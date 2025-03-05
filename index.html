@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ site.title }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .about-text {
+      flex: 1;
+      padding: 20px;
+    }
+    .about-image {
+      flex: 1;
+      padding: 20px;
+      text-align: right;
+    }
+    .about-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        text-align: center;
+      }
+      .about-image {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="about-text">
+      <h1>Welcome to My Personal Page</h1>
+      <p>
+        Hello, and welcome to my janky in-progress webpage. My name is Gerard McCaul, I'm a theoretical physicist suffering from musical
+        and authorial delusions. In the fullness of time this website should contain some links to my CV, publications, and general bric-a-brac 
+        that I've created. For now though this is just a placeholder. And if you're reading this, that's probably all it will ever be!
+      </p>
+    </div>
+    <div class="about-image">
+      <img src="/assets/img/me.jpg" alt="Profile Picture">
+    </div>
+  </div>
+</body>
+</html>
