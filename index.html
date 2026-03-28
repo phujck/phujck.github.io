@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
 
   <title>Gerard McCaul — Theoretical Physicist</title>
   <meta name="description" content="Personal website of Dr. Gerard McCaul, theoretical physicist at Loughborough University. Research in quantum control, open quantum systems, reservoir computing, and superoscillations.">
@@ -10,14 +11,31 @@
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://phujck.github.io/">
 
+  <!-- Google Search Console -->
+  <meta name="google-site-verification" content="QB9iAVhEjCSB7mIYgx-mREYE9SKkyeGlocaMzZiBGMA">
+
+  <!-- Favicon & manifest -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Identity consolidation -->
+  <link rel="me" href="https://orcid.org/0000-0001-7972-456X">
+  <link rel="me" href="https://github.com/phujck">
+  <link rel="me" href="https://scholar.google.com/citations?user=yM12C9kAAAAJ">
+  <link rel="me" href="https://littlelearningmachine.substack.com/">
+
   <!-- Open Graph -->
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="profile">
   <meta property="og:url" content="https://phujck.github.io/">
   <meta property="og:title" content="Gerard McCaul — Theoretical Physicist">
   <meta property="og:description" content="Theoretical physicist at Loughborough University. Research in quantum control, open quantum systems, reservoir computing, and superoscillations. 25+ publications including PRL.">
   <meta property="og:image" content="https://phujck.github.io/assets/img/me.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Gerard McCaul">
   <meta property="og:locale" content="en_GB">
+  <meta property="profile:first_name" content="Gerard">
+  <meta property="profile:last_name" content="McCaul">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
@@ -45,8 +63,8 @@
           "url": "https://www.lboro.ac.uk/"
         },
         "alumniOf": [
-          { "@type": "Organization", "name": "King's College London" },
-          { "@type": "Organization", "name": "Tulane University" }
+          { "@type": "CollegeOrUniversity", "name": "King's College London", "url": "https://www.kcl.ac.uk/" },
+          { "@type": "CollegeOrUniversity", "name": "Tulane University", "url": "https://tulane.edu/" }
         ],
         "sameAs": [
           "https://scholar.google.com/citations?user=yM12C9kAAAAJ",
@@ -59,11 +77,13 @@
         "knowsAbout": [
           "Quantum Control",
           "Open Quantum Systems",
-          "Reservoir Computing",
+          "Quantum Reservoir Computing",
           "Superoscillations",
           "Koopman Mechanics",
           "Non-Linear Optics",
-          "Quantum Thermodynamics"
+          "Quantum Thermodynamics",
+          "Influence Functionals",
+          "High Harmonic Generation"
         ]
       },
       {
@@ -73,17 +93,41 @@
         "name": "Gerard McCaul",
         "description": "Personal website of Dr. Gerard McCaul, theoretical physicist.",
         "author": { "@id": "https://phujck.github.io/#gerard-mccaul" }
+      },
+      {
+        "@type": "ScholarlyArticle",
+        "name": "Driven Imposters: Controlling Expectations in Many-Body Systems",
+        "author": { "@id": "https://phujck.github.io/#gerard-mccaul" },
+        "datePublished": "2020",
+        "isPartOf": { "@type": "Periodical", "name": "Physical Review Letters" },
+        "url": "https://doi.org/10.1103/PhysRevLett.124.183201"
+      },
+      {
+        "@type": "ScholarlyArticle",
+        "name": "Superoscillations Deliver Superspectroscopy",
+        "author": { "@id": "https://phujck.github.io/#gerard-mccaul" },
+        "datePublished": "2023",
+        "isPartOf": { "@type": "Periodical", "name": "Physical Review Letters" },
+        "url": "https://doi.org/10.1103/PhysRevLett.131.153803"
+      },
+      {
+        "@type": "ScholarlyArticle",
+        "name": "Optical Indistinguishability via Twinning Fields",
+        "author": { "@id": "https://phujck.github.io/#gerard-mccaul" },
+        "datePublished": "2021",
+        "isPartOf": { "@type": "Periodical", "name": "Physical Review Letters" },
+        "url": "https://doi.org/10.1103/PhysRevLett.127.113201"
       }
     ]
   }
   </script>
 
-  <!-- Fonts -->
+  <!-- Preloads -->
+  <link rel="preload" href="/assets/css/style.css" as="style">
+  <link rel="preload" href="/assets/img/me.jpg" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Styles -->
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>

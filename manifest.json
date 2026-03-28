@@ -1,0 +1,16 @@
+{
+  "name": "Gerard McCaul",
+  "short_name": "G.McCaul",
+  "description": "Theoretical physicist at Loughborough University. Quantum control, open quantum systems, reservoir computing.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
