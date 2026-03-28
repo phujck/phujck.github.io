@@ -3,8 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Music — Gerard McCaul</title>
-  <meta name="description" content="Original music by Gerard McCaul — songs written, recorded, and produced with varying degrees of competence.">
+  <meta name="description" content="Original music by Gerard McCaul — songs written and recorded including New Devotion, Goodbye to New Orleans, and Somewhere Unknown.">
+  <meta name="author" content="Gerard McCaul">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://phujck.github.io/music.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://phujck.github.io/music.html">
+  <meta property="og:title" content="Music — Gerard McCaul">
+  <meta property="og:description" content="Original songs written and recorded by theoretical physicist Gerard McCaul.">
+  <meta property="og:image" content="https://phujck.github.io/assets/img/me.jpg">
+  <meta property="og:site_name" content="Gerard McCaul">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Music — Gerard McCaul">
+  <meta name="twitter:description" content="Original songs by Gerard McCaul — New Devotion, Goodbye to New Orleans, Somewhere Unknown.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,17 +48,13 @@
     .track-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 2px;
       background: linear-gradient(90deg, var(--highlight-purple), var(--accent), var(--highlight-blue));
       opacity: 0.6;
     }
 
-    .track-card:hover {
-      background: var(--bg-card-hover);
-    }
+    .track-card:hover { background: var(--bg-card-hover); }
 
     .track-header {
       display: flex;
@@ -51,57 +64,23 @@
     }
 
     .track-number {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
       border-radius: 50%;
       background: var(--accent-dim);
       color: var(--accent);
       font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1rem;
+      font-weight: 700; font-size: 1rem;
       flex-shrink: 0;
     }
 
-    .track-info h3 {
-      font-size: 1.15rem;
-      margin-bottom: 2px;
-    }
+    .track-info h3 { font-size: 1.15rem; margin-bottom: 2px; }
+    .track-info .track-meta { font-size: 0.8rem; color: var(--text-muted); }
 
-    .track-info .track-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .track-description {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      line-height: 1.7;
-      margin-bottom: var(--space-lg);
-      max-width: 700px;
-    }
-
-    /* Custom audio player styling */
     .track-card audio {
-      width: 100%;
-      height: 44px;
+      width: 100%; height: 44px;
       border-radius: var(--radius-sm);
       outline: none;
-    }
-
-    /* Style the native audio element for dark theme */
-    .track-card audio::-webkit-media-controls-panel {
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: var(--radius-sm);
-    }
-
-    .track-card audio::-webkit-media-controls-current-time-display,
-    .track-card audio::-webkit-media-controls-time-remaining-display {
-      color: var(--text-secondary);
-      font-family: var(--font-body);
-      font-size: 0.75rem;
     }
 
     .disclaimer {
