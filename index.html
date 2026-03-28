@@ -3,61 +3,175 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ site.title }}</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f7f7f7;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      max-width: 1000px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #fff;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .about-text {
-      flex: 1;
-      padding: 20px;
-    }
-    .about-image {
-      flex: 1;
-      padding: 20px;
-      text-align: right;
-    }
-    .about-image img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        text-align: center;
-      }
-      .about-image {
-        text-align: center;
-      }
-    }
-  </style>
+  <title>Gerard McCaul — Theoretical Physicist</title>
+  <meta name="description" content="Personal website of Dr. Gerard McCaul, theoretical physicist at Loughborough University. Research in quantum control, open quantum systems, reservoir computing, and superoscillations.">
+  <meta name="author" content="Gerard McCaul">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="about-text">
-      <h1>Welcome to My Personal Page</h1>
-      <p>
-        Hello, and welcome to my janky in-progress webpage. My name is Gerard McCaul, I'm a theoretical physicist suffering from musical
-        and authorial delusions. In the fullness of time this website should contain some links to my CV, publications, and general bric-a-brac 
-        that I've created. For now though this is just a placeholder. And if you're reading this, that's probably all it will ever be!
-      </p>
+
+  <!-- ===== Navigation ===== -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">G<span>.</span>McCaul</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="/" class="active">Home</a></li>
+        <li><a href="/physics.html">Physics</a></li>
+        <li><a href="/writing.html">Writing</a></li>
+        <li><a href="/music.html">Music</a></li>
+      </ul>
     </div>
-    <div class="about-image">
-      <img src="/assets/img/me.jpg" alt="Profile Picture">
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-text">
+          <h1 class="fade-in">Gerard <span class="accent">McCaul</span></h1>
+          <p class="hero-role fade-in fade-in-delay-1">
+            Research Associate in <strong>Quantum Reservoir Computing</strong><br>
+            <strong>Loughborough University</strong>, Department of Physics
+          </p>
+          <p class="hero-bio fade-in fade-in-delay-2">
+            I'm a theoretical physicist working at the intersection of quantum dynamics, 
+            control theory, and machine learning. My research asks how we can exploit 
+            the physics of open quantum systems — from engineering material responses with 
+            tailored laser pulses, to building the next generation of quantum and photonic 
+            computing architectures. When not doing physics, I am suffering from musical 
+            and authorial delusions.
+          </p>
+          <div class="hero-links fade-in fade-in-delay-3">
+            <a href="https://scholar.google.com/citations?user=yM12C9kAAAAJ" target="_blank" rel="noopener" class="hero-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14Zm0-2a5 5 0 1 0 0-10 5 5 0 0 0 0 10ZM1.5 9 12 0l10.5 9h-4v3.07A8.96 8.96 0 0 0 12 9.07a8.96 8.96 0 0 0-6.5 2.93V9H1.5Z"/></svg>
+              Scholar
+            </a>
+            <a href="https://orcid.org/0000-0001-7972-456X" target="_blank" rel="noopener" class="hero-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0ZM7.369 4.378a.87.87 0 1 1 0 1.74.87.87 0 0 1 0-1.74ZM8.06 7.608h-1.38v8.783h1.38V7.608Zm2.963 0h-1.38v8.783h1.38v-4.97c0-1.48.656-2.69 2.234-2.69 1.276 0 1.838.96 1.838 2.097v5.563h1.38v-5.83c0-2.066-1.06-3.234-3.04-3.234-1.234 0-2.07.543-2.412 1.267V7.608Z"/></svg>
+              ORCID
+            </a>
+            <a href="https://www.researchgate.net/profile/Gerard-Mccaul" target="_blank" rel="noopener" class="hero-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.586 0c-1.326 0-2.4 1.074-2.4 2.4s1.074 2.4 2.4 2.4 2.4-1.074 2.4-2.4S20.912 0 19.586 0ZM2.014 6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h8c1.103 0 2-.897 2-2V8c0-1.103-.897-2-2-2h-8Zm1 3h2.6c1.325 0 2.4.694 2.4 2.1 0 .995-.565 1.683-1.404 1.898L8.824 16h-1.68l-1.92-2.8h-.21V16h-1V9Zm1 1v1.8h1.4c.884 0 1.5-.308 1.5-1 0-.64-.516-.8-1.4-.8h-1.5Zm12.586 1c-2.21 0-4 1.79-4 4s1.79 4 4 4c1.326 0 2.4-.358 3.187-1.064l-.573-.822c-.596.49-1.468.886-2.614.886-1.657 0-2.8-1.21-2.8-3s1.143-3 2.8-3c.8 0 1.5.268 2.013.692L19.6 12.4c-.698-.6-1.482-.9-2.6-.9v-.5h-.4Z"/></svg>
+              ResearchGate
+            </a>
+            <a href="https://github.com/phujck" target="_blank" rel="noopener" class="hero-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.776.418-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.468-2.382 1.236-3.222-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23A11.51 11.51 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.61-2.805 5.625-5.475 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .322.216.694.825.576C20.565 21.795 24 17.298 24 12 24 5.37 18.627 0 12 0Z"/></svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+        <div class="hero-photo-wrapper fade-in fade-in-delay-2">
+          <img src="/assets/img/me.jpg" alt="Gerard McCaul" class="hero-photo">
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <!-- ===== Research Highlights ===== -->
+  <section class="highlights section" id="highlights">
+    <div class="container">
+      <span class="section-label fade-in">Selected Highlights</span>
+      <h2 class="section-title fade-in">Research at a glance</h2>
+      <div class="highlights-grid stagger-children">
+        <div class="highlight-card">
+          <div class="highlight-icon rose">⚛️</div>
+          <h3>Driven Imposters</h3>
+          <p>Showed how tailored laser pulses can make one quantum material mimic the observable properties of another — featured in <em>Quanta Magazine</em>.</p>
+          <span class="tag">Phys. Rev. Lett. (2020)</span>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon blue">🔬</div>
+          <h3>Superspectroscopy</h3>
+          <p>Demonstrated that superoscillating waveforms can deliver 100-fold enhancement in spectroscopic contrast, enabling new sensing capabilities.</p>
+          <span class="tag">Phys. Rev. Lett. (2023)</span>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon green">🧮</div>
+          <h3>Quantum Reservoir Computing</h3>
+          <p>Developing minimal architectures for quantum and photonic reservoir computing — exploring where quantum advantage resides in machine learning.</p>
+          <span class="tag">Chaos (2025)</span>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon purple">📖</div>
+          <h3>Textbook: Observables in Motion</h3>
+          <p>Co-authoring a comprehensive guide to simulating classical and quantum dynamics, with Python implementations and pedagogical depth.</p>
+          <span class="tag">arXiv:2509.20403</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Media & Press ===== -->
+  <section class="section" id="media">
+    <div class="container">
+      <span class="section-label fade-in">In The Press</span>
+      <h2 class="section-title fade-in">Media Coverage</h2>
+      <div class="media-grid stagger-children">
+        <a href="https://www.quantamagazine.org/alchemy-arrives-in-a-burst-of-light-20200930/" target="_blank" rel="noopener" class="media-card">
+          <div>
+            <div class="media-source">Quanta Magazine</div>
+            <h3>Alchemy Arrives in a Burst of Light</h3>
+            <p>September 2020 — On using laser pulses to make one material behave like another.</p>
+          </div>
+        </a>
+        <div class="media-card">
+          <div>
+            <div class="media-source">Physics World</div>
+            <h3>Quantum control using laser light could turn insulators into conductors and vice-versa</h3>
+            <p>May 2020 — Covering the theoretical framework for laser-driven material control.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Quick Stats ===== -->
+  <section class="highlights section">
+    <div class="container">
+      <div class="highlights-grid stagger-children">
+        <div class="highlight-card" style="text-align:center">
+          <div style="font-size:2.5rem;font-weight:800;color:var(--accent);font-family:var(--font-display)">25+</div>
+          <p>Publications in journals including <em>PRL</em>, <em>PRB</em>, <em>PRA</em>, and <em>Quantum</em></p>
+        </div>
+        <div class="highlight-card" style="text-align:center">
+          <div style="font-size:2.5rem;font-weight:800;color:var(--accent);font-family:var(--font-display)">🏆</div>
+          <p>2nd place, FQxI Essay Competition: <em>"Spanspermia: Does Life Come from Outer Hilbert Space?"</em></p>
+        </div>
+        <div class="highlight-card" style="text-align:center">
+          <div style="font-size:2.5rem;font-weight:800;color:var(--accent);font-family:var(--font-display)">3</div>
+          <p>Institutions: King's College London → Tulane University → Loughborough University</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <p class="footer-text">© 2026 Gerard McCaul. Built with stubbornness and caffeine.</p>
+        <ul class="footer-links">
+          <li><a href="mailto:gerard.mccaul@gmail.com">Email</a></li>
+          <li><a href="https://scholar.google.com/citations?user=yM12C9kAAAAJ" target="_blank" rel="noopener">Scholar</a></li>
+          <li><a href="https://orcid.org/0000-0001-7972-456X" target="_blank" rel="noopener">ORCID</a></li>
+          <li><a href="https://github.com/phujck" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" aria-label="Back to top">↑</button>
+
+  <script src="/assets/js/main.js"></script>
 </body>
 </html>
