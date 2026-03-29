@@ -1088,3 +1088,70 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 auto;
   line-height: 1.75;
 }
+
+/* ---------- Page Hero for Subpages ---------- */
+.page-hero {
+  position: relative;
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: var(--space-3xl);
+  padding-top: calc(var(--nav-height) + var(--space-2xl));
+  padding-bottom: var(--space-3xl);
+}
+
+.page-hero-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(100%) sepia(30%) hue-rotate(5deg) contrast(1.1);
+  mix-blend-mode: luminosity;
+  opacity: 0.15;
+  z-index: -1;
+}
+
+.page-hero-bg::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; width: 100%; height: 60%;
+  background: linear-gradient(to top, var(--bg-primary) 0%, transparent 100%);
+}
+
+.page-hero-title {
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  margin-bottom: var(--space-xs);
+  color: var(--text-primary);
+}
+
+.page-hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--accent);
+  max-width: 600px;
+}
+
+/* Inline Sketch for Bio */
+.inline-sketch {
+  float: right;
+  width: 280px;
+  margin: 0 0 var(--space-md) var(--space-xl);
+  border-radius: var(--radius-lg);
+  filter: grayscale(100%) sepia(40%) hue-rotate(5deg) contrast(1.2);
+  mix-blend-mode: luminosity;
+  opacity: 0.85;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-glass);
+}
+
+@media (max-width: 768px) {
+  .inline-sketch {
+    float: none;
+    width: 100%;
+    max-width: 320px;
+    margin: var(--space-lg) auto;
+    display: block;
+  }
+}
