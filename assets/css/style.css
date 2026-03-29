@@ -295,8 +295,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: var(--space-3xl);
+  grid-template-columns: 1fr 380px;
+  gap: var(--space-2xl);
   align-items: center;
 }
 
@@ -370,21 +370,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-photo {
   width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-glass);
-  filter: grayscale(15%) contrast(1.05);
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: 0;
+  border: none;
+  filter: none;
 }
 
-.hero-photo-wrapper::after {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  border-radius: calc(var(--radius-xl) + 6px);
-  border: 1px solid rgba(201, 169, 110, 0.12);
-  pointer-events: none;
-}
+/* Removed bounding box ghost */
 
 /* ---------- Highlight Cards ---------- */
 .highlights {
@@ -1164,5 +1157,15 @@ h1, h2, h3, h4, h5, h6 {
     background: transparent !important;
     filter: none !important;
     mix-blend-mode: normal !important;
-    transform: scale(1.6) translateX(15%); /* Enlarge the sketch and shift right */
+    transform: scale(1.8) translateX(20%); /* Tuned scale and shift */
+    position: relative;
+    z-index: 2;
+}
+
+.hero-photo-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 5;
 }
