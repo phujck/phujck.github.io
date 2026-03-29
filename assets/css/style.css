@@ -1157,4 +1157,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Sketch Profile Modifiers */
-.hero-sketch { filter: invert(100%) sepia(30%) hue-rotate(5deg) contrast(1.2) brightness(1.2); mix-blend-mode: screen; border: none; border-radius: 0; box-shadow: none; background: transparent; }
+.hero-sketch {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    filter: none !important;
+    mix-blend-mode: screen !important;
+}
