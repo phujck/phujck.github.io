@@ -224,9 +224,12 @@
       </div>
 
       <div id="substack-latest" style="margin-top: var(--space-xl); display: none;">
-        <a id="substack-latest-link" href="#" target="_blank" rel="noopener" class="scrap-card" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <a id="substack-latest-link" href="#" target="_blank" rel="noopener" class="scrap-card"
+          style="display: flex; flex-direction: column; gap: var(--space-md);">
           <div style="display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-md);">
-            <span style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); opacity: 0.8;">Latest post</span>
+            <span
+              style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); opacity: 0.8;">Latest
+              post</span>
             <span id="substack-latest-date" style="font-size: 0.75rem; color: var(--text-muted);"></span>
           </div>
           <div id="substack-latest-title" class="scrap-title"></div>
@@ -244,7 +247,7 @@
       <h2 class="section-title fade-in">Prize-Winning Work</h2>
 
       <div class="essay-card fade-in" style="margin-bottom: var(--space-xl);">
-        <div class="award-badge">🏆 2nd Place — FQxI Essay Competition 2025–26</div>
+        <div class="award-badge">2nd Place — FQxI Essay Competition 2025–26</div>
         <h3>Spanspermia: Does Life Come from Outer Hilbert Space?</h3>
         <div class="essay-meta">
           Foundational Questions Institute (FQxI) · Theme: "How Quantum is Life?"
@@ -257,7 +260,8 @@
           and that the question itself reveals more about our assumptions than about biology.
         </p>
         <div class="pub-links" style="margin-top: var(--space-lg);">
-          <a href="https://fqxi.org/community/forum/topic/4148" target="_blank" rel="noopener" class="pub-link">Read on
+          <a href="https://qspace.fqxi.org/competitions/entry/2393" target="_blank" rel="noopener" class="pub-link">Read
+            on
             FQxI</a>
         </div>
       </div>
@@ -266,16 +270,14 @@
         <div class="award-badge">🏆 1st Runner-Up — Quantum-Steampunk Short-Story Contest</div>
         <h3>Doctor Up and Mister Down</h3>
         <div class="essay-meta">
-          Quantum Frontiers (Caltech) · Quantum-Steampunk Short-Story Contest, 2023
+          Quantum-Steampunk Short-Story Contest, 2023
         </div>
         <p>
-          A short story blending quantum thermodynamics with steampunk fiction — because
-          the second law of thermodynamics is more fun when there are top hats involved.
-          Selected as first runner-up from a competitive international field.
+          A short story written for the University of Maryland quantum thermodynamics hub's short story contest. A
+          dreadful pastiche I had real fun writing.
         </p>
         <div class="pub-links" style="margin-top: var(--space-lg);">
-          <a href="https://www.quantumfrontiers.com/2023/05/01/winners-of-the-quantum-steampunk-short-story-contest/"
-            target="_blank" rel="noopener" class="pub-link">Read on Quantum Frontiers</a>
+          <a href="https://qtd-hub.umd.edu/contest/" target="_blank" rel="noopener" class="pub-link">Read on qtd-hub</a>
         </div>
       </div>
     </div>
@@ -297,19 +299,22 @@
 
         <a href="/essays/the-line.html" class="scrap-card">
           <div class="scrap-title">The Line</div>
-          <p class="scrap-blurb">A morning in a city park, an interrogation on acid, and a very long wait for beignets.</p>
+          <p class="scrap-blurb">A morning in a city park, an interrogation on acid, and a very long wait for beignets.
+          </p>
           <span class="scrap-link">Read →</span>
         </a>
 
         <a href="/essays/two-hundred-and-sixty.html" class="scrap-card">
           <div class="scrap-title">Two Hundred and Sixty</div>
-          <p class="scrap-blurb">Five years in the American South. It's the final one percent that's proving so troublesome.</p>
+          <p class="scrap-blurb">Five years in the American South. It's the final one percent that's proving so
+            troublesome.</p>
           <span class="scrap-link">Read →</span>
         </a>
 
         <a href="/essays/second-attempt.html" class="scrap-card">
           <div class="scrap-title">Second Attempt</div>
-          <p class="scrap-blurb">The difficult second album. Previous critical reception: "certainly a lot of words."</p>
+          <p class="scrap-blurb">The difficult second album. Previous critical reception: "certainly a lot of words."
+          </p>
           <span class="scrap-link">Read →</span>
         </a>
 
@@ -371,8 +376,8 @@
   <script src="/assets/js/main.js"></script>
   <script>
     fetch('https://littlelearningmachine.substack.com/api/v1/posts/?limit=1')
-      .then(function(r) { return r.json(); })
-      .then(function(posts) {
+      .then(function (r) { return r.json(); })
+      .then(function (posts) {
         if (!posts || !posts.length) return;
         var p = posts[0];
         document.getElementById('substack-latest-link').href = p.canonical_url;
@@ -382,7 +387,7 @@
         document.getElementById('substack-latest-date').textContent = date;
         document.getElementById('substack-latest').style.display = '';
       })
-      .catch(function() {});
+      .catch(function () { });
   </script>
 </body>
 
