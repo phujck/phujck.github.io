@@ -222,6 +222,18 @@
           </a>
         </div>
       </div>
+
+      <div id="substack-latest" style="margin-top: var(--space-xl); display: none;">
+        <a id="substack-latest-link" href="#" target="_blank" rel="noopener" class="scrap-card" style="display: flex; flex-direction: column; gap: var(--space-md);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-md);">
+            <span style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); opacity: 0.8;">Latest post</span>
+            <span id="substack-latest-date" style="font-size: 0.75rem; color: var(--text-muted);"></span>
+          </div>
+          <div id="substack-latest-title" class="scrap-title"></div>
+          <div id="substack-latest-subtitle" class="scrap-blurb"></div>
+          <span class="scrap-link">Read on Substack →</span>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -357,6 +369,21 @@
 
   <button class="back-to-top" aria-label="Back to top">↑</button>
   <script src="/assets/js/main.js"></script>
+  <script>
+    fetch('https://littlelearningmachine.substack.com/api/v1/posts/?limit=1')
+      .then(function(r) { return r.json(); })
+      .then(function(posts) {
+        if (!posts || !posts.length) return;
+        var p = posts[0];
+        document.getElementById('substack-latest-link').href = p.canonical_url;
+        document.getElementById('substack-latest-title').textContent = p.title;
+        if (p.subtitle) document.getElementById('substack-latest-subtitle').textContent = p.subtitle;
+        var date = new Date(p.post_date).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
+        document.getElementById('substack-latest-date').textContent = date;
+        document.getElementById('substack-latest').style.display = '';
+      })
+      .catch(function() {});
+  </script>
 </body>
 
 </html>

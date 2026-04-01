@@ -27,7 +27,7 @@ email: gerard.mccaul@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Personal website of Dr. Gerard McCaul, theoretical physicist. Research in quantum control, open quantum systems, reservoir computing, and superoscillations.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://phujck.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://gmccaul.co.uk" # the base hostname & protocol for your site, e.g. http://example.com
 
 github_username:  phujck
 

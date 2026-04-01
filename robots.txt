@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://phujck.github.io/sitemap.xml
+Sitemap: https://gmccaul.co.uk/sitemap.xml
