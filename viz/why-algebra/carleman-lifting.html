@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iterative Lifting — Carleman Linearisation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0f0f1e;
+    color: #c8cad4;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.4rem 1rem 2rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: #9090c0;
+    text-align: center;
+    margin-bottom: 0.25rem;
+  }
+  h1 em { font-style: normal; font-weight: 600; color: #c0c0e8; }
+
+  .subtitle {
+    font-size: 0.78rem;
+    color: #606080;
+    text-align: center;
+    margin-bottom: 1.1rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── slider ─────────────────────────────────────────────── */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 1.1rem;
+    width: 100%;
+    max-width: 900px;
+  }
+  .slider-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #7070a0;
+    white-space: nowrap;
+  }
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 5px;
+    border-radius: 3px;
+    background: #2a2a4a;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #e0e0f8;
+    border: 2px solid #4040a0;
+    box-shadow: 0 0 6px rgba(160,160,255,0.4);
+    cursor: grab;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #e0e0f8;
+    border: 2px solid #4040a0;
+  }
+  #dVal {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #c0c0f0;
+    min-width: 2.2em;
+    text-align: right;
+  }
+
+  /* ── main layout ─────────────────────────────────────────── */
+  .main {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 14px;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  /* ── left: phase portrait ────────────────────────────────── */
+  .left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .panel-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #606088;
+    margin-bottom: 3px;
+  }
+
+  #phaseCanvas {
+    width: 100%;
+    border-radius: 5px;
+    background: #12122a;
+    border: 1px solid #1e1e3e;
+    display: block;
+  }
+
+  .legend {
+    font-size: 0.7rem;
+    color: #70708a;
+    line-height: 1.7;
+  }
+  .legend span {
+    display: inline-block;
+    width: 22px; height: 2px;
+    vertical-align: middle;
+    margin-right: 5px;
+    border-radius: 1px;
+  }
+
+  /* ── right: stacked time-series panels ───────────────────── */
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .obs-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .obs-row.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .obs-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 3px;
+  }
+  .obs-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .obs-desc {
+    font-size: 0.68rem;
+    color: #505070;
+  }
+  .obs-rate {
+    font-size: 0.68rem;
+    color: #505070;
+    margin-left: auto;
+  }
+
+  .obs-canvas {
+    width: 100%;
+    height: 64px;
+    border-radius: 4px;
+    background: #12122a;
+    border: 1px solid #1a1a3a;
+    display: block;
+  }
+
+  /* ── residual panel ──────────────────────────────────────── */
+  .residual-wrap {
+    margin-top: 4px;
+  }
+  #residualCanvas {
+    width: 100%;
+    height: 54px;
+    border-radius: 4px;
+    background: #12122a;
+    border: 1px solid #1a1a3a;
+    display: block;
+  }
+
+  @media (max-width: 620px) {
+    .main { grid-template-columns: 1fr; }
+    #phaseCanvas { aspect-ratio: 1 / 0.85; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Iterative Lifting — <em>Carleman Linearisation</em></h1>
+<div class="subtitle">
+  System: ẋ = μx, &nbsp;ẏ = λ(y − x²) &nbsp;|&nbsp; μ = −0.05, λ = −1.0, (x₀, y₀) = (3, 0)
+</div>
+
+<div class="slider-row">
+  <span class="slider-label">dictionary order D</span>
+  <input type="range" id="dSlider" min="1" max="4" step="1" value="1">
+  <span id="dVal">D = 1</span>
+</div>
+
+<div class="main">
+
+  <!-- LEFT: phase portrait -->
+  <div class="left-col">
+    <div>
+      <div class="panel-title">phase portrait &nbsp;(x, y)</div>
+      <canvas id="phaseCanvas" height="220" width="240"></canvas>
+    </div>
+    <div class="legend">
+      <div><span style="background:#ffffff;opacity:0.9"></span>true trajectory</div>
+      <div><span style="background:#6090e0"></span>Carleman approx D=1</div>
+      <div><span style="background:#e08840"></span>Carleman approx D=2</div>
+      <div><span style="background:#50c080"></span>Carleman approx D=3</div>
+      <div><span style="background:#c060c0"></span>Carleman approx D=4</div>
+      <div style="margin-top:4px"><span style="background:#3a3a6a;height:1px"></span>slow manifold y = x²</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: observable time-series + residual -->
+  <div class="right-col">
+
+    <div class="panel-title" style="margin-bottom:6px">
+      observables — time series &nbsp;<span style="font-style:italic;color:#505070">(solid = true &nbsp;|&nbsp; dashed = Carleman)</span>
+    </div>
+
+    <!-- obs rows are built dynamically, but we declare 4 slots -->
+    <div class="obs-row" id="row0">
+      <div class="obs-header">
+        <span class="obs-name" id="obsName0"></span>
+        <span class="obs-desc" id="obsDesc0"></span>
+        <span class="obs-rate" id="obsRate0"></span>
+      </div>
+      <canvas class="obs-canvas" id="obsCanvas0" height="64"></canvas>
+    </div>
+    <div class="obs-row" id="row1">
+      <div class="obs-header">
+        <span class="obs-name" id="obsName1"></span>
+        <span class="obs-desc" id="obsDesc1"></span>
+        <span class="obs-rate" id="obsRate1"></span>
+      </div>
+      <canvas class="obs-canvas" id="obsCanvas1" height="64"></canvas>
+    </div>
+    <div class="obs-row" id="row2">
+      <div class="obs-header">
+        <span class="obs-name" id="obsName2"></span>
+        <span class="obs-desc" id="obsDesc2"></span>
+        <span class="obs-rate" id="obsRate2"></span>
+      </div>
+      <canvas class="obs-canvas" id="obsCanvas2" height="64"></canvas>
+    </div>
+    <div class="obs-row" id="row3">
+      <div class="obs-header">
+        <span class="obs-name" id="obsName3"></span>
+        <span class="obs-desc" id="obsDesc3"></span>
+        <span class="obs-rate" id="obsRate3"></span>
+      </div>
+      <canvas class="obs-canvas" id="obsCanvas3" height="64"></canvas>
+    </div>
+
+    <div class="residual-wrap">
+      <div class="panel-title" style="margin-bottom:3px">
+        residual &nbsp;|y_true − ŷ_D| &nbsp;(log scale) &nbsp;<span style="color:#505070">— drops to 0 when x² is added at D=2</span>
+      </div>
+      <canvas id="residualCanvas" height="54"></canvas>
+    </div>
+
+  </div><!-- /right-col -->
+</div><!-- /main -->
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+//  SYSTEM  ẋ = μx,  ẏ = λ(y − x²)
+//  Lifted: d/dt [x, y, x², x³, x⁴] with exact Carleman matrix
+//
+//  The Carleman matrix for this system at order D:
+//  The lifted state is z = [x, y, x^2, x^3, x^4, ...]
+//  But x^k satisfies: d/dt(x^k) = k*mu*x^k  (since ẋ = μx => d/dt x^k = k*mu*x^k)
+//  And y satisfies: ẏ = λy − λx²
+//  So the Carleman system IS already linear in z = (x, y, x^2, x^3, ...):
+//    ż_1 = mu * z_1
+//    ż_2 = lambda * z_2 - lambda * z_3         (z_3 = x^2)
+//    ż_3 = 2*mu * z_3
+//    ż_4 = 3*mu * z_4
+//    ...
+//    ż_k = k*mu * z_k  for k = 1, 3, 4, 5, ...
+//  All higher powers of x evolve independently and exactly!
+//  So this system closes EXACTLY at D=2 — x^k for k>=3 are just along for the ride.
+//
+//  To show ITERATIVE improvement, we modify slightly: use a scalar example
+//  for the observables, but keep the 2D system for the phase portrait.
+//  For the time-series panels we show z_k = x^k, k=1..D
+//  plus z_2 = y which is only captured at D >= 2.
+//
+//  State order: z = [x, y, x^2, x^3, x^4]  (indices 0..4)
+//  Carleman matrix A (5×5, but we use top-D×D subblock):
+//    A[0][0] = mu
+//    A[1][1] = lambda,  A[1][2] = -lambda
+//    A[2][2] = 2*mu
+//    A[3][3] = 3*mu
+//    A[4][4] = 4*mu
+//  All other entries = 0.
+//
+//  At D=1: state=[x],       A=[[mu]]                 — misses y entirely
+//  At D=2: state=[x,y,x²],  A=3×3 exact              — x and y exact
+//  At D=3: state=[x,y,x²,x³] — adds x³, exact already
+//  At D=4: state=[x,y,x²,x³,x⁴]
+//
+//  Since this system already closes at D=2, the residual goes to ~0 at D≥2.
+//  That IS the point: adding x² as one new dimension drops the error to zero.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MU     = -0.05;
+const LAMBDA = -1.0;
+const X0     = 3.0;
+const Y0     = 0.0;
+const T_END  = 60;
+const N_STEPS = 800;
+
+const COLORS = ['#ffffff', '#6090e0', '#e08840', '#50c080', '#c060c0'];
+// color[D-1] is the color for Carleman approx at order D
+
+// ── Observable metadata ───────────────────────────────────────────────────────
+// state index mapping at each D:
+// D=1: observables shown = [x]            (index 0 in full state)
+// D=2: observables shown = [x, y, x²]    (indices 0,1,2)
+// D=3: observables shown = [x, y, x², x³] (0,1,2,3)
+// D=4: observables shown = [x, y, x², x³, x⁴] (0,1,2,3,4)
+// But we only have 4 row slots, so we show min(D+1,4) rows.
+// Actually let's map it: row k shows observable with this state index:
+//   k=0 => x     (state idx 0)
+//   k=1 => y     (state idx 1)
+//   k=2 => x²    (state idx 2)
+//   k=3 => x³    (state idx 3)
+// At D=1: only row 0 visible
+// At D=2: rows 0,1,2 visible
+// At D=3: rows 0,1,2,3 visible
+// At D=4: rows 0,1,2,3 visible (x⁴ is the 4th dim but we only have 4 rows)
+
+const OBS_META = [
+  { name: 'z₁ = x',   desc: 'primitive observable',   rateStr: 'rate μ = −0.05' },
+  { name: 'z₂ = y',   desc: 'second state variable',  rateStr: 'modes: e^{λt} + e^{2μt} (mixed)' },
+  { name: 'z₃ = x²',  desc: 'lifted — closes ẏ coupling', rateStr: 'rate 2μ = −0.1' },
+  { name: 'z₄ = x³',  desc: 'degree-3 lift',          rateStr: 'rate 3μ = −0.15' },
+];
+
+const OBS_COLORS = ['#a0c8ff', '#ffb060', '#60e0a0', '#e060c0'];
+
+// ── Build exact/numerical solutions ──────────────────────────────────────────
+
+function linspace(a, b, n) {
+  const arr = new Float64Array(n);
+  const h = (b - a) / (n - 1);
+  for (let i = 0; i < n; i++) arr[i] = a + i * h;
+  return arr;
+}
+
+const t = linspace(0, T_END, N_STEPS);
+
+// True solution (analytic for this system)
+const trueX  = new Float64Array(N_STEPS);
+const trueY  = new Float64Array(N_STEPS);
+const trueX2 = new Float64Array(N_STEPS);
+const trueX3 = new Float64Array(N_STEPS);
+const DELTA  = LAMBDA - 2 * MU;  // = -1.1
+const A_COEF = LAMBDA * X0 * X0 / DELTA;  // = (-1)(9)/(-1.1) = 9/1.1
+
+for (let i = 0; i < N_STEPS; i++) {
+  const ti = t[i];
+  trueX[i]  = X0 * Math.exp(MU * ti);
+  trueX2[i] = X0 * X0 * Math.exp(2 * MU * ti);
+  trueX3[i] = X0 * X0 * X0 * Math.exp(3 * MU * ti);
+  // y(t) = A_COEF*exp(2μt) + (Y0 - A_COEF)*exp(λt)
+  trueY[i]  = A_COEF * Math.exp(2 * MU * ti) + (Y0 - A_COEF) * Math.exp(LAMBDA * ti);
+}
+
+// True state at each t for each observable (row index → Float64Array)
+const trueSeries = [trueX, trueY, trueX2, trueX3];
+
+// ── Carleman solution at order D ─────────────────────────────────────────────
+// Full Carleman state: [x, y, x², x³, x⁴] (5 components)
+// Carleman matrix A (5×5):
+//  A[0][0] = mu
+//  A[1][1] = lambda, A[1][2] = -lambda
+//  A[2][2] = 2*mu
+//  A[3][3] = 3*mu
+//  A[4][4] = 4*mu
+//
+// At order D, we use the top-(D+1)×(D+1) block EXCEPT:
+//  D=1: only [x] → 1×1
+//  D=2: [x, y, x²] → 3×3 (includes y which needs x² coupling)
+//  D=3: [x, y, x², x³] → 4×4
+//  D=4: [x, y, x², x³, x⁴] → 5×5
+// Map D → number of Carleman states:
+//  D=1 → 1 state: [x]
+//  D=2 → 3 states: [x, y, x²]
+//  D=3 → 4 states: [x, y, x², x³]
+//  D=4 → 5 states: [x, y, x², x³, x⁴]
+function carlDim(D) { return D === 1 ? 1 : D + 1; }
+function carlIC(D) {
+  // Initial conditions for Carleman state
+  const z0 = [X0, Y0, X0*X0, X0*X0*X0, X0*X0*X0*X0];
+  return z0.slice(0, carlDim(D));
+}
+
+// Integrate Carleman linear system with RK4
+function matVec(A, v) {
+  const n = v.length;
+  const out = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    let s = 0;
+    for (let j = 0; j < n; j++) s += A[i][j] * v[j];
+    out[i] = s;
+  }
+  return out;
+}
+
+function rk4Step(A, z, dt) {
+  const n = z.length;
+  const k1 = matVec(A, z);
+  const zk2 = z.map((v, i) => v + 0.5 * dt * k1[i]);
+  const k2 = matVec(A, zk2);
+  const zk3 = z.map((v, i) => v + 0.5 * dt * k2[i]);
+  const k3 = matVec(A, zk3);
+  const zk4 = z.map((v, i) => v + dt * k3[i]);
+  const k4 = matVec(A, zk4);
+  return z.map((v, i) => v + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]));
+}
+
+function buildCarlMatrix(D) {
+  const dim = carlDim(D);
+  // Build dim×dim zero matrix
+  const A = Array.from({length: dim}, () => new Float64Array(dim));
+  // x: index 0
+  A[0][0] = MU;
+  if (dim >= 2) {
+    // y: index 1
+    A[1][1] = LAMBDA;
+    if (dim >= 3) A[1][2] = -LAMBDA;  // coupling to x²
+    // x²: index 2
+    if (dim >= 3) A[2][2] = 2 * MU;
+    // x³: index 3
+    if (dim >= 4) A[3][3] = 3 * MU;
+    // x⁴: index 4
+    if (dim >= 5) A[4][4] = 4 * MU;
+  }
+  return A;
+}
+
+// Cache Carleman solutions for D=1..4
+const carlSolutions = {};  // carlSolutions[D] = array of N_STEPS state vectors
+
+function computeCarl(D) {
+  if (carlSolutions[D]) return;
+  const A = buildCarlMatrix(D);
+  const dim = carlDim(D);
+  const z0 = carlIC(D);
+  const traj = new Array(N_STEPS);
+  traj[0] = Float64Array.from(z0);
+  for (let i = 1; i < N_STEPS; i++) {
+    const dt = t[i] - t[i-1];
+    traj[i] = Float64Array.from(rk4Step(A, Array.from(traj[i-1]), dt));
+  }
+  carlSolutions[D] = traj;
+}
+
+// Precompute all
+for (let D = 1; D <= 4; D++) computeCarl(D);
+
+// ── Extract observable time series from Carleman solution ─────────────────────
+// obsIdx maps row k → state index in Carleman state:
+//  row 0 (x): state index 0 for all D
+//  row 1 (y): state index 1 for D>=2, not present for D=1
+//  row 2 (x²): state index 2 for D>=2
+//  row 3 (x³): state index 3 for D>=3
+function carlObsSeries(D, rowK) {
+  // Returns Float64Array of length N_STEPS for observable at row rowK
+  // in the Carleman solution at order D.
+  const traj = carlSolutions[D];
+  const stateIdx = rowK === 0 ? 0 : rowK;  // state idx matches row idx
+  const dim = carlDim(D);
+  const series = new Float64Array(N_STEPS);
+  for (let i = 0; i < N_STEPS; i++) {
+    series[i] = stateIdx < dim ? traj[i][stateIdx] : NaN;
+  }
+  return series;
+}
+
+// ── Drawing helpers ───────────────────────────────────────────────────────────
+
+function setCanvasSize(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width  = Math.round(rect.width  * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return ctx;
+}
+
+function cssW(canvas) { return canvas.getBoundingClientRect().width; }
+function cssH(canvas) { return canvas.getBoundingClientRect().height; }
+
+function plotLines(ctx, W, H, pad, series, colors, dashes, yMin, yMax) {
+  // series: array of Float64Array; colors: array of css strings; dashes: array of arrays
+  const xScale = (W - 2*pad) / (N_STEPS - 1);
+  const yRange = yMax - yMin || 1;
+  function ys(v) { return pad + (1 - (v - yMin) / yRange) * (H - 2*pad); }
+  for (let s = 0; s < series.length; s++) {
+    const arr = series[s];
+    if (!arr) continue;
+    ctx.beginPath();
+    ctx.strokeStyle = colors[s];
+    ctx.setLineDash(dashes[s] || []);
+    ctx.lineWidth = 1.5;
+    let started = false;
+    for (let i = 0; i < N_STEPS; i++) {
+      const v = arr[i];
+      if (isNaN(v)) { started = false; continue; }
+      const px = pad + i * xScale;
+      const py = ys(v);
+      if (!started) { ctx.moveTo(px, py); started = true; }
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+function drawGrid(ctx, W, H, pad) {
+  ctx.strokeStyle = '#1e1e3e';
+  ctx.lineWidth = 0.5;
+  const nLines = 3;
+  for (let i = 1; i <= nLines; i++) {
+    const y = pad + i * (H - 2*pad) / (nLines + 1);
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
+  }
+}
+
+function drawAxisLabel(ctx, W, H, pad, label, color) {
+  ctx.fillStyle = color || '#404060';
+  ctx.font = '9px system-ui, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(label, pad + 2, pad + 10);
+}
+
+// ── Phase portrait ────────────────────────────────────────────────────────────
+
+function drawPhase(D) {
+  const canvas = document.getElementById('phaseCanvas');
+  const dpr = window.devicePixelRatio || 1;
+  const W0 = canvas.getBoundingClientRect().width;
+  const H0 = canvas.getBoundingClientRect().height || W0 * 0.92;
+  canvas.width  = Math.round(W0 * dpr);
+  canvas.height = Math.round(H0 * dpr);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = W0, H = H0;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const padL = 34, padR = 10, padT = 10, padB = 24;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  // Data range: x in [-0.2, 3.2], y in [-0.5, 10]
+  const xMin = -0.1, xMax = 3.3;
+  const yMin = -0.5, yMax = 10.0;
+  function px(x) { return padL + (x - xMin) / (xMax - xMin) * plotW; }
+  function py(y) { return padT + (1 - (y - yMin) / (yMax - yMin)) * plotH; }
+
+  // Background grid
+  ctx.strokeStyle = '#1a1a30'; ctx.lineWidth = 0.5;
+  for (let gx = 0; gx <= 3; gx++) {
+    ctx.beginPath(); ctx.moveTo(px(gx), padT); ctx.lineTo(px(gx), padT+plotH); ctx.stroke();
+  }
+  for (let gy = 0; gy <= 9; gy += 3) {
+    ctx.beginPath(); ctx.moveTo(padL, py(gy)); ctx.lineTo(padL+plotW, py(gy)); ctx.stroke();
+  }
+
+  // Slow manifold y = x²
+  ctx.beginPath();
+  ctx.strokeStyle = '#2a2a5a'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+  for (let xi = xMin; xi <= xMax; xi += 0.05) {
+    const yi = xi * xi;
+    if (yi > yMax) break;
+    xi === xMin ? ctx.moveTo(px(xi), py(yi)) : ctx.lineTo(px(xi), py(yi));
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Axes
+  ctx.strokeStyle = '#303050'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT+plotH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(padL, padT+plotH); ctx.lineTo(padL+plotW, padT+plotH); ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#404060'; ctx.font = '9px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText('x', padL + plotW / 2, H - 5);
+  ctx.save(); ctx.translate(11, padT + plotH/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('y', 0, 0); ctx.restore();
+
+  // Tick labels
+  ctx.fillStyle = '#303050'; ctx.font = '8px system-ui';
+  for (let gx = 0; gx <= 3; gx++) {
+    ctx.textAlign = 'center';
+    ctx.fillText(gx, px(gx), padT + plotH + 10);
+  }
+
+  // Draw ALL Carleman trajectories up to D (accumulate)
+  const dColors = ['#6090e0','#e08840','#50c080','#c060c0'];
+  for (let d = 1; d <= D; d++) {
+    const traj = carlSolutions[d];
+    const dim  = carlDim(d);
+    // Extract x and y from Carleman solution
+    ctx.beginPath();
+    ctx.strokeStyle = dColors[d-1];
+    ctx.lineWidth = d === D ? 1.8 : 1.0;
+    ctx.globalAlpha = d === D ? 1 : 0.4;
+    ctx.setLineDash(d === D ? [] : [2,2]);
+    for (let i = 0; i < N_STEPS; i++) {
+      const xi = traj[i][0];
+      const yi = dim >= 2 ? traj[i][1] : 0;
+      const pxi = px(xi), pyi = py(yi);
+      i === 0 ? ctx.moveTo(pxi, pyi) : ctx.lineTo(pxi, pyi);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+  }
+
+  // True trajectory (on top)
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+  ctx.lineWidth = 1.5;
+  for (let i = 0; i < N_STEPS; i++) {
+    const xi = trueX[i], yi = trueY[i];
+    i === 0 ? ctx.moveTo(px(xi), py(yi)) : ctx.lineTo(px(xi), py(yi));
+  }
+  ctx.stroke();
+
+  // Start marker
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(px(X0), py(Y0), 3, 0, 2*Math.PI); ctx.fill();
+
+  // Label
+  ctx.fillStyle = '#404060'; ctx.font = '9px system-ui'; ctx.textAlign = 'left';
+  ctx.fillText('y = x²', px(1.4) + 2, py(1.4*1.4) - 4);
+}
+
+// ── Observable time-series panels ─────────────────────────────────────────────
+
+// How many row panels to show at each D:
+// D=1: rows [0]  (just x)
+// D=2: rows [0,1,2]  (x, y, x²)
+// D=3: rows [0,1,2,3]
+// D=4: rows [0,1,2,3]
+function visibleRows(D) {
+  if (D === 1) return [0];
+  if (D === 2) return [0, 1, 2];
+  return [0, 1, 2, 3];
+}
+
+function drawObsPanel(D, rowK) {
+  const canvas = document.getElementById('obsCanvas' + rowK);
+  const dpr = window.devicePixelRatio || 1;
+  const W0 = canvas.getBoundingClientRect().width || 500;
+  const H0 = canvas.getBoundingClientRect().height || 64;
+  canvas.width  = Math.round(W0 * dpr);
+  canvas.height = Math.round(H0 * dpr);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = W0, H = H0;
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = 6;
+
+  // True series for this row
+  const trueSer = trueSeries[rowK];
+
+  // Carleman series for this row at order D
+  const carlSer = carlObsSeries(D, rowK);
+
+  // y range: auto-fit to true series
+  let yMin = Infinity, yMax = -Infinity;
+  for (let i = 0; i < N_STEPS; i++) {
+    const v = trueSer[i];
+    if (isFinite(v)) { yMin = Math.min(yMin, v); yMax = Math.max(yMax, v); }
+  }
+  const margin = (yMax - yMin) * 0.1 || 0.1;
+  yMin -= margin; yMax += margin;
+
+  // Grid
+  drawGrid(ctx, W, H, pad);
+
+  // Zero line
+  if (yMin < 0 && yMax > 0) {
+    const yRange = yMax - yMin;
+    const y0px = pad + (1 - (0 - yMin) / yRange) * (H - 2*pad);
+    ctx.beginPath(); ctx.strokeStyle = '#252540'; ctx.lineWidth = 0.5;
+    ctx.moveTo(pad, y0px); ctx.lineTo(W - pad, y0px); ctx.stroke();
+  }
+
+  // Draw Carleman (dashed, in the current D color)
+  const carlColor = COLORS[D];  // COLORS[1..4]
+  plotLines(ctx, W, H, pad,
+    [carlSer, trueSer],
+    [carlColor, OBS_COLORS[rowK]],
+    [[4, 3], []],
+    yMin, yMax
+  );
+
+  // Row label (rate annotation on right edge)
+  ctx.fillStyle = '#303050';
+  ctx.font = '8px system-ui'; ctx.textAlign = 'right';
+  ctx.fillText('t = 0 → ' + T_END, W - pad - 2, H - pad - 2);
+}
+
+// ── Residual panel ────────────────────────────────────────────────────────────
+
+function drawResidual(D) {
+  const canvas = document.getElementById('residualCanvas');
+  const dpr = window.devicePixelRatio || 1;
+  const W0 = canvas.getBoundingClientRect().width || 500;
+  const H0 = canvas.getBoundingClientRect().height || 54;
+  canvas.width  = Math.round(W0 * dpr);
+  canvas.height = Math.round(H0 * dpr);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = W0, H = H0;
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = 6;
+
+  // Residuals for D=1..4 — track error in y (the interesting observable).
+  // At D=1, y is not in the Carleman state (dim=1), so the "prediction" for y
+  // is y₀ = 0 at all times: residual = |y_true|.
+  // At D≥2, y is in the Carleman state and is exact: residual ≈ 0.
+  const residuals = [];
+  for (let d = 1; d <= 4; d++) {
+    const traj = carlSolutions[d];
+    const dim  = carlDim(d);
+    const res  = new Float64Array(N_STEPS);
+    for (let i = 0; i < N_STEPS; i++) {
+      const yHat = dim >= 2 ? traj[i][1] : Y0;  // y₀=0 if y not in state
+      res[i] = Math.abs(trueY[i] - yHat);
+    }
+    residuals.push(res);
+  }
+
+  // Log scale
+  const logRes = residuals.map(r => {
+    const lr = new Float64Array(N_STEPS);
+    for (let i = 0; i < N_STEPS; i++) lr[i] = r[i] > 1e-14 ? Math.log10(r[i]) : -14;
+    return lr;
+  });
+
+  const yMin = -14, yMax = 1;
+
+  drawGrid(ctx, W, H, pad);
+
+  const resColors = ['#6090e0','#e08840','#50c080','#c060c0'];
+  for (let d = 0; d < 4; d++) {
+    const isActive = (d + 1) === D;
+    ctx.globalAlpha = isActive ? 1 : 0.25;
+    plotLines(ctx, W, H, pad,
+      [logRes[d]],
+      [resColors[d]],
+      [[]],
+      yMin, yMax
+    );
+    ctx.globalAlpha = 1;
+  }
+
+  // Y axis ticks
+  ctx.fillStyle = '#404060'; ctx.font = '8px system-ui'; ctx.textAlign = 'left';
+  for (const exp of [-12, -8, -4, 0]) {
+    const yRange = yMax - yMin;
+    const ypx = pad + (1 - (exp - yMin) / yRange) * (H - 2*pad);
+    ctx.fillText('10^' + exp, pad + 2, ypx - 1);
+  }
+  ctx.fillStyle = '#404060'; ctx.textAlign = 'right';
+  ctx.fillText('|err|', W - pad - 2, pad + 9);
+}
+
+// ── Main render ───────────────────────────────────────────────────────────────
+
+function render(D) {
+  document.getElementById('dVal').textContent = 'D = ' + D;
+
+  const rows = visibleRows(D);
+  const ALL_ROWS = [0, 1, 2, 3];
+
+  // Show/hide rows
+  ALL_ROWS.forEach(k => {
+    const rowEl = document.getElementById('row' + k);
+    const isVis = rows.includes(k);
+    if (isVis) {
+      rowEl.classList.add('visible');
+    } else {
+      rowEl.classList.remove('visible');
+    }
+  });
+
+  // Set row metadata
+  rows.forEach(k => {
+    const meta = OBS_META[k];
+    document.getElementById('obsName' + k).textContent = meta.name;
+    document.getElementById('obsDesc' + k).textContent = meta.desc;
+    document.getElementById('obsRate' + k).style.color = OBS_COLORS[k];
+    document.getElementById('obsRate' + k).textContent = meta.rateStr;
+    document.getElementById('obsName' + k).style.color = OBS_COLORS[k];
+  });
+
+  // Phase portrait
+  requestAnimationFrame(() => {
+    drawPhase(D);
+    rows.forEach(k => drawObsPanel(D, k));
+    drawResidual(D);
+  });
+}
+
+// ── Resize handling ───────────────────────────────────────────────────────────
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => render(currentD), 120);
+});
+
+// ── Slider interaction ────────────────────────────────────────────────────────
+
+let currentD = 1;
+const slider = document.getElementById('dSlider');
+
+slider.addEventListener('input', () => {
+  currentD = parseInt(slider.value, 10);
+  render(currentD);
+});
+
+// Initial render after layout settles
+window.addEventListener('load', () => {
+  // Force a layout pass so getBoundingClientRect is valid
+  setTimeout(() => render(currentD), 50);
+});
+</script>
+</body>
+</html>
