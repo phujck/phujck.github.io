@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constraint Carves Structure from Noise</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+    color: #c8c8e0;
+    text-align: center;
+  }
+  #sim-canvas {
+    border-radius: 6px;
+    display: block;
+    background: #0d0d1a;
+  }
+  .controls {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    max-width: 800px;
+  }
+  .slider-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .slider-group label {
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: #a0a0c0;
+    min-width: 72px;
+  }
+  .slider-group .val {
+    font-size: 0.85rem;
+    color: #d0d0e8;
+    min-width: 36px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 240px;
+    height: 6px;
+    border-radius: 3px;
+    background: #2a2a44;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #6c63ff;
+    border: 2px solid #9590ff;
+    cursor: pointer;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #6c63ff;
+    border: 2px solid #9590ff;
+    cursor: pointer;
+  }
+  button {
+    background: #2a2a44;
+    color: #c8c8e0;
+    border: 1px solid #3a3a5c;
+    border-radius: 4px;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  button:hover {
+    background: #3a3a5c;
+    border-color: #6c63ff;
+  }
+  button.active {
+    background: #6c63ff;
+    border-color: #9590ff;
+    color: #fff;
+  }
+  .annotation {
+    margin-top: 10px;
+    font-size: 0.78rem;
+    color: #6a6a8a;
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<h1>Constraint Carves Structure from Noise</h1>
+<canvas id="sim-canvas"></canvas>
+
+<div class="controls">
+  <div class="slider-group">
+    <label>Constraint</label>
+    <input type="range" id="alpha-slider" min="0" max="1" step="0.005" value="0">
+    <span class="val" id="alpha-val">0.00</span>
+  </div>
+  <button id="btn-play">Pause</button>
+  <button id="btn-reset">Reset</button>
+  <button id="btn-sweep">Sweep</button>
+  <button id="recBtn">⏺ Record</button>
+</div>
+
+<p class="annotation" id="annotation">
+  Pure noise &mdash; every trajectory equally likely, no structure.
+</p>
+
+<script>
+// ─── Configuration ──────────────────────────────────────────────
+const N_PARTICLES   = 260;
+const TRAIL_LEN     = 32;
+const DT            = 0.018;
+const NOISE_AMP     = 0.32;
+const THERMAL_NOISE = 0.06;   // residual noise at alpha=1
+const BOX           = 2.5;
+const W             = 800;
+const H             = 600;
+
+// ─── Canvas setup ───────────────────────────────────────────────
+const canvas = document.getElementById('sim-canvas');
+const ctx    = canvas.getContext('2d');
+canvas.width  = W;
+canvas.height = H;
+
+// ─── State ──────────────────────────────────────────────────────
+let alpha   = 0;
+let running = true;
+let sweeping = false;
+let sweepStart = 0;
+const SWEEP_DURATION = 5000; // ms
+
+// ─── Coordinate transforms ─────────────────────────────────────
+function toScreen(x, y) {
+  return [
+    (x + BOX) / (2 * BOX) * W,
+    (1 - (y + BOX) / (2 * BOX)) * H
+  ];
+}
+
+// ─── Potential & gradient ───────────────────────────────────────
+function potential(x, y) {
+  const xsq = x * x;
+  return (xsq - 1) * (xsq - 1) + y * y;
+}
+function gradV(x, y) {
+  return [4 * x * (x * x - 1), 2 * y];
+}
+
+// ─── Gaussian random (Box-Muller) ──────────────────────────────
+function randn() {
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+// ─── Particles ──────────────────────────────────────────────────
+let particles = [];
+
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < N_PARTICLES; i++) {
+    const x = (Math.random() - 0.5) * 2 * BOX * 0.9;
+    const y = (Math.random() - 0.5) * 2 * BOX * 0.9;
+    particles.push({
+      x, y,
+      trail: [{x, y}]
+    });
+  }
+}
+initParticles();
+
+// ─── Physics step ───────────────────────────────────────────────
+function step() {
+  const sqrtDt = Math.sqrt(DT);
+  const noiseScale = NOISE_AMP * (1 - alpha) + THERMAL_NOISE * alpha;
+
+  for (const p of particles) {
+    const [gx, gy] = gradV(p.x, p.y);
+
+    p.x += -alpha * gx * DT + noiseScale * sqrtDt * randn();
+    p.y += -alpha * gy * DT + noiseScale * sqrtDt * randn();
+
+    // Reflecting boundaries
+    if (p.x < -BOX) { p.x = -BOX + (-BOX - p.x); }
+    if (p.x >  BOX) { p.x =  BOX - (p.x - BOX); }
+    if (p.y < -BOX) { p.y = -BOX + (-BOX - p.y); }
+    if (p.y >  BOX) { p.y =  BOX - (p.y - BOX); }
+    p.x = Math.max(-BOX, Math.min(BOX, p.x));
+    p.y = Math.max(-BOX, Math.min(BOX, p.y));
+
+    // Trail
+    p.trail.push({x: p.x, y: p.y});
+    if (p.trail.length > TRAIL_LEN) p.trail.shift();
+  }
+}
+
+// ─── Background potential landscape ─────────────────────────────
+let potentialImage = null;
+
+function buildPotentialImage() {
+  const offscreen = document.createElement('canvas');
+  offscreen.width = W;
+  offscreen.height = H;
+  const octx = offscreen.getContext('2d');
+  const imgData = octx.createImageData(W, H);
+  const d = imgData.data;
+
+  let maxV = 0;
+  for (let py = 0; py < H; py++) {
+    for (let px = 0; px < W; px++) {
+      const x = (px / W) * 2 * BOX - BOX;
+      const y = BOX - (py / H) * 2 * BOX;
+      const v = potential(x, y);
+      if (v > maxV) maxV = v;
+    }
+  }
+
+  for (let py = 0; py < H; py++) {
+    for (let px = 0; px < W; px++) {
+      const x = (px / W) * 2 * BOX - BOX;
+      const y = BOX - (py / H) * 2 * BOX;
+      const v = potential(x, y);
+      const t = Math.min(v / maxV, 1);
+
+      // Warm color map: dark at low potential, brighter at high
+      const idx = (py * W + px) * 4;
+      const brightness = t;
+      // Low potential (basins): deep blue-black; high: warm amber
+      d[idx]     = Math.floor(40 + 180 * brightness);  // R
+      d[idx + 1] = Math.floor(20 + 80 * brightness * brightness); // G
+      d[idx + 2] = Math.floor(30 + 20 * brightness);   // B
+      d[idx + 3] = 255;
+    }
+  }
+  octx.putImageData(imgData, 0, 0);
+  potentialImage = offscreen;
+}
+buildPotentialImage();
+
+// ─── Contour lines ──────────────────────────────────────────────
+function drawContours(opacity) {
+  if (opacity < 0.01) return;
+  ctx.save();
+  ctx.globalAlpha = opacity * 0.35;
+  ctx.strokeStyle = '#d4a050';
+  ctx.lineWidth = 0.7;
+
+  const levels = [0.1, 0.3, 0.6, 1.0, 1.6, 2.5, 4.0];
+  const res = 3; // pixel step
+
+  for (const level of levels) {
+    // Marching squares (simplified: draw points where potential ~ level)
+    for (let py = 0; py < H; py += res) {
+      for (let px = 0; px < W; px += res) {
+        const x = (px / W) * 2 * BOX - BOX;
+        const y = BOX - (py / H) * 2 * BOX;
+        const v = potential(x, y);
+        if (Math.abs(v - level) < 0.08) {
+          ctx.fillStyle = `rgba(212, 160, 80, ${opacity * 0.4})`;
+          ctx.fillRect(px, py, 1.2, 1.2);
+        }
+      }
+    }
+  }
+  ctx.restore();
+}
+
+// ─── Particle colors ───────────────────────────────────────────
+function particleColor(p, alpha) {
+  // At low alpha: grey. At high alpha: blue for left basin, amber for right.
+  const basin = p.x < 0 ? -1 : 1;
+
+  const grey  = { r: 160, g: 160, b: 175 };
+  const left  = { r: 80,  g: 140, b: 255 }; // blue
+  const right = { r: 255, g: 180, b: 60  }; // amber
+
+  const target = basin < 0 ? left : right;
+  const blend  = alpha * alpha; // quadratic fade for snappier color emergence
+
+  return {
+    r: Math.round(grey.r + (target.r - grey.r) * blend),
+    g: Math.round(grey.g + (target.g - grey.g) * blend),
+    b: Math.round(grey.b + (target.b - grey.b) * blend)
+  };
+}
+
+// ─── Draw ───────────────────────────────────────────────────────
+function draw() {
+  // Clear
+  ctx.fillStyle = '#0d0d1a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Potential landscape (fade in with alpha)
+  if (alpha > 0.02 && potentialImage) {
+    ctx.save();
+    ctx.globalAlpha = alpha * 0.15;
+    ctx.drawImage(potentialImage, 0, 0);
+    ctx.restore();
+  }
+
+  // Contour lines
+  drawContours(alpha);
+
+  // Attractor markers
+  if (alpha > 0.15) {
+    const markerAlpha = (alpha - 0.15) / 0.85;
+    for (const ax of [-1, 1]) {
+      const [sx, sy] = toScreen(ax, 0);
+      ctx.save();
+      ctx.globalAlpha = markerAlpha * 0.3;
+      const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, 30);
+      grad.addColorStop(0, ax < 0 ? 'rgba(80,140,255,0.5)' : 'rgba(255,180,60,0.5)');
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 30, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // Particles
+  for (const p of particles) {
+    const col = particleColor(p, alpha);
+    const trail = p.trail;
+
+    // Trail
+    if (trail.length > 1) {
+      for (let i = 1; i < trail.length; i++) {
+        const frac = i / trail.length;
+        const a = frac * frac * 0.35;
+        const [x0, y0] = toScreen(trail[i - 1].x, trail[i - 1].y);
+        const [x1, y1] = toScreen(trail[i].x, trail[i].y);
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.strokeStyle = `rgba(${col.r},${col.g},${col.b},${a})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // Particle dot with glow
+    const [sx, sy] = toScreen(p.x, p.y);
+    ctx.save();
+
+    // Glow
+    ctx.globalAlpha = 0.25;
+    ctx.fillStyle = `rgb(${col.r},${col.g},${col.b})`;
+    ctx.beginPath();
+    ctx.arc(sx, sy, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Core
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = `rgb(${Math.min(255, col.r + 40)},${Math.min(255, col.g + 40)},${Math.min(255, col.b + 40)})`;
+    ctx.beginPath();
+    ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+// ─── Annotation text ────────────────────────────────────────────
+function updateAnnotation() {
+  const el = document.getElementById('annotation');
+  if (alpha < 0.05) {
+    el.textContent = 'Pure noise \u2014 every trajectory equally likely, no structure.';
+  } else if (alpha < 0.25) {
+    el.textContent = 'A faint bias appears. The potential whispers, but noise still dominates.';
+  } else if (alpha < 0.5) {
+    el.textContent = 'Flow lines emerge from the chaos. Particles begin to feel the landscape.';
+  } else if (alpha < 0.75) {
+    el.textContent = 'Two basins of attraction become visible. Structure crystallizes from noise.';
+  } else {
+    el.textContent = 'Constraint has carved two distinct attractors. What was noise is now dynamics.';
+  }
+}
+
+// ─── Controls ───────────────────────────────────────────────────
+const slider    = document.getElementById('alpha-slider');
+const alphaVal  = document.getElementById('alpha-val');
+const btnPlay   = document.getElementById('btn-play');
+const btnReset  = document.getElementById('btn-reset');
+const btnSweep  = document.getElementById('btn-sweep');
+
+slider.addEventListener('input', () => {
+  alpha = parseFloat(slider.value);
+  alphaVal.textContent = alpha.toFixed(2);
+  updateAnnotation();
+  if (sweeping) { sweeping = false; btnSweep.classList.remove('active'); }
+});
+
+btnPlay.addEventListener('click', () => {
+  running = !running;
+  btnPlay.textContent = running ? 'Pause' : 'Play';
+});
+
+btnReset.addEventListener('click', () => {
+  initParticles();
+});
+
+btnSweep.addEventListener('click', () => {
+  if (sweeping) {
+    sweeping = false;
+    btnSweep.classList.remove('active');
+  } else {
+    sweeping = true;
+    sweepStart = performance.now();
+    alpha = 0;
+    slider.value = 0;
+    alphaVal.textContent = '0.00';
+    btnSweep.classList.add('active');
+    updateAnnotation();
+  }
+});
+
+// ─── Main loop ──────────────────────────────────────────────────
+function loop(now) {
+  if (sweeping) {
+    const elapsed = now - sweepStart;
+    alpha = Math.min(elapsed / SWEEP_DURATION, 1);
+    slider.value = alpha;
+    alphaVal.textContent = alpha.toFixed(2);
+    updateAnnotation();
+    if (alpha >= 1) {
+      sweeping = false;
+      btnSweep.classList.remove('active');
+    }
+  }
+
+  if (running) {
+    step();
+  }
+  draw();
+  requestAnimationFrame(loop);
+}
+
+updateAnnotation();
+requestAnimationFrame(loop);
+
+// ─── recording ─────────────────────────────────────────────────
+(function () {
+  let mr = null, chunks = [];
+  const btn = document.getElementById('recBtn');
+  btn.addEventListener('click', () => {
+    if (!mr || mr.state === 'inactive') {
+      const stream = canvas.captureStream(30);
+      mr = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+      chunks = [];
+      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+      mr.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'constraint-structure.webm';
+        a.click();
+      };
+      mr.start();
+      btn.textContent = '⏹ Stop';
+      btn.style.color = '#ff7070';
+    } else {
+      mr.stop();
+      btn.textContent = '⏺ Record';
+      btn.style.color = '';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

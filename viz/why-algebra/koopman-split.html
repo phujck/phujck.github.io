@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Koopman Operator — Same Dynamics, Two Representations</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f0f1e;
+    color: #d0d0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 18px 12px;
+  }
+  h1 {
+    font-size: 1.15rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: #a0a0c8;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  h1 em { font-style: normal; color: #c8c8f0; font-weight: 600; }
+  .panels {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .panel-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8888b0;
+    margin-bottom: 6px;
+  }
+  canvas {
+    border-radius: 4px;
+    cursor: crosshair;
+  }
+  #leftCanvas { background: #12122a; }
+  #rightCanvas { background: #12122a; }
+  .controls {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .controls label {
+    font-size: 0.78rem;
+    color: #8888b0;
+    letter-spacing: 0.03em;
+  }
+  select, button {
+    font-family: inherit;
+    font-size: 0.78rem;
+    background: #1e1e3a;
+    color: #c0c0e0;
+    border: 1px solid #333366;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  select:hover, button:hover { background: #2a2a50; }
+  button.active { background: #3a3a6a; border-color: #5555aa; }
+  input[type=range] {
+    width: 90px;
+    accent-color: #6666bb;
+    vertical-align: middle;
+  }
+  .hint {
+    margin-top: 10px;
+    font-size: 0.72rem;
+    color: #606088;
+    text-align: center;
+    max-width: 720px;
+    line-height: 1.45;
+  }
+  .colorbar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  #colorbar { border-radius: 2px; }
+  .cb-label { font-size: 0.68rem; color: #606088; }
+</style>
+</head>
+<body>
+
+<h1>The <em>Koopman Operator</em> &mdash; Same Dynamics, Two Representations</h1>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-label">State Space</div>
+    <canvas id="leftCanvas" width="420" height="420"></canvas>
+  </div>
+  <div class="panel">
+    <div class="panel-label">Observable Space</div>
+    <canvas id="rightCanvas" width="420" height="420"></canvas>
+    <div class="colorbar-wrap">
+      <span class="cb-label" id="cbLo"></span>
+      <canvas id="colorbar" width="180" height="10"></canvas>
+      <span class="cb-label" id="cbHi"></span>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <label>Observable:
+    <select id="obsSelect">
+      <option value="angle">Angle &theta;</option>
+      <option value="energy">Energy &frac12;&omega;&sup2; &minus; cos&theta;</option>
+      <option value="omega">Angular velocity &omega;</option>
+      <option value="custom" selected>sin(2&theta;) &middot; &omega;</option>
+    </select>
+  </label>
+  <button id="btnPlay" class="active">Pause</button>
+  <button id="btnReset">Reset</button>
+  <button id="recBtn">⏺ Record</button>
+  <label>Speed:
+    <input type="range" id="speedSlider" min="1" max="12" value="4">
+  </label>
+</div>
+
+<div class="hint">
+  Click the left panel to drop trajectories. The right panel shows the same phase space, but painted with the value of an observable function being advected by the flow &mdash; <em>that deformation is the Koopman operator acting</em>. The left side looks nonlinear; the right side is a linear map on function space.
+</div>
+
+<script>
+// ── Physics ──────────────────────────────────────────────────────
+const G_L = 9.81;   // g/L
+const GAMMA = 0.05;  // damping
+
+function pendulumDeriv(th, om) {
+  return [om, -G_L * Math.sin(th) - GAMMA * om];
+}
+
+function rk4Step(th, om, dt) {
+  const [k1a, k1b] = pendulumDeriv(th, om);
+  const [k2a, k2b] = pendulumDeriv(th + 0.5*dt*k1a, om + 0.5*dt*k1b);
+  const [k3a, k3b] = pendulumDeriv(th + 0.5*dt*k2a, om + 0.5*dt*k2b);
+  const [k4a, k4b] = pendulumDeriv(th + dt*k3a, om + dt*k3b);
+  return [
+    th + (dt/6)*(k1a + 2*k2a + 2*k3a + k4a),
+    om + (dt/6)*(k1b + 2*k2b + 2*k3b + k4b)
+  ];
+}
+
+// ── Observables ──────────────────────────────────────────────────
+const observables = {
+  angle:  { fn: (th, om) => th,                        label: "\u03b8",             range: [-Math.PI, Math.PI] },
+  energy: { fn: (th, om) => 0.5*om*om - Math.cos(th),  label: "\u00bdw\u00b2\u2212cos\u03b8", range: [-1, 12] },
+  omega:  { fn: (th, om) => om,                         label: "\u03c9",             range: [-6, 6] },
+  custom: { fn: (th, om) => Math.sin(2*th)*om,          label: "sin(2\u03b8)\u00b7\u03c9",   range: [-6, 6] }
+};
+
+// ── Colormaps ────────────────────────────────────────────────────
+// Hand-rolled diverging blue-white-red (perceptually reasonable)
+function colormapDiverging(t) {
+  // t in [0,1]
+  t = Math.max(0, Math.min(1, t));
+  let r, g, b;
+  if (t < 0.5) {
+    const s = t * 2; // 0..1
+    r = Math.round(30 + 80 * s);
+    g = Math.round(60 + 130 * s);
+    b = Math.round(180 + 75 * s);
+  } else {
+    const s = (t - 0.5) * 2; // 0..1
+    r = Math.round(110 + 145 * s);
+    g = Math.round(190 - 120 * s);
+    b = Math.round(255 - 200 * s);
+  }
+  return [r, g, b];
+}
+
+// Viridis-like for energy (all-positive-ish)
+function colormapViridis(t) {
+  t = Math.max(0, Math.min(1, t));
+  const r = Math.round(68  + (253 - 68)  * Math.pow(t, 0.85));
+  const g = Math.round(1   + (231 - 1)   * Math.pow(t, 0.55));
+  const b = Math.round(84  + (37  - 84)  * t);
+  return [r, g, b];
+}
+
+function getColormap(obsKey) {
+  return obsKey === 'energy' ? colormapViridis : colormapDiverging;
+}
+
+// ── Canvas setup ─────────────────────────────────────────────────
+const W = 420, H = 420;
+const leftCanvas  = document.getElementById('leftCanvas');
+const rightCanvas = document.getElementById('rightCanvas');
+const ctxL = leftCanvas.getContext('2d');
+const ctxR = rightCanvas.getContext('2d');
+
+// Phase-space bounds
+const TH_MIN = -Math.PI, TH_MAX = Math.PI;
+const OM_MIN = -6, OM_MAX = 6;
+
+function thToX(th) { return (th - TH_MIN) / (TH_MAX - TH_MIN) * W; }
+function omToY(om) { return (1 - (om - OM_MIN) / (OM_MAX - OM_MIN)) * H; }
+function xToTh(x)  { return TH_MIN + x / W * (TH_MAX - TH_MIN); }
+function yToOm(y)  { return OM_MAX - y / H * (OM_MAX - OM_MIN); }
+
+// ── Trajectories ─────────────────────────────────────────────────
+const PALETTE = [
+  '#66ccff', '#ff7799', '#88ee88', '#ffcc55',
+  '#cc88ff', '#55eedd', '#ff9966', '#aabb55'
+];
+let trajectories = []; // each: { points: [{th, om}], color, active }
+
+// ── Observable field ─────────────────────────────────────────────
+const GRID = 120;
+let field = new Float32Array(GRID * GRID * 2); // [th, om] per cell
+let obsKey = 'custom';
+let cmap = getColormap(obsKey);
+let imgData = ctxR.createImageData(GRID, GRID);
+// Offscreen canvas for scaling
+const offscreen = document.createElement('canvas');
+offscreen.width = GRID; offscreen.height = GRID;
+const ctxOff = offscreen.getContext('2d');
+
+function initField() {
+  for (let j = 0; j < GRID; j++) {
+    for (let i = 0; i < GRID; i++) {
+      const idx = (j * GRID + i) * 2;
+      field[idx]     = TH_MIN + (i + 0.5) / GRID * (TH_MAX - TH_MIN);
+      field[idx + 1] = OM_MAX - (j + 0.5) / GRID * (OM_MAX - OM_MIN);
+    }
+  }
+}
+
+function advectField(dt) {
+  // Forward-advect each "parcel": step its stored (th, om) forward
+  for (let k = 0; k < GRID * GRID; k++) {
+    const idx = k * 2;
+    let th = field[idx], om = field[idx + 1];
+    const [th2, om2] = rk4Step(th, om, dt);
+    field[idx] = th2;
+    field[idx + 1] = om2;
+  }
+}
+
+function renderField() {
+  const obs = observables[obsKey];
+  const [lo, hi] = obs.range;
+  const inv = 1 / (hi - lo);
+  const data = imgData.data;
+  for (let k = 0; k < GRID * GRID; k++) {
+    const idx = k * 2;
+    const val = obs.fn(field[idx], field[idx + 1]);
+    const t = (val - lo) * inv;
+    const [r, g, b] = cmap(t);
+    const p = k * 4;
+    data[p]   = r;
+    data[p+1] = g;
+    data[p+2] = b;
+    data[p+3] = 255;
+  }
+  ctxOff.putImageData(imgData, 0, 0);
+  ctxR.imageSmoothingEnabled = true;
+  ctxR.imageSmoothingQuality = 'high';
+  ctxR.drawImage(offscreen, 0, 0, W, H);
+}
+
+// ── Draw axes helper ─────────────────────────────────────────────
+function drawAxes(ctx) {
+  ctx.strokeStyle = '#2a2a55';
+  ctx.lineWidth = 1;
+  // Horizontal axis (omega = 0)
+  const y0 = omToY(0);
+  ctx.beginPath(); ctx.moveTo(0, y0); ctx.lineTo(W, y0); ctx.stroke();
+  // Vertical axis (theta = 0)
+  const x0 = thToX(0);
+  ctx.beginPath(); ctx.moveTo(x0, 0); ctx.lineTo(x0, H); ctx.stroke();
+
+  ctx.fillStyle = '#555580';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('\u03b8', W - 14, y0 - 6);
+  ctx.fillText('\u03c9', x0 + 6, 14);
+  // Tick labels
+  ctx.font = '9px sans-serif';
+  ctx.fillStyle = '#444468';
+  [-Math.PI, Math.PI].forEach(v => {
+    const label = v < 0 ? '-\u03c0' : '\u03c0';
+    ctx.fillText(label, thToX(v) - 6, y0 + 13);
+  });
+  [-4, 4].forEach(v => {
+    ctx.fillText(String(v), x0 + 5, omToY(v) + 3);
+  });
+}
+
+// ── Draw left panel ──────────────────────────────────────────────
+function drawLeft() {
+  ctxL.fillStyle = '#12122a';
+  ctxL.fillRect(0, 0, W, H);
+  drawAxes(ctxL);
+
+  for (const traj of trajectories) {
+    if (traj.points.length < 2) continue;
+    ctxL.strokeStyle = traj.color;
+    ctxL.lineWidth = 1.6;
+    ctxL.globalAlpha = 0.85;
+    ctxL.beginPath();
+    for (let i = 0; i < traj.points.length; i++) {
+      const p = traj.points[i];
+      const x = thToX(p.th), y = omToY(p.om);
+      if (i === 0) ctxL.moveTo(x, y); else ctxL.lineTo(x, y);
+    }
+    ctxL.stroke();
+    ctxL.globalAlpha = 1;
+
+    // Draw head
+    const last = traj.points[traj.points.length - 1];
+    ctxL.fillStyle = traj.color;
+    ctxL.beginPath();
+    ctxL.arc(thToX(last.th), omToY(last.om), 3.5, 0, 2*Math.PI);
+    ctxL.fill();
+  }
+}
+
+// ── Draw right panel overlay (trajectories + axes) ───────────────
+function drawRightOverlay() {
+  // Light axes
+  ctxR.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctxR.lineWidth = 1;
+  const y0 = omToY(0);
+  ctxR.beginPath(); ctxR.moveTo(0, y0); ctxR.lineTo(W, y0); ctxR.stroke();
+  const x0 = thToX(0);
+  ctxR.beginPath(); ctxR.moveTo(x0, 0); ctxR.lineTo(x0, H); ctxR.stroke();
+
+  // Trajectories (thin white)
+  for (const traj of trajectories) {
+    if (traj.points.length < 2) continue;
+    ctxR.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctxR.lineWidth = 1.0;
+    ctxR.beginPath();
+    for (let i = 0; i < traj.points.length; i++) {
+      const p = traj.points[i];
+      const x = thToX(p.th), y = omToY(p.om);
+      if (i === 0) ctxR.moveTo(x, y); else ctxR.lineTo(x, y);
+    }
+    ctxR.stroke();
+
+    const last = traj.points[traj.points.length - 1];
+    ctxR.fillStyle = 'rgba(255,255,255,0.8)';
+    ctxR.beginPath();
+    ctxR.arc(thToX(last.th), omToY(last.om), 2.5, 0, 2*Math.PI);
+    ctxR.fill();
+  }
+}
+
+// ── Colorbar ─────────────────────────────────────────────────────
+function drawColorbar() {
+  const cbar = document.getElementById('colorbar');
+  const cctx = cbar.getContext('2d');
+  const cw = cbar.width, ch = cbar.height;
+  const id = cctx.createImageData(cw, ch);
+  for (let x = 0; x < cw; x++) {
+    const t = x / (cw - 1);
+    const [r, g, b] = cmap(t);
+    for (let y = 0; y < ch; y++) {
+      const p = (y * cw + x) * 4;
+      id.data[p] = r; id.data[p+1] = g; id.data[p+2] = b; id.data[p+3] = 255;
+    }
+  }
+  cctx.putImageData(id, 0, 0);
+  const obs = observables[obsKey];
+  const fmt = v => Number.isInteger(v) ? String(v) : v.toFixed(1);
+  document.getElementById('cbLo').textContent = fmt(obs.range[0]);
+  document.getElementById('cbHi').textContent = fmt(obs.range[1]);
+}
+
+// ── Animation loop ───────────────────────────────────────────────
+let playing = true;
+let totalTime = 0;
+const SUBSTEPS = 4;   // RK4 substeps per frame for stability
+
+function tick() {
+  requestAnimationFrame(tick);
+  if (!playing) return;
+
+  const speed = parseInt(document.getElementById('speedSlider').value);
+  const dtFrame = 0.008 * speed;
+  const dtSub = dtFrame / SUBSTEPS;
+
+  // Advect field
+  for (let s = 0; s < SUBSTEPS; s++) {
+    advectField(dtSub);
+  }
+
+  // Advance trajectories
+  for (const traj of trajectories) {
+    if (!traj.active) continue;
+    let {th, om} = traj.points[traj.points.length - 1];
+    for (let s = 0; s < SUBSTEPS; s++) {
+      [th, om] = rk4Step(th, om, dtSub);
+    }
+    // Wrap theta to [-pi, pi]
+    th = ((th + Math.PI) % (2*Math.PI) + 2*Math.PI) % (2*Math.PI) - Math.PI;
+    traj.points.push({th, om});
+    // Limit trail length
+    if (traj.points.length > 4000) traj.points.shift();
+  }
+
+  totalTime += dtFrame;
+
+  // Render
+  renderField();
+  drawRightOverlay();
+  drawLeft();
+}
+
+// ── Interaction ──────────────────────────────────────────────────
+leftCanvas.addEventListener('click', (e) => {
+  const rect = leftCanvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (W / rect.width);
+  const y = (e.clientY - rect.top)  * (H / rect.height);
+  const th = xToTh(x), om = yToOm(y);
+  trajectories.push({
+    points: [{th, om}],
+    color: PALETTE[trajectories.length % PALETTE.length],
+    active: true
+  });
+});
+
+// Also allow clicking on right panel
+rightCanvas.addEventListener('click', (e) => {
+  const rect = rightCanvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (W / rect.width);
+  const y = (e.clientY - rect.top)  * (H / rect.height);
+  const th = xToTh(x), om = yToOm(y);
+  trajectories.push({
+    points: [{th, om}],
+    color: PALETTE[trajectories.length % PALETTE.length],
+    active: true
+  });
+});
+
+document.getElementById('obsSelect').addEventListener('change', (e) => {
+  obsKey = e.target.value;
+  cmap = getColormap(obsKey);
+  initField();
+  totalTime = 0;
+  drawColorbar();
+});
+
+document.getElementById('btnPlay').addEventListener('click', (e) => {
+  playing = !playing;
+  e.target.textContent = playing ? 'Pause' : 'Play';
+  e.target.classList.toggle('active', playing);
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  trajectories = [];
+  initField();
+  totalTime = 0;
+  ctxL.fillStyle = '#12122a';
+  ctxL.fillRect(0, 0, W, H);
+  drawAxes(ctxL);
+});
+
+// ── Init ─────────────────────────────────────────────────────────
+initField();
+drawColorbar();
+drawAxes(ctxL);
+
+// Drop a few default trajectories for immediate visual appeal
+const defaults = [
+  { th:  2.0, om:  1.5 },
+  { th: -1.0, om:  4.0 },
+  { th:  0.5, om: -2.0 },
+];
+defaults.forEach((ic, i) => {
+  trajectories.push({
+    points: [{th: ic.th, om: ic.om}],
+    color: PALETTE[i % PALETTE.length],
+    active: true
+  });
+});
+
+tick();
+
+// ─── recording ─────────────────────────────────────────────────
+(function () {
+  let mr = null, chunks = [], compositing = false;
+  const btn = document.getElementById('recBtn');
+  const rc = document.createElement('canvas');
+  const rctx = rc.getContext('2d');
+
+  function compositeFrame() {
+    if (!compositing) return;
+    rctx.clearRect(0, 0, rc.width, rc.height);
+    rctx.drawImage(leftCanvas, 0, 0);
+    rctx.drawImage(rightCanvas, leftCanvas.width, 0);
+    requestAnimationFrame(compositeFrame);
+  }
+
+  btn.addEventListener('click', () => {
+    if (!mr || mr.state === 'inactive') {
+      rc.width = leftCanvas.width + rightCanvas.width;
+      rc.height = leftCanvas.height;
+      compositing = true;
+      compositeFrame();
+      const stream = rc.captureStream(30);
+      mr = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+      chunks = [];
+      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+      mr.onstop = () => {
+        compositing = false;
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'koopman-split.webm';
+        a.click();
+      };
+      mr.start();
+      btn.textContent = '⏹ Stop';
+      btn.style.color = '#ff7070';
+    } else {
+      mr.stop();
+      btn.textContent = '⏺ Record';
+      btn.style.color = '';
+    }
+  });
+})();
+</script>
+</body>
+</html>

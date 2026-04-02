@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dimensionality–Nonlinearity Trade</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #f0f0f0;
+    margin-bottom: 0.25rem;
+    text-align: center;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: #8888aa;
+    font-style: italic;
+    margin-bottom: 1.2rem;
+    text-align: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 820px;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    border-radius: 8px;
+    background: #12122a;
+    border: 1px solid #2a2a4a;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .slider-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    min-width: 110px;
+    line-height: 1.3;
+  }
+
+  .slider-label.left { text-align: right; color: #e8a84c; }
+  .slider-label.right { text-align: left; color: #5cacee; }
+
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #e8a84c, #5cacee);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    border: 2px solid #444;
+    box-shadow: 0 0 8px rgba(255,255,255,0.3);
+    cursor: grab;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    border: 2px solid #444;
+    box-shadow: 0 0 8px rgba(255,255,255,0.3);
+    cursor: grab;
+  }
+
+  .meter-section {
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .meter-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #aaaacc;
+    margin-bottom: 0.4rem;
+  }
+
+  .meter-track {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 28px;
+    background: #0d0d1f;
+    border-radius: 14px;
+    border: 1px solid #2a2a4a;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .meter-fill {
+    position: absolute;
+    top: 3px; bottom: 3px; left: 3px;
+    width: 72%;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #e8a84c, #c87030, #e8a84c);
+    background-size: 200% 100%;
+    animation: meterPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes meterPulse {
+    0%, 100% { opacity: 0.85; background-position: 0% 50%; }
+    50% { opacity: 1; background-position: 100% 50%; }
+  }
+
+  .meter-value {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #f0f0f0;
+    text-shadow: 0 0 6px rgba(0,0,0,0.8);
+  }
+
+  .meter-note {
+    font-size: 0.7rem;
+    color: #666688;
+    margin-top: 0.35rem;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<h1>The Dimensionality–Nonlinearity Trade</h1>
+<p class="subtitle">Complexity is conserved. Representation is a choice.</p>
+
+<div class="container">
+  <canvas id="canvas" width="1640" height="900"></canvas>
+
+  <div class="slider-row">
+    <span class="slider-label left">Nonlinear<br>Low-Dimensional</span>
+    <input type="range" id="slider" min="0" max="1000" value="0">
+    <span class="slider-label right">Linear<br>High-Dimensional</span>
+  </div>
+
+  <div class="meter-section">
+    <div class="meter-label">Dynamical Complexity</div>
+    <div class="meter-track">
+      <div class="meter-fill"></div>
+      <div class="meter-value">INVARIANT</div>
+    </div>
+    <div class="meter-note">This meter does not move. The complexity is the same everywhere.</div>
+  </div>
+  <div style="margin-top:12px">
+    <button id="recBtn" style="font-size:13px">⏺ Record</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('slider');
+
+let t = 0; // slider param 0..1
+let animT = 0; // running clock for animation
+
+slider.addEventListener('input', () => { t = slider.value / 1000; });
+
+// --- Color helpers ---
+function lerpColor(a, b, f) {
+  // a, b are [r,g,b]
+  return [
+    a[0] + (b[0] - a[0]) * f,
+    a[1] + (b[1] - a[1]) * f,
+    a[2] + (b[2] - a[2]) * f,
+  ];
+}
+
+function rgba(c, a) {
+  return `rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${a})`;
+}
+
+const WARM = [232, 168, 76];   // amber
+const COOL = [92, 172, 238];   // blue
+
+// --- Curve generation ---
+
+// Base curves: parametric curves with controllable complexity.
+// At t=0 (nonlinear): high-frequency Lissajous-like curves in a tight box.
+// At t=1 (linear): straight lines spread wide.
+
+function generateCurve(curveIndex, totalCurves, param, clock) {
+  // param: 0 = nonlinear, 1 = linear
+  const points = [];
+  const steps = 400;
+
+  // Each curve gets a distinct phase and frequency offset
+  const phase = curveIndex * Math.PI * 2 / totalCurves + curveIndex * 0.7;
+  const freqBase = 3 + curveIndex * 1.7;
+
+  // Nonlinear frequencies (high)
+  const freqA = freqBase * 1.3;
+  const freqB = freqBase * 0.9 + 0.5;
+
+  // Vertical spread for linear end: evenly space curves
+  const linearY = (curveIndex / (totalCurves - 1 || 1)) * 2 - 1; // -1..1
+
+  for (let i = 0; i <= steps; i++) {
+    const s = i / steps; // 0..1 along curve
+
+    // Nonlinear component: Lissajous-ish
+    const nlx = Math.sin(freqA * s * Math.PI * 2 + phase + clock * 0.3) *
+                Math.cos(freqB * 0.3 * s * Math.PI * 2 + phase * 0.5);
+    const nly = Math.cos(freqB * s * Math.PI * 2 + phase * 1.3 + clock * 0.2) *
+                Math.sin(freqA * 0.4 * s * Math.PI * 2 + phase * 0.7);
+
+    // Linear component: straight line from left to right
+    const lx = s * 2 - 1; // -1..1
+    const ly = linearY;
+
+    // Slight divergence for linear lines (subtle fan-out)
+    const diverge = (s - 0.5) * linearY * 0.15;
+
+    // Interpolate
+    const ease = param * param * (3 - 2 * param); // smoothstep
+    const x = nlx * (1 - ease) + (lx + diverge) * ease;
+    const y = nly * (1 - ease) + (ly + diverge) * ease;
+
+    points.push([x, y]);
+  }
+
+  return points;
+}
+
+// --- Drawing ---
+
+function draw() {
+  const W = canvas.width;
+  const H = canvas.height;
+  const cw = W / 2;
+  const ch = H / 2;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background gradient
+  const bg = ctx.createRadialGradient(cw, ch, 0, cw, ch, W * 0.6);
+  bg.addColorStop(0, '#1e1e3a');
+  bg.addColorStop(1, '#12122a');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // --- Determine number of curves ---
+  // At t=0: 3 curves. At t=1: 12 curves.
+  const minCurves = 3;
+  const maxCurves = 14;
+  const numCurves = Math.round(minCurves + (maxCurves - minCurves) * t);
+
+  // --- Visual bounding box ---
+  // At t=0: tight box. At t=1: nearly full canvas.
+  const ease = t * t * (3 - 2 * t);
+  const boxW = 260 + ease * 480; // half-width in canvas units
+  const boxH = 220 + ease * 180;
+
+  // Draw faint bounding box
+  const boxLeft = cw - boxW;
+  const boxRight = cw + boxW;
+  const boxTop = ch - boxH;
+  const boxBot = ch + boxH;
+
+  ctx.strokeStyle = `rgba(100, 100, 160, ${0.15 + ease * 0.1})`;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(boxLeft, boxTop, boxW * 2, boxH * 2);
+
+  // --- Depth cues for high-dimensional end ---
+  if (t > 0.3) {
+    const depthAlpha = (t - 0.3) / 0.7;
+    const depthLayers = Math.round(depthAlpha * 5);
+    for (let d = 1; d <= depthLayers; d++) {
+      const shrink = 1 - d * 0.08;
+      const offsetX = d * 12;
+      const offsetY = -d * 8;
+      ctx.strokeStyle = `rgba(80, 120, 180, ${depthAlpha * 0.08 / d})`;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(
+        boxLeft * shrink + offsetX + cw * (1 - shrink),
+        boxTop * shrink + offsetY + ch * (1 - shrink),
+        boxW * 2 * shrink,
+        boxH * 2 * shrink
+      );
+    }
+    // Faint diagonal "depth" lines in corners
+    const da = depthAlpha * 0.12;
+    ctx.strokeStyle = `rgba(80, 120, 180, ${da})`;
+    ctx.beginPath();
+    for (let d = 1; d <= depthLayers; d++) {
+      const shrink = 1 - d * 0.08;
+      const ox = d * 12;
+      const oy = -d * 8;
+      // top-left corner connector
+      ctx.moveTo(boxLeft, boxTop);
+      ctx.lineTo(boxLeft * shrink + ox + cw * (1 - shrink),
+                 boxTop * shrink + oy + ch * (1 - shrink));
+      // top-right
+      ctx.moveTo(boxRight, boxTop);
+      ctx.lineTo((boxLeft + boxW * 2) * shrink + ox + cw * (1 - shrink),
+                 boxTop * shrink + oy + ch * (1 - shrink));
+    }
+    ctx.stroke();
+  }
+
+  // --- Draw curves ---
+  const color = lerpColor(WARM, COOL, ease);
+
+  for (let ci = 0; ci < numCurves; ci++) {
+    const points = generateCurve(ci, numCurves, t, animT);
+
+    // Fade factor: original 3 curves are always full opacity; extras fade in
+    let alpha = 1;
+    if (ci >= minCurves) {
+      // This curve appeared at some t threshold
+      const threshold = (ci - minCurves + 1) / (maxCurves - minCurves + 1);
+      alpha = Math.max(0, Math.min(1, (t - threshold + 0.1) / 0.15));
+    }
+
+    if (alpha <= 0) continue;
+
+    // Per-curve color variation
+    const hueShift = ci / numCurves;
+    const curveColor = lerpColor(
+      WARM,
+      COOL,
+      Math.min(1, Math.max(0, ease + (hueShift - 0.5) * 0.3))
+    );
+
+    // Draw glow layer
+    ctx.beginPath();
+    for (let i = 0; i < points.length; i++) {
+      const px = cw + points[i][0] * boxW;
+      const py = ch + points[i][1] * boxH;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = rgba(curveColor, alpha * 0.15);
+    ctx.lineWidth = 6;
+    ctx.stroke();
+
+    // Draw main line
+    ctx.beginPath();
+    for (let i = 0; i < points.length; i++) {
+      const px = cw + points[i][0] * boxW;
+      const py = ch + points[i][1] * boxH;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = rgba(curveColor, alpha * 0.8);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // --- Dynamic label in main area ---
+  const dimCount = Math.round(2 + t * 98); // 2..100
+  const dimLabel = t > 0.95 ? '\u221e' : String(dimCount);
+  const nlLevel = t < 0.05 ? 'ferocious' : t < 0.3 ? 'strong' : t < 0.7 ? 'moderate' : t < 0.95 ? 'mild' : 'zero';
+  const nlWord = t > 0.95 ? 'perfect linearity' : nlLevel + ' nonlinearity';
+
+  ctx.font = '600 22px "Segoe UI", system-ui, sans-serif';
+  ctx.fillStyle = rgba(color, 0.7);
+  ctx.textAlign = 'center';
+  ctx.fillText(`${dimLabel} dimensions, ${nlWord}`, cw, boxBot + 40);
+
+  // --- Endpoint annotations ---
+  // Left: "Biological neural networks"
+  if (t < 0.35) {
+    const a = 1 - t / 0.35;
+    ctx.font = '14px "Segoe UI", system-ui, sans-serif';
+    ctx.fillStyle = rgba(WARM, a * 0.6);
+    ctx.textAlign = 'left';
+    ctx.fillText('Biological neural networks', boxLeft, boxBot + 72);
+  }
+
+  // Right: "Transformer architectures"
+  if (t > 0.65) {
+    const a = (t - 0.65) / 0.35;
+    ctx.font = '14px "Segoe UI", system-ui, sans-serif';
+    ctx.fillStyle = rgba(COOL, a * 0.6);
+    ctx.textAlign = 'right';
+    ctx.fillText('Transformer architectures', boxRight, boxBot + 72);
+  }
+
+  animT += 0.008;
+  requestAnimationFrame(draw);
+}
+
+draw();
+
+// ─── recording ─────────────────────────────────────────────────
+(function () {
+  let mr = null, chunks = [];
+  const btn = document.getElementById('recBtn');
+  btn.addEventListener('click', () => {
+    if (!mr || mr.state === 'inactive') {
+      const stream = canvas.captureStream(30);
+      mr = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+      chunks = [];
+      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+      mr.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'complexity-trade.webm';
+        a.click();
+      };
+      mr.start();
+      btn.textContent = '⏹ Stop';
+      btn.style.color = '#ff7070';
+    } else {
+      mr.stop();
+      btn.textContent = '⏺ Record';
+      btn.style.color = '';
+    }
+  });
+})();
+</script>
+</body>
+</html>
