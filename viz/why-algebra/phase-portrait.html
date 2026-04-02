@@ -130,7 +130,6 @@
     </label>
 
     <button id="clearBtn">Clear</button>
-    <button id="recBtn">⏺ Record</button>
   </div>
 
   <p class="hint">Click anywhere in the phase space to launch a trajectory.</p>
@@ -513,49 +512,6 @@ document.getElementById('clearBtn').addEventListener('click', () => {
 
 // ─── start ────────────────────────────────────────────────────
 requestAnimationFrame(tick);
-
-// ─── recording ─────────────────────────────────────────────────
-(function () {
-  let mr = null, chunks = [], compositing = false;
-  const btn = document.getElementById('recBtn');
-  const rc = document.createElement('canvas');
-  const rctx = rc.getContext('2d');
-
-  function compositeFrame() {
-    if (!compositing) return;
-    rc.width = bgCanvas.width; rc.height = bgCanvas.height;
-    rctx.drawImage(bgCanvas, 0, 0);
-    rctx.drawImage(fgCanvas, 0, 0);
-    requestAnimationFrame(compositeFrame);
-  }
-
-  btn.addEventListener('click', () => {
-    if (!mr || mr.state === 'inactive') {
-      rc.width = bgCanvas.width; rc.height = bgCanvas.height;
-      compositing = true;
-      compositeFrame();
-      const stream = rc.captureStream(30);
-      mr = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
-      chunks = [];
-      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-      mr.onstop = () => {
-        compositing = false;
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'phase-portrait.webm';
-        a.click();
-      };
-      mr.start();
-      btn.textContent = '⏹ Stop';
-      btn.style.color = '#ff7070';
-    } else {
-      mr.stop();
-      btn.textContent = '⏺ Record';
-      btn.style.color = '';
-    }
-  });
-})();
 </script>
 </body>
 </html>

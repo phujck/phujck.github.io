@@ -131,7 +131,6 @@
   </label>
   <button id="btnPlay" class="active">Pause</button>
   <button id="btnReset">Reset</button>
-  <button id="recBtn">⏺ Record</button>
   <label>Speed:
     <input type="range" id="speedSlider" min="1" max="12" value="4">
   </label>
@@ -496,50 +495,6 @@ defaults.forEach((ic, i) => {
 });
 
 tick();
-
-// ─── recording ─────────────────────────────────────────────────
-(function () {
-  let mr = null, chunks = [], compositing = false;
-  const btn = document.getElementById('recBtn');
-  const rc = document.createElement('canvas');
-  const rctx = rc.getContext('2d');
-
-  function compositeFrame() {
-    if (!compositing) return;
-    rctx.clearRect(0, 0, rc.width, rc.height);
-    rctx.drawImage(leftCanvas, 0, 0);
-    rctx.drawImage(rightCanvas, leftCanvas.width, 0);
-    requestAnimationFrame(compositeFrame);
-  }
-
-  btn.addEventListener('click', () => {
-    if (!mr || mr.state === 'inactive') {
-      rc.width = leftCanvas.width + rightCanvas.width;
-      rc.height = leftCanvas.height;
-      compositing = true;
-      compositeFrame();
-      const stream = rc.captureStream(30);
-      mr = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
-      chunks = [];
-      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-      mr.onstop = () => {
-        compositing = false;
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'koopman-split.webm';
-        a.click();
-      };
-      mr.start();
-      btn.textContent = '⏹ Stop';
-      btn.style.color = '#ff7070';
-    } else {
-      mr.stop();
-      btn.textContent = '⏺ Record';
-      btn.style.color = '';
-    }
-  });
-})();
 </script>
 </body>
 </html>

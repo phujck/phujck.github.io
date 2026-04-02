@@ -185,9 +185,6 @@
     </div>
     <div class="meter-note">This meter does not move. The complexity is the same everywhere.</div>
   </div>
-  <div style="margin-top:12px">
-    <button id="recBtn" style="font-size:13px">⏺ Record</button>
-  </div>
 </div>
 
 <script>
@@ -426,34 +423,6 @@ function draw() {
 }
 
 draw();
-
-// ─── recording ─────────────────────────────────────────────────
-(function () {
-  let mr = null, chunks = [];
-  const btn = document.getElementById('recBtn');
-  btn.addEventListener('click', () => {
-    if (!mr || mr.state === 'inactive') {
-      const stream = canvas.captureStream(30);
-      mr = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
-      chunks = [];
-      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-      mr.onstop = () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'complexity-trade.webm';
-        a.click();
-      };
-      mr.start();
-      btn.textContent = '⏹ Stop';
-      btn.style.color = '#ff7070';
-    } else {
-      mr.stop();
-      btn.textContent = '⏺ Record';
-      btn.style.color = '';
-    }
-  });
-})();
 </script>
 </body>
 </html>

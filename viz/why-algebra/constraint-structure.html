@@ -130,7 +130,6 @@
   <button id="btn-play">Pause</button>
   <button id="btn-reset">Reset</button>
   <button id="btn-sweep">Sweep</button>
-  <button id="recBtn">⏺ Record</button>
 </div>
 
 <p class="annotation" id="annotation">
@@ -472,34 +471,6 @@ function loop(now) {
 
 updateAnnotation();
 requestAnimationFrame(loop);
-
-// ─── recording ─────────────────────────────────────────────────
-(function () {
-  let mr = null, chunks = [];
-  const btn = document.getElementById('recBtn');
-  btn.addEventListener('click', () => {
-    if (!mr || mr.state === 'inactive') {
-      const stream = canvas.captureStream(30);
-      mr = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
-      chunks = [];
-      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-      mr.onstop = () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'constraint-structure.webm';
-        a.click();
-      };
-      mr.start();
-      btn.textContent = '⏹ Stop';
-      btn.style.color = '#ff7070';
-    } else {
-      mr.stop();
-      btn.textContent = '⏺ Record';
-      btn.style.color = '';
-    }
-  });
-})();
 </script>
 
 </body>

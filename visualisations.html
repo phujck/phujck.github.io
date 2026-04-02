@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
+  <title>Visualisations — Gerard McCaul</title>
+  <meta name="description"
+    content="Interactive mathematical visualisations by Dr. Gerard McCaul — dynamical systems, Koopman operators, phase portraits, and Carleman lifting.">
+  <meta name="author" content="Gerard McCaul">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://gmccaul.co.uk/visualisations.html">
+
+  <meta name="google-site-verification" content="QB9iAVhEjCSB7mIYgx-mREYE9SKkyeGlocaMzZiBGMA">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="me" href="https://orcid.org/0000-0001-7972-456X">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://gmccaul.co.uk/visualisations.html">
+  <meta property="og:title" content="Visualisations — Gerard McCaul">
+  <meta property="og:description"
+    content="Interactive mathematical visualisations: phase portraits, Koopman operators, Carleman lifting, and the dimensionality-nonlinearity trade.">
+  <meta property="og:image" content="https://gmccaul.co.uk/assets/img/me.jpg">
+  <meta property="og:site_name" content="Gerard McCaul">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Visualisations — Gerard McCaul">
+  <meta name="twitter:description"
+    content="Interactive mathematical visualisations: dynamical systems, Koopman operators, Carleman lifting.">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Visualisations — Gerard McCaul",
+    "description": "Interactive mathematical visualisations by Dr. Gerard McCaul.",
+    "url": "https://gmccaul.co.uk/visualisations.html",
+    "author": {
+      "@type": "Person",
+      "@id": "https://gmccaul.co.uk/#gerard-mccaul",
+      "name": "Gerard McCaul"
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+  <style>
+    .viz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-xl);
+    }
+
+    .viz-card {
+      padding: var(--space-xl);
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-base);
+    }
+
+    .viz-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #5cacee, #60e0a0);
+      opacity: 0;
+      transition: opacity var(--transition-base);
+    }
+
+    .viz-card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      border-color: rgba(92, 172, 238, 0.25);
+    }
+
+    .viz-card:hover::before {
+      opacity: 1;
+    }
+
+    .viz-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    .viz-title {
+      font-size: 1.0rem;
+      font-weight: 600;
+      font-family: var(--font-display);
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .viz-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      flex: 1;
+    }
+
+    .viz-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .viz-series {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.75;
+    }
+
+    .viz-open {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #5cacee;
+      text-decoration: none;
+      transition: opacity var(--transition-fast);
+    }
+
+    .viz-open:hover {
+      opacity: 0.75;
+    }
+
+    .viz-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(92, 172, 238, 0.1);
+      color: #5cacee;
+      border: 1px solid rgba(92, 172, 238, 0.2);
+    }
+
+    .series-intro {
+      padding: var(--space-xl);
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      border-left: 3px solid #5cacee;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .series-intro h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .series-intro p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+    }
+
+    .series-intro a {
+      color: #5cacee;
+      text-decoration: none;
+    }
+
+    .series-intro a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">G<span>.</span>M<sup>c</sup>Caul</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/physics.html">Physics</a></li>
+        <li><a href="/writing.html">Writing</a></li>
+        <li><a href="/music.html">Music</a></li>
+        <li><a href="/visualisations.html" class="active">Visualisations</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="page-hero">
+    <div class="page-hero-bg" style="background: radial-gradient(ellipse at 30% 60%, rgba(92,172,238,0.08) 0%, transparent 70%);"></div>
+    <div class="container" style="position: relative;">
+      <h1 class="page-hero-title fade-in">Visualisations</h1>
+      <p class="page-hero-subtitle fade-in fade-in-delay-1">Interactive companions to the mathematics.</p>
+    </div>
+  </header>
+
+  <!-- Why Algebra series -->
+  <section class="section" id="why-algebra">
+    <div class="container">
+      <span class="section-label fade-in">Series</span>
+      <h2 class="section-title fade-in">Why Algebra</h2>
+
+      <div class="series-intro fade-in">
+        <h3>Little Learning Machine — Post 1</h3>
+        <p>
+          These five pieces accompany the first post in the
+          <a href="https://littlelearningmachine.substack.com/" target="_blank" rel="noopener">Little Learning Machine</a>
+          series. The post argues that algebra is the correct language for any genuinely invariant description of
+          dynamics, and that the dimensionality-nonlinearity trade-off is the central cost of realising intelligence
+          in matter. Each visualisation makes one step of that argument interactive.
+        </p>
+      </div>
+
+      <div class="viz-grid stagger-children">
+
+        <a href="/viz/why-algebra/phase-portrait.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">🌀</div>
+          <div class="viz-title">Phase Portrait — Damped Pendulum</div>
+          <div class="viz-desc">
+            Explore the phase space of a damped pendulum. Click anywhere to seed a trajectory and watch
+            the system evolve — stable fixed points, unstable saddles, and the basins that separate them.
+            The geometry of state space made interactive.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">State Space</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+        <a href="/viz/why-algebra/koopman-split.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">⚡</div>
+          <div class="viz-title">The Koopman Operator — Same Dynamics, Two Representations</div>
+          <div class="viz-desc">
+            The same nonlinear trajectory rendered side by side: state space on the left, observable space on
+            the right. The Koopman operator is linear on observables regardless of the nonlinearity of the
+            underlying flow — both panels show identical physics.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">Koopman</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+        <a href="/viz/why-algebra/complexity-trade.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">⚖️</div>
+          <div class="viz-title">The Dimensionality–Nonlinearity Trade</div>
+          <div class="viz-desc">
+            A dynamical system's complexity budget is fixed. Slide between high-dimensional linear
+            representations and low-dimensional nonlinear ones — and watch what each choice costs.
+            The total complexity is invariant; only the allocation changes.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">EDMD</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+        <a href="/viz/why-algebra/constraint-structure.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">🔲</div>
+          <div class="viz-title">Constraint Carves Structure from Noise</div>
+          <div class="viz-desc">
+            A system without constraints is indistinguishable from noise. Add structure one constraint at a
+            time and watch coherent patterns crystallise from an otherwise featureless background. Constraint
+            is what it means to be a system rather than a collection of uncorrelated events.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">Universality</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+        <a href="/viz/why-algebra/carleman-lifting.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">📐</div>
+          <div class="viz-title">Iterative Lifting — Carleman Linearisation</div>
+          <div class="viz-desc">
+            Advance the dictionary order D from 1 to 4. At each step a new observable axis is added and
+            a new time-series panel appears. The y-residual collapses to zero the moment x² enters the
+            dictionary — the nonlinear transient was always a linear combination in disguise.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">Carleman</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <p class="footer-text">© 2026 Gerard McCaul. Built by algebra.</p>
+        <ul class="footer-links">
+          <li><a href="mailto:gerard.mccaul@gmail.com">Email</a></li>
+          <li><a href="https://littlelearningmachine.substack.com/" target="_blank" rel="noopener">Substack</a></li>
+          <li><a href="https://scholar.google.com/citations?user=GMHiq1IAAAAJ&hl=en" target="_blank" rel="noopener">Scholar</a></li>
+          <li><a href="https://orcid.org/0000-0001-7972-456X" target="_blank" rel="noopener">ORCID</a></li>
+          <li><a href="https://github.com/phujck" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" aria-label="Back to top">↑</button>
+  <script src="/assets/js/main.js"></script>
+</body>
+
+</html>
