@@ -548,12 +548,57 @@
   pointer-events: none;
 }
 
+.deck-video-frame.is-ended::after {
+  opacity: 0;
+  animation: none;
+}
+
 .deck-video {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   background: #040810;
+}
+
+.deck-replay-button {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.9rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(201, 169, 110, 0.26);
+  border-radius: 999px;
+  background: rgba(10, 14, 26, 0.82);
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.deck-video-frame.is-ended .deck-replay-button {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.deck-replay-button:hover {
+  border-color: rgba(201, 169, 110, 0.42);
+  background: rgba(16, 22, 36, 0.92);
+}
+
+.deck-replay-button:focus-visible {
+  outline: 2px solid rgba(126, 184, 218, 0.65);
+  outline-offset: 2px;
 }
 
 .deck-controls {

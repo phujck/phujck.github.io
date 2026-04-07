@@ -30,11 +30,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const videoEl = deckRoot.querySelector("[data-deck-video]");
   const sourceEl = deckRoot.querySelector("[data-deck-source]");
   const captionEl = deckRoot.querySelector("[data-deck-caption]");
+  const replayButton = deckRoot.querySelector("[data-deck-replay]");
   const openVideoEl = deckRoot.querySelector("[data-deck-open-video]");
   const fullscreenButton = deckRoot.querySelector("[data-deck-fullscreen]");
   const prevButton = deckRoot.querySelector("[data-deck-prev]");
   const nextButton = deckRoot.querySelector("[data-deck-next]");
   const stageCard = deckRoot.querySelector("[data-deck-stage-card]");
+  const videoFrame = videoEl ? videoEl.closest(".deck-video-frame") : null;
 
   let currentIndex = 0;
   const slideButtons = [];
@@ -55,10 +57,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  const setReplayVisible = (visible) => {
+    if (videoFrame) {
+      videoFrame.classList.toggle("is-ended", visible);
+    }
+
+    if (replayButton) {
+      replayButton.hidden = !visible;
+      replayButton.setAttribute("aria-hidden", visible ? "false" : "true");
+    }
+  };
+
   const setVideoSource = (slide) => {
     videoEl.pause();
+    videoEl.loop = false;
     sourceEl.src = slide.video;
     videoEl.poster = slide.poster;
+    videoEl.currentTime = 0;
+    setReplayVisible(false);
     videoEl.load();
 
     const playPromise = videoEl.play();
@@ -192,7 +208,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   videoEl.addEventListener("click", () => {
+    if (videoEl.ended) {
+      videoEl.currentTime = 0;
+    }
+
     if (videoEl.paused) {
+      setReplayVisible(false);
       const playPromise = videoEl.play();
       if (playPromise && typeof playPromise.catch === "function") {
         playPromise.catch(() => {});
@@ -201,6 +222,29 @@ document.addEventListener("DOMContentLoaded", () => {
       videoEl.pause();
     }
   });
+
+  videoEl.addEventListener("play", () => {
+    setReplayVisible(false);
+  });
+
+  videoEl.addEventListener("ended", () => {
+    setReplayVisible(true);
+  });
+
+  if (replayButton) {
+    replayButton.hidden = true;
+    replayButton.setAttribute("aria-hidden", "true");
+    replayButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      videoEl.currentTime = 0;
+      setReplayVisible(false);
+      const playPromise = videoEl.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {});
+      }
+    });
+  }
 
   if (!document.fullscreenEnabled && fullscreenButton) {
     fullscreenButton.hidden = true;
