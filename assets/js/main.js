@@ -85,7 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
   document.querySelectorAll('.nav-links a').forEach(a => {
     const href = a.getAttribute('href').replace(/\/$/, '') || '/';
-    if (currentPath === href || (currentPath.endsWith(href) && href !== '/')) {
+    const sectionHref = href.replace(/\.html$/, '');
+    const matchesSection =
+      sectionHref !== href &&
+      sectionHref !== '/' &&
+      (currentPath === sectionHref || currentPath.startsWith(sectionHref + '/'));
+
+    if (currentPath === href || (currentPath.endsWith(href) && href !== '/') || matchesSection) {
       a.classList.add('active');
     }
   });

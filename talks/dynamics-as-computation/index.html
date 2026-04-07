@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
+  <title>Dynamics as Computation - Gerard McCaul</title>
+  <meta name="description"
+    content="Browser-native presentation deck for Dynamics as Computation by Gerard McCaul.">
+  <meta name="author" content="Gerard McCaul">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://gmccaul.co.uk/talks/dynamics-as-computation/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://gmccaul.co.uk/talks/dynamics-as-computation/">
+  <meta property="og:title" content="Dynamics as Computation - Gerard McCaul">
+  <meta property="og:description"
+    content="An 18-slide browser deck on dynamical systems, operator lifts, quantum structure, and ground-state computation.">
+  <meta property="og:image" content="https://gmccaul.co.uk/assets/talks/dynamics-as-computation/posters/02_comparison.png">
+  <meta property="og:site_name" content="Gerard McCaul">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Dynamics as Computation - Gerard McCaul">
+  <meta name="twitter:description"
+    content="A browser-native seminar deck with Manim animations and HTML5 video.">
+  <meta name="twitter:image" content="https://gmccaul.co.uk/assets/talks/dynamics-as-computation/posters/02_comparison.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "Dynamics as Computation",
+    "url": "https://gmccaul.co.uk/talks/dynamics-as-computation/",
+    "author": {
+      "@type": "Person",
+      "name": "Gerard McCaul"
+    },
+    "description": "Browser-native seminar deck on dynamics, computation, quantum structure, and Hamiltonian encoding."
+  }
+  </script>
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/talks.css">
+</head>
+
+<body>
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">G<span>.</span>M<sup>c</sup>Caul</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/physics.html">Physics</a></li>
+        <li><a href="/talks.html" class="active">Talks</a></li>
+        <li><a href="/writing.html">Writing</a></li>
+        <li><a href="/music.html">Music</a></li>
+        <li><a href="/visualisations.html">Visualisations</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-hero">
+    <div class="page-hero-bg"
+      style="background: radial-gradient(ellipse at 22% 35%, rgba(126, 184, 218, 0.15) 0%, transparent 60%), radial-gradient(ellipse at 78% 50%, rgba(201, 169, 110, 0.16) 0%, transparent 55%), linear-gradient(180deg, rgba(10, 14, 26, 0.65), rgba(10, 14, 26, 0.98));">
+    </div>
+    <div class="container" style="position: relative;">
+      <h1 class="page-hero-title fade-in">Dynamics as Computation</h1>
+      <p class="page-hero-subtitle fade-in fade-in-delay-1">A browser-native seminar deck with local HTML5 video and direct slide navigation.</p>
+    </div>
+  </header>
+
+  <main class="talk-deck-page">
+    <div class="container">
+      <section class="talk-deck-header fade-in">
+        <span class="section-label">Deck</span>
+        <h2 class="section-title">Animated slide deck</h2>
+        <p class="talk-deck-summary">
+          This page keeps the talk in slide form rather than flattening it into a single recording. The rail on the left lets you jump
+          between beats, arrow keys move forward and backward, and each slide swaps in its own local MP4 so the animations stay sharp
+          without relying on PDF movie support.
+        </p>
+        <div class="talk-deck-meta">
+          <span>18 slides</span>
+          <span>HTML5 video</span>
+          <span>Keyboard navigation</span>
+          <span>Hostable on GitHub Pages</span>
+        </div>
+      </section>
+
+      <section class="talks-deck-shell fade-in fade-in-delay-1" data-talk-deck>
+        <aside class="talks-deck-sidebar" aria-label="Slide navigation">
+          <div class="deck-sidebar-head">
+            <span class="deck-kicker">Slide rail</span>
+            <span class="deck-counter" data-deck-counter>01 / 18</span>
+          </div>
+          <div class="deck-rail" data-deck-rail></div>
+        </aside>
+
+        <div class="talks-deck-stage">
+          <div class="deck-toolbar">
+            <div class="deck-progress" aria-hidden="true">
+              <span data-deck-progress></span>
+            </div>
+            <div class="deck-toolbar-actions">
+              <a class="deck-link-button" href="/talks.html">All talks</a>
+              <a class="deck-link-button" href="/physics.html#talks">Physics page</a>
+              <a class="deck-link-button" data-deck-open-video href="#" target="_blank" rel="noopener">Open current video</a>
+            </div>
+          </div>
+
+          <div class="deck-stage-card">
+            <div class="deck-slide-layout">
+              <div class="deck-copy-card">
+                <span class="deck-section-pill" data-deck-section>Opening</span>
+                <h2 data-deck-title>Dynamics as Computation</h2>
+                <ul class="deck-bullets" data-deck-bullets></ul>
+                <div class="deck-slide-notes">
+                  <span data-deck-counter>01 / 18</span>
+                  <span>Left and right arrows navigate</span>
+                </div>
+              </div>
+
+              <div class="deck-media-card">
+                <div class="deck-video-frame">
+                  <video class="deck-video" data-deck-video muted loop playsinline preload="metadata" poster="">
+                    <source data-deck-source src="" type="video/mp4">
+                  </video>
+                </div>
+                <div class="deck-media-caption">
+                  <span data-deck-caption>Autoplaying muted video loop</span>
+                  <span>Click video to pause or resume</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="deck-controls">
+            <span class="deck-control-label">Use the slide rail or arrow keys to move through the talk.</span>
+            <div class="deck-controls-group">
+              <button type="button" class="deck-control" data-deck-prev>Previous</button>
+              <button type="button" class="deck-control" data-deck-next>Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <p class="footer-text">&copy; 2026 Gerard McCaul. Built by algebra.</p>
+        <ul class="footer-links">
+          <li><a href="mailto:gerard.mccaul@gmail.com">Email</a></li>
+          <li><a href="https://littlelearningmachine.substack.com/" target="_blank" rel="noopener">Substack</a></li>
+          <li><a href="https://scholar.google.com/citations?user=GMHiq1IAAAAJ&hl=en" target="_blank" rel="noopener">Scholar</a></li>
+          <li><a href="https://orcid.org/0000-0001-7972-456X" target="_blank" rel="noopener">ORCID</a></li>
+          <li><a href="https://github.com/phujck" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" aria-label="Back to top">&uarr;</button>
+
+  <script id="talk-deck-data" type="application/json">
+  [
+    {
+      "slug": "dynamics-as-computation",
+      "section": "Opening",
+      "title": "Dynamics as Computation",
+      "bullets": [
+        "Nonlinear systems, operator lifts, and readout all become computational ingredients.",
+        "The thread running through the deck is simple: useful computation can emerge from physics."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/01_s01_title.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/01_s01_title.png",
+      "caption": "Title slide"
+    },
+    {
+      "slug": "dynamics-and-computation",
+      "section": "Opening",
+      "title": "Dynamics and Computation",
+      "bullets": [
+        "Dynamics updates a state continuously, deforming probability mass through time.",
+        "Computation applies local symbolic rules in discrete steps.",
+        "The interesting question is when these two pictures become the same mechanism."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/02_comparison.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/02_comparison.png",
+      "caption": "Flowing density against symbolic tape dynamics"
+    },
+    {
+      "slug": "nonlinearity-versus-dimension",
+      "section": "Lifts",
+      "title": "Nonlinearity Versus Dimension",
+      "bullets": [
+        "A linear separator fails in the raw coordinates.",
+        "A suitable lift makes the same structure linearly accessible.",
+        "Computation can hide inside a higher-dimensional linear representation."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/03_s02_dynamics_question.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/03_s02_dynamics_question.png",
+      "caption": "Why representation choice matters"
+    },
+    {
+      "slug": "random-features-as-a-lift",
+      "section": "Lifts",
+      "title": "Random Features as a Lift",
+      "bullets": [
+        "The nonlinear hidden layer creates a rich feature basis almost for free.",
+        "Only the final linear map needs to be trained.",
+        "Expressivity is shifted from optimisation to representation."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/04_s02_elm_skeleton.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/04_s02_elm_skeleton.png",
+      "caption": "A fixed nonlinear lift with a simple readout"
+    },
+    {
+      "slug": "reservoir-as-dynamical-memory",
+      "section": "Reservoirs",
+      "title": "Reservoir as Dynamical Memory",
+      "bullets": [
+        "Recurrence stores a fading trace of past inputs inside the system state.",
+        "Nonlinearity mixes old and new information into a computationally useful embedding.",
+        "A simple readout can exploit this without touching the internal dynamics."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/05_s03_reservoir_skeleton.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/05_s03_reservoir_skeleton.png",
+      "caption": "Input, reservoir state, and readout"
+    },
+    {
+      "slug": "the-central-question",
+      "section": "Reservoirs",
+      "title": "The Central Question",
+      "bullets": [
+        "Which part of reservoir performance comes from architecture and which part from dynamics?",
+        "Are we buying expressive coordinates, long memory, or something more structural?",
+        "That pushes us toward an operator-theoretic viewpoint."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/06_s04_the_question.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/06_s04_the_question.png",
+      "caption": "The deck turns toward operator structure"
+    },
+    {
+      "slug": "a-physical-system-computing",
+      "section": "Reservoirs",
+      "title": "A Physical System Computing",
+      "bullets": [
+        "The drive perturbs a nonlinear system continuously rather than symbolically.",
+        "Useful transient structure appears directly in the trajectory.",
+        "Computation is read out from observables of the evolving state."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/07_s06_reservoir_computation.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/07_s06_reservoir_computation.png",
+      "caption": "A dynamical system pressed into computational service"
+    },
+    {
+      "slug": "koopman-linearisation",
+      "section": "Operators",
+      "title": "Koopman Linearisation",
+      "bullets": [
+        "Nonlinear flow becomes linear when expressed on a suitable observable algebra.",
+        "Complexity moves from the propagator to the choice of representation.",
+        "This is the mathematical bridge from dynamics to computation."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/08_s07_koopman.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/08_s07_koopman.png",
+      "caption": "The operator lift in motion"
+    },
+    {
+      "slug": "compressing-the-lift",
+      "section": "Operators",
+      "title": "Compressing the Lift",
+      "bullets": [
+        "Not every lifted direction matters equally for the task.",
+        "Singular structure reveals the dominant computational modes.",
+        "Useful lifted dynamics can remain effectively low-rank."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/09_s07b_svd.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/09_s07b_svd.png",
+      "caption": "Dominant lifted directions survive compression"
+    },
+    {
+      "slug": "dynamic-mode-decomposition",
+      "section": "Operators",
+      "title": "Dynamic Mode Decomposition",
+      "bullets": [
+        "Snapshot pairs give a data-driven estimate of the effective linear update rule.",
+        "Modes separate coherent patterns and characteristic timescales.",
+        "In practice, this is a tractable Koopman approximation."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/10_s08_dmd.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/10_s08_dmd.png",
+      "caption": "Data-driven Koopman structure"
+    },
+    {
+      "slug": "kvn-as-a-bridge",
+      "section": "KvN",
+      "title": "KvN as a Bridge",
+      "bullets": [
+        "Classical transport can already be written in Hilbert-space language.",
+        "States, phases, and operators are not uniquely quantum ideas.",
+        "KvN makes the classical-quantum comparison much tighter."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/11_s09_kvn_bridge.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/11_s09_kvn_bridge.png",
+      "caption": "Hilbert-space language on the classical side"
+    },
+    {
+      "slug": "readout-as-measurement",
+      "section": "Readout",
+      "title": "Readout as Measurement",
+      "bullets": [
+        "Different observables expose different computational structure in the same dynamics.",
+        "A task is solved only after choosing what to measure.",
+        "The measurement map is part of the computational model, not an afterthought."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/12_s10_observable_readout.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/12_s10_observable_readout.png",
+      "caption": "Observables determine the usable output"
+    },
+    {
+      "slug": "classical-and-quantum-reservoirs",
+      "section": "Quantum",
+      "title": "Classical and Quantum Reservoirs",
+      "bullets": [
+        "Both classical and quantum systems build transient state representations.",
+        "Quantum evolution adds interference and noncommuting structure.",
+        "The question is when that extra structure becomes computationally useful."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/13_s11_classical_vs_quantum.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/13_s11_classical_vs_quantum.png",
+      "caption": "Classical and quantum transients compared"
+    },
+    {
+      "slug": "phase-as-computational-resource",
+      "section": "Quantum",
+      "title": "Phase as Computational Resource",
+      "bullets": [
+        "Wrapped phase encodes history in a way amplitudes alone cannot.",
+        "Interference sharpens some distinctions while washing others out.",
+        "Quantum processing changes not just the state, but the geometry of readout."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/14_s11_phase_wrapping.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/14_s11_phase_wrapping.png",
+      "caption": "Phase geometry becomes part of the computation"
+    },
+    {
+      "slug": "quasiprobability-and-the-classical-limit",
+      "section": "Quantum",
+      "title": "Quasiprobability and the Classical Limit",
+      "bullets": [
+        "Negative regions in the Wigner picture mark genuinely nonclassical behaviour.",
+        "The marginals remain proper probability densities throughout.",
+        "As hbar tends to zero, the negativity fades and the description classicalises."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/15_s13_wave_operator.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/15_s13_wave_operator.png",
+      "caption": "Negativity appears and disappears across the semiclassical sweep"
+    },
+    {
+      "slug": "hamiltonian-of-mean-force",
+      "section": "Open Systems",
+      "title": "Hamiltonian of Mean Force",
+      "bullets": [
+        "Projecting onto an input activates an effective subsystem inside a larger network.",
+        "In the commuting case this mainly renormalises existing terms.",
+        "In the quantum case tracing out the rest induces new couplings and rearrangements."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/16_s14_hamiltonian_mean_force.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/16_s14_hamiltonian_mean_force.png",
+      "caption": "The effective network changes when noncommutativity matters"
+    },
+    {
+      "slug": "problems-encoded-in-ground-states",
+      "section": "Optimisation",
+      "title": "Problems Encoded in Ground States",
+      "bullets": [
+        "Optimisation objectives can be rewritten as Hamiltonians.",
+        "The desired answer is then the lowest-energy configuration.",
+        "MaxCut gives a clean example of computation encoded into physics."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/17_s15b_ground_state_encoding.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/17_s15b_ground_state_encoding.png",
+      "caption": "MaxCut as a Hamiltonian ground-state problem"
+    },
+    {
+      "slug": "finding-the-ground-state-with-itqde",
+      "section": "Optimisation",
+      "title": "Finding the Ground State with ITQDE",
+      "bullets": [
+        "Filtered evolution progressively suppresses excited-state contributions.",
+        "The spectral estimate sharpens as the window narrows.",
+        "Ground-state information can emerge without a full diagonalisation."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/18_s15_staircase.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/18_s15_staircase.png",
+      "caption": "Tau sharpens the filter while lambda scans the spectrum"
+    }
+  ]
+  </script>
+
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/talk-deck.js"></script>
+</body>
+
+</html>

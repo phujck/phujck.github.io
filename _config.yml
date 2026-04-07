@@ -42,6 +42,8 @@ header:
       url: "/"
     - title: "Physics"
       url: "/physics/"
+    - title: "Talks"
+      url: "/talks/"
     - title: "Music"
       url: "/music/"
     - title: "Writing"
