@@ -655,10 +655,10 @@
 
 .talks-deck-shell:fullscreen .deck-video-frame {
   aspect-ratio: 16 / 9;
-  width: min(85%, calc((100vh - 19rem) * 16 / 9));
-  max-width: 85%;
-  max-height: calc((100vh - 19rem) * 0.85);
-  height: auto;
+  height: 85%;
+  max-height: 85%;
+  width: auto;
+  max-width: 100%;
   margin: 0 auto;
 }
 
