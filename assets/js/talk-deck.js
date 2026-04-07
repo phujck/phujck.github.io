@@ -31,8 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const sourceEl = deckRoot.querySelector("[data-deck-source]");
   const captionEl = deckRoot.querySelector("[data-deck-caption]");
   const openVideoEl = deckRoot.querySelector("[data-deck-open-video]");
+  const fullscreenButton = deckRoot.querySelector("[data-deck-fullscreen]");
   const prevButton = deckRoot.querySelector("[data-deck-prev]");
   const nextButton = deckRoot.querySelector("[data-deck-next]");
+  const stageCard = deckRoot.querySelector("[data-deck-stage-card]");
 
   let currentIndex = 0;
   const slideButtons = [];
@@ -72,6 +74,16 @@ document.addEventListener("DOMContentLoaded", () => {
       li.textContent = bullet;
       bulletsEl.appendChild(li);
     });
+  };
+
+  const updateFullscreenButton = () => {
+    if (!fullscreenButton) {
+      return;
+    }
+
+    const isFullscreen = document.fullscreenElement === deckRoot;
+    fullscreenButton.textContent = isFullscreen ? "Exit present mode" : "Present mode";
+    fullscreenButton.setAttribute("aria-pressed", isFullscreen ? "true" : "false");
   };
 
   const setSlide = (requestedIndex, { updateHash = true } = {}) => {
@@ -190,7 +202,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  if (!document.fullscreenEnabled && fullscreenButton) {
+    fullscreenButton.hidden = true;
+  }
+
+  if (fullscreenButton && document.fullscreenEnabled) {
+    fullscreenButton.addEventListener("click", async () => {
+      try {
+        if (document.fullscreenElement === deckRoot) {
+          await document.exitFullscreen();
+        } else {
+          await deckRoot.requestFullscreen();
+        }
+      } catch (error) {
+        console.error("Failed to toggle presentation fullscreen.", error);
+      }
+    });
+  }
+
+  document.addEventListener("fullscreenchange", () => {
+    updateFullscreenButton();
+
+    if (document.fullscreenElement === deckRoot && stageCard) {
+      stageCard.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
+  });
+
   const initialSlug = normaliseHash(window.location.hash);
   const initialIndex = slides.findIndex((slide) => slide.slug === initialSlug);
+  updateFullscreenButton();
   setSlide(initialIndex >= 0 ? initialIndex : 0, { updateHash: initialSlug.length === 0 });
 });

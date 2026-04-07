@@ -51,7 +51,7 @@
   <link rel="stylesheet" href="/assets/css/talks.css">
 </head>
 
-<body>
+<body class="talk-page">
   <nav class="nav" role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <a href="/" class="nav-brand">G<span>.</span>M<sup>c</sup>Caul</a>
@@ -112,13 +112,14 @@
               <span data-deck-progress></span>
             </div>
             <div class="deck-toolbar-actions">
+              <button type="button" class="deck-link-button deck-link-button-accent" data-deck-fullscreen>Present mode</button>
               <a class="deck-link-button" href="/talks.html">All talks</a>
               <a class="deck-link-button" href="/physics.html#talks">Physics page</a>
               <a class="deck-link-button" data-deck-open-video href="#" target="_blank" rel="noopener">Open current video</a>
             </div>
           </div>
 
-          <div class="deck-stage-card">
+          <div class="deck-stage-card" data-deck-stage-card>
             <div class="deck-slide-layout">
               <div class="deck-copy-card">
                 <span class="deck-section-pill" data-deck-section>Opening</span>
@@ -135,10 +136,10 @@
                   <video class="deck-video" data-deck-video muted loop playsinline preload="metadata" poster="">
                     <source data-deck-source src="" type="video/mp4">
                   </video>
-                </div>
-                <div class="deck-media-caption">
-                  <span data-deck-caption>Autoplaying muted video loop</span>
-                  <span>Click video to pause or resume</span>
+                  <div class="deck-video-overlay">
+                    <span data-deck-caption>Autoplaying muted video loop</span>
+                    <span>Click video to pause or resume</span>
+                  </div>
                 </div>
               </div>
             </div>
