@@ -85,12 +85,12 @@
         <span class="section-label">Talk</span>
         <h2 class="section-title">Overview</h2>
         <p class="talk-deck-summary">
-          The talk opens with a concrete neuromorphic motivation, then builds through the tension between smooth dynamical evolution
-          and discrete computation, reservoir dynamics, Koopman and KvN operator pictures, quantum signatures such as phase and
-          quasiprobability, and finally optimisation problems encoded into Hamiltonian ground states.
+          The talk opens on the title question, then moves into a concrete neuromorphic motivation before building through the tension
+          between smooth dynamical evolution and discrete computation, reservoir dynamics, Koopman and KvN operator pictures, quantum
+          signatures such as phase and quasiprobability, and finally optimisation problems encoded into Hamiltonian ground states.
         </p>
         <div class="talk-deck-meta">
-          <span>23 slides</span>
+          <span>19 slides</span>
           <span>Reservoirs</span>
           <span>Quantum structure</span>
           <span>Ground states</span>
@@ -101,7 +101,7 @@
         <aside class="talks-deck-sidebar" aria-label="Slide navigation">
           <div class="deck-sidebar-head">
             <span class="deck-kicker">Slide rail</span>
-            <span class="deck-counter" data-deck-counter>01 / 23</span>
+            <span class="deck-counter" data-deck-counter>01 / 19</span>
           </div>
           <div class="deck-rail" data-deck-rail></div>
         </aside>
@@ -126,7 +126,7 @@
                 <h2 data-deck-title>Dynamics as Computation</h2>
                 <ul class="deck-bullets" data-deck-bullets></ul>
                 <div class="deck-slide-notes">
-                  <span data-deck-counter>01 / 23</span>
+                  <span data-deck-counter>01 / 19</span>
                 </div>
               </div>
 
@@ -173,70 +173,6 @@
   <script id="talk-deck-data" type="application/json">
   [
     {
-      "slug": "motivation-finn-1",
-      "section": "Motivation",
-      "title": "A Neuromorphic Computer I Recently Acquired",
-      "bullets": [
-        "Launch configuration: more than 100 billion neurons already installed."
-      ],
-      "video": "/assets/talks/dynamics-as-computation/videos/00_finn_blank.mp4",
-      "poster": "/assets/talks/dynamics-as-computation/posters/00_finn_blank.png",
-      "caption": "A concrete motivation: a very small wetware machine"
-    },
-    {
-      "slug": "motivation-finn-2",
-      "section": "Motivation",
-      "title": "A Neuromorphic Computer I Recently Acquired",
-      "bullets": [
-        "Launch configuration: more than 100 billion neurons already installed.",
-        "Power draw: the newborn brain can consume around 60% of the body's daily energy budget."
-      ],
-      "video": "/assets/talks/dynamics-as-computation/videos/00_finn_blank.mp4",
-      "poster": "/assets/talks/dynamics-as-computation/posters/00_finn_blank.png",
-      "caption": "A concrete motivation: a very small wetware machine"
-    },
-    {
-      "slug": "motivation-finn-3",
-      "section": "Motivation",
-      "title": "A Neuromorphic Computer I Recently Acquired",
-      "bullets": [
-        "Launch configuration: more than 100 billion neurons already installed.",
-        "Power draw: the newborn brain can consume around 60% of the body's daily energy budget.",
-        "Online learning rate: more than 1 million new neural connections can form every second in early life."
-      ],
-      "video": "/assets/talks/dynamics-as-computation/videos/00_finn_blank.mp4",
-      "poster": "/assets/talks/dynamics-as-computation/posters/00_finn_blank.png",
-      "caption": "A concrete motivation: a very small wetware machine"
-    },
-    {
-      "slug": "motivation-finn-4",
-      "section": "Motivation",
-      "title": "A Neuromorphic Computer I Recently Acquired",
-      "bullets": [
-        "Launch configuration: more than 100 billion neurons already installed.",
-        "Power draw: the newborn brain can consume around 60% of the body's daily energy budget.",
-        "Online learning rate: more than 1 million new neural connections can form every second in early life.",
-        "Primary I/O channels currently favour milk, touch, voices, and very loud fault reporting."
-      ],
-      "video": "/assets/talks/dynamics-as-computation/videos/00_finn_blank.mp4",
-      "poster": "/assets/talks/dynamics-as-computation/posters/00_finn_blank.png",
-      "caption": "A concrete motivation: a very small wetware machine"
-    },
-    {
-      "slug": "motivation-finn-reveal",
-      "section": "Motivation",
-      "title": "Meet Finn",
-      "bullets": [
-        "Launch configuration: more than 100 billion neurons already installed.",
-        "Power draw: the newborn brain can consume around 60% of the body's daily energy budget.",
-        "Online learning rate: more than 1 million new neural connections can form every second in early life.",
-        "Primary I/O channels currently favour milk, touch, voices, and very loud fault reporting."
-      ],
-      "video": "/assets/talks/dynamics-as-computation/videos/00_finn_reveal.mp4",
-      "poster": "/assets/talks/dynamics-as-computation/posters/00_finn_reveal.png",
-      "caption": "A freshly deployed wetware computer"
-    },
-    {
       "slug": "dynamics-as-computation",
       "section": "Opening",
       "title": "Dynamics as Computation",
@@ -247,6 +183,22 @@
       "video": "/assets/talks/dynamics-as-computation/videos/01_s01_title.mp4",
       "poster": "/assets/talks/dynamics-as-computation/posters/01_s01_title.png",
       "caption": "Title slide"
+    },
+    {
+      "slug": "motivation-finn",
+      "section": "Motivation",
+      "title": "A Neuromorphic Computer I Recently Acquired",
+      "bullets": [
+        "Launch configuration: more than 100 billion neurons already installed.",
+        "Power draw: the newborn brain can consume around 60% of the body's daily energy budget.",
+        "Online learning rate: more than 1 million new neural connections can form every second in early life.",
+        "Primary I/O channels currently favour milk, touch, voices, and very loud fault reporting."
+      ],
+      "image": "/assets/talks/dynamics-as-computation/images/01_finn.jpg",
+      "imageAlt": "Finn sleeping in a hospital cot with a bright knitted hat and a copy of Schrodinger's What is Life?",
+      "revealBullets": true,
+      "revealMediaOnLastStep": true,
+      "caption": "A freshly deployed wetware computer"
     },
     {
       "slug": "dynamics-and-computation",
@@ -288,17 +240,17 @@
       "caption": "Why representation choice matters"
     },
     {
-      "slug": "reservoir-as-dynamical-memory",
-      "section": "Reservoirs",
-      "title": "Reservoir as Dynamical Memory",
+      "slug": "linearising-dynamics",
+      "section": "Lifts",
+      "title": "Linearising Dynamics",
       "bullets": [
-        "Recurrence stores a fading trace of past inputs inside the system state.",
-        "Nonlinearity mixes old and new information into a computationally useful embedding.",
-        "A simple readout can exploit this without touching the internal dynamics."
+        "Lifting nonlinear state dynamics to an observable basis can make the evolution exactly linear — the Carleman embedding.",
+        "Every classical transform (Fourier, Laplace) implicitly chooses a dynamical basis whose elements evolve as eigenfunctions.",
+        "The ideal basis consists of Koopman eigenfunctions: φ(x(t)) = e^{λt} φ(x(0))."
       ],
-      "video": "/assets/talks/dynamics-as-computation/videos/05_s03_reservoir_skeleton.mp4",
-      "poster": "/assets/talks/dynamics-as-computation/posters/05_s03_reservoir_skeleton.png",
-      "caption": "Input, reservoir state, and readout"
+      "video": "/assets/talks/dynamics-as-computation/videos/05_s05_linearising_dynamics.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/05_s05_linearising_dynamics.png",
+      "caption": "Nonlinear phase portrait lifted into a 3D observable space where dynamics obeys a linear matrix equation"
     },
     {
       "slug": "the-central-question",
