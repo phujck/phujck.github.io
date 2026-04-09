@@ -87,10 +87,11 @@
         <p class="talk-deck-summary">
           The talk opens on the title question, then moves into a concrete neuromorphic motivation before building through the tension
           between smooth dynamical evolution and discrete computation, reservoir dynamics, Koopman and KvN operator pictures, quantum
-          signatures such as quasiprobability, and finally optimisation problems encoded into Hamiltonian ground states.
+          signatures such as quasiprobability, optimisation problems encoded into Hamiltonian ground states, and a final unified picture
+          of physical law as computational structure before closing with links back to the website.
         </p>
         <div class="talk-deck-meta">
-          <span>18 slides</span>
+          <span>20 slides</span>
           <span>Reservoirs</span>
           <span>Quantum structure</span>
           <span>Ground states</span>
@@ -101,7 +102,7 @@
         <aside class="talks-deck-sidebar" aria-label="Slide navigation">
           <div class="deck-sidebar-head">
             <span class="deck-kicker">Slide rail</span>
-            <span class="deck-counter" data-deck-counter>01 / 18</span>
+            <span class="deck-counter" data-deck-counter>01 / 20</span>
           </div>
           <div class="deck-rail" data-deck-rail></div>
         </aside>
@@ -126,7 +127,7 @@
                 <h2 data-deck-title>Dynamics as Computation</h2>
                 <ul class="deck-bullets" data-deck-bullets></ul>
                 <div class="deck-slide-notes">
-                  <span data-deck-counter>01 / 18</span>
+                  <span data-deck-counter>01 / 20</span>
                 </div>
               </div>
 
@@ -218,13 +219,13 @@
       "section": "Opening",
       "title": "The Algebraic Paradigm",
       "bullets": [
-        "Modern learning is often just a linear readout acting on a rich representation: y_hat = W phi(x).",
-        "Once phi(x) is available, fitting W is basically linear algebra.",
-        "The real question is how a physical system can generate phi(x) in the first place."
+        "Modern statistical learning reduces to a linear map on a rich feature representation: y_hat = W phi(x).",
+        "The feature map phi carries all the structure; the readout W is solved by linear algebra alone.",
+        "This framework dominates machine intelligence, but says nothing about how phi is generated."
       ],
       "video": "/assets/talks/dynamics-as-computation/videos/03_s03_algebraic_paradigm.mp4",
       "poster": "/assets/talks/dynamics-as-computation/posters/03_s03_algebraic_paradigm.png",
-      "caption": "Feature map, linear readout, and the question of where representation comes from"
+      "caption": "The algebraic core of statistical learning, and the question dynamics will answer"
     },
     {
       "slug": "nonlinearity-versus-dimension",
@@ -270,13 +271,13 @@
       "section": "Lifts",
       "title": "Linearising Dynamics",
       "bullets": [
-        "A nonlinear system can become linear after lifting state into the right observable coordinates.",
-        "In this toy example, Phi = (x, y, x^2) closes exactly, so d/dt Phi = A Phi.",
-        "Koopman eigenfunctions are the ideal limit: each observable evolves by a simple exponential."
+        "Differentiate the state.",
+        "New monomials appear.",
+        "Add observables until the lift closes."
       ],
       "video": "/assets/talks/dynamics-as-computation/videos/05_s05_linearising_dynamics.mp4",
       "poster": "/assets/talks/dynamics-as-computation/posters/05_s05_linearising_dynamics.png",
-      "caption": "A nonlinear phase portrait becomes linear after the right observable lift"
+      "caption": "Carleman lift: enlarge coordinates until the dynamics becomes linear"
     },
     {
       "slug": "koopman-linearisation",
@@ -407,6 +408,30 @@
       "video": "/assets/talks/dynamics-as-computation/videos/18_s15_staircase.mp4",
       "poster": "/assets/talks/dynamics-as-computation/posters/18_s15_staircase.png",
       "caption": "Tau sharpens the filter while lambda scans the spectrum"
+    },
+    {
+      "slug": "one-substrate",
+      "section": "Summary",
+      "title": "One Substrate",
+      "bullets": [
+        "Operator lifts make dynamics legible as computation.",
+        "Physical law already carries the limits and efficient principles."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/19_s16_unified_picture.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/19_s16_unified_picture.png",
+      "caption": "One mathematical substrate links dynamics, computation, and optimisation"
+    },
+    {
+      "slug": "thank-you",
+      "section": "Closing",
+      "title": "Thank You",
+      "bullets": [
+        "Talk + slides: gmccaul.co.uk/talks/dynamics-as-computation/",
+        "Writing: Spanspermia via gmccaul.co.uk/writing.html"
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/20_s17_thank_you.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/20_s17_thank_you.png",
+      "caption": "Talk, slides, and writing all live on gmccaul.co.uk"
     }
   ]
   </script>
