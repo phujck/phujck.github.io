@@ -600,11 +600,18 @@
 }
 
 .deck-image {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
   background: #040810;
+}
+
+.deck-image[hidden],
+.deck-media-badge[hidden],
+.deck-replay-button[hidden] {
+  display: none !important;
 }
 
 .deck-image.is-visible {
