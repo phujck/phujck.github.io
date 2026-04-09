@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const imageEl = deckRoot.querySelector("[data-deck-image]");
   const sourceEl = deckRoot.querySelector("[data-deck-source]");
   const captionEl = deckRoot.querySelector("[data-deck-caption]");
-  const mediaBadgeEl = deckRoot.querySelector("[data-deck-media-badge]");
   const replayButton = deckRoot.querySelector("[data-deck-replay]");
   const openVideoEl = deckRoot.querySelector("[data-deck-open-video]");
   const fullscreenButton = deckRoot.querySelector("[data-deck-fullscreen]");
@@ -160,12 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
       imageEl.alt = "";
     }
 
-    if (mediaBadgeEl) {
-      mediaBadgeEl.hidden = true;
-      mediaBadgeEl.classList.remove("is-visible");
-      mediaBadgeEl.textContent = slide.mediaBadge || "";
-    }
-
     if (imageSlide) {
       stopVideo();
       if (videoEl) {
@@ -218,12 +211,6 @@ document.addEventListener("DOMContentLoaded", () => {
         videoEl.pause();
         setReplayVisible(false);
       }
-    }
-
-    if (mediaBadgeEl) {
-      const showBadge = Boolean(slide.mediaBadge) && mediaVisible;
-      mediaBadgeEl.hidden = !showBadge;
-      mediaBadgeEl.classList.toggle("is-visible", showBadge);
     }
 
     if (openVideoEl) {
