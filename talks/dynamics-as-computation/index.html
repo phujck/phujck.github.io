@@ -85,12 +85,12 @@
         <span class="section-label">Talk</span>
         <h2 class="section-title">Overview</h2>
         <p class="talk-deck-summary">
-          The talk starts from the tension between smooth dynamical evolution and discrete computation, then builds through reservoir
-          dynamics, Koopman and KvN operator pictures, quantum signatures such as phase and quasiprobability, and finally optimisation
-          problems encoded into Hamiltonian ground states.
+          The talk opens with a concrete neuromorphic motivation, then moves from the tension between smooth dynamical evolution and
+          discrete computation through reservoir dynamics, Koopman and KvN operator pictures, quantum signatures such as phase and
+          quasiprobability, and finally optimisation problems encoded into Hamiltonian ground states.
         </p>
         <div class="talk-deck-meta">
-          <span>18 slides</span>
+          <span>19 slides</span>
           <span>Reservoirs</span>
           <span>Quantum structure</span>
           <span>Ground states</span>
@@ -101,7 +101,7 @@
         <aside class="talks-deck-sidebar" aria-label="Slide navigation">
           <div class="deck-sidebar-head">
             <span class="deck-kicker">Slide rail</span>
-            <span class="deck-counter" data-deck-counter>01 / 18</span>
+            <span class="deck-counter" data-deck-counter>01 / 19</span>
           </div>
           <div class="deck-rail" data-deck-rail></div>
         </aside>
@@ -115,7 +115,7 @@
               <button type="button" class="deck-link-button deck-link-button-accent" data-deck-fullscreen>Present mode</button>
               <a class="deck-link-button" href="/talks.html">All talks</a>
               <a class="deck-link-button" href="/physics.html#talks">Physics page</a>
-              <a class="deck-link-button" data-deck-open-video href="#" target="_blank" rel="noopener">Open current video</a>
+              <a class="deck-link-button" data-deck-open-video href="#" target="_blank" rel="noopener">Open current media</a>
             </div>
           </div>
 
@@ -126,7 +126,7 @@
                 <h2 data-deck-title>Dynamics as Computation</h2>
                 <ul class="deck-bullets" data-deck-bullets></ul>
                 <div class="deck-slide-notes">
-                  <span data-deck-counter>01 / 18</span>
+                  <span data-deck-counter>01 / 19</span>
                 </div>
               </div>
 
@@ -135,6 +135,8 @@
                   <video class="deck-video" data-deck-video muted playsinline preload="metadata" poster="">
                     <source data-deck-source src="" type="video/mp4">
                   </video>
+                  <img class="deck-image" data-deck-image alt="" hidden>
+                  <div class="deck-media-badge" data-deck-media-badge hidden></div>
                   <button type="button" class="deck-replay-button" data-deck-replay aria-label="Replay animation">Replay</button>
                 </div>
               </div>
@@ -171,6 +173,24 @@
 
   <script id="talk-deck-data" type="application/json">
   [
+    {
+      "slug": "motivation-finn",
+      "section": "Motivation",
+      "title": "A Neuromorphic Computer I Recently Acquired",
+      "bullets": [
+        "Launch configuration: more than 100 billion neurons already installed.",
+        "Power draw: the newborn brain can consume around 60% of the body's daily energy budget.",
+        "Online learning rate: more than 1 million new neural connections can form every second in early life.",
+        "Primary I/O channels currently favour milk, touch, voices, and very loud fault reporting."
+      ],
+      "image": "/assets/talks/dynamics-as-computation/images/01_finn.jpg",
+      "imageAlt": "Finn sleeping in a hospital cot with a bright knitted hat and a copy of Schrodinger's What is Life?",
+      "mediaBadge": "Finn",
+      "mediaPlaceholder": "Identity withheld pending final reveal",
+      "revealBullets": true,
+      "revealMediaOnLastStep": true,
+      "caption": "A freshly deployed wetware computer"
+    },
     {
       "slug": "dynamics-as-computation",
       "section": "Opening",

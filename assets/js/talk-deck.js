@@ -28,8 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const counterEls = deckRoot.querySelectorAll("[data-deck-counter]");
   const progressEl = deckRoot.querySelector("[data-deck-progress]");
   const videoEl = deckRoot.querySelector("[data-deck-video]");
+  const imageEl = deckRoot.querySelector("[data-deck-image]");
   const sourceEl = deckRoot.querySelector("[data-deck-source]");
   const captionEl = deckRoot.querySelector("[data-deck-caption]");
+  const mediaBadgeEl = deckRoot.querySelector("[data-deck-media-badge]");
   const replayButton = deckRoot.querySelector("[data-deck-replay]");
   const openVideoEl = deckRoot.querySelector("[data-deck-open-video]");
   const fullscreenButton = deckRoot.querySelector("[data-deck-fullscreen]");
@@ -39,12 +41,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const videoFrame = videoEl ? videoEl.closest(".deck-video-frame") : null;
 
   let currentIndex = 0;
+  let currentFragment = 0;
   const slideButtons = [];
 
   const formatCounter = (index) =>
     `${String(index + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
 
   const normaliseHash = (hash) => hash.replace(/^#/, "").trim();
+
+  const getFragmentCount = (slide) => {
+    let count = 0;
+    if (slide.revealBullets) {
+      count += slide.bullets.length;
+    }
+    if (slide.revealMediaOnLastStep) {
+      count += 1;
+    }
+    return count;
+  };
+
+  const getMediaHref = (slide) => slide.image || slide.video || "";
+
+  const isImageSlide = (slide) => Boolean(slide.image);
 
   const scrollButtonIntoView = (button) => {
     if (!button || typeof button.scrollIntoView !== "function") {
@@ -68,7 +86,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const stopVideo = () => {
+    if (!videoEl || !sourceEl) {
+      return;
+    }
+
+    videoEl.pause();
+    videoEl.loop = false;
+    videoEl.currentTime = 0;
+    sourceEl.removeAttribute("src");
+    videoEl.removeAttribute("poster");
+    setReplayVisible(false);
+    videoEl.load();
+  };
+
   const setVideoSource = (slide) => {
+    if (!videoEl || !sourceEl) {
+      return;
+    }
+
     videoEl.pause();
     videoEl.loop = false;
     sourceEl.src = slide.video;
@@ -83,13 +119,142 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const renderBullets = (slide) => {
+  const buildBullets = (slide) => {
     bulletsEl.innerHTML = "";
     slide.bullets.forEach((bullet) => {
       const li = document.createElement("li");
       li.textContent = bullet;
       bulletsEl.appendChild(li);
     });
+    bulletsEl.classList.toggle("has-fragments", Boolean(slide.revealBullets));
+  };
+
+  const updateBullets = (slide) => {
+    const visibleCount = slide.revealBullets ? currentFragment : slide.bullets.length;
+    const bulletEls = bulletsEl.querySelectorAll("li");
+
+    bulletsEl.classList.toggle("has-fragments", Boolean(slide.revealBullets));
+
+    bulletEls.forEach((li, index) => {
+      const shouldShow = !slide.revealBullets || index < visibleCount;
+      li.hidden = Boolean(slide.revealBullets) && !shouldShow;
+      li.classList.toggle("is-visible", shouldShow);
+      li.setAttribute("aria-hidden", shouldShow ? "false" : "true");
+    });
+  };
+
+  const primeMedia = (slide) => {
+    const mediaHref = getMediaHref(slide);
+    const imageSlide = isImageSlide(slide);
+
+    if (videoFrame) {
+      videoFrame.classList.toggle("is-image", imageSlide);
+      videoFrame.classList.remove("is-media-hidden");
+      videoFrame.dataset.placeholder = "";
+    }
+
+    if (imageEl) {
+      imageEl.hidden = true;
+      imageEl.classList.remove("is-visible");
+      imageEl.removeAttribute("src");
+      imageEl.alt = "";
+    }
+
+    if (mediaBadgeEl) {
+      mediaBadgeEl.hidden = true;
+      mediaBadgeEl.classList.remove("is-visible");
+      mediaBadgeEl.textContent = slide.mediaBadge || "";
+    }
+
+    if (imageSlide) {
+      stopVideo();
+      if (videoEl) {
+        videoEl.hidden = true;
+      }
+
+      if (imageEl && mediaHref) {
+        imageEl.src = mediaHref;
+        imageEl.alt = slide.imageAlt || slide.title;
+      }
+    } else {
+      if (videoEl) {
+        videoEl.hidden = false;
+      }
+      setVideoSource(slide);
+    }
+  };
+
+  const shouldShowMedia = (slide) => {
+    if (!getMediaHref(slide)) {
+      return false;
+    }
+
+    if (!slide.revealMediaOnLastStep) {
+      return true;
+    }
+
+    const bulletSteps = slide.revealBullets ? slide.bullets.length : 0;
+    return currentFragment > bulletSteps;
+  };
+
+  const updateMedia = (slide) => {
+    const mediaHref = getMediaHref(slide);
+    const mediaVisible = shouldShowMedia(slide);
+    const imageSlide = isImageSlide(slide);
+
+    if (videoFrame) {
+      videoFrame.classList.toggle("is-media-hidden", !mediaVisible);
+      videoFrame.dataset.placeholder = !mediaVisible ? slide.mediaPlaceholder || "" : "";
+    }
+
+    if (imageSlide) {
+      if (imageEl) {
+        imageEl.hidden = !mediaVisible;
+        imageEl.classList.toggle("is-visible", mediaVisible);
+      }
+    } else if (videoEl) {
+      videoEl.hidden = !mediaVisible;
+      if (!mediaVisible) {
+        videoEl.pause();
+        setReplayVisible(false);
+      }
+    }
+
+    if (mediaBadgeEl) {
+      const showBadge = Boolean(slide.mediaBadge) && mediaVisible;
+      mediaBadgeEl.hidden = !showBadge;
+      mediaBadgeEl.classList.toggle("is-visible", showBadge);
+    }
+
+    if (openVideoEl) {
+      const hasMedia = Boolean(mediaHref);
+      openVideoEl.hidden = !hasMedia || !mediaVisible;
+      openVideoEl.href = hasMedia ? mediaHref : "#";
+      openVideoEl.textContent = imageSlide ? "Open current image" : "Open current video";
+    }
+  };
+
+  const updateNavButtons = (slide) => {
+    const lastFragment = getFragmentCount(slide);
+    const atStart = currentIndex === 0 && currentFragment === 0;
+    const atEnd = currentIndex === slides.length - 1 && currentFragment >= lastFragment;
+
+    prevButton.disabled = atStart;
+    nextButton.disabled = atEnd;
+  };
+
+  const renderCurrentState = () => {
+    const slide = slides[currentIndex];
+    updateBullets(slide);
+    updateMedia(slide);
+    updateNavButtons(slide);
+  };
+
+  const setFragment = (requestedFragment) => {
+    const slide = slides[currentIndex];
+    const maxFragment = getFragmentCount(slide);
+    currentFragment = Math.max(0, Math.min(maxFragment, requestedFragment));
+    renderCurrentState();
   };
 
   const updateFullscreenButton = () => {
@@ -102,15 +267,16 @@ document.addEventListener("DOMContentLoaded", () => {
     fullscreenButton.setAttribute("aria-pressed", isFullscreen ? "true" : "false");
   };
 
-  const setSlide = (requestedIndex, { updateHash = true } = {}) => {
+  const setSlide = (requestedIndex, { updateHash = true, fragment = 0 } = {}) => {
     const nextIndex = Math.max(0, Math.min(slides.length - 1, requestedIndex));
     currentIndex = nextIndex;
 
     const slide = slides[currentIndex];
+    currentFragment = Math.max(0, Math.min(getFragmentCount(slide), fragment));
 
     sectionEl.textContent = slide.section;
     titleEl.textContent = slide.title;
-    renderBullets(slide);
+    buildBullets(slide);
 
     counterEls.forEach((el) => {
       el.textContent = formatCounter(currentIndex);
@@ -124,23 +290,43 @@ document.addEventListener("DOMContentLoaded", () => {
       captionEl.textContent = slide.caption || "Autoplaying muted video loop";
     }
 
-    if (openVideoEl) {
-      openVideoEl.href = slide.video;
-    }
-
     slideButtons.forEach((button, index) => {
       button.classList.toggle("active", index === currentIndex);
       button.setAttribute("aria-current", index === currentIndex ? "true" : "false");
     });
 
-    prevButton.disabled = currentIndex === 0;
-    nextButton.disabled = currentIndex === slides.length - 1;
-
-    setVideoSource(slide);
+    primeMedia(slide);
+    renderCurrentState();
     scrollButtonIntoView(slideButtons[currentIndex]);
 
     if (updateHash) {
       history.replaceState(null, "", `#${slide.slug}`);
+    }
+  };
+
+  const advanceDeck = () => {
+    const slide = slides[currentIndex];
+    const lastFragment = getFragmentCount(slide);
+
+    if (currentFragment < lastFragment) {
+      setFragment(currentFragment + 1);
+      return;
+    }
+
+    if (currentIndex < slides.length - 1) {
+      setSlide(currentIndex + 1);
+    }
+  };
+
+  const rewindDeck = () => {
+    if (currentFragment > 0) {
+      setFragment(currentFragment - 1);
+      return;
+    }
+
+    if (currentIndex > 0) {
+      const previousIndex = currentIndex - 1;
+      setSlide(previousIndex, { fragment: getFragmentCount(slides[previousIndex]) });
     }
   };
 
@@ -160,8 +346,8 @@ document.addEventListener("DOMContentLoaded", () => {
     slideButtons.push(button);
   });
 
-  prevButton.addEventListener("click", () => setSlide(currentIndex - 1));
-  nextButton.addEventListener("click", () => setSlide(currentIndex + 1));
+  prevButton.addEventListener("click", rewindDeck);
+  nextButton.addEventListener("click", advanceDeck);
 
   document.addEventListener("keydown", (event) => {
     if (event.defaultPrevented) {
@@ -178,13 +364,13 @@ document.addEventListener("DOMContentLoaded", () => {
       case "ArrowLeft":
       case "PageUp":
         event.preventDefault();
-        setSlide(currentIndex - 1);
+        rewindDeck();
         break;
       case "ArrowRight":
       case "PageDown":
       case " ":
         event.preventDefault();
-        setSlide(currentIndex + 1);
+        advanceDeck();
         break;
       case "Home":
         event.preventDefault();
@@ -192,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
         break;
       case "End":
         event.preventDefault();
-        setSlide(slides.length - 1);
+        setSlide(slides.length - 1, { fragment: getFragmentCount(slides[slides.length - 1]) });
         break;
       default:
         break;
