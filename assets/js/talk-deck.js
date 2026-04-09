@@ -436,6 +436,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   videoEl.addEventListener("ended", () => {
+    const slide = slides[currentIndex];
+    if (slide.endPoster) {
+      videoEl.poster = slide.endPoster;
+    }
     setReplayVisible(true);
   });
 
