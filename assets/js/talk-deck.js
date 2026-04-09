@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentIndex = 0;
   let currentFragment = 0;
+  let videoStarted = false;
   const slideButtons = [];
 
   const formatCounter = (index) =>
@@ -62,6 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const getMediaHref = (slide) => slide.image || slide.video || "";
 
   const isImageSlide = (slide) => Boolean(slide.image);
+
+  const isVideoSlide = (slide) => Boolean(slide && slide.video && !slide.image);
 
   const scrollButtonIntoView = (button) => {
     if (!button || typeof button.scrollIntoView !== "function") {
@@ -90,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    videoStarted = false;
     videoEl.pause();
     videoEl.loop = false;
     videoEl.currentTime = 0;
@@ -104,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    videoStarted = false;
     videoEl.pause();
     videoEl.loop = false;
     sourceEl.src = slide.video;
@@ -111,11 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
     videoEl.currentTime = 0;
     setReplayVisible(false);
     videoEl.load();
-
-    const playPromise = videoEl.play();
-    if (playPromise && typeof playPromise.catch === "function") {
-      playPromise.catch(() => {});
-    }
   };
 
   const buildBullets = (slide) => {
@@ -190,6 +190,34 @@ document.addEventListener("DOMContentLoaded", () => {
     return currentFragment > bulletSteps;
   };
 
+  const canStartVideoPlayback = (slide) => {
+    if (!videoEl || !isVideoSlide(slide)) {
+      return false;
+    }
+
+    if (!shouldShowMedia(slide)) {
+      return false;
+    }
+
+    return !videoStarted;
+  };
+
+  const startVideoPlayback = () => {
+    if (!videoEl) {
+      return;
+    }
+
+    if (videoEl.ended) {
+      videoEl.currentTime = 0;
+    }
+
+    setReplayVisible(false);
+    const playPromise = videoEl.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {});
+    }
+  };
+
   const updateMedia = (slide) => {
     const mediaHref = getMediaHref(slide);
     const mediaVisible = shouldShowMedia(slide);
@@ -224,7 +252,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateNavButtons = (slide) => {
     const lastFragment = getFragmentCount(slide);
     const atStart = currentIndex === 0 && currentFragment === 0;
-    const atEnd = currentIndex === slides.length - 1 && currentFragment >= lastFragment;
+    const atEnd =
+      currentIndex === slides.length - 1 &&
+      currentFragment >= lastFragment &&
+      !canStartVideoPlayback(slide);
 
     prevButton.disabled = atStart;
     nextButton.disabled = atEnd;
@@ -260,6 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const slide = slides[currentIndex];
     currentFragment = Math.max(0, Math.min(getFragmentCount(slide), fragment));
+    videoStarted = false;
 
     sectionEl.textContent = slide.section;
     titleEl.textContent = slide.title;
@@ -297,6 +329,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (currentFragment < lastFragment) {
       setFragment(currentFragment + 1);
+      return;
+    }
+
+    if (canStartVideoPlayback(slide)) {
+      startVideoPlayback();
       return;
     }
 
@@ -386,18 +423,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (videoEl.paused) {
-      setReplayVisible(false);
-      const playPromise = videoEl.play();
-      if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {});
-      }
+      startVideoPlayback();
     } else {
       videoEl.pause();
     }
   });
 
   videoEl.addEventListener("play", () => {
+    videoStarted = true;
     setReplayVisible(false);
+    updateNavButtons(slides[currentIndex]);
   });
 
   videoEl.addEventListener("ended", () => {
@@ -411,11 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       event.stopPropagation();
       videoEl.currentTime = 0;
-      setReplayVisible(false);
-      const playPromise = videoEl.play();
-      if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {});
-      }
+      startVideoPlayback();
     });
   }
 

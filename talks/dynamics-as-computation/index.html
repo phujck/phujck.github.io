@@ -87,10 +87,10 @@
         <p class="talk-deck-summary">
           The talk opens on the title question, then moves into a concrete neuromorphic motivation before building through the tension
           between smooth dynamical evolution and discrete computation, reservoir dynamics, Koopman and KvN operator pictures, quantum
-          signatures such as phase and quasiprobability, and finally optimisation problems encoded into Hamiltonian ground states.
+          signatures such as quasiprobability, and finally optimisation problems encoded into Hamiltonian ground states.
         </p>
         <div class="talk-deck-meta">
-          <span>19 slides</span>
+          <span>18 slides</span>
           <span>Reservoirs</span>
           <span>Quantum structure</span>
           <span>Ground states</span>
@@ -101,7 +101,7 @@
         <aside class="talks-deck-sidebar" aria-label="Slide navigation">
           <div class="deck-sidebar-head">
             <span class="deck-kicker">Slide rail</span>
-            <span class="deck-counter" data-deck-counter>01 / 19</span>
+            <span class="deck-counter" data-deck-counter>01 / 18</span>
           </div>
           <div class="deck-rail" data-deck-rail></div>
         </aside>
@@ -126,7 +126,7 @@
                 <h2 data-deck-title>Dynamics as Computation</h2>
                 <ul class="deck-bullets" data-deck-bullets></ul>
                 <div class="deck-slide-notes">
-                  <span data-deck-counter>01 / 19</span>
+                  <span data-deck-counter>01 / 18</span>
                 </div>
               </div>
 
@@ -218,13 +218,13 @@
       "section": "Opening",
       "title": "The Algebraic Paradigm",
       "bullets": [
-        "Modern statistical learning reduces to a linear map on a rich feature representation: y_hat = W phi(x).",
-        "The feature map phi carries all the structure; the readout W is solved by linear algebra alone.",
-        "This framework dominates machine intelligence, but says nothing about how phi is generated."
+        "Modern learning is often just a linear readout acting on a rich representation: y_hat = W phi(x).",
+        "Once phi(x) is available, fitting W is basically linear algebra.",
+        "The real question is how a physical system can generate phi(x) in the first place."
       ],
       "video": "/assets/talks/dynamics-as-computation/videos/03_s03_algebraic_paradigm.mp4",
       "poster": "/assets/talks/dynamics-as-computation/posters/03_s03_algebraic_paradigm.png",
-      "caption": "The algebraic core of statistical learning, and the question dynamics will answer"
+      "caption": "Feature map, linear readout, and the question of where representation comes from"
     },
     {
       "slug": "nonlinearity-versus-dimension",
@@ -238,19 +238,6 @@
       "video": "/assets/talks/dynamics-as-computation/videos/03_s02_dynamics_question.mp4",
       "poster": "/assets/talks/dynamics-as-computation/posters/03_s02_dynamics_question.png",
       "caption": "Why representation choice matters"
-    },
-    {
-      "slug": "linearising-dynamics",
-      "section": "Lifts",
-      "title": "Linearising Dynamics",
-      "bullets": [
-        "Lifting nonlinear state dynamics to an observable basis can make the evolution exactly linear — the Carleman embedding.",
-        "Every classical transform (Fourier, Laplace) implicitly chooses a dynamical basis whose elements evolve as eigenfunctions.",
-        "The ideal basis consists of Koopman eigenfunctions: φ(x(t)) = e^{λt} φ(x(0))."
-      ],
-      "video": "/assets/talks/dynamics-as-computation/videos/05_s05_linearising_dynamics.mp4",
-      "poster": "/assets/talks/dynamics-as-computation/posters/05_s05_linearising_dynamics.png",
-      "caption": "Nonlinear phase portrait lifted into a 3D observable space where dynamics obeys a linear matrix equation"
     },
     {
       "slug": "the-central-question",
@@ -277,6 +264,19 @@
       "video": "/assets/talks/dynamics-as-computation/videos/07_s06_reservoir_computation.mp4",
       "poster": "/assets/talks/dynamics-as-computation/posters/07_s06_reservoir_computation.png",
       "caption": "A dynamical system pressed into computational service"
+    },
+    {
+      "slug": "linearising-dynamics",
+      "section": "Lifts",
+      "title": "Linearising Dynamics",
+      "bullets": [
+        "A nonlinear system can become linear after lifting state into the right observable coordinates.",
+        "In this toy example, Phi = (x, y, x^2) closes exactly, so d/dt Phi = A Phi.",
+        "Koopman eigenfunctions are the ideal limit: each observable evolves by a simple exponential."
+      ],
+      "video": "/assets/talks/dynamics-as-computation/videos/05_s05_linearising_dynamics.mp4",
+      "poster": "/assets/talks/dynamics-as-computation/posters/05_s05_linearising_dynamics.png",
+      "caption": "A nonlinear phase portrait becomes linear after the right observable lift"
     },
     {
       "slug": "koopman-linearisation",
@@ -355,19 +355,6 @@
       "video": "/assets/talks/dynamics-as-computation/videos/13_s11_classical_vs_quantum.mp4",
       "poster": "/assets/talks/dynamics-as-computation/posters/13_s11_classical_vs_quantum.png",
       "caption": "Classical and quantum transients compared"
-    },
-    {
-      "slug": "phase-as-computational-resource",
-      "section": "Quantum",
-      "title": "Phase as Computational Resource",
-      "bullets": [
-        "Wrapped phase encodes history in a way amplitudes alone cannot.",
-        "Interference sharpens some distinctions while washing others out.",
-        "Quantum processing changes not just the state, but the geometry of readout."
-      ],
-      "video": "/assets/talks/dynamics-as-computation/videos/14_s11_phase_wrapping.mp4",
-      "poster": "/assets/talks/dynamics-as-computation/posters/14_s11_phase_wrapping.png",
-      "caption": "Phase geometry becomes part of the computation"
     },
     {
       "slug": "quasiprobability-and-the-classical-limit",
