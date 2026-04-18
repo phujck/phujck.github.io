@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Synthetics — Residency Pitch</title>
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="deck-stage.js"></script>
+<script type="application/json" id="speaker-notes">
+[
+"A heat engine was in serious industrial use for about a century before anyone had a theory of what it was doing. Before Carnot and Clausius, the engine was a useful mystery — you could build one, and if you were careful and lucky, it worked. After the theory, refrigeration, systematic engine design, and whole industries nobody had been able to imagine became routine. The theory did not invent the engine; it made the engine legible, and then it made everything downstream of the engine possible.",
+"My claim is that we are today in an exactly analogous situation with intelligence. Intelligence engines exist and work — biological brains, deep networks, the machinery of modern AI. But a principled physical theory of what they are, what they cost, and what any given substrate can efficiently do, does not. We are the mechanics before the physicists. Synthetics is my attempt at that theory.",
+"Two foundational pre-preprints already lay the static mathematics. The Cost of Complexity derives, from three sparse assumptions, the thermodynamic price of any embodied representation — and identifies a sharp critical ceiling where the partition function becomes the Riemann zeta function. Equilibrium from the Inside Out gives an exact algebraic closure theorem — a criterion for when a subsystem admits a compact local effective description — proven for a genuinely non-commuting case. Both are currently static. The residency extends them into dynamics, connects them formally, and applies them to neuromorphic computing.",
+"Here is the unifying move. Biological cortex, open quantum systems, and neuromorphic hardware look nothing like each other as physical objects, but they are all dynamical systems, and dynamical systems theory lets us write them all down as the same linear evolution over a lifted observable space — one operator algebra for all three. That shared representation is the glue. And the moment you insist these dynamics be physically embodied, two constraints fall out whether you want them to or not — a thermodynamic cost, and an algebraic closure criterion. Design principles for efficient intelligence are just what those constraints look like when you take them seriously. That is the shape of Synthetics.",
+"Alongside the mathematics, public writing is treated as part of the work rather than a separate communications activity. The argument is simple: a synthesis which cannot be stated across the fields it unifies has not unified them. Explicability is a research deliverable, not a chore. Little Learning Machine and the FQxI essay are where that work is already happening — second place out of several hundred entrants for an essay on whether life comes from outer Hilbert space.",
+"A word on who's doing this. I'm a theoretical physicist — PhD King's, postdoc at Tulane — sitting at the intersection of the three fields Synthetics wants to unify: quantum theory, thermodynamics, and machine intelligence. Twenty-five-plus papers in quantum control, open systems, reservoir computing, superoscillations, Koopman methods. The website holds the full catalogue — the pre-preprints at slash physics, the essays on Substack, and the broader writing at slash writing. Thank you."
+]
+</script>
+<style>
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-deep: #060912;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-glass: rgba(255, 255, 255, 0.06);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text-primary: #e8e6e3;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --accent: #c9a96e;
+  --accent-light: #dfc599;
+  --accent-dim: rgba(201, 169, 110, 0.15);
+  --link: #7eb8da;
+  --rose: #f43f5e;
+  --green: #10b981;
+  --blue: #7eb8da;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Outfit', var(--font-body);
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body { background:#000; }
+
+deck-stage section {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Shared grain + ambient glow on every slide */
+deck-stage section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+deck-stage section::after {
+  content: '';
+  position: absolute;
+  top: -30%; left: -20%;
+  width: 70%; height: 90%;
+  background: radial-gradient(ellipse, rgba(201,169,110,0.045) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide-inner {
+  position: absolute; inset: 0;
+  padding: 100px 120px 80px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Shared atomic components ───────────────────────────────────── */
+.kicker {
+  display: inline-flex; align-items: center; gap: 14px;
+  font-family: var(--font-body);
+  font-size: 24px; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent);
+}
+.kicker::before {
+  content:''; display:block; width:48px; height:1px; background: var(--accent);
+}
+
+.eyebrow-num {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+.title-xxl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 120px;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--text-primary);
+}
+.title-xl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 84px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+.title-lg {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 64px;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+}
+.accent { color: var(--accent); }
+
+.body-lg {
+  font-family: var(--font-body);
+  font-size: 36px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.body-md {
+  font-size: 28px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.body-sm {
+  font-size: 24px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.footer-mark {
+  position: absolute;
+  bottom: 44px; left: 120px;
+  display: flex; align-items: center; gap: 20px;
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-muted);
+  z-index: 2;
+}
+.footer-mark .dot { color: var(--accent); }
+.footer-mark .meta {
+  font-family: var(--font-body);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin-left: 20px;
+}
+.slide-counter {
+  position: absolute;
+  bottom: 44px; right: 120px;
+  font-family: var(--font-mono);
+  font-size: 24px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  z-index: 2;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SLIDE 1 — Carnot title
+   ══════════════════════════════════════════════════════════════════ */
+.s1 .slide-inner {
+  justify-content: center;
+  padding: 120px 160px 160px;
+}
+.s1 .kicker { margin-bottom: 64px; position: relative; z-index: 3; }
+.s1 .carnot-stat {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: end;
+  margin-top: 60px;
+}
+.s1 .stat-block .number {
+  font-family: var(--font-display);
+  font-size: 180px;
+  font-weight: 800;
+  line-height: 0.9;
+  color: var(--accent);
+  letter-spacing: -0.04em;
+  margin-bottom: 14px;
+}
+.s1 .stat-block .label {
+  font-size: 26px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  max-width: 520px;
+}
+.s1 .stat-block.right .number {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 56px !important;
+  line-height: 1.15 !important;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.s1 .era-divider {
+  position: absolute;
+  top: 44px; right: 120px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 24px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  z-index: 2;
+  line-height: 1.5;
+}
+.s1 .era-divider strong {
+  display: block; color: var(--accent);
+  font-weight: 500;
+  margin-top: 6px;
+  letter-spacing: 0.18em;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SLIDE 2 — We are here again
+   ══════════════════════════════════════════════════════════════════ */
+.s2 .slide-inner {
+  justify-content: center;
+}
+.s2 .kicker { margin-bottom: 40px; }
+.s2 .twin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin-top: 36px;
+}
+.s2 .twin-col {
+  padding: 44px 48px;
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  background: var(--bg-card);
+  min-height: 460px;
+}
+.s2 .twin-col.exists { border-color: rgba(201,169,110,0.3); }
+.s2 .twin-label {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 28px;
+}
+.s2 .twin-col.missing .twin-label { color: var(--rose); }
+.s2 .twin-h {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin-bottom: 26px;
+  color: var(--text-primary);
+}
+.s2 .twin-p {
+  font-size: 24px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.s2 .twin-list {
+  list-style: none;
+  margin-top: 26px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.s2 .twin-list li {
+  font-size: 24px;
+  color: var(--text-secondary);
+  padding-left: 22px;
+  position: relative;
+  line-height: 1.4;
+}
+.s2 .twin-list li::before {
+  content: ''; position: absolute; left: 0; top: 13px;
+  width: 10px; height: 1px; background: var(--text-muted);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SLIDE 3 — Foundational math (browser window + 2 papers)
+   ══════════════════════════════════════════════════════════════════ */
+.s3 .slide-inner { padding: 60px 120px 70px; }
+.s3 .kicker { margin-bottom: 16px; }
+.s3 .title-lg { margin-bottom: 12px; font-size: 50px; }
+.s3 .subtitle {
+  font-size: 26px;
+  color: var(--text-secondary);
+  max-width: 1400px;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+.s3 .window {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.6);
+}
+.s3 .window-bar {
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border-glass);
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.s3 .window-dots { display:flex; gap:10px; }
+.s3 .window-dots span {
+  width:16px; height:16px; border-radius:50%;
+  background: rgba(255,255,255,0.12);
+  font-size: 24px;
+}
+.s3 .window-url {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 24px;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.s3 .window-url strong { color: var(--text-secondary); font-weight: 500; }
+.s3 .window-body {
+  padding: 18px 28px 22px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.s3 .section-label {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 24px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 16px;
+}
+.s3 .section-label::before {
+  content:''; display:block; width:24px; height:1px; background: var(--accent);
+}
+.s3 .win-title {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+.s3 .win-sub {
+  font-size: 22px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  max-width: 1100px;
+  line-height: 1.45;
+}
+.s3 .paper-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  flex: 1;
+}
+.s3 .paper { padding: 20px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.s3 .paper .highlight-ring {
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  pointer-events: none;
+  opacity: 0.55;
+}
+.s3 .paper-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+.s3 .paper-author {
+  font-size: 24px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.s3 .paper-author .me { color: var(--accent); font-weight: 500; }
+.s3 .paper-journal {
+  font-size: 24px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+.s3 .paper-blurb {
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  flex: 1;
+}
+.s3 .paper-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 22px;
+  font-family: var(--font-mono);
+  color: var(--link);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 6px;
+  align-self: flex-start;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SLIDE 4 — Dynamical glue + embodiment constraints
+   ══════════════════════════════════════════════════════════════════ */
+.s4 .slide-inner { padding: 60px 100px 120px; }
+.s4 .kicker { margin-bottom: 14px; }
+.s4 .title-lg { font-size: 54px; margin-bottom: 12px; }
+.s4 .subtitle {
+  font-size: 26px;
+  color: var(--text-secondary);
+  max-width: 1500px;
+  line-height: 1.45;
+  margin-bottom: 32px;
+}
+.s4 .stack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 0;
+}
+
+/* Row 1 — three substrate panels */
+.s4 .substrates {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 28px;
+}
+.s4 .sub-card {
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  background: var(--bg-card);
+  padding: 16px 22px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 168px;
+}
+.s4 .sub-label {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.s4 .sub-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.s4 .sub-trace {
+  flex: 1;
+  display: block;
+  width: 100%;
+}
+.s4 .sub-foot {
+  font-size: 22px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Row 2 — converging arrows + central bar */
+.s4 .converge {
+  position: relative;
+  height: 56px;
+}
+.s4 .converge svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+.s4 .glue-bar {
+  border: 1px solid rgba(201,169,110,0.4);
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(201,169,110,0.10), rgba(201,169,110,0.04));
+  padding: 22px 32px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.s4 .glue-label {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.s4 .glue-expr {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+.s4 .glue-expr .op { color: var(--accent); }
+.s4 .glue-prose {
+  font-size: 24px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  border-left: 1px solid rgba(201,169,110,0.3);
+  padding-left: 24px;
+  margin-left: 6px;
+  flex: 1;
+}
+
+/* Row 3 — embodiment constraints */
+.s4 .diverge {
+  position: relative;
+  height: 44px;
+}
+.s4 .diverge svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.s4 .constraints {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.s4 .constraint {
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  background: var(--bg-card);
+  padding: 16px 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.s4 .constraint .c-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.s4 .c-tag {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.s4 .c-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.s4 .c-desc {
+  font-size: 22px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+.s4 .c-desc strong { color: var(--accent); font-weight: 500; }
+
+/* ══════════════════════════════════════════════════════════════════
+   SLIDE 5 — Public writing
+   ══════════════════════════════════════════════════════════════════ */
+.s5 .kicker { margin-bottom: 28px; }
+.s5 .title-lg { margin-bottom: 24px; max-width: 1400px; }
+.s5 .lede {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  max-width: 1300px;
+  font-style: italic;
+  margin-bottom: 48px;
+}
+.s5 .lede strong { color: var(--accent); font-style: normal; font-weight: 500; }
+.s5 .writing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: auto;
+}
+.s5 .writing-card {
+  padding: 40px 44px;
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  min-height: 380px;
+  position: relative;
+  overflow: hidden;
+}
+.s5 .writing-card::before {
+  content: '';
+  position: absolute;
+  top: -40%; right: -20%;
+  width: 60%; height: 80%;
+  background: radial-gradient(ellipse, rgba(201,169,110,0.07), transparent 70%);
+  pointer-events: none;
+}
+.s5 .wc-label {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  position: relative;
+}
+.s5 .wc-title {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 18px;
+  position: relative;
+}
+.s5 .wc-blurb {
+  font-size: 22px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  position: relative;
+  margin-bottom: 24px;
+}
+.s5 .wc-meta {
+  font-size: 18px;
+  color: var(--text-muted);
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-glass);
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  position: relative;
+}
+.s5 .wc-meta strong { color: var(--accent); font-weight: 500; }
+
+/* ══════════════════════════════════════════════════════════════════
+   SLIDE 6 — About + URLs
+   ══════════════════════════════════════════════════════════════════ */
+.s6 .slide-inner {
+  justify-content: center;
+  padding: 80px 100px 80px;
+}
+.s6 .kicker { margin-bottom: 22px; }
+.s6 .about-row {
+  display: grid;
+  grid-template-columns: 520px 1fr;
+  gap: 80px;
+  align-items: center;
+  margin-bottom: 60px;
+}
+.s6 .portrait-wrap {
+  position: relative;
+  padding: 20px;
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  background: radial-gradient(circle at 30% 25%, rgba(201,169,110,0.08), transparent 60%);
+}
+.s6 .portrait-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: grayscale(0.15);
+}
+.s6 .portrait-cap {
+  position: absolute;
+  left: 28px; bottom: -14px;
+  background: var(--bg-primary);
+  padding: 4px 14px;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.s6 .about-name {
+  font-family: var(--font-display);
+  font-size: 84px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+.s6 .about-name .accent { color: var(--accent); }
+.s6 .about-role {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  font-style: italic;
+}
+.s6 .about-bio {
+  font-size: 24px;
+  color: var(--text-primary);
+  line-height: 1.55;
+  max-width: 900px;
+  margin-bottom: 22px;
+}
+.s6 .about-bio em { color: var(--accent); font-style: normal; }
+.s6 .about-meta {
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+.s6 .about-meta span strong { color: var(--text-primary); font-weight: 500; }
+.s6 .urls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--border-glass);
+}
+.s6 .url-cell {
+  padding: 24px 32px 22px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-right: 1px solid var(--border-glass);
+}
+.s6 .url-cell:last-child { border-right: none; padding-right: 0; }
+.s6 .url-cell:first-child { }
+.s6 .url-tag {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.s6 .url-link {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.005em;
+}
+.s6 .url-link .accent { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+<!-- ═══ SLIDE 1 ═══ Carnot title ═══════════════════════════════════ -->
+<section class="s1" data-label="Carnot">
+  <div class="era-divider">
+    c.&nbsp;1712 — 1824
+    <strong>Engine before theory</strong>
+  </div>
+  <div class="slide-inner">
+    <div class="kicker">Synthetics — Residency Pitch</div>
+    <h1 class="title-xxl" style="margin-top:18px;">
+      The engine ran<br>
+      for a <span class="accent">century</span><br>
+      before the theory.
+    </h1>
+    <div class="carnot-stat">
+      <div class="stat-block">
+        <div class="number">~112</div>
+        <div class="label">years between Newcomen's atmospheric engine and Carnot's <em>Réflexions</em>.</div>
+      </div>
+      <div class="stat-block right">
+        <div class="number">useful mystery<br>→ routine industry</div>
+        <div class="label" style="max-width:none; margin-top:18px;">Refrigeration, systematic engine design, entire industries that nobody had been able to imagine.</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-mark">Synthetics<span class="dot">.</span> <span class="meta">Gerard McCaul — Astera residency application</span></div>
+  <div class="slide-counter">01 / 06</div>
+</section>
+
+<!-- ═══ SLIDE 2 ═══ We are here again ═══════════════════════════════ -->
+<section class="s2" data-label="We are here again">
+  <div class="slide-inner">
+    <div class="kicker">The claim</div>
+    <h2 class="title-xl" style="margin-bottom:22px;">We are here again.</h2>
+    <p class="body-lg" style="max-width:1500px;">Intelligence engines exist and work.<br>A physical theory of them does not.</p>
+    <div class="twin">
+      <div class="twin-col exists">
+        <div class="twin-label">■ What exists</div>
+        <div class="twin-h">The engines.</div>
+        <p class="twin-p">Biological brains. Deep networks. Neuromorphic chips. We build them, operate them, and depend on them — at ruinous energetic cost.</p>
+        <ul class="twin-list">
+          <li>They work.</li>
+          <li>We have empirical scaling laws.</li>
+          <li>We do not know why they work.</li>
+        </ul>
+      </div>
+      <div class="twin-col missing">
+        <div class="twin-label">□ What is missing</div>
+        <div class="twin-h">A theory of them.</div>
+        <p class="twin-p">A principled account of what an intelligence <em>is</em>, what it <em>costs</em>, and what any given physical substrate can <em>efficiently do</em>.</p>
+        <ul class="twin-list">
+          <li>No Carnot bound.</li>
+          <li>No closure criterion.</li>
+          <li>No substrate-independent accounting.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-mark">Synthetics<span class="dot">.</span></div>
+  <div class="slide-counter">02 / 06</div>
+</section>
+
+<!-- ═══ SLIDE 3 ═══ Foundational math (browser window) ══════════════ -->
+<section class="s3" data-label="Foundational math">
+  <div class="slide-inner">
+    <div class="kicker">The foundations are already written</div>
+    <h2 class="title-lg">Two pre-preprints,<br>one static skeleton.</h2>
+    <p class="subtitle">The residency extends both into <strong style="color:var(--accent); font-weight:500;">dynamics</strong>, connects them formally, and applies them to <strong style="color:var(--accent); font-weight:500;">neuromorphic computing</strong>.</p>
+
+    <div class="window">
+      <div class="window-bar">
+        <div class="window-dots"><span></span><span></span><span></span></div>
+        <div class="window-url"><strong>gmccaul.co.uk</strong>/physics.html <span style="opacity:0.5;">#pre-preprints</span></div>
+      </div>
+      <div class="window-body">
+        <div class="section-label">— Drafts</div>
+        <div class="win-title">Pre-preprints</div>
+        <div class="win-sub">In-progress drafts of a foundational document for a broader program concerned with a physical theory of representations.</div>
+
+        <div class="paper-list">
+          <div class="paper">
+            <div class="highlight-ring"></div>
+            <div class="paper-title">The Cost of Complexity</div>
+            <div class="paper-author"><span class="me">G. M<sup>c</sup>Caul</span></div>
+            <div class="paper-journal">In-progress draft</div>
+            <div class="paper-blurb">Derives, from three sparse assumptions, the thermodynamic cost of any embodied representation — together with a sharp critical ceiling on any physical computation where the partition function becomes the Riemann zeta function.</div>
+            <div class="paper-pill">PDF →</div>
+          </div>
+          <div class="paper">
+            <div class="highlight-ring"></div>
+            <div class="paper-title">Equilibrium from the Inside Out</div>
+            <div class="paper-author"><span class="me">G. M<sup>c</sup>Caul</span></div>
+            <div class="paper-journal">Exact Hamiltonian of Mean Force · In-progress draft</div>
+            <div class="paper-blurb">An exact algebraic closure theorem: a criterion for when a subsystem of a larger physical system admits a compact local effective description — proved for a genuinely non-commuting case.</div>
+            <div class="paper-pill">PDF →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-counter" style="bottom:32px;">03 / 06</div>
+</section>
+
+<!-- ═══ SLIDE 4 ═══ Dynamical glue + embodiment constraints ═════════ -->
+<section class="s4" data-label="One dynamics">
+  <div class="slide-inner">
+    <div class="kicker">The unifying move</div>
+    <h2 class="title-lg">One dynamics, many substrates.</h2>
+    <p class="subtitle">Dynamical systems theory is the glue: biological, quantum, and neuromorphic learners are three physical realisations of the <strong style="color:var(--text-primary); font-weight:500;">same operator algebra</strong>. Embodiment then imposes constraints — and constraints are where design principles come from.</p>
+
+    <div class="stack">
+
+      <!-- Row 1: three substrates -->
+      <div class="substrates">
+        <div class="sub-card">
+          <div class="sub-label">— Biology</div>
+          <div class="sub-title">Spiking cortex</div>
+          <svg class="sub-trace" viewBox="0 0 400 80" preserveAspectRatio="none">
+            <line x1="0" y1="65" x2="400" y2="65" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+            <path d="M 0 65 L 40 65 L 44 20 L 48 65 L 90 65 L 94 18 L 98 65 L 140 65 L 144 22 L 148 65 L 200 65 L 204 15 L 208 65 L 260 65 L 264 24 L 268 65 L 310 65 L 314 20 L 318 65 L 380 65 L 400 65"
+                  fill="none" stroke="#10b981" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          </svg>
+          <div class="sub-foot">irregular spikes · sparse · cheap</div>
+        </div>
+
+        <div class="sub-card">
+          <div class="sub-label">— Quantum</div>
+          <div class="sub-title">Open-system evolution</div>
+          <svg class="sub-trace" viewBox="0 0 400 80" preserveAspectRatio="none">
+            <line x1="0" y1="40" x2="400" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+            <path d="M 0 40 Q 25 5, 50 40 T 100 40 T 150 40 T 200 40 T 250 40 T 300 40 T 350 40 T 400 40"
+                  fill="none" stroke="#7eb8da" stroke-width="2" stroke-linejoin="round" opacity="0.85"/>
+            <path d="M 0 40 Q 25 15, 50 40 T 100 40 T 150 40 T 200 40 T 250 40 T 300 40 T 350 40 T 400 40"
+                  fill="none" stroke="#7eb8da" stroke-width="1.2" stroke-linejoin="round" opacity="0.4"/>
+          </svg>
+          <div class="sub-foot">coherent · non-commuting · lossy</div>
+        </div>
+
+        <div class="sub-card">
+          <div class="sub-label">— Neuromorphic</div>
+          <div class="sub-title">Memristive reservoir</div>
+          <svg class="sub-trace" viewBox="0 0 400 80" preserveAspectRatio="none">
+            <line x1="0" y1="45" x2="400" y2="45" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+            <path d="M 0 60 Q 30 60, 30 40 L 30 22 Q 30 20, 35 20 L 80 20 Q 85 20, 85 24 L 85 58 Q 85 62, 90 62 L 160 62 Q 165 62, 165 56 L 165 28 Q 165 24, 170 24 L 240 24 Q 245 24, 245 30 L 245 52 Q 245 56, 250 56 L 320 56 Q 325 56, 325 48 L 325 32 Q 325 28, 330 28 L 400 28"
+                  fill="none" stroke="#c9a96e" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          </svg>
+          <div class="sub-foot">analog state · hysteretic · embodied</div>
+        </div>
+      </div>
+
+      <!-- Row 2: converging arrows -->
+      <div class="converge">
+        <svg viewBox="0 0 1000 76" preserveAspectRatio="none">
+          <defs>
+            <marker id="cvArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="rgba(201,169,110,0.7)"/>
+            </marker>
+          </defs>
+          <!-- biology (left) arrow converging to center -->
+          <path d="M 167 0 Q 167 38, 500 68" fill="none" stroke="rgba(16,185,129,0.55)" stroke-width="1.5" marker-end="url(#cvArr)"/>
+          <!-- quantum (middle) arrow straight down -->
+          <path d="M 500 0 L 500 68" fill="none" stroke="rgba(126,184,218,0.55)" stroke-width="1.5" marker-end="url(#cvArr)"/>
+          <!-- neuromorphic (right) arrow converging to center -->
+          <path d="M 833 0 Q 833 38, 500 68" fill="none" stroke="rgba(201,169,110,0.55)" stroke-width="1.5" marker-end="url(#cvArr)"/>
+        </svg>
+      </div>
+
+      <!-- Central glue bar -->
+      <div class="glue-bar">
+        <div class="glue-label">— The glue</div>
+        <div class="glue-expr">∂<sub>t</sub> ρ = <span class="op">𝓛</span>[ρ]</div>
+        <div class="glue-prose">A single operator-algebraic representation — the same <em>linear</em> evolution over a lifted observable space, whatever the hardware underneath.</div>
+      </div>
+
+      <!-- Row 4: diverging arrows -->
+      <div class="diverge">
+        <svg viewBox="0 0 1000 60" preserveAspectRatio="none">
+          <defs>
+            <marker id="dvArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="rgba(201,169,110,0.7)"/>
+            </marker>
+          </defs>
+          <!-- center out to left constraint -->
+          <path d="M 500 0 Q 500 30, 260 55" fill="none" stroke="rgba(201,169,110,0.55)" stroke-width="1.5" marker-end="url(#dvArr)"/>
+          <!-- center out to right constraint -->
+          <path d="M 500 0 Q 500 30, 740 55" fill="none" stroke="rgba(201,169,110,0.55)" stroke-width="1.5" marker-end="url(#dvArr)"/>
+        </svg>
+      </div>
+
+      <!-- Row 5: embodiment constraints -->
+      <div class="constraints">
+        <div class="constraint">
+          <div class="c-head">
+            <div class="c-tag">Constraint · 01</div>
+          </div>
+          <div class="c-title">Thermodynamic cost</div>
+          <div class="c-desc">Every embodied representation pays a price in free energy. The <strong>Cost of Complexity</strong> fixes that price from three sparse assumptions — and sets a critical ceiling.</div>
+        </div>
+        <div class="constraint">
+          <div class="c-head">
+            <div class="c-tag">Constraint · 02</div>
+          </div>
+          <div class="c-title">Algebraic closure</div>
+          <div class="c-desc">Not every substrate admits a compact local description of what it does. <strong>Equilibrium from the Inside Out</strong> gives the exact criterion for when it does.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="footer-mark">Synthetics<span class="dot">.</span></div>
+  <div class="slide-counter">04 / 06</div>
+</section>
+
+<!-- ═══ SLIDE 5 ═══ Public writing ══════════════════════════════════ -->
+<section class="s5" data-label="Public writing">
+  <div class="slide-inner">
+    <div class="kicker">Explicability as deliverable</div>
+    <h2 class="title-lg">Public writing is<br>part of the work.</h2>
+    <p class="lede">A synthesis which cannot be stated across the fields it unifies <strong>hasn't unified them</strong>.</p>
+
+    <div class="writing-grid">
+      <div class="writing-card">
+        <div class="wc-label">Ongoing essay practice</div>
+        <div class="wc-title">Little Learning Machine</div>
+        <div class="wc-blurb">Essays on physics, machine intelligence, and the occasionally unbearable nature of modern theory. Where Synthetics is drafted in public.</div>
+        <div class="wc-meta"><strong>Substack</strong> — littlelearningmachine.substack.com</div>
+      </div>
+      <div class="writing-card">
+        <div class="wc-label">Essay prize</div>
+        <div class="wc-title">Spanspermia</div>
+        <div class="wc-blurb">"Does Life Come from Outer Hilbert Space?" — an argument that informational structure, not chemistry, is the substrate question worth asking.</div>
+        <div class="wc-meta"><strong>2<sup>nd</sup> place · FQxI</strong> Essay Competition</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-mark">Synthetics<span class="dot">.</span></div>
+  <div class="slide-counter">05 / 06</div>
+</section>
+
+<!-- ═══ SLIDE 6 ═══ Closing URLs ═══════════════════════════════════ -->
+<section class="s6" data-label="About">
+  <div class="slide-inner">
+    <div class="kicker">About</div>
+
+    <div class="about-row">
+      <div class="portrait-wrap">
+        <img src="../../assets/img/me_sketch_cleaned.png" alt="Gerard McCaul sketch portrait">
+        <div class="portrait-cap">— the applicant</div>
+      </div>
+      <div class="about-text">
+        <h2 class="about-name">Gerard <span class="accent">M<sup>c</sup>Caul</span>.</h2>
+        <div class="about-role">Theoretical physicist · Loose canon</div>
+        <p class="about-bio">I work at the intersection of <em>quantum theory, thermodynamics, and machine intelligence</em> — the three fields Synthetics proposes to unify. Twenty-five-plus papers across quantum control, open quantum systems, reservoir computing, superoscillations, and Koopman methods. I also write essays that are too long, and compose music that makes people wince.</p>
+        <div class="about-meta">
+          <span><strong>PhD</strong> · King's College London, 2019</span>
+          <span><strong>FQxI</strong> · 2<sup>nd</sup> place, 2024</span>
+          <span><strong>Postdoctoral</strong> · Tulane</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="urls">
+      <div class="url-cell">
+        <div class="url-tag">01 · Physics</div>
+        <div class="url-link">gmccaul.co.uk<span class="accent">/physics.html</span></div>
+      </div>
+      <div class="url-cell">
+        <div class="url-tag">02 · Essays</div>
+        <div class="url-link">littlelearningmachine<span class="accent">.substack.com</span></div>
+      </div>
+      <div class="url-cell">
+        <div class="url-tag">03 · Writing</div>
+        <div class="url-link">gmccaul.co.uk<span class="accent">/writing.html</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-mark" style="color:var(--text-muted);"><span style="white-space:nowrap;">Gerard M<sup>c</sup>Caul</span><span class="dot">.</span><span class="meta">Astera — Residency application · 2026</span></div>
+  <div class="slide-counter">06 / 06</div>
+</section>
+
+</deck-stage>
+
+</body>
+</html>
