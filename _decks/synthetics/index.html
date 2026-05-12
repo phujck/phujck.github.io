@@ -10,12 +10,13 @@
 <script src="deck-stage.js"></script>
 <script type="application/json" id="speaker-notes">
 [
-"A heat engine was in serious industrial use for about a century before anyone had a theory of what it was doing. Before Carnot and Clausius, the engine was a useful mystery — you could build one, and if you were careful and lucky, it worked. After the theory, refrigeration, systematic engine design, and whole industries nobody had been able to imagine became routine. The theory did not invent the engine; it made the engine legible, and then it made everything downstream of the engine possible.",
-"My claim is that we are today in an exactly analogous situation with intelligence. Intelligence engines exist and work — biological brains, deep networks, the machinery of modern AI. But a principled physical theory of what they are, what they cost, and what any given substrate can efficiently do, does not. We are the mechanics before the physicists. Synthetics is my attempt at that theory.",
-"Two foundational pre-preprints already lay the static mathematics. The Cost of Complexity derives, from three sparse assumptions, the thermodynamic price of any embodied representation — and identifies a sharp critical ceiling where the partition function becomes the Riemann zeta function. Equilibrium from the Inside Out gives an exact algebraic closure theorem — a criterion for when a subsystem admits a compact local effective description — proven for a genuinely non-commuting case. Both are currently static. The residency extends them into dynamics, connects them formally, and applies them to neuromorphic computing.",
-"Here is the unifying move. Biological cortex, open quantum systems, and neuromorphic hardware look nothing like each other as physical objects, but they are all dynamical systems, and dynamical systems theory lets us write them all down as the same linear evolution over a lifted observable space — one operator algebra for all three. That shared representation is the glue. And the moment you insist these dynamics be physically embodied, two constraints fall out whether you want them to or not — a thermodynamic cost, and an algebraic closure criterion. Design principles for efficient intelligence are just what those constraints look like when you take them seriously. That is the shape of Synthetics.",
-"Alongside the mathematics, public writing is treated as part of the work rather than a separate communications activity. The argument is simple: a synthesis which cannot be stated across the fields it unifies has not unified them. Explicability is a research deliverable, not a chore. Little Learning Machine and the FQxI essay are where that work is already happening — second place out of several hundred entrants for an essay on whether life comes from outer Hilbert space.",
-"A word on who's doing this. I'm a theoretical physicist — PhD King's, postdoc at Tulane — sitting at the intersection of the three fields Synthetics wants to unify: quantum theory, thermodynamics, and machine intelligence. Twenty-five-plus papers in quantum control, open systems, reservoir computing, superoscillations, Koopman methods. The website holds the full catalogue — the pre-preprints at slash physics, the essays on Substack, and the broader writing at slash writing. Thank you."
+  "A heat engine was in serious industrial use for about a century before anyone had a theory of what it was doing. Before Carnot and Clausius, the engine was a useful mystery — you could build one, and if you were careful and lucky, it worked. After the theory, refrigeration, systematic engine design, and whole industries nobody had been able to imagine became routine. The theory did not invent the engine; it made the engine legible, and then it made everything downstream of the engine possible.",
+  "My claim is that we are today in an exactly analogous situation with intelligence. Intelligence engines exist and work — biological brains, deep networks, the machinery of modern AI. But a principled physical theory of what they are, what they cost, and what any given substrate can efficiently do, does not. We are the mechanics before the physicists. Synthetics is my attempt at that theory.",
+  "A brief word on who's doing this. I'm a theoretical physicist — PhD King's, postdoc at Tulane — working exactly at the intersection Synthetics wants to unify: quantum theory, thermodynamics, and machine intelligence. Twenty-five-plus papers across quantum control, open systems, reservoir computing, superoscillations, and Koopman methods. The point of the slide is simple: this project sits squarely inside the body of work I've already been building.",
+  "Two foundational pre-preprints already lay the static mathematics. The Cost of Complexity derives, from three sparse assumptions, the thermodynamic price of any embodied representation — and identifies a sharp critical ceiling where the partition function becomes the Riemann zeta function. Equilibrium from the Inside Out gives an exact algebraic closure theorem — a criterion for when a subsystem admits a compact local effective description — proven for a genuinely non-commuting case. Both are currently static. The residency extends them into dynamics, connects them formally, and applies them to neuromorphic computing.",
+  "Here is the unifying move. Biological cortex, open quantum systems, and neuromorphic hardware look nothing like each other as physical objects, but they are all dynamical systems, and dynamical systems theory lets us write them all down as the same linear evolution over a lifted observable space — one operator algebra for all three. That shared representation is the glue. And the moment you insist these dynamics be physically embodied, two constraints fall out whether you want them to or not — a thermodynamic cost, and an algebraic closure criterion. Design principles for efficient intelligence are just what those constraints look like when you take them seriously. That is the shape of Synthetics.",
+  "Alongside the mathematics, public writing is treated as part of the work rather than a separate communications activity. The argument is simple: a synthesis which cannot be stated across the fields it unifies has not unified them. Explicability is a research deliverable, not a chore. Little Learning Machine and the FQxI essay are where that work is already happening — second place out of several hundred entrants for an essay on whether life comes from outer Hilbert space.",
+  "So the proposal in one sentence is this: build a physical theory of intelligence that works across substrates, prices embodied representations thermodynamically, tells us when compact local descriptions exist, and turns those constraints into design principles for efficient synthetic systems. That's the program. Thank you."
 ]
 </script>
 <style>
@@ -671,19 +672,18 @@ deck-stage section::after {
    ══════════════════════════════════════════════════════════════════ */
 .s6 .slide-inner {
   justify-content: center;
-  padding: 80px 100px 80px;
+  padding: 88px 120px 100px;
 }
-.s6 .kicker { margin-bottom: 22px; }
-.s6 .about-row {
+.s6 .kicker { margin-bottom: 24px; }
+.s6 .intro-grid {
   display: grid;
-  grid-template-columns: 520px 1fr;
-  gap: 80px;
+  grid-template-columns: 400px 1fr;
+  gap: 72px;
   align-items: center;
-  margin-bottom: 60px;
 }
 .s6 .portrait-wrap {
   position: relative;
-  padding: 20px;
+  padding: 18px;
   border: 1px solid var(--border-glass);
   border-radius: 16px;
   background: radial-gradient(circle at 30% 25%, rgba(201,169,110,0.08), transparent 60%);
@@ -705,71 +705,158 @@ deck-stage section::after {
   color: var(--text-muted);
   text-transform: uppercase;
 }
-.s6 .about-name {
+.s6 .intro-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.s6 .intro-name {
   font-family: var(--font-display);
-  font-size: 84px;
+  font-size: 88px;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 0.98;
   color: var(--text-primary);
-  margin-bottom: 10px;
 }
-.s6 .about-name .accent { color: var(--accent); }
-.s6 .about-role {
+.s6 .intro-name .accent { color: var(--accent); }
+.s6 .intro-role {
   font-family: var(--font-display);
   font-size: 28px;
   color: var(--text-secondary);
-  margin-bottom: 24px;
   font-style: italic;
 }
-.s6 .about-bio {
-  font-size: 24px;
-  color: var(--text-primary);
+.s6 .intro-bio {
+  font-size: 28px;
+  color: var(--text-secondary);
   line-height: 1.55;
-  max-width: 900px;
-  margin-bottom: 22px;
+  max-width: 980px;
 }
-.s6 .about-bio em { color: var(--accent); font-style: normal; }
-.s6 .about-meta {
+.s6 .intro-bio strong,
+.s6 .intro-bio em { color: var(--accent); font-style: normal; font-weight: 500; }
+.s6 .intro-meta {
   display: flex;
-  gap: 36px;
+  gap: 16px;
   flex-wrap: wrap;
-  font-family: var(--font-mono);
-  font-size: 20px;
-  color: var(--text-muted);
-  letter-spacing: 0.06em;
+  margin-top: 6px;
 }
-.s6 .about-meta span strong { color: var(--text-primary); font-weight: 500; }
-.s6 .urls {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0;
-  border-top: 1px solid var(--border-glass);
-}
-.s6 .url-cell {
-  padding: 24px 32px 22px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border-right: 1px solid var(--border-glass);
-}
-.s6 .url-cell:last-child { border-right: none; padding-right: 0; }
-.s6 .url-cell:first-child { }
-.s6 .url-tag {
+.s6 .intro-chip {
+  padding: 14px 18px;
+  border: 1px solid var(--border-glass);
+  border-radius: 999px;
+  background: var(--bg-card);
   font-family: var(--font-mono);
   font-size: 18px;
   color: var(--text-muted);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.s6 .url-link {
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 500;
+.s6 .intro-chip strong {
   color: var(--text-primary);
-  letter-spacing: -0.005em;
+  font-weight: 500;
 }
-.s6 .url-link .accent { color: var(--accent); }
+
+.s7 .slide-inner {
+  padding: 96px 120px 96px;
+}
+.s7 .kicker { margin-bottom: 22px; }
+.s7 .title-xl {
+  max-width: 1480px;
+  margin-bottom: 24px;
+}
+.s7 .summary-lede {
+  font-size: 32px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  max-width: 1500px;
+}
+.s7 .summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 28px;
+  margin-top: 44px;
+}
+.s7 .summary-card {
+  padding: 28px 30px 30px;
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  background: var(--bg-card);
+  min-height: 250px;
+  position: relative;
+  overflow: hidden;
+}
+.s7 .summary-card::before {
+  content: '';
+  position: absolute;
+  top: -45%; right: -18%;
+  width: 60%; height: 80%;
+  background: radial-gradient(ellipse, rgba(201,169,110,0.08), transparent 70%);
+  pointer-events: none;
+}
+.s7 .summary-num {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+.s7 .summary-title {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.12;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+}
+.s7 .summary-body {
+  position: relative;
+  font-size: 22px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.s7 .thanks-row {
+  margin-top: auto;
+  padding-top: 42px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 36px;
+  border-top: 1px solid var(--border-glass);
+}
+.s7 .thanks-text {
+  font-family: var(--font-display);
+  font-size: 62px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+}
+.s7 .thanks-sub {
+  margin-top: 14px;
+  font-size: 24px;
+  color: var(--text-secondary);
+}
+.s7 .thanks-links {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.s7 .thanks-link {
+  padding: 14px 18px;
+  border: 1px solid var(--border-glass);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+.s7 .thanks-link strong {
+  color: var(--accent);
+  font-weight: 500;
+}
 </style>
 </head>
 <body>
@@ -797,7 +884,7 @@ deck-stage section::after {
     </div>
   </div>
   <div class="footer-mark">Synthetics<span class="dot">.</span> <span class="meta">Gerard McCaul — Astera residency application</span></div>
-  <div class="slide-counter">01 / 06</div>
+  <div class="slide-counter">01 / 07</div>
 </section>
 
 <!-- ═══ SLIDE 2 ═══ We are here again ═══════════════════════════════ -->
@@ -830,10 +917,36 @@ deck-stage section::after {
     </div>
   </div>
   <div class="footer-mark">Synthetics<span class="dot">.</span></div>
-  <div class="slide-counter">02 / 06</div>
+  <div class="slide-counter">02 / 07</div>
 </section>
 
 <!-- ═══ SLIDE 3 ═══ Foundational math (browser window) ══════════════ -->
+<section class="s6" data-label="Who am I">
+  <div class="slide-inner">
+    <div class="kicker">Who am I</div>
+
+    <div class="intro-grid">
+      <div class="portrait-wrap">
+        <img src="../../assets/img/me_sketch_cleaned.png" alt="Gerard McCaul sketch portrait">
+        <div class="portrait-cap">— the applicant</div>
+      </div>
+
+      <div class="intro-copy">
+        <h2 class="intro-name">Gerard <span class="accent">M<sup>c</sup>Caul</span>.</h2>
+        <div class="intro-role">Theoretical physicist · quantum theory · thermodynamics · machine intelligence</div>
+        <p class="intro-bio">PhD from King's, postdoctoral work at Tulane, and <strong>25-plus papers</strong> across quantum control, open systems, reservoir computing, superoscillations, and Koopman methods. <em>Synthetics</em> sits exactly at the intersection I already work in.</p>
+        <div class="intro-meta">
+          <div class="intro-chip"><strong>PhD</strong> · King's College London, 2019</div>
+          <div class="intro-chip"><strong>Postdoctoral</strong> · Tulane</div>
+          <div class="intro-chip"><strong>FQxI</strong> · 2<sup>nd</sup> place, 2024</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-mark" style="color:var(--text-muted);"><span style="white-space:nowrap;">Gerard M<sup>c</sup>Caul</span><span class="dot">.</span><span class="meta">Astera — Residency application · 2026</span></div>
+  <div class="slide-counter">03 / 07</div>
+</section>
+
 <section class="s3" data-label="Foundational math">
   <div class="slide-inner">
     <div class="kicker">The foundations are already written</div>
@@ -871,7 +984,7 @@ deck-stage section::after {
       </div>
     </div>
   </div>
-  <div class="slide-counter" style="bottom:32px;">03 / 06</div>
+  <div class="slide-counter" style="bottom:32px;">04 / 07</div>
 </section>
 
 <!-- ═══ SLIDE 4 ═══ Dynamical glue + embodiment constraints ═════════ -->
@@ -981,7 +1094,7 @@ deck-stage section::after {
     </div>
   </div>
   <div class="footer-mark">Synthetics<span class="dot">.</span></div>
-  <div class="slide-counter">04 / 06</div>
+  <div class="slide-counter">05 / 07</div>
 </section>
 
 <!-- ═══ SLIDE 5 ═══ Public writing ══════════════════════════════════ -->
@@ -1007,11 +1120,54 @@ deck-stage section::after {
     </div>
   </div>
   <div class="footer-mark">Synthetics<span class="dot">.</span></div>
-  <div class="slide-counter">05 / 06</div>
+  <div class="slide-counter">06 / 07</div>
 </section>
 
 <!-- ═══ SLIDE 6 ═══ Closing URLs ═══════════════════════════════════ -->
-<section class="s6" data-label="About">
+<section class="s7" data-label="Summary and thanks">
+  <div class="slide-inner">
+    <div class="kicker">Summary</div>
+    <h2 class="title-xl">A physics of intelligence,<br>made explicit.</h2>
+    <p class="summary-lede">Synthetics asks what intelligence is as a physical process, what embodied representations cost, and what different substrates can efficiently do.</p>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-num">01 · Unify</div>
+        <div class="summary-title">One language across substrates</div>
+        <div class="summary-body">Biological cortex, open quantum systems, and neuromorphic hardware treated as dynamical systems in a shared operator-algebraic frame.</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-num">02 · Constrain</div>
+        <div class="summary-title">Price and close representations</div>
+        <div class="summary-body">Thermodynamic cost and algebraic closure turn vague intelligence talk into concrete physical limits on efficient embodied systems.</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-num">03 · Build</div>
+        <div class="summary-title">Turn theory into design rules</div>
+        <div class="summary-body">Extend the static results into dynamics, connect them formally, apply them to neuromorphic computing, and state the synthesis clearly in public.</div>
+      </div>
+    </div>
+
+    <div class="thanks-row">
+      <div>
+        <div class="thanks-text">Thank you.</div>
+        <div class="thanks-sub">Gerard McCaul — Astera residency application</div>
+      </div>
+
+      <div class="thanks-links">
+        <div class="thanks-link"><strong>physics</strong> — gmccaul.co.uk/physics.html</div>
+        <div class="thanks-link"><strong>essays</strong> — littlelearningmachine.substack.com</div>
+        <div class="thanks-link"><strong>writing</strong> — gmccaul.co.uk/writing.html</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-mark" style="color:var(--text-muted);"><span style="white-space:nowrap;">Gerard M<sup>c</sup>Caul</span><span class="dot">.</span><span class="meta">Astera — Residency application · 2026</span></div>
+  <div class="slide-counter">07 / 07</div>
+</section>
+
+<template data-legacy-slide="about">
   <div class="slide-inner">
     <div class="kicker">About</div>
 
@@ -1049,7 +1205,7 @@ deck-stage section::after {
   </div>
   <div class="footer-mark" style="color:var(--text-muted);"><span style="white-space:nowrap;">Gerard M<sup>c</sup>Caul</span><span class="dot">.</span><span class="meta">Astera — Residency application · 2026</span></div>
   <div class="slide-counter">06 / 06</div>
-</section>
+</template>
 
 </deck-stage>
 
