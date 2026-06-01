@@ -29,6 +29,14 @@ be fine-tuned and iterated by the author*, not a finished talk.
   on phujck.github.io), inheriting that site's palette. The reused light REVTeX figures are
   inverted at render time so they read on dark. Theming only - no content, spine or physics
   changed. See the `theme/` note under Files.
+- **Live copy + the doubled close.** A built static copy is published at `/talks/laws-of-learning/`
+  (the committed Slidev build at the talk-dir root, matching how `dynamics-as-computation` ships).
+  The final reveal was reworked into a **dual graph close** - the talk's own five results R1-R5 as
+  a graph beside the engine that built them as a graph - landing *the build is the talk is the
+  engine* in one picture. The engine-graph is a self-contained **facsimile**
+  (`public/viz/engine-facsimile.html`) - the canon's ~38 skill *names* clustered by activity
+  (generating, staging, evaluating), a facsimile of the shape only, no live server and no canon
+  prose. This is the self-experiment closing on itself - the deck shows the engine that drafted it.
 
 ## Run it
 
@@ -105,4 +113,5 @@ The deck embeds six live assets, all self-contained vanilla-JS canvas under `pub
 - `components/` — `Fig.vue` (verbatim figure reuse), `Embed.vue` (sandboxed live iframe).
 - `public/figs/` — the eight ANF figures, verbatim, plus the conceptric snapshot.
 - `public/viz/` — the live embeds: `many-faces`, `adaptive-loop`, `phase-portrait`,
-  `coarse-graining`, `viable-window`.
+  `coarse-graining`, `viable-window`, and `engine-facsimile` (the names-only engine-skill graph
+  for the dual close).

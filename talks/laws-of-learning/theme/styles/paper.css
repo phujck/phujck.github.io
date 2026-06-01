@@ -165,6 +165,31 @@
 .paper.embed-slide h1,
 .slidev-layout:has(.embed-slide) h1 { margin-bottom: 0.9rem; }
 
+/* ── the dual reveal: two graphs side by side (the doubled self-reference).
+   talk-graph on the left, engine-graph on the right - the build is the talk
+   is the engine, made one picture. Stacks on narrow viewports. ── */
+.paper .dual-embed {
+  display: flex;
+  gap: 1.1rem;
+  max-width: 60rem;
+  margin: 0.3rem auto 0;
+  align-items: stretch;
+}
+.paper .dual-embed > .dual-col { flex: 1 1 0; min-width: 0; }
+.paper .dual-embed .embed-frame { height: 100%; }
+.paper .dual-cap {
+  text-align: center;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.3rem;
+  font-variant: small-caps;
+}
+.paper .dual-cap.cap-talk { color: var(--pp-blue); }
+.paper .dual-cap.cap-engine { color: var(--pp-gold); }
+@media (max-width: 760px) {
+  .paper .dual-embed { flex-direction: column; }
+}
+
 /* ── the turn / closure quote stacks ── */
 .paper .turn-quotes {
   display: flex;

@@ -1408,6 +1408,51 @@ Do not over-claim Law III - it is the frame, not a theorem. Caveat (d): the open
 
 ---
 layout: center
+class: paper embed-slide text-center
+---
+
+# The Talk Was a Graph. So Is the Engine.
+
+<div class="dual-embed">
+
+<div class="dual-col" v-click>
+<div class="dual-cap cap-talk">the talk - five results, one law</div>
+<div class="embed-frame">
+  <Embed src="/figs/conceptric_snapshot.html" :height="350" caption="The talk you just saw, drawn as a graph - R1 to R5 feeding the laws." />
+</div>
+</div>
+
+<div class="dual-col" v-click>
+<div class="dual-cap cap-engine">the engine - the skills that built it</div>
+<div class="embed-frame">
+  <Embed src="/viz/engine-facsimile.html" :height="350" caption="And the engine that built it, drawn as a graph too - a facsimile of its skills." />
+</div>
+</div>
+
+</div>
+
+<div class="closing-line text-lg" v-click style="margin-top:1rem;">
+
+Two graphs. [The build is the talk is the engine.]{.accent}
+
+</div>
+
+<!--
+THE DOUBLED SELF-REFERENCE, made one picture. Left: the conceptric snapshot - the talk's own
+five results R1-R5 as a graph, the thing they just walked through. Right: the engine-facsimile -
+the skills of the Laplace canon that drafted this very deck, clustered by what they do
+(generating, staging, evaluating). Names only - a facsimile of the shape, not the live engine.
+
+The line to land, pointing left then right: "the talk you just saw is a graph - and the thing
+that built it is a graph too." Let both sit side by side for a beat. This is the literal close
+of the recursion the turn opened: a learning system studying learning, and the study of it is
+itself a graph of the same kind. Do not over-explain - the two pictures are the argument. Then
+the terminal callback on the next slide. (Engine: laplace canon skills + the conceptric;
+SELF-EXPERIMENT - this deck was drafted by the engine on the right.)
+-->
+
+---
+layout: center
 class: paper text-center
 ---
 
