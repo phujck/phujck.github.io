@@ -25,6 +25,10 @@ be fine-tuned and iterated by the author*, not a finished talk.
   `…/workflow/state/substrate.md`) and the build record of these sessions (the engine /
   conceptric narrative). Every slide traces to a source result, figure, or the engine
   narrative — see `STORYBOARD.md` for per-slide provenance. No invented physics.
+- **Theme:** a later pass took the deck **dark** to match the author's dark website (it lives
+  on phujck.github.io), inheriting that site's palette. The reused light REVTeX figures are
+  inverted at render time so they read on dark. Theming only - no content, spine or physics
+  changed. See the `theme/` note under Files.
 
 ## Run it
 
@@ -35,7 +39,7 @@ npm run build        # static build → dist/
 ```
 
 The deck embeds six live assets, all self-contained vanilla-JS canvas under `public/viz/`
-(deterministic, no build step, dark instrument cards on the paper deck):
+(deterministic, no build step, dark instruments that sit natively on the dark deck):
 
 - **A0 `many-faces.html`** (Act 0) — four faces of learning (evolution / gradient descent /
   a market / a reservoir) revealed as one loop. The broad grounding. *The most important new
@@ -87,9 +91,17 @@ The deck embeds six live assets, all self-contained vanilla-JS canvas under `pub
 - `slides.md` — the deck (~34 slides/segments, Act 0–V, ~60 min).
 - `STORYBOARD.md` — the full spine with per-act minute budget, the BUILT-vs-SPEC animation
   list, provenance, and the author-decision flag.
-- `theme/` — paper-light theme (substrate-decides-theme: the ANF figures are light REVTeX, so
-  the deck is light; accent = the figures' own Okabe-Ito blue `#0072b2`). `theme/styles/paper.css`
-  carries the Act-0 chip grid, the loop legend, and the Act-II stage cards.
+- `theme/` — dark theme, inheriting the website palette (the deck lives on the dark site at
+  phujck.github.io, so it takes the site's own colours from `assets/css/style.css`: deep navy
+  ground `#0a0e1a`, warm off-white ink `#e8e6e3`, the gold brand accent `#c9a96e`, the soft-blue
+  link `#7eb8da`). This also dissolves the seam with the dark live embeds (the conceptric viewer
+  and the canvas instruments sit on the same `#0e1116` family). The reused ANF figures are
+  white-background REVTeX, so they are inverted at render time (`invert(1) hue-rotate(180deg)` in
+  `Fig.vue` / `paper.css`) - the white field flips to dark while the Okabe-Ito data colours stay
+  roughly true - source PNGs untouched. `theme/styles/layout.css` holds the base palette and
+  `theme/styles/paper.css` the per-slide furniture (the Act-0 chip grid, the loop legend, the
+  Act-II stage cards), now dark. (The `class: paper` name is retained for the per-slide skin
+  hook - it is now a dark skin, not a light one.)
 - `components/` — `Fig.vue` (verbatim figure reuse), `Embed.vue` (sandboxed live iframe).
 - `public/figs/` — the eight ANF figures, verbatim, plus the conceptric snapshot.
 - `public/viz/` — the live embeds: `many-faces`, `adaptive-loop`, `phase-portrait`,

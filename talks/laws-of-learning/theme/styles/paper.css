@@ -1,16 +1,24 @@
-/* Paper-light variant — for decks whose figures are REVTeX/light (ANF).
-   The on-slide accents are the figures' OWN Okabe-Ito data colours, so the
-   slide furniture and the figure read as one object. Activated per-slide by
-   `class: paper` (and the title via `class: paper text-center`). */
+/* Dark "paper" skin - the deck now lives on the dark website, so the slide
+   furniture inherits the site palette (assets/css/style.css on phujck.github.io):
+   deep navy ground, warm off-white ink, the gold brand accent, the soft-blue
+   link. The class is still named `paper` because every slide carries
+   `class: paper` and this is the per-slide furniture skin - but it is now dark,
+   not light. The reused ANF figures are inverted at render time (see Fig.vue)
+   so their white field becomes dark and they read as one object with the slide.
+   The structural accents below stay in the Okabe-Ito family used by the figures
+   and the canvas instruments, so the deck, the figures and the embeds read as
+   one palette. */
 
 :root {
-  --pp-bg: #fbfbf9;        /* warm paper white */
-  --pp-ink: #1a1a1a;
-  --pp-muted: #5a5f6a;
-  --pp-blue: #0072b2;      /* Okabe-Ito blue  — the CLT / predicted curve */
-  --pp-orange: #d55e00;    /* Okabe-Ito orange — the exact / simulated points */
-  --pp-green: #009e73;     /* Okabe-Ito green — corrections */
-  --pp-rule: #d9d6cf;
+  --pp-bg: #0a0e1a;        /* site --bg-primary, deep navy ground */
+  --pp-ink: #e8e6e3;       /* site --text-primary, warm off-white */
+  --pp-muted: #9ca3af;     /* site --text-secondary */
+  --pp-blue: #7eb8da;      /* site --link, the soft blue - structural accent on dark */
+  --pp-gold: #c9a96e;      /* site --accent, the gold brand mark - emphasis */
+  --pp-orange: #e0875a;    /* Okabe-Ito vermilion, lifted for legibility on dark */
+  --pp-green: #5cbf9a;     /* Okabe-Ito green, lifted for legibility on dark */
+  --pp-rule: rgba(255, 255, 255, 0.08);   /* site --border-glass */
+  --pp-card: rgba(255, 255, 255, 0.04);   /* site --bg-card */
 }
 
 .slidev-layout.paper,
@@ -25,19 +33,20 @@
   font-weight: 600;
   letter-spacing: -0.01em;
 }
-.paper strong { color: var(--pp-orange); }
+.paper strong { color: var(--pp-gold); }
 .paper .accent { color: var(--pp-blue); }
 .paper a { color: var(--pp-blue); }
 
-/* mathematics: give display equations room and a hairline card on busy slides */
+/* mathematics: give display equations room and let them breathe on dark */
 .paper .katex-display {
   margin: 0.9rem 0;
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
 }
-/* KaTeX ink on paper — dark ink, opaque, on both the layout-root (.paper) and
-   the column-nested case (two-cols-header puts .paper on the columns). */
+/* KaTeX ink on dark - light formula colour, fully opaque, on both the
+   layout-root (.paper) and the column-nested case (two-cols-header puts
+   .paper on the columns). */
 .slidev-layout:has(.paper) .katex,
 .slidev-layout.paper .katex,
 .paper .katex {
@@ -63,7 +72,16 @@
 .paper ul { line-height: 1.85; }
 .paper li { margin-bottom: 0.5rem; }
 
-/* figure reuse: the REVTeX png sits on paper with a hairline + its caption */
+/* figure reuse: the ANF pngs are white-background REVTeX plots. They are
+   inverted at render time - invert(1) flips the white field to near-black and
+   hue-rotate(180deg) brings the Okabe-Ito data colours roughly back to true -
+   so the figure reads on the dark slide. This is render-only and reversible,
+   the source PNGs are untouched. A figure that inverts badly is opted out
+   per-image via .fig-card (a light panel) - see the .fig-card rule at the foot
+   of this file, whose `filter: none` overrides this by source order. */
+.paper .reuse-fig {
+  filter: invert(1) hue-rotate(180deg);
+}
 .paper .fig {
   display: flex;
   flex-direction: column;
@@ -73,7 +91,6 @@
   max-height: 60vh;
   border: 1px solid var(--pp-rule);
   border-radius: 3px;
-  background: #fff;
 }
 .slidev-layout:has(.paper) .figcap,
 .paper .figcap {
@@ -84,9 +101,9 @@
   text-align: center;
 }
 .paper .figcap p { margin: 0; }
-.paper .figcap strong { color: var(--pp-orange); }
+.paper .figcap strong { color: var(--pp-gold); }
 
-/* bare <Fig class="fig-click"> in a column slot — centre it and cap its height,
+/* bare <Fig class="fig-click"> in a column slot - centre it and cap its height,
    the styling the .fig wrapper used to give, now applied to the image itself */
 .paper .reuse-fig.fig-click,
 .paper img.fig-click {
@@ -102,33 +119,32 @@
   border-top: 2px solid var(--pp-blue);
   border-radius: 4px;
   padding: 0.7rem 1rem;
-  background: #fff;
+  background: var(--pp-card);
   font-size: 0.9rem;
   min-width: 92px;
 }
-.paper .rung b { color: var(--pp-orange); display: block; font-size: 1.05rem; }
-.paper .kicker { color: var(--pp-blue); font-variant: small-caps; letter-spacing: 0.06em; }
+.paper .rung b { color: var(--pp-gold); display: block; font-size: 1.05rem; }
+.paper .kicker { color: var(--pp-gold); font-variant: small-caps; letter-spacing: 0.06em; }
 
-/* the corner equation card, on paper: hairline on white, not the dark layout card */
+/* the corner equation card on dark - a glass card on the navy ground */
 .paper .corner-eq,
 .slidev-layout:has(.paper) .corner-eq {
-  background: #fff;
+  background: rgba(17, 24, 39, 0.7);
   border: 1px solid var(--pp-rule);
   color: var(--pp-ink);
-  box-shadow: 0 1px 10px rgba(20, 20, 20, 0.06);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* ── live embeds on paper ──────────────────────────────────────────────
-   The phase-portrait and the conceptric snapshot are DARK assets. On a
-   paper deck they sit in a framed card (a deliberate seam, not a recolour):
-   their dark substrate reads as "a live instrument", distinct from the
-   paper-white manuscript figures. Same role the figure card plays for REVTeX. */
+/* ── live embeds ───────────────────────────────────────────────────────
+   The viz instruments and the conceptric snapshot are dark assets on the
+   same #0e1116 family as the deck. The frame is now a hairline glass card
+   that continues the slide rather than a seam against a light ground. */
 .paper .embed-frame {
   border: 1px solid var(--pp-rule);
   border-radius: 6px;
   overflow: hidden;
   background: #0e1116;
-  box-shadow: 0 2px 22px rgba(20, 20, 20, 0.16);
+  box-shadow: 0 2px 28px rgba(0, 0, 0, 0.45);
 }
 .paper .embed-frame .dyn-embed {
   border: 0;
@@ -149,7 +165,7 @@
 .paper.embed-slide h1,
 .slidev-layout:has(.embed-slide) h1 { margin-bottom: 0.9rem; }
 
-/* ── the turn / closure quote stacks (slides 12, 14) ── */
+/* ── the turn / closure quote stacks ── */
 .paper .turn-quotes {
   display: flex;
   flex-direction: column;
@@ -164,9 +180,9 @@
   font-size: 1.18rem;
   line-height: 1.5;
 }
-.paper .turn-quote strong { color: var(--pp-orange); }
+.paper .turn-quote strong { color: var(--pp-gold); }
 
-/* ── the three Laws (slide 15) ── */
+/* ── the three Laws ── */
 .paper .laws {
   display: flex;
   flex-direction: column;
@@ -179,7 +195,7 @@
   border: 1px solid var(--pp-rule);
   border-top: 2px solid var(--pp-blue);
   border-radius: 5px;
-  background: #fff;
+  background: var(--pp-card);
   padding: 0.85rem 1.1rem;
   font-size: 1.12rem;
   line-height: 1.45;
@@ -187,7 +203,7 @@
 .paper .law > p { margin: 0; }
 .paper .law > p + p { margin-top: 0.35rem; }
 .paper .law-n {
-  color: var(--pp-orange);
+  color: var(--pp-gold);
   font-weight: 700;
   font-size: 1.3rem;
   font-variant: small-caps;
@@ -202,7 +218,7 @@
 .paper .closing-line { font-size: 1.05rem; margin-top: 1.3rem; }
 .paper .closing-line.text-lg { font-size: 1.2rem; }
 
-/* ── Act 0: the "many faces" chip grid (slide: What do these have in common?) ── */
+/* ── Act 0: the "many faces" chip grid ── */
 .paper .grid-faces {
   display: flex;
   flex-wrap: wrap;
@@ -215,14 +231,17 @@
   border: 1px solid var(--pp-rule);
   border-top: 2px solid var(--pp-blue);
   border-radius: 5px;
-  background: #fff;
+  background: var(--pp-card);
   padding: 0.6rem 1rem;
   font-size: 1.02rem;
-  box-shadow: 0 1px 8px rgba(20, 20, 20, 0.05);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
 }
-.paper .face-chip span { color: var(--pp-orange); font-weight: 600; }
+.paper .face-chip span { color: var(--pp-gold); font-weight: 600; }
 
-/* ── Act 0: the colour-coded four-leg loop legend (the parts named in words) ── */
+/* ── Act 0: the colour-coded four-leg loop legend (the parts named in words).
+   These four colours are data-semantic - they match the loop legs in the
+   canvas animations and the figures - so they stay. On dark they read as
+   filled pills with dark or white text chosen for contrast. ── */
 .paper .loop-legend {
   display: flex;
   flex-direction: column;
@@ -237,12 +256,12 @@
   font-weight: 600;
   min-width: 12rem;
   text-align: center;
-  color: #fff;
+  color: #0a0e1a;
 }
-.paper .loop-legend .leg-ctrl  { background: #c9a96e; color: #1a1a1a; }  /* gold control */
-.paper .loop-legend .leg-env   { background: #d55e00; }                  /* vermilion environment */
-.paper .loop-legend .leg-state { background: #009e73; }                  /* green fast state */
-.paper .loop-legend .leg-meas  { background: #0072b2; }                  /* blue measurement */
+.paper .loop-legend .leg-ctrl  { background: #c9a96e; }                  /* gold control */
+.paper .loop-legend .leg-env   { background: #e0875a; }                  /* vermilion environment */
+.paper .loop-legend .leg-state { background: #5cbf9a; }                  /* green fast state */
+.paper .loop-legend .leg-meas  { background: #7eb8da; }                  /* blue measurement */
 .paper .loop-legend .leg-arrow {
   color: var(--pp-muted);
   font-size: 0.78rem;
@@ -254,11 +273,11 @@
   border: 1px solid var(--pp-rule);
   border-left: 3px solid var(--pp-blue);
   border-radius: 5px;
-  background: #fff;
+  background: var(--pp-card);
   padding: 1.1rem 1.2rem;
   margin: 1.2rem auto 0;
   max-width: 30rem;
-  box-shadow: 0 1px 10px rgba(20, 20, 20, 0.05);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25);
 }
 .paper .stage-eq {
   font-size: 1.35rem;
@@ -271,4 +290,20 @@
   font-size: 0.86rem;
   text-align: center;
   line-height: 1.45;
+}
+
+/* ── per-figure opt-out: a light "card" behind a figure that inverts badly ──
+   The default is render-time inversion (Fig.vue) so the white plot field goes
+   dark. A figure whose data colours or labels go muddy under inversion instead
+   wears .fig-card: NOT inverted, sat on a clean white rounded panel so it stays
+   legible on the dark slide. A clean compromise - applied per image in slides.md
+   on the figures that need it. */
+.paper .reuse-fig.fig-card,
+.paper img.fig-card {
+  filter: none;
+  background: #ffffff;
+  padding: 0.7rem;
+  border: 1px solid var(--pp-rule);
+  border-radius: 6px;
+  box-shadow: 0 2px 22px rgba(0, 0, 0, 0.4);
 }

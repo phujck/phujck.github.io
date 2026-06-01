@@ -36,9 +36,9 @@ fonts:
 
 <div class="eq-note">One number sets the phases. You already know it in one guise. Here is the law behind it.</div>
 
-<div class="accent-rule" style="background:#0072b2;width:90px;height:2px;margin:1.4rem auto;"></div>
+<div class="accent-rule" style="background:#7eb8da;width:90px;height:2px;margin:1.4rem auto;"></div>
 
-<div class="author" style="color:#5a5f6a;">Gerard McCaul</div>
+<div class="author" style="color:#9ca3af;">Gerard McCaul</div>
 
 <div class="corner-eq">
 

@@ -1,15 +1,19 @@
-/* Dark talk theme mirroring the dynamics-as-computation manim palette.
-   accent = teal, accent_alt = gold, near-black card stock. */
+/* Dark talk theme inheriting the website palette (assets/css/style.css on
+   phujck.github.io). The deck now lives on the dark site, so it takes the
+   site's own colours - deep navy ground, warm off-white ink, the gold brand
+   accent, the soft-blue link - rather than an arbitrary dark theme. This also
+   dissolves the seam with the dark live embeds (the conceptric snapshot and
+   the viz instruments sit on #0e1116, in the same family). */
 
 :root {
-  --dyn-bg: #0a0f15;
-  --dyn-bg-2: #0d1117;
-  --dyn-text: #e0e2e8;
-  --dyn-muted: #9ba2b0;
-  --dyn-accent: #4fc4c4;      /* TEAL_B family */
-  --dyn-accent-alt: #c9a96e;  /* GOLD_E family */
-  --dyn-card-stroke: #2a3440;
-  --dyn-card-fill: #0a0f15;
+  --dyn-bg: #0a0e1a;          /* site --bg-primary */
+  --dyn-bg-2: #111827;        /* site --bg-secondary */
+  --dyn-text: #e8e6e3;        /* site --text-primary, warm off-white */
+  --dyn-muted: #9ca3af;       /* site --text-secondary */
+  --dyn-accent: #c9a96e;      /* site --accent, the gold brand mark */
+  --dyn-accent-alt: #7eb8da;  /* site --link, the soft blue */
+  --dyn-card-stroke: rgba(255, 255, 255, 0.08);  /* site --border-glass */
+  --dyn-card-fill: rgba(255, 255, 255, 0.04);    /* site --bg-card */
 }
 
 .slidev-layout {
@@ -56,7 +60,7 @@ strong { color: var(--dyn-accent-alt); font-weight: 600; }
   padding: 0.5rem 0.9rem;
   border: 1px solid var(--dyn-card-stroke);
   border-radius: 0.6rem;
-  background: rgba(10, 15, 21, 0.7);
+  background: rgba(17, 24, 39, 0.7);
   font-size: 0.85rem;
 }
 
@@ -106,7 +110,7 @@ strong { color: var(--dyn-accent-alt); font-weight: 600; }
   border: 1px solid var(--dyn-card-stroke);
   border-radius: 0.6rem;
   padding: 1rem 1.4rem;
-  background: rgba(10, 15, 21, 0.6);
+  background: rgba(17, 24, 39, 0.6);
   min-width: 150px;
 }
 .closing-item strong { display: block; font-size: 1.15rem; margin-bottom: 0.3rem; }
