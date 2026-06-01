@@ -1,0 +1,1 @@
+var e=`/Program%20Files/Git/talks/anf-draft/assets/fig4a_wedge-DYrDhGc1.png`;export{e as t};
