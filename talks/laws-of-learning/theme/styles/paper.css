@@ -1,0 +1,274 @@
+/* Paper-light variant — for decks whose figures are REVTeX/light (ANF).
+   The on-slide accents are the figures' OWN Okabe-Ito data colours, so the
+   slide furniture and the figure read as one object. Activated per-slide by
+   `class: paper` (and the title via `class: paper text-center`). */
+
+:root {
+  --pp-bg: #fbfbf9;        /* warm paper white */
+  --pp-ink: #1a1a1a;
+  --pp-muted: #5a5f6a;
+  --pp-blue: #0072b2;      /* Okabe-Ito blue  — the CLT / predicted curve */
+  --pp-orange: #d55e00;    /* Okabe-Ito orange — the exact / simulated points */
+  --pp-green: #009e73;     /* Okabe-Ito green — corrections */
+  --pp-rule: #d9d6cf;
+}
+
+.slidev-layout.paper,
+.slidev-layout:has(.paper) {
+  background: var(--pp-bg);
+  color: var(--pp-ink);
+  font-family: 'Lora', Georgia, serif;
+}
+.paper h1,
+.slidev-layout:has(.paper) h1 {
+  color: var(--pp-ink);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.paper strong { color: var(--pp-orange); }
+.paper .accent { color: var(--pp-blue); }
+.paper a { color: var(--pp-blue); }
+
+/* mathematics: give display equations room and a hairline card on busy slides */
+.paper .katex-display {
+  margin: 0.9rem 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+/* KaTeX ink on paper — dark ink, opaque, on both the layout-root (.paper) and
+   the column-nested case (two-cols-header puts .paper on the columns). */
+.slidev-layout:has(.paper) .katex,
+.slidev-layout.paper .katex,
+.paper .katex {
+  color: var(--pp-ink);
+  opacity: 1;
+  font-size: 1.04em;
+}
+.paper .eq-hero {
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 1.4rem 0 0.6rem;
+}
+.paper .eq-note {
+  color: var(--pp-muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+.paper .define {
+  border-left: 2px solid var(--pp-blue);
+  padding-left: 0.9rem;
+  margin: 0.4rem 0;
+}
+.paper ul { line-height: 1.85; }
+.paper li { margin-bottom: 0.5rem; }
+
+/* figure reuse: the REVTeX png sits on paper with a hairline + its caption */
+.paper .fig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.paper .fig .reuse-fig {
+  max-height: 60vh;
+  border: 1px solid var(--pp-rule);
+  border-radius: 3px;
+  background: #fff;
+}
+.slidev-layout:has(.paper) .figcap,
+.paper .figcap {
+  margin: 0.6rem auto 0;
+  color: var(--pp-muted);
+  font-size: 0.82rem;
+  max-width: 46ch;
+  text-align: center;
+}
+.paper .figcap p { margin: 0; }
+.paper .figcap strong { color: var(--pp-orange); }
+
+/* bare <Fig class="fig-click"> in a column slot — centre it and cap its height,
+   the styling the .fig wrapper used to give, now applied to the image itself */
+.paper .reuse-fig.fig-click,
+.paper img.fig-click {
+  display: block;
+  margin: 0 auto;
+  max-height: 56vh;
+}
+
+/* the result-ladder chip row on the closing slide */
+.paper .ladder { display: flex; gap: 0.8rem; justify-content: center; margin: 1.4rem 0; }
+.paper .rung {
+  border: 1px solid var(--pp-rule);
+  border-top: 2px solid var(--pp-blue);
+  border-radius: 4px;
+  padding: 0.7rem 1rem;
+  background: #fff;
+  font-size: 0.9rem;
+  min-width: 92px;
+}
+.paper .rung b { color: var(--pp-orange); display: block; font-size: 1.05rem; }
+.paper .kicker { color: var(--pp-blue); font-variant: small-caps; letter-spacing: 0.06em; }
+
+/* the corner equation card, on paper: hairline on white, not the dark layout card */
+.paper .corner-eq,
+.slidev-layout:has(.paper) .corner-eq {
+  background: #fff;
+  border: 1px solid var(--pp-rule);
+  color: var(--pp-ink);
+  box-shadow: 0 1px 10px rgba(20, 20, 20, 0.06);
+}
+
+/* ── live embeds on paper ──────────────────────────────────────────────
+   The phase-portrait and the conceptric snapshot are DARK assets. On a
+   paper deck they sit in a framed card (a deliberate seam, not a recolour):
+   their dark substrate reads as "a live instrument", distinct from the
+   paper-white manuscript figures. Same role the figure card plays for REVTeX. */
+.paper .embed-frame {
+  border: 1px solid var(--pp-rule);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0e1116;
+  box-shadow: 0 2px 22px rgba(20, 20, 20, 0.16);
+}
+.paper .embed-frame .dyn-embed {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.paper .embed-frame iframe { width: 100%; display: block; border: 0; }
+.paper .embed-frame .dyn-embed-caption,
+.paper .embed-slide .dyn-embed-caption {
+  color: var(--pp-muted);
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 0.55rem 0.6rem 0.4rem;
+}
+/* the climax embed runs wide and centred */
+.paper .embed-wide { max-width: 56rem; margin: 0.4rem auto 0; }
+.paper.embed-slide h1,
+.slidev-layout:has(.embed-slide) h1 { margin-bottom: 0.9rem; }
+
+/* ── the turn / closure quote stacks (slides 12, 14) ── */
+.paper .turn-quotes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 44rem;
+  margin: 0.6rem auto 0;
+  text-align: left;
+}
+.paper .turn-quote {
+  border-left: 2px solid var(--pp-blue);
+  padding: 0.35rem 0 0.35rem 1rem;
+  font-size: 1.18rem;
+  line-height: 1.5;
+}
+.paper .turn-quote strong { color: var(--pp-orange); }
+
+/* ── the three Laws (slide 15) ── */
+.paper .laws {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 46rem;
+  margin: 1rem auto 0;
+  text-align: left;
+}
+.paper .law {
+  border: 1px solid var(--pp-rule);
+  border-top: 2px solid var(--pp-blue);
+  border-radius: 5px;
+  background: #fff;
+  padding: 0.85rem 1.1rem;
+  font-size: 1.12rem;
+  line-height: 1.45;
+}
+.paper .law > p { margin: 0; }
+.paper .law > p + p { margin-top: 0.35rem; }
+.paper .law-n {
+  color: var(--pp-orange);
+  font-weight: 700;
+  font-size: 1.3rem;
+  font-variant: small-caps;
+  margin-right: 0.5rem;
+}
+.paper .law-sub {
+  color: var(--pp-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.paper .law-sub .katex { font-size: 0.96em; }
+.paper .closing-line { font-size: 1.05rem; margin-top: 1.3rem; }
+.paper .closing-line.text-lg { font-size: 1.2rem; }
+
+/* ── Act 0: the "many faces" chip grid (slide: What do these have in common?) ── */
+.paper .grid-faces {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  max-width: 50rem;
+  margin: 1.4rem auto 0;
+}
+.paper .face-chip {
+  border: 1px solid var(--pp-rule);
+  border-top: 2px solid var(--pp-blue);
+  border-radius: 5px;
+  background: #fff;
+  padding: 0.6rem 1rem;
+  font-size: 1.02rem;
+  box-shadow: 0 1px 8px rgba(20, 20, 20, 0.05);
+}
+.paper .face-chip span { color: var(--pp-orange); font-weight: 600; }
+
+/* ── Act 0: the colour-coded four-leg loop legend (the parts named in words) ── */
+.paper .loop-legend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.18rem;
+  margin: 0.2rem auto 0;
+  font-size: 0.95rem;
+}
+.paper .loop-legend .leg {
+  padding: 0.34rem 0.9rem;
+  border-radius: 4px;
+  font-weight: 600;
+  min-width: 12rem;
+  text-align: center;
+  color: #fff;
+}
+.paper .loop-legend .leg-ctrl  { background: #c9a96e; color: #1a1a1a; }  /* gold control */
+.paper .loop-legend .leg-env   { background: #d55e00; }                  /* vermilion environment */
+.paper .loop-legend .leg-state { background: #009e73; }                  /* green fast state */
+.paper .loop-legend .leg-meas  { background: #0072b2; }                  /* blue measurement */
+.paper .loop-legend .leg-arrow {
+  color: var(--pp-muted);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+/* ── Act II: the staged model-build cards (one motivated piece per slide) ── */
+.paper .stage-card {
+  border: 1px solid var(--pp-rule);
+  border-left: 3px solid var(--pp-blue);
+  border-radius: 5px;
+  background: #fff;
+  padding: 1.1rem 1.2rem;
+  margin: 1.2rem auto 0;
+  max-width: 30rem;
+  box-shadow: 0 1px 10px rgba(20, 20, 20, 0.05);
+}
+.paper .stage-eq {
+  font-size: 1.35rem;
+  text-align: center;
+}
+.paper .stage-eq .katex { color: var(--pp-ink); }
+.paper .stage-note {
+  margin-top: 0.7rem;
+  color: var(--pp-muted);
+  font-size: 0.86rem;
+  text-align: center;
+  line-height: 1.45;
+}

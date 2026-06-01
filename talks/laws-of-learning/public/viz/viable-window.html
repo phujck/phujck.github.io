@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Viable Window — drive the edge of chaos</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0e1116;
+    color: #c8cad0;
+    font-family: 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.1rem 1rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { width: 100%; max-width: 980px; }
+
+  h1 {
+    font-size: 1.28rem; font-weight: 600; letter-spacing: 0.01em;
+    color: #e6e8ee; margin-bottom: 0.12rem; text-align: center;
+  }
+  h1 span { color: #6b8aaf; font-weight: 400; }
+  .sub { font-size: 0.84rem; color: #7a8190; text-align: center; margin-bottom: 0.7rem; font-style: italic; }
+
+  .canvas-wrap {
+    position: relative; width: 100%; aspect-ratio: 2 / 1;
+    border-radius: 6px; overflow: hidden; background: #0a0d12;
+    box-shadow: 0 2px 22px rgba(0,0,0,0.45);
+  }
+  canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+  .controls {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 1.3rem; margin-top: 0.8rem;
+    padding: 0.6rem 0.9rem; background: rgba(255,255,255,0.04); border-radius: 6px;
+  }
+  .controls label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; white-space: nowrap; }
+  .controls input[type="range"] { width: 150px; accent-color: #6b8aaf; }
+  .controls .val { display: inline-block; min-width: 3.3em; text-align: right; color: #9ba2b0; font-variant-numeric: tabular-nums; }
+  .verdict {
+    font-size: 0.86rem; font-weight: 600; letter-spacing: 0.02em;
+    padding: 0.28rem 0.7rem; border-radius: 4px; min-width: 11rem; text-align: center;
+  }
+  .controls button {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    color: #c8cad0; padding: 0.32rem 0.75rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer;
+  }
+  .controls button:hover { background: rgba(255,255,255,0.13); }
+  .hint { margin-top: 0.5rem; font-size: 0.72rem; color: #5f6675; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>The Viable Window <span>— drive the edge of chaos</span></h1>
+  <p class="sub">One exponent ψ sets the slope of the loop's return map. Below 1 it fades, above 1 it runs away.</p>
+
+  <div class="canvas-wrap" id="wrap">
+    <canvas id="cv"></canvas>
+  </div>
+
+  <div class="controls">
+    <label>ψ
+      <input type="range" id="psi" min="-0.6" max="0.6" step="0.01" value="-0.10">
+      <span class="val" id="psiVal">-0.10</span>
+    </label>
+    <label>size&nbsp;N
+      <input type="range" id="logN" min="0.5" max="4.0" step="0.02" value="2.0">
+      <span class="val" id="nVal">100</span>
+    </label>
+    <label>memory&nbsp;r
+      <input type="range" id="rr" min="0.0" max="0.9" step="0.01" value="0.40">
+      <span class="val" id="rVal">0.40</span>
+    </label>
+    <div class="verdict" id="verdict">stable</div>
+    <button id="kick">Kick it</button>
+  </div>
+  <p class="hint">Drag ψ through zero and watch the return-map slope cross 1. The right panel is the viable window — the floor and ceiling are both priced by the same λ₀ = n^ψ.</p>
+</div>
+
+<script>
+// ─── palette (shared loop colours) ────────────────────────────
+const BG    = '#0a0d12';
+const INK   = '#d2d5dc';
+const MUTED = '#7a8190';
+const FAINT = 'rgba(255,255,255,0.10)';
+const C_STABLE = '#5cacee';   // contracting / fading — blue
+const C_CRIT   = '#c9a96e';   // edge of chaos — gold
+const C_RUN    = '#d4826a';   // runaway / flip — vermilion
+const C_VIABLE = '#7ec4a5';   // the viable band — green
+
+// ─── model constants (grounded in the ANF spine) ──────────────
+//   return map:  e_{k+1} = (r - K_N) e_k - alpha*cN*e_k^3
+//   gain:        K_N = alpha * chi_N * g,   chi_N = A * N^psi
+//   threshold:   flip when (r - K_N) crosses -1, i.e. K_N = K_c = r + 1
+//   FP slope:    lambda0 = n^psi  (decimation eigenvalue); psi = log_n lambda0
+const N_DEC   = 4;        // decimation factor n (group size)
+const A_CHI   = 1.0;      // susceptibility prefactor
+const ALPHA_G = 1.0;      // alpha * g lumped (so K_N = chi_N)
+const SAT     = 2.2;      // saturation sharpness: f(x)=(slope/SAT)*tanh(SAT*x).
+                          // f'(0)=slope (the eigenvalue), but it saturates — so a
+                          // slope below −1 gives a clean, bounded period-2 flip
+                          // instead of a numerical blow-up. The leading slope is the
+                          // physics; the saturation is the generic higher-order term.
+const LAMBDA_CAP = 30;    // reconfiguration budget -> ceiling on depth (visual)
+
+// ─── state ────────────────────────────────────────────────────
+let psi = -0.10, logN = 2.0, r = 0.40;
+let e = 0.18;             // current error iterate
+let cobweb = [];          // recent (e_k -> e_{k+1}) points for the staircase
+let twoCycle = [];        // recent iterates, to detect/draw a 2-cycle
+let clock = 0;
+
+// derived
+function N() { return Math.pow(10, logN); }
+function chiN() { return A_CHI * Math.pow(N(), psi); }
+function K_N() { return ALPHA_G * chiN(); }       // loop gain
+function K_c() { return r + 1; }                  // flip threshold
+function slope() { return r - K_N(); }            // linear coeff of the return map
+function lambda0() { return Math.pow(N_DEC, psi); } // decimation eigenvalue
+
+// the single-level critical size: where K_N = K_c  ->  A N^psi * alpha g = r+1
+function Ncrit() {
+  if (psi <= 1e-6) return Infinity;
+  return Math.pow(K_c() / (ALPHA_G * A_CHI), 1/psi);
+}
+// minimum viable depth to govern size N:  L_min ~ log_{lambda0}(N / Nc1) + 1
+function Lmin(nn) {
+  if (psi <= 1e-6) return 1;             // psi<=0: one level always suffices
+  const nc1 = Ncrit();
+  if (nn <= nc1) return 1;
+  return 1 + Math.log(nn / nc1) / Math.log(lambda0());
+}
+
+// ─── canvas ───────────────────────────────────────────────────
+const wrap = document.getElementById('wrap');
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0;
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = wrap.getBoundingClientRect();
+  W = Math.round(rect.width); H = Math.round(rect.height);
+  cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize', resize); resize();
+
+// ─── the return map ───────────────────────────────────────────
+// Leading slope = the loop eigenvalue (r - K_N). A saturating tanh supplies the
+// generic higher-order term, so |slope|>1 yields a bounded period-2 flip rather
+// than a divergence. f'(0) = slope exactly; the curve saturates at ±slope/SAT.
+function fmap(x) {
+  const s = slope();
+  return (s / SAT) * Math.tanh(SAT * x);
+}
+
+// ─── left panel: live cobweb of the return map ────────────────
+function drawReturnMap(px, py, pw, ph) {
+  // frame
+  ctx.strokeStyle = FAINT; ctx.lineWidth = 1;
+  rr(px, py, pw, ph, 6); ctx.stroke();
+
+  const mx = 38, mt = 30, mb = 26, mr = 14;
+  const ax = px+mx, ay = py+mt, aw = pw-mx-mr, ah = ph-mt-mb;
+  const E = 1.25;  // axis half-range in e
+  const sx = (x) => ax + (x + E)/(2*E)*aw;
+  const sy = (y) => ay + ah - (y + E)/(2*E)*ah;
+
+  // title
+  ctx.fillStyle = '#e6e8ee'; ctx.font = '600 13px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText('Return map   eₖ₊₁ = f(eₖ)', px+12, py+9);
+
+  // axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(sx(-E), sy(0)); ctx.lineTo(sx(E), sy(0)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(sx(0), sy(-E)); ctx.lineTo(sx(0), sy(E)); ctx.stroke();
+
+  // identity line y = x
+  ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(sx(-E), sy(-E)); ctx.lineTo(sx(E), sy(E)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // the map curve, coloured by regime — break the path where it leaves the box
+  // so a steep (runaway) slope reads as a clean line that exits, not a vertical wall
+  const reg = regime();
+  const curveCol = reg === 'stable' ? C_STABLE : reg === 'critical' ? C_CRIT : C_RUN;
+  ctx.strokeStyle = curveCol; ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  let pen = false;
+  for (let i = 0; i <= 160; i++) {
+    const x = -E + (i/160)*2*E;
+    const y = fmap(x);
+    if (y < -E || y > E) { pen = false; continue; }
+    const X = sx(x), Y = sy(y);
+    if (!pen) { ctx.moveTo(X, Y); pen = true; } else ctx.lineTo(X, Y);
+  }
+  ctx.stroke();
+
+  // slope tangent at the origin (the eigenvalue made visible)
+  const s = slope();
+  ctx.strokeStyle = 'rgba(255,255,255,0.30)'; ctx.lineWidth = 1; ctx.setLineDash([2,3]);
+  ctx.beginPath();
+  ctx.moveTo(sx(-0.5), sy(s*-0.5)); ctx.lineTo(sx(0.5), sy(s*0.5));
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // cobweb staircase
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let i = 0; i < cobweb.length-1; i++) {
+    const a = cobweb[i], b = cobweb[i+1];
+    const X0 = sx(Math.max(-E,Math.min(E,a[0]))), Y0 = sy(Math.max(-E,Math.min(E,a[1])));
+    const X1 = sx(Math.max(-E,Math.min(E,b[0]))), Y1 = sy(Math.max(-E,Math.min(E,b[1])));
+    if (i === 0) ctx.moveTo(X0, Y0);
+    ctx.lineTo(X1, Y1);
+  }
+  ctx.stroke();
+
+  // current iterate dot
+  const cx = sx(Math.max(-E,Math.min(E,e))), cy = sy(0);
+  ctx.fillStyle = curveCol; ctx.shadowColor = curveCol; ctx.shadowBlur = 9;
+  ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
+
+  // slope readout
+  ctx.fillStyle = MUTED; ctx.font = '11px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  ctx.fillText(`slope at fixed point = r − Kₙ = ${s.toFixed(2)}`, px+12, py+ph-9);
+  ctx.textAlign = 'right';
+  ctx.fillText(`|slope| ${Math.abs(s) < 1 ? '< 1  contracts' : Math.abs(s) > 1 ? '> 1  flips' : '= 1  edge'}`, px+pw-12, py+ph-9);
+}
+
+// ─── right panel: the (N, L) viable window ────────────────────
+function drawWindow(px, py, pw, ph) {
+  ctx.strokeStyle = FAINT; ctx.lineWidth = 1;
+  rr(px, py, pw, ph, 6); ctx.stroke();
+
+  const ml = 40, mt = 30, mb = 30, mr = 16;
+  const ax = px+ml, ay = py+mt, aw = pw-ml-mr, ah = ph-mt-mb;
+  // axes: x = log10 N in [0.5,4.5], y = depth L in [0, Lcap+1]
+  const NX0 = 0.5, NX1 = 4.5, LY0 = 0, LY1 = LAMBDA_CAP*0 + 9;  // depth axis 0..9
+  const sx = (ln) => ax + (ln - NX0)/(NX1-NX0)*aw;
+  const sy = (L) => ay + ah - (L - LY0)/(LY1-LY0)*ah;
+
+  ctx.fillStyle = '#e6e8ee'; ctx.font = '600 13px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText('Viable window   (size N, depth L)', px+12, py+9);
+
+  // ceiling depth from the energy budget: L <= Lambda (a constant cap, visual)
+  const Lceil = 7.5;
+
+  // shade the regions:
+  // below floor  -> too flat (flip)     [vermilion]
+  // above ceiling-> frozen / inert      [muted]
+  // between      -> viable              [green]
+  // sample columns across N
+  const cols = 120;
+  for (let i = 0; i < cols; i++) {
+    const ln = NX0 + (i/cols)*(NX1-NX0);
+    const nn = Math.pow(10, ln);
+    const x0 = sx(ln), x1 = sx(ln + (NX1-NX0)/cols) + 0.6;
+    const lf = Math.min(Lceil+1, Lmin(nn));
+    // viable band: [floor, ceiling]
+    if (lf < Lceil) {
+      ctx.fillStyle = hexA(C_VIABLE, 0.16);
+      ctx.fillRect(x0, sy(Lceil), x1-x0, sy(lf)-sy(Lceil));
+    }
+    // too-flat (below floor)
+    ctx.fillStyle = hexA(C_RUN, 0.13);
+    ctx.fillRect(x0, sy(lf), x1-x0, sy(LY0)-sy(lf));
+  }
+  // frozen region above ceiling
+  ctx.fillStyle = 'rgba(255,255,255,0.05)';
+  ctx.fillRect(ax, sy(LY1), aw, sy(Lceil)-sy(LY1));
+
+  // floor curve L_min(N) ~ log_{lambda0} N
+  ctx.beginPath();
+  let started = false;
+  for (let i = 0; i <= cols; i++) {
+    const ln = NX0 + (i/cols)*(NX1-NX0);
+    const nn = Math.pow(10, ln);
+    const L = Lmin(nn);
+    const X = sx(ln), Y = sy(Math.min(LY1, L));
+    if (!started) { ctx.moveTo(X, Y); started = true; } else ctx.lineTo(X, Y);
+  }
+  ctx.strokeStyle = C_VIABLE; ctx.lineWidth = 2; ctx.stroke();
+
+  // ceiling line
+  ctx.strokeStyle = hexA('#ffffff', 0.4); ctx.setLineDash([5,4]); ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(ax, sy(Lceil)); ctx.lineTo(ax+aw, sy(Lceil)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // the live operating point (N, L=Lmin(N)) — where the system is being driven
+  const opX = sx(logN), opL = Math.min(LY1, Math.max(1, Lmin(N())));
+  const inViable = (opL <= Lceil);
+  ctx.fillStyle = inViable ? C_VIABLE : C_RUN;
+  ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 10;
+  ctx.beginPath(); ctx.arc(opX, sy(opL), 5, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
+  // drop line to the N axis
+  ctx.strokeStyle = hexA('#ffffff', 0.25); ctx.setLineDash([2,3]);
+  ctx.beginPath(); ctx.moveTo(opX, sy(opL)); ctx.lineTo(opX, sy(LY0)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // axis labels
+  ctx.fillStyle = MUTED; ctx.font = '10px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  for (const ln of [1,2,3,4]) {
+    const X = sx(ln);
+    ctx.fillText('10' + sup(ln), X, sy(LY0)+4);
+  }
+  ctx.fillText('system size N', ax+aw/2, sy(LY0)+18);
+  ctx.save(); ctx.translate(px+12, ay+ah/2); ctx.rotate(-Math.PI/2);
+  ctx.textBaseline = 'bottom'; ctx.fillText('hierarchy depth L', 0, 0); ctx.restore();
+
+  // region labels
+  ctx.font = 'italic 11px "Segoe UI", system-ui, sans-serif';
+  ctx.fillStyle = hexA(C_RUN, 0.8); ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText('too flat — it flips', sx(2.3), sy(0.6));
+  ctx.fillStyle = hexA('#cfd3da', 0.6);
+  ctx.fillText('too deep — it freezes', sx(1.0), sy(8.4));
+  ctx.fillStyle = hexA(C_VIABLE, 0.95);
+  ctx.fillText('viable', sx(2.0), sy(4.2));
+  // floor label
+  ctx.fillStyle = hexA(C_VIABLE, 0.9); ctx.font = '10px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('floor  Lₘᵢₙ ~ log N', sx(3.0), sy(Lmin(Math.pow(10,3.6)))-10);
+}
+
+function sup(n) { return ['','¹','²','³','⁴'][n] || ''; }
+
+// ─── regime classification ────────────────────────────────────
+function regime() {
+  const s = slope();
+  if (Math.abs(Math.abs(s) - 1) < 0.04) return 'critical';
+  if (Math.abs(s) < 1) return 'stable';
+  return 'runaway';
+}
+
+// ─── main loop ────────────────────────────────────────────────
+function iterate() {
+  // advance the return map a step
+  const next = fmap(e);
+  cobweb.push([e, e]);        // vertical to the curve handled below
+  cobweb.push([e, next]);     // up/down to the curve
+  cobweb.push([next, next]);  // across to the identity line
+  if (cobweb.length > 90) cobweb.splice(0, cobweb.length - 90);
+  // the saturating map self-bounds; a light clamp only guards against overflow
+  e = Math.max(-1.3, Math.min(1.3, next));
+  // if it has collapsed to ~0 in the stable case, keep a faint life so the curve is visible
+  if (regime() === 'stable' && Math.abs(e) < 0.004) e = 0.004;
+  twoCycle.push(e); if (twoCycle.length > 40) twoCycle.shift();
+}
+
+let stepAccum = 0;
+function draw() {
+  ctx.clearRect(0,0,W,H); ctx.fillStyle = BG; ctx.fillRect(0,0,W,H);
+  clock += 0.016;
+  // step the map a few times a second so the staircase is watchable
+  stepAccum += 1;
+  if (stepAccum >= 8) { iterate(); stepAccum = 0; }
+
+  const gap = 14;
+  const halfW = (W - gap*3)/2;
+  drawReturnMap(gap, 12, halfW, H-24);
+  drawWindow(gap*2 + halfW, 12, halfW, H-24);
+
+  requestAnimationFrame(draw);
+}
+
+// ─── helpers ──────────────────────────────────────────────────
+function rr(x,y,w,h,rad){ ctx.beginPath(); ctx.moveTo(x+rad,y);
+  ctx.arcTo(x+w,y,x+w,y+h,rad); ctx.arcTo(x+w,y+h,x,y+h,rad);
+  ctx.arcTo(x,y+h,x,y,rad); ctx.arcTo(x,y,x+w,y,rad); ctx.closePath(); }
+function hexA(hex,a){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
+
+// ─── controls ─────────────────────────────────────────────────
+const psiEl = document.getElementById('psi');
+const logNEl = document.getElementById('logN');
+const rEl = document.getElementById('rr');
+const verdict = document.getElementById('verdict');
+
+function updateVerdict() {
+  const reg = regime();
+  let txt, col, bg;
+  if (reg === 'stable') { txt = 'STABLE — fades, computes'; col = C_STABLE; }
+  else if (reg === 'critical') { txt = 'EDGE OF CHAOS'; col = C_CRIT; }
+  else { txt = 'RUNAWAY — it flips'; col = C_RUN; }
+  verdict.textContent = txt;
+  verdict.style.color = '#0a0d12';
+  verdict.style.background = col;
+}
+function refresh() {
+  psi = parseFloat(psiEl.value); logN = parseFloat(logNEl.value); r = parseFloat(rEl.value);
+  document.getElementById('psiVal').textContent = (psi>=0?'+':'') + psi.toFixed(2);
+  const nn = N();
+  document.getElementById('nVal').textContent = nn >= 1000 ? (nn/1000).toFixed(1)+'k' : Math.round(nn);
+  document.getElementById('rVal').textContent = r.toFixed(2);
+  // reset the iterate so a fresh regime is visible immediately
+  e = 0.18; cobweb.length = 0; twoCycle.length = 0;
+  updateVerdict();
+}
+psiEl.addEventListener('input', refresh);
+logNEl.addEventListener('input', refresh);
+rEl.addEventListener('input', refresh);
+document.getElementById('kick').addEventListener('click', () => { e = (e >= 0 ? -1 : 1) * 0.5; });
+
+refresh();
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>

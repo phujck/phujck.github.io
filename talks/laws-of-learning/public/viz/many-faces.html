@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Many Faces, One Loop</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0e1116;
+    color: #c8cad0;
+    font-family: 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.2rem 1rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { width: 100%; max-width: 960px; }
+
+  h1 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: #e6e8ee;
+    margin-bottom: 0.15rem;
+    text-align: center;
+  }
+  h1 span { color: #6b8aaf; font-weight: 400; }
+
+  .sub {
+    font-size: 0.85rem;
+    color: #7a8190;
+    text-align: center;
+    margin-bottom: 0.7rem;
+    font-style: italic;
+  }
+
+  .canvas-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #0a0d12;
+    box-shadow: 0 2px 22px rgba(0,0,0,0.45);
+  }
+  canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    margin-top: 0.75rem;
+  }
+  .controls button {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #c8cad0;
+    padding: 0.34rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .controls button:hover { background: rgba(255,255,255,0.12); }
+  .controls button.active {
+    border-color: #6b8aaf;
+    background: rgba(107,138,175,0.18);
+    color: #e6e8ee;
+  }
+  .controls .spacer { width: 0.6rem; }
+
+  .hint {
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    color: #5f6675;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Many Faces <span>— one loop</span></h1>
+  <p class="sub">A system senses, updates, and acts into an environment it partly creates.</p>
+
+  <div class="canvas-wrap" id="wrap">
+    <canvas id="cv"></canvas>
+  </div>
+
+  <div class="controls" id="controls">
+    <button data-face="0">Evolution</button>
+    <button data-face="1">Gradient descent</button>
+    <button data-face="2">A market</button>
+    <button data-face="3">A reservoir</button>
+    <span class="spacer"></span>
+    <button id="allBtn">All four</button>
+  </div>
+  <p class="hint">Autoplay cycles the four faces. Click a face to hold it. "All four" shows the shared loop.</p>
+</div>
+
+<script>
+// ─── palette ──────────────────────────────────────────────────
+const BG       = '#0a0d12';
+const INK      = '#c8cad0';
+const MUTED    = '#7a8190';
+const FAINT     = 'rgba(255,255,255,0.07)';
+// the three legs of the loop get fixed colours, shared across all faces
+const C_SENSE  = '#5cacee';   // measure / sense — blue
+const C_UPDATE = '#e8a84c';   // update the control — gold
+const C_ENV    = '#d4826a';   // act into the environment — vermilion
+const C_STATE  = '#7ec4a5';   // the fast state living in the environment — green
+
+// ─── canvas setup ─────────────────────────────────────────────
+const wrap = document.getElementById('wrap');
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0;
+
+function resize() {
+  const r = window.devicePixelRatio || 1;
+  const rect = wrap.getBoundingClientRect();
+  W = Math.round(rect.width); H = Math.round(rect.height);
+  cv.width = W * r; cv.height = H * r;
+  ctx.setTransform(r, 0, 0, r, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ─── deterministic RNG (so the picture is the same every run) ──
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// ─── faces ────────────────────────────────────────────────────
+// Each face is a small live simulation that visibly runs the same three-leg
+// loop: it SENSES a coarse signal, UPDATES a slow control, and the control
+// reshapes the ENVIRONMENT its fast state lives in. Same loop, four clothes.
+
+const FACES = [
+  {
+    name: 'Evolution',
+    control: 'the trait distribution',
+    env: 'a fitness landscape',
+    sense: 'who survives',
+    blurb: 'A population climbs a fitness landscape it reshapes by climbing.',
+  },
+  {
+    name: 'Gradient descent',
+    control: 'the weights',
+    env: 'a loss surface',
+    sense: 'the gradient',
+    blurb: 'A model rolls downhill on a loss surface its own data defines.',
+  },
+  {
+    name: 'A market',
+    control: 'the price',
+    env: 'supply and demand',
+    sense: 'excess demand',
+    blurb: 'A price moves to clear a market the price itself shifts.',
+  },
+  {
+    name: 'A reservoir',
+    control: 'the readout weights',
+    env: 'the recurrent state',
+    sense: 'the output error',
+    blurb: 'A reservoir is trained against a target its own dynamics chase.',
+  },
+];
+
+// ── shared simulation state for each face (a slow control + fast state) ──
+const sim = [];
+function resetSim() {
+  sim.length = 0;
+  // Evolution: a 1-D trait distribution climbing a moving-peak landscape
+  sim.push({ mean: -1.4, peak: 1.0, t: 0 });
+  // Gradient descent: a ball rolling on a 1-D loss curve
+  sim.push({ x: -1.7, v: 0, t: 0 });
+  // Market: price vs equilibrium with delayed overshoot
+  sim.push({ price: 0.35, eq: 0.7, t: 0, hist: [] });
+  // Reservoir: scalar output chasing a target, weight adapts
+  sim.push({ w: 0.15, target: 0.8, out: 0, t: 0, hist: [] });
+}
+resetSim();
+
+const rng = mulberry32(20260601);
+
+// ─── view state ───────────────────────────────────────────────
+let mode = 'cycle';        // 'cycle' | 'single' | 'all'
+let activeFace = 0;        // which face is shown in single mode
+let cycleIdx = 0;          // which face the cycle is on
+let faceTimer = 0;         // frames the current face has been shown
+const FACE_FRAMES = 300;   // ~5s per face at 60fps in cycle mode
+let clock = 0;             // global animation clock
+let loopPhase = 0;         // 0..1 pointer that runs around the loop legs
+
+// ─── helpers ──────────────────────────────────────────────────
+function rr(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function hexA(hex, a) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ─── per-face mini-simulations, drawn into a given panel rect ──
+// rect = {x,y,w,h}; phase animates the active leg highlight.
+function drawFace(faceIdx, rect, big) {
+  const f = FACES[faceIdx];
+  const s = sim[faceIdx];
+  const pad = big ? 18 : 12;
+  const px = rect.x + pad, py = rect.y + pad;
+  const pw = rect.w - 2*pad, ph = rect.h - 2*pad;
+
+  // panel frame
+  ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+  ctx.lineWidth = 1;
+  rr(rect.x, rect.y, rect.w, rect.h, 6); ctx.stroke();
+
+  // title
+  ctx.fillStyle = '#e6e8ee';
+  ctx.font = `600 ${big ? 17 : 12}px "Segoe UI", system-ui, sans-serif`;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText(f.name, px, py);
+
+  // simulation viewport sits below the title
+  const vx = px, vy = py + (big ? 30 : 20);
+  const vw = pw, vh = ph - (big ? 30 : 20) - (big ? 18 : 0);
+
+  ctx.save();
+  rr(vx, vy, vw, vh, 4); ctx.clip();
+
+  if (faceIdx === 0) drawEvolution(s, vx, vy, vw, vh, big);
+  else if (faceIdx === 1) drawGradient(s, vx, vy, vw, vh, big);
+  else if (faceIdx === 2) drawMarket(s, vx, vy, vw, vh, big);
+  else drawReservoir(s, vx, vy, vw, vh, big);
+
+  ctx.restore();
+
+  if (big) {
+    ctx.fillStyle = MUTED;
+    ctx.font = '13px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    ctx.fillText(f.blurb, px, rect.y + rect.h - 8);
+  }
+}
+
+// Evolution: a gaussian trait distribution climbing a landscape whose peak it pushes
+function drawEvolution(s, x, y, w, h, big) {
+  s.t += 0.016;
+  // landscape: a hill whose peak drifts as the population arrives (endogeneity)
+  const peakDrift = 0.35 * Math.sin(s.t * 0.5);
+  s.peak = 0.6 + peakDrift;
+  // population mean climbs toward the peak (selection), with lag
+  s.mean += (s.peak - s.mean) * 0.012;
+  const land = (u) => Math.exp(-Math.pow((u - s.peak) / 0.5, 2)); // 0..1
+  // axes map u in [-2,2] -> x
+  const U0 = -2, U1 = 2;
+  const sx = (u) => x + (u - U0) / (U1 - U0) * w;
+  const sy = (v) => y + h - 6 - v * (h - 16);
+  // landscape curve
+  ctx.beginPath();
+  for (let i = 0; i <= 80; i++) {
+    const u = U0 + (i/80)*(U1-U0);
+    const X = sx(u), Y = sy(land(u));
+    i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
+  }
+  ctx.strokeStyle = hexA(C_ENV, 0.85); ctx.lineWidth = big ? 2 : 1.4; ctx.stroke();
+  // peak marker
+  ctx.fillStyle = hexA(C_ENV, 0.5);
+  ctx.beginPath(); ctx.arc(sx(s.peak), sy(1), big?4:2.5, 0, 7); ctx.fill();
+  // population: a cloud of dots around the mean
+  const n = big ? 38 : 16;
+  for (let i = 0; i < n; i++) {
+    const u = s.mean + (rng()*2-1)*0.32;
+    const fit = land(u);
+    ctx.fillStyle = hexA(C_STATE, 0.35 + 0.55*fit);
+    ctx.beginPath(); ctx.arc(sx(u), sy(fit) - (big?5:3), big?2.4:1.6, 0, 7); ctx.fill();
+  }
+}
+
+// Gradient descent: a ball rolling on a loss curve; the curve tilts under it (data shift)
+function drawGradient(s, x, y, w, h, big) {
+  s.t += 0.016;
+  const tilt = 0.25 * Math.sin(s.t * 0.45);            // the surface the model defines moves
+  const loss = (u) => 0.5*u*u - 0.55*Math.cos(2.4*u) + tilt*u + 0.6;
+  const dloss = (u) => u + 0.55*2.4*Math.sin(2.4*u) + tilt;
+  // descend
+  s.v = 0.86*s.v - 0.045*dloss(s.x);
+  s.x += s.v;
+  if (s.x < -2) s.x = -2, s.v = 0; if (s.x > 2) s.x = 2, s.v = 0;
+  const U0 = -2, U1 = 2;
+  const vmin = 0, vmax = 2.6;
+  const sx = (u) => x + (u - U0)/(U1-U0)*w;
+  const sy = (v) => y + h - 6 - (v - vmin)/(vmax - vmin)*(h - 14);
+  ctx.beginPath();
+  for (let i = 0; i <= 90; i++) {
+    const u = U0 + (i/90)*(U1-U0);
+    const X = sx(u), Y = sy(loss(u));
+    i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
+  }
+  ctx.strokeStyle = hexA(C_ENV, 0.85); ctx.lineWidth = big?2:1.4; ctx.stroke();
+  // the ball (the weights)
+  const bx = sx(s.x), by = sy(loss(s.x));
+  ctx.fillStyle = C_UPDATE;
+  ctx.shadowColor = C_UPDATE; ctx.shadowBlur = big?10:5;
+  ctx.beginPath(); ctx.arc(bx, by - (big?5:3), big?5:3, 0, 7); ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+// Market: price oscillates toward a moving equilibrium with delay -> cobweb overshoot
+function drawMarket(s, x, y, w, h, big) {
+  s.t += 0.016;
+  s.eq = 0.55 + 0.18*Math.sin(s.t*0.5);                // demand the price itself shifts
+  // delayed adjustment -> classic over/undershoot
+  const err = s.eq - s.price;
+  s.price += err * 0.09 + 0.04*Math.sin(s.t*2.1)*Math.abs(err);
+  s.hist.push(s.price);
+  if (s.hist.length > (big?160:80)) s.hist.shift();
+  const vmin = 0.1, vmax = 1.0;
+  const sy = (v) => y + h - 6 - (v - vmin)/(vmax - vmin)*(h - 14);
+  // equilibrium line
+  ctx.strokeStyle = hexA(C_ENV, 0.5); ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(x, sy(s.eq)); ctx.lineTo(x+w, sy(s.eq)); ctx.stroke();
+  ctx.setLineDash([]);
+  // price time series
+  ctx.beginPath();
+  for (let i = 0; i < s.hist.length; i++) {
+    const X = x + (i/(s.hist.length-1 || 1))*w;
+    const Y = sy(s.hist[i]);
+    i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
+  }
+  ctx.strokeStyle = C_UPDATE; ctx.lineWidth = big?2:1.4; ctx.stroke();
+  // current price head
+  ctx.fillStyle = C_UPDATE;
+  ctx.beginPath(); ctx.arc(x+w, sy(s.price), big?4:2.6, 0, 7); ctx.fill();
+}
+
+// Reservoir: a scalar output (driven by a noisy "recurrent state") chases a target as the readout weight adapts
+function drawReservoir(s, x, y, w, h, big) {
+  s.t += 0.016;
+  s.target = 0.5 + 0.3*Math.sin(s.t*0.6);
+  // a wiggly internal state (stand-in for the recurrent reservoir signal)
+  const state = 0.5 + 0.4*Math.sin(s.t*3.1) + 0.18*Math.sin(s.t*7.7+1.0);
+  s.out = s.w * state;
+  const errR = s.target - s.out;
+  s.w += 0.06 * errR * state;                          // readout learns; output chases target
+  s.hist.push([s.out, s.target]);
+  if (s.hist.length > (big?160:80)) s.hist.shift();
+  const vmin = -0.1, vmax = 1.1;
+  const sy = (v) => y + h - 6 - (v - vmin)/(vmax - vmin)*(h - 14);
+  // target
+  ctx.beginPath();
+  for (let i = 0; i < s.hist.length; i++) {
+    const X = x + (i/(s.hist.length-1||1))*w; const Y = sy(s.hist[i][1]);
+    i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
+  }
+  ctx.strokeStyle = hexA(C_ENV, 0.6); ctx.lineWidth = big?2:1.4; ctx.setLineDash([5,4]); ctx.stroke();
+  ctx.setLineDash([]);
+  // output
+  ctx.beginPath();
+  for (let i = 0; i < s.hist.length; i++) {
+    const X = x + (i/(s.hist.length-1||1))*w; const Y = sy(s.hist[i][0]);
+    i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
+  }
+  ctx.strokeStyle = C_STATE; ctx.lineWidth = big?2:1.4; ctx.stroke();
+  ctx.fillStyle = C_STATE;
+  ctx.beginPath(); ctx.arc(x+w, sy(s.out), big?4:2.6, 0, 7); ctx.fill();
+}
+
+// ─── the shared loop diagram ──────────────────────────────────
+// Four nodes on a ring: CONTROL (slow) -> ENVIRONMENT -> STATE -> MEASURE -> back.
+// A travelling pulse runs the ring; legs light in their fixed colours. The labels
+// re-skin per face, but the diagram never changes — that is the whole point.
+function drawLoop(rect, faceIdx, showSkin) {
+  const cx = rect.x + rect.w/2, cy = rect.y + rect.h/2;
+  const R = Math.min(rect.w, rect.h) * 0.34;
+  const f = FACES[faceIdx];
+
+  // node angular positions (top, right, bottom, left)
+  const nodes = [
+    { a: -Math.PI/2, label: 'CONTROL', sub: showSkin ? f.control : 'slow variable θ',      col: C_UPDATE },
+    { a: 0,          label: 'ENVIRONMENT', sub: showSkin ? f.env : 'field h = Π(θ)',       col: C_ENV },
+    { a: Math.PI/2,  label: 'STATE', sub: showSkin ? 'fast parts' : 'microstate ρ',        col: C_STATE },
+    { a: Math.PI,    label: 'MEASURE', sub: showSkin ? f.sense : 'coarse, delayed m',      col: C_SENSE },
+  ];
+  const pos = nodes.map(n => ({ x: cx + R*Math.cos(n.a), y: cy + R*Math.sin(n.a), ...n }));
+
+  // arcs between successive nodes, with a travelling highlight
+  for (let i = 0; i < 4; i++) {
+    const a = pos[i], b = pos[(i+1)%4];
+    // base arc
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+    ctx.lineWidth = 2;
+    arrowArc(a, b, cx, cy, R, false, 0);
+    // highlight if the loop pulse is on this leg
+    const segPhase = (loopPhase*4) - i;
+    if (segPhase >= 0 && segPhase < 1) {
+      ctx.strokeStyle = a.col;
+      ctx.lineWidth = 3.2;
+      arrowArc(a, b, cx, cy, R, true, segPhase);
+    }
+  }
+
+  // nodes
+  for (const n of pos) {
+    ctx.fillStyle = BG;
+    ctx.strokeStyle = n.col; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(n.x, n.y, 7, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#e6e8ee';
+    ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    // place labels outside the ring
+    const lx = cx + (R+26)*Math.cos(n.a), ly = cy + (R+26)*Math.sin(n.a);
+    ctx.textBaseline = (n.a === Math.PI/2) ? 'top' : (n.a === -Math.PI/2 ? 'bottom' : 'middle');
+    ctx.fillText(n.label, lx, ly);
+    ctx.fillStyle = MUTED;
+    ctx.font = '10px "Segoe UI", system-ui, sans-serif';
+    const sy2 = ly + (n.a === -Math.PI/2 ? -14 : (n.a === Math.PI/2 ? 14 : 13));
+    ctx.fillText(n.sub, lx, sy2);
+  }
+
+  // the endogeneity arrow gets a label: control -> environment is the red leg
+  ctx.fillStyle = hexA(C_ENV, 0.9);
+  ctx.font = 'italic 11px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('it makes its own field', cx + R*0.9, cy - R*0.62);
+}
+
+// draw an arc segment between two ring nodes, optional moving dot at param p
+function arrowArc(a, b, cx, cy, R, withDot, p) {
+  const a0 = Math.atan2(a.y - cy, a.x - cx);
+  let a1 = Math.atan2(b.y - cy, b.x - cx);
+  // ensure we sweep the short clockwise way
+  if (a1 < a0) a1 += Math.PI*2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, a0, a1);
+  ctx.stroke();
+  // arrowhead near b
+  const ah = a1 - 0.08;
+  const hx = cx + R*Math.cos(ah), hy = cy + R*Math.sin(ah);
+  const tx = cx + R*Math.cos(a1), ty = cy + R*Math.sin(a1);
+  const ang = Math.atan2(ty - hy, tx - hx);
+  ctx.beginPath();
+  ctx.moveTo(tx, ty);
+  ctx.lineTo(tx - 7*Math.cos(ang - 0.4), ty - 7*Math.sin(ang - 0.4));
+  ctx.lineTo(tx - 7*Math.cos(ang + 0.4), ty - 7*Math.sin(ang + 0.4));
+  ctx.closePath();
+  ctx.fillStyle = ctx.strokeStyle; ctx.fill();
+  if (withDot) {
+    const ad = a0 + (a1 - a0)*p;
+    const dx = cx + R*Math.cos(ad), dy = cy + R*Math.sin(ad);
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 10;
+    ctx.beginPath(); ctx.arc(dx, dy, 4, 0, 7); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+// ─── layout / scenes ──────────────────────────────────────────
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
+
+  // advance loop pulse
+  loopPhase = (loopPhase + 0.0045) % 1;
+  clock += 0.016;
+
+  if (mode === 'all') {
+    // four small panels on the left, the shared loop large on the right
+    const gx = 14, gy = 14, gap = 12;
+    const colW = W*0.46;
+    const cellW = (colW - gx - gap)/2, cellH = (H - gy*2 - gap)/2;
+    const cells = [
+      {x: gx,           y: gy,            w: cellW, h: cellH},
+      {x: gx+cellW+gap, y: gy,            w: cellW, h: cellH},
+      {x: gx,           y: gy+cellH+gap,  w: cellW, h: cellH},
+      {x: gx+cellW+gap, y: gy+cellH+gap,  w: cellW, h: cellH},
+    ];
+    for (let i = 0; i < 4; i++) drawFace(i, cells[i], false);
+    // the loop, generic skin, on the right
+    drawLoop({x: colW+6, y: 8, w: W-colW-18, h: H-16}, 0, false);
+    // caption strip
+    ctx.fillStyle = '#e6e8ee';
+    ctx.font = '600 14px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('Four systems. One loop.', colW + (W-colW)/2, H - 10);
+  } else {
+    // single big face on the left, its loop (skinned) on the right
+    const idx = (mode === 'single') ? activeFace : cycleIdx;
+    const split = W*0.54;
+    drawFace(idx, {x: 14, y: 14, w: split-22, h: H-28}, true);
+    drawLoop({x: split, y: 10, w: W-split-14, h: H-20}, idx, true);
+
+    if (mode === 'cycle') {
+      faceTimer++;
+      if (faceTimer >= FACE_FRAMES) { faceTimer = 0; cycleIdx = (cycleIdx+1)%4; }
+      // progress ticks
+      const tx = split + (W-split)/2;
+      for (let i = 0; i < 4; i++) {
+        ctx.fillStyle = (i === cycleIdx) ? C_SENSE : 'rgba(255,255,255,0.18)';
+        ctx.beginPath(); ctx.arc(tx - 24 + i*16, H - 12, 3, 0, 7); ctx.fill();
+      }
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+// ─── controls ─────────────────────────────────────────────────
+const faceButtons = [...document.querySelectorAll('button[data-face]')];
+function setActiveButton(btn) {
+  faceButtons.forEach(b => b.classList.remove('active'));
+  document.getElementById('allBtn').classList.remove('active');
+  if (btn) btn.classList.add('active');
+}
+faceButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    mode = 'single'; activeFace = parseInt(btn.dataset.face);
+    setActiveButton(btn);
+  });
+});
+document.getElementById('allBtn').addEventListener('click', () => {
+  mode = 'all'; setActiveButton(document.getElementById('allBtn'));
+});
+// click the canvas to resume the autoplay cycle
+cv.addEventListener('click', () => { mode = 'cycle'; setActiveButton(null); });
+
+// ─── start ────────────────────────────────────────────────────
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>

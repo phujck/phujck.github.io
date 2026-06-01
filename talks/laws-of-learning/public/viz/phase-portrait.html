@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Portrait — Damped Pendulum</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #111122;
+    color: #c8cad0;
+    font-family: 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem 1rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #e0e2e8;
+    margin-bottom: 0.9rem;
+    text-align: center;
+  }
+  h1 span { color: #6b8aaf; font-weight: 400; }
+
+  .container {
+    width: 100%;
+    max-width: 840px;
+  }
+
+  .canvas-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: crosshair;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.45);
+  }
+
+  canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.1rem;
+    margin-top: 0.85rem;
+    padding: 0.65rem 0.9rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    font-size: 0.82rem;
+  }
+
+  .controls label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    white-space: nowrap;
+  }
+
+  .controls input[type="range"] {
+    width: 110px;
+    accent-color: #6b8aaf;
+  }
+
+  .controls .val {
+    display: inline-block;
+    min-width: 2.4em;
+    text-align: right;
+    color: #9ba2b0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .controls button {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #c8cad0;
+    padding: 0.32rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .controls button:hover { background: rgba(255,255,255,0.14); }
+
+  .controls input[type="checkbox"] {
+    accent-color: #6b8aaf;
+  }
+
+  .hint {
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    color: #6a6e7a;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Phase Portrait <span>— Damped Pendulum</span></h1>
+
+  <div class="canvas-wrap" id="wrap">
+    <canvas id="bg"></canvas>
+    <canvas id="fg"></canvas>
+  </div>
+
+  <div class="controls">
+    <label>
+      damping &gamma;
+      <input type="range" id="dampSlider" min="0" max="0.5" step="0.01" value="0.05">
+      <span class="val" id="dampVal">0.05</span>
+    </label>
+
+    <label>
+      <input type="checkbox" id="contourToggle" checked>
+      energy contours
+    </label>
+
+    <button id="clearBtn">Clear</button>
+  </div>
+
+  <p class="hint">Click anywhere in the phase space to launch a trajectory.</p>
+</div>
+
+<script>
+// ─── constants & config ───────────────────────────────────────
+const G_OVER_L  = 1.0;          // g/L — sets timescale
+const DT        = 0.008;        // integration timestep
+const STEPS_PER_FRAME = 60;     // sub-steps per animation frame
+const MAX_TRAJ  = 20;
+const TRAIL_LEN = 1800;         // max stored points per trajectory
+const BG_COLOR  = '#1a1a2e';
+
+const PALETTE = [
+  '#5b9bd5','#7ec4a5','#e6b35a','#c27db5','#6dc8c8',
+  '#d4826a','#8fb36a','#a0a0d8','#c9a55a','#6aa5d4',
+  '#b5de8c','#e08585','#85c7c7','#d4a06a','#9585d4',
+  '#6ac4a0','#d8b585','#85a0d4','#c4856a','#6ad4b5',
+];
+
+// ─── state ────────────────────────────────────────────────────
+let gamma = 0.05;
+let showContours = true;
+let trajectories = [];          // [{pts:[[th,om],...], color, age}]
+let colorIdx = 0;
+let needBgRedraw = true;
+
+// ─── canvas setup ─────────────────────────────────────────────
+const wrap = document.getElementById('wrap');
+const bgCanvas = document.getElementById('bg');
+const fgCanvas = document.getElementById('fg');
+const bgCtx = bgCanvas.getContext('2d');
+const fgCtx = fgCanvas.getContext('2d');
+
+function resize() {
+  const r = window.devicePixelRatio || 1;
+  const rect = wrap.getBoundingClientRect();
+  const w = Math.round(rect.width);
+  const h = Math.round(rect.height);
+  for (const c of [bgCanvas, fgCanvas]) {
+    c.width  = w * r;
+    c.height = h * r;
+    c.getContext('2d').setTransform(r, 0, 0, r, 0, 0);
+  }
+  bgCanvas._w = fgCanvas._w = w;
+  bgCanvas._h = fgCanvas._h = h;
+  needBgRedraw = true;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ─── coordinate transforms ────────────────────────────────────
+const TH_MIN = -Math.PI, TH_MAX = Math.PI;
+const OM_MIN = -3.5,      OM_MAX = 3.5;
+
+function toScreen(th, om) {
+  const w = fgCanvas._w, h = fgCanvas._h;
+  const x = (th - TH_MIN) / (TH_MAX - TH_MIN) * w;
+  const y = (1 - (om - OM_MIN) / (OM_MAX - OM_MIN)) * h;
+  return [x, y];
+}
+
+function toPhase(px, py) {
+  const w = fgCanvas._w, h = fgCanvas._h;
+  const th = TH_MIN + (px / w) * (TH_MAX - TH_MIN);
+  const om = OM_MAX - (py / h) * (OM_MAX - OM_MIN);
+  return [th, om];
+}
+
+// ─── RK4 integrator ───────────────────────────────────────────
+function deriv(th, om, g) {
+  return [om, -G_OVER_L * Math.sin(th) - g * om];
+}
+
+function rk4Step(th, om, dt, g) {
+  const [k1a, k1b] = deriv(th, om, g);
+  const [k2a, k2b] = deriv(th + 0.5*dt*k1a, om + 0.5*dt*k1b, g);
+  const [k3a, k3b] = deriv(th + 0.5*dt*k2a, om + 0.5*dt*k2b, g);
+  const [k4a, k4b] = deriv(th + dt*k3a, om + dt*k3b, g);
+  let newTh = th + (dt/6)*(k1a + 2*k2a + 2*k3a + k4a);
+  let newOm = om + (dt/6)*(k1b + 2*k2b + 2*k3b + k4b);
+  // wrap angle to [-pi, pi]
+  newTh = ((newTh + Math.PI) % (2*Math.PI) + 2*Math.PI) % (2*Math.PI) - Math.PI;
+  return [newTh, newOm];
+}
+
+// ─── background: grid, axes, contours ─────────────────────────
+function drawBackground() {
+  const ctx = bgCtx;
+  const w = bgCanvas._w, h = bgCanvas._h;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = BG_COLOR;
+  ctx.fillRect(0, 0, w, h);
+
+  // subtle grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 0.5;
+  // vertical lines at multiples of pi/4
+  for (let th = -Math.PI; th <= Math.PI + 0.01; th += Math.PI / 4) {
+    const [x] = toScreen(th, 0);
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+  }
+  // horizontal lines at integer omega
+  for (let om = Math.ceil(OM_MIN); om <= Math.floor(OM_MAX); om++) {
+    const [, y] = toScreen(0, om);
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+
+  // axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  ctx.lineWidth = 1;
+  const [ax] = toScreen(0, 0);
+  const [, ay] = toScreen(0, 0);
+  ctx.beginPath(); ctx.moveTo(ax, 0); ctx.lineTo(ax, h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, ay); ctx.lineTo(w, ay); ctx.stroke();
+
+  // energy contours
+  if (showContours) {
+    drawContours(ctx, w, h);
+  }
+
+  // axis labels
+  ctx.fillStyle = 'rgba(200,202,210,0.7)';
+  ctx.font = '12px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('angle \u03B8', w / 2, h - 6);
+  ctx.save();
+  ctx.translate(14, h / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('angular velocity \u03C9', 0, 0);
+  ctx.restore();
+
+  // tick labels
+  ctx.fillStyle = 'rgba(200,202,210,0.45)';
+  ctx.font = '10px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  const tickLabels = [
+    [-Math.PI, '-\u03C0'], [-Math.PI/2, '-\u03C0/2'],
+    [0, '0'], [Math.PI/2, '\u03C0/2'], [Math.PI, '\u03C0']
+  ];
+  for (const [th, lbl] of tickLabels) {
+    const [x, y] = toScreen(th, 0);
+    ctx.fillText(lbl, x, y + 3);
+  }
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (let om = Math.ceil(OM_MIN); om <= Math.floor(OM_MAX); om++) {
+    if (om === 0) continue;
+    const [x, y] = toScreen(0, om);
+    ctx.fillText(String(om), x - 5, y);
+  }
+
+  // fixed points
+  const [ox, oy] = toScreen(0, 0);
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.beginPath(); ctx.arc(ox, oy, 3.5, 0, 2*Math.PI); ctx.fill();
+  // unstable fixed points at +/-pi
+  for (const th of [-Math.PI, Math.PI]) {
+    const [ux, uy] = toScreen(th, 0);
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(ux, uy, 3.5, 0, 2*Math.PI); ctx.stroke();
+  }
+}
+
+function drawContours(ctx, w, h) {
+  // Evaluate H on a grid and draw iso-lines via marching squares (simplified)
+  // H = 0.5*om^2 - G_OVER_L*cos(th)
+  // Separatrix energy: H_sep = G_OVER_L (at the unstable fixed point th=pi, om=0)
+  const H_sep = G_OVER_L;
+
+  const RES = 200;
+  const thStep = (TH_MAX - TH_MIN) / RES;
+  const omStep = (OM_MAX - OM_MIN) / RES;
+
+  // Build energy field
+  const field = new Float64Array((RES+1)*(RES+1));
+  for (let j = 0; j <= RES; j++) {
+    for (let i = 0; i <= RES; i++) {
+      const th = TH_MIN + i * thStep;
+      const om = OM_MIN + j * omStep;
+      field[j*(RES+1)+i] = 0.5*om*om - G_OVER_L*Math.cos(th);
+    }
+  }
+
+  // Contour levels
+  const levels = [];
+  for (let e = -1.0; e <= 4.0; e += 0.25) {
+    if (Math.abs(e - H_sep) < 0.05) continue; // skip near separatrix — drawn separately
+    levels.push(e);
+  }
+
+  // Draw each level via marching squares segments
+  ctx.lineWidth = 0.6;
+  for (const level of levels) {
+    ctx.strokeStyle = 'rgba(100,140,200,0.12)';
+    ctx.beginPath();
+    marchingSquaresLevel(ctx, field, RES, level, w, h);
+    ctx.stroke();
+  }
+
+  // Draw separatrix prominently
+  ctx.strokeStyle = 'rgba(200,160,100,0.55)';
+  ctx.lineWidth = 1.3;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  marchingSquaresLevel(ctx, field, RES, H_sep, w, h);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function marchingSquaresLevel(ctx, field, RES, level, w, h) {
+  // Simple segment-based marching squares — emits disconnected line segments
+  const N = RES + 1;
+  for (let j = 0; j < RES; j++) {
+    for (let i = 0; i < RES; i++) {
+      const v00 = field[j*N+i]       - level;
+      const v10 = field[j*N+i+1]     - level;
+      const v01 = field[(j+1)*N+i]   - level;
+      const v11 = field[(j+1)*N+i+1] - level;
+
+      const idx = (v00 > 0 ? 8 : 0) | (v10 > 0 ? 4 : 0) | (v11 > 0 ? 2 : 0) | (v01 > 0 ? 1 : 0);
+      if (idx === 0 || idx === 15) continue;
+
+      // Interpolation helpers — return screen coords
+      const lerpX = (va, vb, ix, iy) => {
+        const t = va / (va - vb);
+        const th = TH_MIN + (ix + t) * (TH_MAX - TH_MIN) / RES;
+        const om = OM_MIN + iy * (OM_MAX - OM_MIN) / RES;
+        return toScreen(th, om);
+      };
+      const lerpY = (va, vb, ix, iy) => {
+        const t = va / (va - vb);
+        const th = TH_MIN + ix * (TH_MAX - TH_MIN) / RES;
+        const om = OM_MIN + (iy + t) * (OM_MAX - OM_MIN) / RES;
+        return toScreen(th, om);
+      };
+
+      // Edge midpoints: top(0-1), right(1-2), bottom(2-3), left(3-0)
+      // Corners: 0=TL(i,j), 1=TR(i+1,j), 2=BR(i+1,j+1), 3=BL(i,j+1)
+      const top    = () => lerpX(v00, v10, i, j);
+      const bottom = () => lerpX(v01, v11, i, j+1);
+      const left   = () => lerpY(v00, v01, i, j);
+      const right  = () => lerpY(v10, v11, i+1, j);
+
+      const segments = [];
+      switch(idx) {
+        case 1: case 14: segments.push([left(), bottom()]); break;
+        case 2: case 13: segments.push([bottom(), right()]); break;
+        case 3: case 12: segments.push([left(), right()]); break;
+        case 4: case 11: segments.push([top(), right()]); break;
+        case 5: segments.push([left(), top()], [bottom(), right()]); break;
+        case 6: case 9:  segments.push([top(), bottom()]); break;
+        case 7: case 8:  segments.push([left(), top()]); break;
+        case 10: segments.push([top(), right()], [left(), bottom()]); break;
+      }
+
+      for (const [a, b] of segments) {
+        ctx.moveTo(a[0], a[1]);
+        ctx.lineTo(b[0], b[1]);
+      }
+    }
+  }
+}
+
+// ─── foreground: trajectories ─────────────────────────────────
+function drawTrajectories() {
+  const ctx = fgCtx;
+  const w = fgCanvas._w, h = fgCanvas._h;
+  ctx.clearRect(0, 0, w, h);
+
+  for (const traj of trajectories) {
+    const pts = traj.pts;
+    if (pts.length < 2) continue;
+
+    const n = pts.length;
+    // Draw with fading opacity — older segments more transparent
+    // We batch into segments of similar opacity for performance
+    const BATCH = 8;
+    for (let k = 1; k < n; k++) {
+      // Fade: newest = full opacity, oldest = nearly invisible
+      const frac = k / n;  // 0 = oldest, 1 = newest
+      const alpha = 0.06 + 0.88 * frac * frac;
+
+      const [x0, y0] = toScreen(pts[k-1][0], pts[k-1][1]);
+      const [x1, y1] = toScreen(pts[k][0], pts[k][1]);
+
+      // Skip segments that wrap across the canvas (angle wrapping discontinuity)
+      if (Math.abs(pts[k][0] - pts[k-1][0]) > Math.PI) continue;
+
+      if (k % BATCH === 1 || BATCH === 1) {
+        if (k > 1) ctx.stroke();
+        ctx.beginPath();
+        ctx.strokeStyle = hexWithAlpha(traj.color, alpha);
+        ctx.lineWidth = 1.8;
+        ctx.moveTo(x0, y0);
+      }
+      ctx.lineTo(x1, y1);
+    }
+    ctx.stroke();
+
+    // Draw bright head
+    const [hx, hy] = toScreen(pts[n-1][0], pts[n-1][1]);
+    ctx.fillStyle = traj.color;
+    ctx.shadowColor = traj.color;
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(hx, hy, 3, 0, 2*Math.PI);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+function hexWithAlpha(hex, a) {
+  // Convert hex to rgba
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a.toFixed(3)})`;
+}
+
+// ─── animation loop ───────────────────────────────────────────
+function tick() {
+  // Integrate all trajectories
+  for (const traj of trajectories) {
+    const pts = traj.pts;
+    let [th, om] = pts[pts.length - 1];
+    for (let s = 0; s < STEPS_PER_FRAME; s++) {
+      [th, om] = rk4Step(th, om, DT, gamma);
+    }
+    pts.push([th, om]);
+    if (pts.length > TRAIL_LEN) pts.shift();
+  }
+
+  if (needBgRedraw) {
+    drawBackground();
+    needBgRedraw = false;
+  }
+  drawTrajectories();
+  requestAnimationFrame(tick);
+}
+
+// ─── event handlers ───────────────────────────────────────────
+fgCanvas.addEventListener('click', (e) => {
+  const rect = fgCanvas.getBoundingClientRect();
+  const px = e.clientX - rect.left;
+  const py = e.clientY - rect.top;
+  const [th, om] = toPhase(px, py);
+
+  if (trajectories.length >= MAX_TRAJ) trajectories.shift();
+
+  trajectories.push({
+    pts: [[th, om]],
+    color: PALETTE[colorIdx % PALETTE.length],
+    age: 0,
+  });
+  colorIdx++;
+});
+
+document.getElementById('dampSlider').addEventListener('input', (e) => {
+  gamma = parseFloat(e.target.value);
+  document.getElementById('dampVal').textContent = gamma.toFixed(2);
+});
+
+document.getElementById('contourToggle').addEventListener('change', (e) => {
+  showContours = e.target.checked;
+  needBgRedraw = true;
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  trajectories.length = 0;
+  colorIdx = 0;
+});
+
+// Redraw background when damping changes (contours don't depend on gamma, but
+// user might toggle contours while adjusting, so keep it responsive)
+// Actually energy contours are independent of damping — only redraw when toggled.
+
+// ─── start ────────────────────────────────────────────────────
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
