@@ -125,6 +125,6 @@ strong { color: var(--dyn-accent-alt); font-weight: 600; }
   font-size: 0.85rem;
 }
 
-/* KaTeX legibility on dark — scoped to the dark layout only, so it never
+/* KaTeX legibility on dark - scoped to the dark layout only, so it never
    bleeds onto the paper-light theme and paints white-on-white. */
 .slidev-layout:not(.paper):not(:has(.paper)) .katex { color: var(--dyn-text); }

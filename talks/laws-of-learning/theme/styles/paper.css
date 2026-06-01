@@ -140,12 +140,18 @@
    same #0e1116 family as the deck. The frame is now a hairline glass card
    that continues the slide rather than a seam against a light ground. */
 .paper .embed-frame {
+  width: 100%;
   border: 1px solid var(--pp-rule);
   border-radius: 6px;
   overflow: hidden;
   background: #0e1116;
   box-shadow: 0 2px 28px rgba(0, 0, 0, 0.45);
 }
+/* the inner Embed.vue wrapper must also span the frame, or an auto-width
+   iframe (a replaced element whose intrinsic width is ~300px) collapses the
+   chain and the embedded applet is handed a too-narrow canvas - the cause of
+   the panel-collision on the wide canvas instruments. */
+.paper .embed-frame .dyn-embed { width: 100%; }
 .paper .embed-frame .dyn-embed {
   border: 0;
   border-radius: 0;
@@ -160,8 +166,25 @@
   text-align: center;
   padding: 0.55rem 0.6rem 0.4rem;
 }
-/* the climax embed runs wide and centred */
-.paper .embed-wide { max-width: 56rem; margin: 0.4rem auto 0; }
+/* the climax embed runs wide and centred. An explicit width (not just a
+   max-width) is required: in a `center` layout the content wrapper is
+   auto-width, so a max-width alone lets the frame collapse to the iframe's
+   intrinsic ~300px and the wide canvas instruments lose their second panel.
+   56rem fills the 980px slide canvas with margins to spare. */
+.paper .embed-wide { width: 56rem; max-width: 100%; margin: 0.4rem auto 0; }
+/* a compact framing line that sits between the title and a wide embed - lets a
+   full-width canvas instrument carry the slide while the one motivating
+   sentence still leads it. Constrained and centred so it never runs the frame
+   edge; tight margins so the embed keeps the canvas. */
+.paper .embed-lead {
+  max-width: 54rem;
+  margin: 0 auto 0.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--pp-ink);
+}
+.paper .embed-lead .katex { font-size: 0.98em; }
 .paper.embed-slide h1,
 .slidev-layout:has(.embed-slide) h1 { margin-bottom: 0.9rem; }
 

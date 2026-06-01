@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Number Governs the Reservoir</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { width: 100%; height: 100%; overflow: hidden; }   /* deck frame is fixed-height: never scroll */
+  body {
+    background: #0a0d12;
+    color: #c8cad0;
+    font-family: 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    display: flex; flex-direction: column;
+  }
+
+  /* thin control strip - the only chrome; the slide carries the title */
+  .bar {
+    flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center; flex-wrap: nowrap;
+    gap: 16px; padding: 8px 14px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .bar label { display: flex; align-items: center; gap: 9px; font-size: 12.5px; white-space: nowrap; color: #aeb4c2; }
+  .bar input[type="range"] { width: 188px; accent-color: #c9a96e; cursor: pointer; vertical-align: middle; }
+  .seg { display: inline-flex; border: 1px solid rgba(255,255,255,0.14); border-radius: 6px; overflow: hidden; }
+  .seg button {
+    background: transparent; border: 0; color: #aeb4c2;
+    padding: 5px 12px; font-size: 11.5px; cursor: pointer; white-space: nowrap; font-family: inherit;
+  }
+  .seg button + button { border-left: 1px solid rgba(255,255,255,0.14); }
+  .seg button:hover { background: rgba(255,255,255,0.07); }
+  .seg button.active { color: #0a0d12; font-weight: 600; }
+
+  .stage { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <label>spectral&nbsp;radius&nbsp;&rho;(W)
+    <input type="range" id="rho" min="0.20" max="1.80" step="0.01" value="0.60">
+  </label>
+  <div class="seg">
+    <button id="bContract" class="active">contract</button>
+    <button id="bEdge">edge</button>
+    <button id="bGrow">grow</button>
+  </div>
+</div>
+
+<div class="stage" id="stage">
+  <canvas id="cv"></canvas>
+</div>
+
+<script>
+// ─── palette (shared with the rest of the deck) ────────────────────────────
+const BG    = '#0a0d12';
+const INK   = '#e6e8ee';
+const MUTED = '#8b92a1';
+const FAINT = 'rgba(255,255,255,0.10)';
+const C_IN   = '#7ec4a5';   // input leg - green
+const C_OUT  = '#5cacee';   // readout leg - blue
+const C_W    = '#9aa3b2';   // recurrent weights W - neutral steel
+// regime colours: the SAME three the deck uses everywhere (settle/edge/ring)
+const C_CONTRACT = '#5cacee';   // rho<1, signal fades - blue
+const C_EDGE     = '#c9a96e';   // rho~1, edge of chaos - gold
+const C_GROW     = '#d4826a';   // rho>1, signal blows up - vermilion
+
+const FONT = '"Segoe UI", system-ui, -apple-system, sans-serif';
+
+// ─── deterministic rng (fixed reservoir across reloads) ────────────────────
+function mb32(a){ return function(){ a|=0; a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a);
+  t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+
+// ─── the reservoir: a fixed random recurrent pool, rescaled to a chosen rho ─
+// Build W0 once (sparse, deterministic). Its spectral radius rho0 is found by
+// power iteration on the ratio of successive norms ||W0^k v|| -> |lambda_max|,
+// which holds for any real matrix (the dominant eigenvalue may be complex). The
+// LIVE matrix is W = (rho / rho0) * W0, so its spectral radius is EXACTLY the
+// slider value. This is the real governing quantity, not a decorative dial.
+const N = 22;                       // reservoir nodes
+const rngW = mb32(20240601);
+const W0 = Array.from({length:N}, () => new Float64Array(N));
+const CONN = 0.26;                  // sparse connectivity
+for (let i=0;i<N;i++) for (let j=0;j<N;j++){ if (i!==j && rngW()<CONN) W0[i][j] = (rngW()*2-1); }
+// guarantee a connected, recurrent pool: a light cyclic backbone so every node
+// sits on at least one loop (the "fed back on itself" structure is always there)
+for (let i=0;i<N;i++){ const j=(i+1)%N; if (W0[i][j]===0) W0[i][j] = (rngW()*2-1)*0.6; }
+
+const w_in = new Float64Array(N);   // fixed input weights
+for (let i=0;i<N;i++) w_in[i] = (rngW()*2-1) * 0.85;
+const w_out = new Float64Array(N);  // fixed (untrained) readout weights, for the y(t) tap
+for (let i=0;i<N;i++) w_out[i] = (rngW()*2-1);
+{ let s=0; for (let i=0;i<N;i++) s+=w_out[i]*w_out[i]; const k=1/Math.sqrt(s); for(let i=0;i<N;i++) w_out[i]*=k; }
+
+function matvec(W,x){ const y=new Float64Array(N); for(let i=0;i<N;i++){ let s=0; for(let j=0;j<N;j++) s+=W[i][j]*x[j]; y[i]=s; } return y; }
+function vnorm(x){ let s=0; for(let i=0;i<N;i++) s+=x[i]*x[i]; return Math.sqrt(s); }
+function specRad(W, iters=500){
+  const rg = mb32(7);
+  let x=new Float64Array(N); for(let i=0;i<N;i++) x[i]=rg()*2-1;
+  let nx=vnorm(x)||1; for(let i=0;i<N;i++) x[i]/=nx;
+  let lam=0;
+  for(let k=0;k<iters;k++){ const y=matvec(W,x); const ny=vnorm(y); if(ny<1e-300) return 0; lam=ny; for(let i=0;i<N;i++) x[i]=y[i]/ny; }
+  return lam;
+}
+const RHO0 = specRad(W0) || 1;
+// live (rescaled) matrix - rebuilt when rho changes
+let W = W0.map(r => Float64Array.from(r));
+function setRho(target){
+  rho = target;
+  const s = target / RHO0;
+  for (let i=0;i<N;i++){ const r=W[i], r0=W0[i]; for (let j=0;j<N;j++) r[j] = r0[j]*s; }
+}
+
+// ─── live reservoir state, driven by a continuous input u(t) ───────────────
+//   x_{t+1} = tanh( W x_t + w_in u_t )           (the echo-state map)
+//   rho<1  -> x decays, follows the input weakly      (CONTRACTS, fades)
+//   rho~1  -> rich sustained echoes                    (COMPUTES, edge of chaos)
+//   rho>1  -> x saturates against the tanh rails        (GROWS, blows up)
+let rho = 0.60;
+setRho(rho);
+let x = new Float64Array(N); for (let i=0;i<N;i++) x[i] = (rngW()*2-1)*0.1;
+let uPhase = 0;
+function inputAt(p){ return 0.55*Math.sin(p) + 0.20*Math.sin(2.7*p+0.6); }  // a non-trivial drive
+let uNow = 0, yNow = 0;
+// rolling readout trace for the little output sparkline
+const TRACE = 150;
+const yTrace = new Float64Array(TRACE); let yHead = 0;
+// per-node activation history for the in-node micro-traces
+const NH = 26;
+const xHist = Array.from({length:N}, () => new Float64Array(NH));
+let xHead = 0;
+
+function stepModel(dt){
+  uPhase += dt * 1.7;
+  uNow = inputAt(uPhase);
+  const pre = matvec(W, x);
+  for (let i=0;i<N;i++) x[i] = Math.tanh(pre[i] + w_in[i]*uNow);
+  let y=0; for (let i=0;i<N;i++) y += w_out[i]*x[i];
+  yNow = y;
+  yTrace[yHead] = y; yHead = (yHead+1) % TRACE;
+  for (let i=0;i<N;i++) xHist[i][xHead] = x[i];
+  xHead = (xHead+1) % NH;
+}
+
+// running RMS activity (smoothed) - drives the verdict and glow intensity
+let rms = 0.2;
+function rmsActivity(){ return vnorm(x)/Math.sqrt(N); }
+
+// regime from the GOVERNING quantity rho itself (the point of the applet)
+function regime(){
+  if (Math.abs(rho - 1) <= 0.07) return 'edge';
+  return rho < 1 ? 'contract' : 'grow';
+}
+function regimeColour(){ const r=regime(); return r==='contract'?C_CONTRACT : r==='edge'?C_EDGE : C_GROW; }
+
+// ─── canvas (crisp at any DPR; 2x render is sharp) ─────────────────────────
+const stage = document.getElementById('stage');
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W_, H_, DPR=1;
+function resize(){
+  DPR = Math.max(1, window.devicePixelRatio || 1);
+  const r = stage.getBoundingClientRect();
+  W_ = Math.max(1, Math.round(r.width));
+  H_ = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W_*DPR); cv.height = Math.round(H_*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  layout();
+}
+window.addEventListener('resize', resize);
+// the iframe box can change after load (lazy reveal, layout settle, zoom) with
+// no resize event - observe the stage element directly and always re-fit.
+if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
+
+// crisp text on the device-pixel grid
+function text(str, x, y, font, fill, align, baseline){
+  ctx.font = font; ctx.fillStyle = fill;
+  ctx.textAlign = align||'left'; ctx.textBaseline = baseline||'alphabetic';
+  ctx.fillText(str, Math.round(x), Math.round(y));
+}
+function rr(x,y,w,h,rad){ rad=Math.min(rad,w/2,h/2);
+  ctx.beginPath(); ctx.moveTo(x+rad,y);
+  ctx.arcTo(x+w,y,x+w,y+h,rad); ctx.arcTo(x+w,y+h,x,y+h,rad);
+  ctx.arcTo(x,y+h,x,y,rad); ctx.arcTo(x,y,x+w,y,rad); ctx.closePath();
+}
+function hexA(hex,a){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
+
+// ─── layout: computed from the box so nothing ever collides ────────────────
+// Three zones across: input | reservoir pool | readout. A governing-quantity
+// banner spans the foot. Node positions sit on a ring inside the pool box,
+// computed once per resize so edges and labels never overlap the furniture.
+let L = null;
+function layout(){
+  const padX = 18, padTop = 14, padBot = 14;
+  const bannerH = Math.max(58, Math.min(86, H_*0.20));
+  const bodyTop = padTop, bodyBot = H_ - padBot - bannerH;
+  const bodyH = bodyBot - bodyTop;
+  const inW  = Math.max(96, W_*0.17);
+  const outW = Math.max(96, W_*0.17);
+  const gap  = 16;
+  const poolX = padX + inW + gap;
+  const poolW = W_ - padX*2 - inW - outW - gap*2;
+  const poolBox = { x: poolX, y: bodyTop, w: poolW, h: bodyH };
+  const inBox  = { x: padX, y: bodyTop, w: inW, h: bodyH };
+  const outBox = { x: W_ - padX - outW, y: bodyTop, w: outW, h: bodyH };
+
+  // node ring inside the pool box
+  const cx = poolBox.x + poolBox.w/2, cy = poolBox.y + poolBox.h/2;
+  const rad = Math.min(poolBox.w, poolBox.h)/2 - 26;
+  const nodes = [];
+  // two concentric rings read more like a "pool" than a single ring
+  const nOuter = Math.ceil(N*0.62), nInner = N - nOuter;
+  for (let i=0;i<nOuter;i++){ const a = -Math.PI/2 + i/nOuter*2*Math.PI; nodes.push({ x: cx+Math.cos(a)*rad, y: cy+Math.sin(a)*rad }); }
+  for (let i=0;i<nInner;i++){ const a = -Math.PI/2 + (i+0.5)/nInner*2*Math.PI; nodes.push({ x: cx+Math.cos(a)*rad*0.46, y: cy+Math.sin(a)*rad*0.46 }); }
+
+  // precompute the recurrent edge list (only meaningful weights) for drawing
+  const edges = [];
+  for (let i=0;i<N;i++) for (let j=0;j<N;j++){ if (i!==j && W0[i][j]!==0) edges.push([i,j,W0[i][j]]); }
+
+  L = { padX, bannerH, inBox, outBox, poolBox, cx, cy, rad, nodes, edges,
+        nodeR: Math.max(5, Math.min(9, rad*0.12)) };
+}
+
+// ─── input panel: a driving waveform entering the pool ─────────────────────
+function drawInput(){
+  const b = L.inBox;
+  text('input  u(t)', b.x + b.w/2, b.y + 2, '600 12.5px '+FONT, C_IN, 'center', 'top');
+  // a little scrolling waveform
+  const ax=b.x+8, aw=b.w-16, ay=b.y+26, ah=b.h-40;
+  ctx.strokeStyle = hexA(C_IN, 0.85); ctx.lineWidth = 2; ctx.lineJoin='round';
+  ctx.beginPath();
+  const M = 90;
+  for (let k=0;k<M;k++){
+    const p = uPhase - (M-1-k)*0.07;
+    const v = inputAt(p);
+    const X = ax + k/(M-1)*aw;
+    const Y = ay + ah/2 - v*(ah/2)*0.8;
+    k?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+  }
+  ctx.stroke();
+  // the live sample as a dot at the right edge, on the same axis it feeds from
+  const vy = ay + ah/2 - uNow*(ah/2)*0.8;
+  ctx.fillStyle = C_IN; ctx.shadowColor=C_IN; ctx.shadowBlur=8;
+  ctx.beginPath(); ctx.arc(ax+aw, vy, 3.4, 0, 7); ctx.fill(); ctx.shadowBlur=0;
+}
+
+// ─── the arrow from input into the pool (w_in), pulsing with |u| ───────────
+function drawArrow(x0,y0,x1,y1,col,alpha,wd){
+  ctx.strokeStyle = hexA(col, alpha); ctx.lineWidth = wd;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+  const a = Math.atan2(y1-y0, x1-x0), hl=8;
+  ctx.fillStyle = hexA(col, alpha);
+  ctx.beginPath(); ctx.moveTo(x1,y1);
+  ctx.lineTo(x1-hl*Math.cos(a-0.4), y1-hl*Math.sin(a-0.4));
+  ctx.lineTo(x1-hl*Math.cos(a+0.4), y1-hl*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+// ─── reservoir pool: recurrent edges (W) + live nodes ──────────────────────
+function drawPool(){
+  const b = L.poolBox, reg = regime(), rc = regimeColour();
+  // pool boundary - faint, labelled with W. The label sits ABOVE the box, in a
+  // clear gutter, never over the nodes.
+  ctx.strokeStyle = FAINT; ctx.lineWidth = 1;
+  rr(b.x+0.5, b.y+0.5, b.w-1, b.h-1, 12); ctx.stroke();
+  text('reservoir  -  recurrent pool', b.x + b.w/2, b.y + 2, '600 12.5px '+FONT, INK, 'center', 'top');
+  text('weights W', b.x + b.w/2, b.y + 20, '11px '+FONT, hexA(C_W,0.85), 'center', 'top');
+
+  // recurrent edges: the loop fed back on itself. Width/alpha scale with the
+  // CURRENT |W_ij| (i.e. with rho), so the coupling visibly strengthens as rho
+  // grows. A travelling glint rides a subset to show signal circulating.
+  const s = rho / RHO0;
+  for (const [i,j,w0] of L.edges){
+    const a = L.nodes[i], c = L.nodes[j];
+    const wgt = Math.abs(w0*s);
+    const al = Math.max(0.05, Math.min(0.5, wgt*0.5));
+    ctx.strokeStyle = hexA(C_W, al); ctx.lineWidth = Math.max(0.6, Math.min(2.4, wgt*2.0));
+    // slight curve so opposing edges don't overdraw
+    const mx=(a.x+c.x)/2, my=(a.y+c.y)/2;
+    const nx=-(c.y-a.y), ny=(c.x-a.x); const nl=Math.hypot(nx,ny)||1; const bend=10;
+    const qx=mx+nx/nl*bend, qy=my+ny/nl*bend;
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.quadraticCurveTo(qx,qy,c.x,c.y); ctx.stroke();
+  }
+  // travelling glints on a few strong edges - signal circulating in the loop
+  const t = performance.now()/1000;
+  let gi=0;
+  for (const [i,j,w0] of L.edges){
+    if (Math.abs(w0) < 0.45) continue;
+    gi++; if (gi%2) continue;
+    const a=L.nodes[i], c=L.nodes[j];
+    const ph = (t*0.6 + gi*0.17) % 1;
+    const gx = a.x + (c.x-a.x)*ph, gy = a.y + (c.y-a.y)*ph;
+    const ga = Math.sin(ph*Math.PI) * Math.min(1, rms*1.6);
+    ctx.fillStyle = hexA(rc, 0.5*ga);
+    ctx.beginPath(); ctx.arc(gx,gy, 2.0, 0, 7); ctx.fill();
+  }
+
+  // nodes: fill brightness = |activation|, tinted by regime. A tiny internal
+  // trace in each node shows its recent activation, so "the signal lives in the
+  // pool" reads literally. Saturated nodes (|x|->1, rho>1) get a hot ring.
+  const R = L.nodeR;
+  for (let i=0;i<N;i++){
+    const p = L.nodes[i], xi = x[i], mag = Math.min(1, Math.abs(xi));
+    // base disc
+    ctx.fillStyle = hexA('#11161d', 1);
+    ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, 7); ctx.fill();
+    // activation fill - a small floor so quiet (contract) nodes still read as
+    // present nodes holding a faint signal, never as an empty/dead pool
+    ctx.fillStyle = hexA(rc, 0.24 + 0.66*mag);
+    ctx.beginPath(); ctx.arc(p.x, p.y, R*(0.5+0.5*mag), 0, 7); ctx.fill();
+    // outline; saturated -> hot ring (the blow-up tell)
+    const sat = mag > 0.92;
+    ctx.strokeStyle = sat ? hexA(C_GROW, 0.95) : hexA('#ffffff', 0.16);
+    ctx.lineWidth = sat ? 2 : 1;
+    ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, 7); ctx.stroke();
+    if (mag > 0.35){ ctx.shadowColor=rc; ctx.shadowBlur=8*mag; ctx.beginPath(); ctx.arc(p.x,p.y,R*0.5,0,7); ctx.fillStyle=hexA(rc,0.9*mag); ctx.fill(); ctx.shadowBlur=0; }
+  }
+}
+
+// ─── readout panel: weighted sum y(t), with a rolling trace ────────────────
+function drawReadout(){
+  const b = L.outBox, rc = regimeColour();
+  text('readout  y(t)', b.x + b.w/2, b.y + 2, '600 12.5px '+FONT, C_OUT, 'center', 'top');
+  const ax=b.x+8, aw=b.w-16, ay=b.y+26, ah=b.h-40;
+  // axis
+  ctx.strokeStyle = hexA('#ffffff',0.14); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(ax, ay+ah/2); ctx.lineTo(ax+aw, ay+ah/2); ctx.stroke();
+  // rolling y trace (oldest -> newest left to right), autoscaled gently
+  let peak=0.001; for (let k=0;k<TRACE;k++) peak=Math.max(peak,Math.abs(yTrace[k]));
+  const sc = (ah/2)*0.86 / Math.max(0.6, peak);
+  ctx.strokeStyle = hexA(C_OUT,0.9); ctx.lineWidth=1.8; ctx.lineJoin='round';
+  ctx.beginPath();
+  for (let k=0;k<TRACE;k++){
+    const idx=(yHead+k)%TRACE;
+    const X=ax + k/(TRACE-1)*aw;
+    const Y=ay+ah/2 - yTrace[idx]*sc;
+    k?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+  }
+  ctx.stroke();
+  const vy = ay+ah/2 - yNow*sc;
+  ctx.fillStyle=C_OUT; ctx.shadowColor=C_OUT; ctx.shadowBlur=8;
+  ctx.beginPath(); ctx.arc(ax+aw, Math.max(ay,Math.min(ay+ah,vy)), 3.4, 0, 7); ctx.fill(); ctx.shadowBlur=0;
+}
+
+// ─── connective arrows between the three zones ─────────────────────────────
+function drawConnectors(){
+  const pulse = 0.4 + 0.6*Math.min(1, Math.abs(uNow)*1.3);
+  // input -> pool (w_in), enters at the pool's left mid
+  drawArrow(L.inBox.x + L.inBox.w + 2, L.cy,
+            L.poolBox.x - 4, L.cy, C_IN, 0.55+0.4*pulse, 2.2);
+  text('w_in', (L.inBox.x+L.inBox.w + L.poolBox.x)/2, L.cy - 9, '10.5px '+FONT, hexA(C_IN,0.8), 'center', 'alphabetic');
+  // pool -> readout (w_out)
+  const oa = 0.45 + 0.5*Math.min(1, Math.abs(yNow)*0.7);
+  drawArrow(L.poolBox.x + L.poolBox.w + 4, L.cy,
+            L.outBox.x - 2, L.cy, C_OUT, oa, 2.2);
+  text('w_out', (L.poolBox.x+L.poolBox.w + L.outBox.x)/2, L.cy - 9, '10.5px '+FONT, hexA(C_OUT,0.8), 'center', 'alphabetic');
+}
+
+// ─── the governing-quantity banner: rho(W) extracted as THE one number ─────
+function drawBanner(){
+  const reg = regime(), rc = regimeColour();
+  const by = H_ - L.padX - L.bannerH, bh = L.bannerH, bx = L.padX, bw = W_ - L.padX*2;
+  rr(bx+0.5, by+0.5, bw-1, bh-1, 10);
+  ctx.fillStyle = hexA(rc, 0.07); ctx.fill();
+  ctx.strokeStyle = hexA(rc, 0.5); ctx.lineWidth = 1.5; ctx.stroke();
+
+  // LEFT: the number itself, large
+  const numX = bx + 22, midY = by + bh*0.5;
+  text('ρ(W) =', numX, midY, '600 ' + Math.round(bh*0.34) + 'px '+FONT, MUTED, 'left', 'middle');
+  const eqW = ctx.measureText('ρ(W) =').width;
+  text(rho.toFixed(2), numX + eqW + 14, midY, '700 ' + Math.round(bh*0.50) + 'px '+FONT, rc, 'left', 'middle');
+
+  // a continuous rho axis with the three regions + a live marker, so the slider
+  // value reads as a POSITION between fades / computes / blows up.
+  const axL = bx + bw*0.40, axR = bx + bw - 24, axW = axR - axL;
+  const aY = by + bh*0.5;
+  const RMIN=0.2, RMAX=1.8;
+  const sx = (v)=> axL + (v-RMIN)/(RMAX-RMIN)*axW;
+  // tri-tint track
+  const xEdgeL = sx(0.93), xEdgeR = sx(1.07);
+  ctx.lineWidth = 5; ctx.lineCap='round';
+  ctx.strokeStyle = hexA(C_CONTRACT,0.6); ctx.beginPath(); ctx.moveTo(axL, aY); ctx.lineTo(xEdgeL, aY); ctx.stroke();
+  ctx.strokeStyle = hexA(C_EDGE,0.85);    ctx.beginPath(); ctx.moveTo(xEdgeL, aY); ctx.lineTo(xEdgeR, aY); ctx.stroke();
+  ctx.strokeStyle = hexA(C_GROW,0.6);     ctx.beginPath(); ctx.moveTo(xEdgeR, aY); ctx.lineTo(axR, aY); ctx.stroke();
+  ctx.lineCap='butt';
+  // the rho=1 tick (the critical value) - sits BELOW the track so the region
+  // word "computes" above the track has a clear gutter to itself
+  const x1 = sx(1.0);
+  ctx.strokeStyle = hexA('#ffffff',0.5); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x1, aY-9); ctx.lineTo(x1, aY+13); ctx.stroke();
+  text('1', x1, aY+15, '10px '+FONT, MUTED, 'center', 'top');
+  // region words ABOVE the track (clear gutter), the active one lit
+  const lab = (cx, t, on, col)=> text(t, cx, aY-17, (on?'700 ':'')+'11px '+FONT, on?col:hexA(col,0.4), 'center', 'alphabetic');
+  lab(sx(0.55), 'contracts', reg==='contract', C_CONTRACT);
+  lab(x1,       'computes',  reg==='edge',     C_EDGE);
+  lab(sx(1.45), 'grows',     reg==='grow',     C_GROW);
+  // live marker on the track
+  const mx = sx(rho);
+  ctx.fillStyle = rc; ctx.shadowColor=rc; ctx.shadowBlur=10;
+  ctx.beginPath(); ctx.arc(mx, aY, 6, 0, 7); ctx.fill(); ctx.shadowBlur=0;
+  ctx.strokeStyle = hexA('#ffffff',0.6); ctx.lineWidth=1.4; ctx.beginPath(); ctx.arc(mx,aY,6,0,7); ctx.stroke();
+  // one plain-words line under the track (substance, not padding)
+  const phrase = reg==='contract' ? 'looped signal fades - the pool forgets'
+               : reg==='edge'     ? 'rich sustained echoes - the edge of chaos'
+               :                    'looped signal blows up - the pool saturates';
+  text(phrase, axL, aY+24, 'italic 11.5px '+FONT, hexA(rc,0.95), 'left', 'top');
+}
+
+// ─── frame ─────────────────────────────────────────────────────────────────
+let prev = performance.now();
+function frame(now){
+  let dt = (now - prev)/1000; prev = now;
+  dt = Math.min(0.05, dt);
+  // step the model a few substeps for smooth motion at any frame rate
+  const sub = 2;
+  for (let s=0;s<sub;s++) stepModel(dt/sub * 1.0);
+  rms += (rmsActivity() - rms) * 0.12;
+
+  ctx.clearRect(0,0,W_,H_);
+  ctx.fillStyle = BG; ctx.fillRect(0,0,W_,H_);
+  if (!L) layout();
+
+  drawInput();
+  drawConnectors();
+  drawPool();
+  drawReadout();
+  drawBanner();
+
+  requestAnimationFrame(frame);
+}
+
+// ─── controls ───────────────────────────────────────────────────────────────
+const rhoEl = document.getElementById('rho');
+const bC = document.getElementById('bContract'), bE = document.getElementById('bEdge'), bG = document.getElementById('bGrow');
+function syncSeg(){
+  const r = regime();
+  for (const [el,key] of [[bC,'contract'],[bE,'edge'],[bG,'grow']]){
+    const on = (r===key); el.classList.toggle('active', on);
+    el.style.background = on ? (key==='contract'?C_CONTRACT:key==='edge'?C_EDGE:C_GROW) : 'transparent';
+  }
+  // tint the slider accent to the live regime
+  rhoEl.style.accentColor = r==='contract'?C_CONTRACT : r==='edge'?C_EDGE : C_GROW;
+}
+rhoEl.addEventListener('input', () => { setRho(parseFloat(rhoEl.value)); syncSeg(); });
+function preset(v){ rhoEl.value = String(v); setRho(v); syncSeg(); }
+bC.addEventListener('click', ()=> preset(0.50));
+bE.addEventListener('click', ()=> preset(1.00));
+bG.addEventListener('click', ()=> preset(1.45));
+
+// ─── go ──────────────────────────────────────────────────────────────────--
+resize();
+setRho(rho);
+syncSeg();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

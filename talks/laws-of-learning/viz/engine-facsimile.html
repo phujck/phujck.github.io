@@ -3,40 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Engine's Skills — a facsimile</title>
+<title>The Engine's Skills - a facsimile</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
   body {
     background: #0e1116; color: #c8cad0;
     font-family: 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 100vh; padding: 1.1rem 1rem; -webkit-font-smoothing: antialiased;
+    height: 100vh; padding: 0.75rem 1rem; -webkit-font-smoothing: antialiased;
   }
-  .container { width: 100%; max-width: 940px; }
-  h1 { font-size: 1.28rem; font-weight: 600; color: #e6e8ee; margin-bottom: 0.12rem; text-align: center; }
+  /* The embed frame is already 16:9 - the page fills it exactly and the graph
+     box takes whatever the header/legend/note leave, so nothing overflows. */
+  .container {
+    width: 100%; max-width: 940px; height: 100%;
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  h1 { font-size: 1.28rem; font-weight: 600; color: #e6e8ee; margin-bottom: 0.12rem; text-align: center; flex: 0 0 auto; }
   h1 span { color: #4A90D9; font-weight: 400; }
-  .sub { font-size: 0.84rem; color: #7a8190; text-align: center; margin-bottom: 0.7rem; font-style: italic; }
+  .sub { font-size: 0.84rem; color: #7a8190; text-align: center; margin-bottom: 0.55rem; font-style: italic; flex: 0 0 auto; }
   .canvas-wrap {
-    position: relative; width: 100%; aspect-ratio: 16 / 9;
+    position: relative; width: 100%; flex: 1 1 auto; min-height: 0;
     border-radius: 6px; overflow: hidden; background: #0a0d12; box-shadow: 0 2px 22px rgba(0,0,0,0.45);
   }
   canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   .legend {
     display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.4rem;
-    margin-top: 0.7rem; padding: 0.5rem 0.9rem; background: rgba(255,255,255,0.04); border-radius: 6px;
-    font-size: 0.8rem;
+    margin-top: 0.55rem; padding: 0.4rem 0.9rem; background: rgba(255,255,255,0.04); border-radius: 6px;
+    font-size: 0.8rem; flex: 0 0 auto;
   }
   .legend .item { display: flex; align-items: center; gap: 0.45rem; white-space: nowrap; }
   .legend .dot { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
   .legend .count { color: #7a8190; font-variant-numeric: tabular-nums; }
-  .note { margin-top: 0.5rem; font-size: 0.72rem; color: #5f6675; text-align: center; line-height: 1.5; }
+  .note { margin-top: 0.4rem; font-size: 0.72rem; color: #5f6675; text-align: center; line-height: 1.4; flex: 0 0 auto; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>The Engine's Skills <span>— a facsimile (names only)</span></h1>
-  <p class="sub">The canon that built this talk, drawn as a graph — clustered by what each skill does.</p>
+  <h1>The Engine's Skills <span>- a facsimile (names only)</span></h1>
+  <p class="sub">The canon that built this talk, drawn as a graph - clustered by what each skill does.</p>
 
   <div class="canvas-wrap" id="wrap">
     <canvas id="cv"></canvas>
@@ -47,19 +53,19 @@
     <div class="item"><span class="dot" style="background:#c9a96e"></span>staging <span class="count" id="cStg"></span></div>
     <div class="item"><span class="dot" style="background:#4A90D9"></span>evaluating <span class="count" id="cEva"></span></div>
   </div>
-  <p class="note">A facsimile of the shape, not the content — the skill <em>names</em> and their activity only,
+  <p class="note">A facsimile of the shape, not the content - the skill <em>names</em> and their activity only,
     no canon prose. The structural threads carry no real link data.</p>
 </div>
 
 <script>
 // ─── palette ──────────────────────────────────────────────────
 const BG = '#0a0d12';
-const C_GEN = '#5cbf9a';   // generating — green
-const C_STG = '#c9a96e';   // staging — gold
-const C_EVA = '#4A90D9';   // evaluating — the site/snapshot accent blue
+const C_GEN = '#5cbf9a';   // generating - green
+const C_STG = '#c9a96e';   // staging - gold
+const C_EVA = '#4A90D9';   // evaluating - the site/snapshot accent blue
 const INK = '#d2d5dc', MUTED = '#7a8190';
 
-// ─── the canon, by activity (38 skills, names only — pulled from
+// ─── the canon, by activity (38 skills, names only - pulled from
 //     laplace.canon, frozen here so the asset is self-contained and
 //     server-free; this holds NO descriptions or link data) ──────
 const GROUPS = [
@@ -95,22 +101,22 @@ function resize() {
 }
 window.addEventListener('resize', resize);
 
-// ─── deterministic layout — golden-angle spiral per cluster, no wiggle ──
+// ─── deterministic layout - golden-angle spiral per cluster, no wiggle ──
 const GOLDEN = Math.PI * (3 - Math.sqrt(5));   // ~2.39996 rad
 let nodes = [];      // {name, colour, gi, x, y}
-let edges = [];      // {a, b}  — structural texture only, no real link data
+let edges = [];      // {a, b} - structural texture only, no real link data
 
 // each cluster owns a non-overlapping band of the canvas (fractions of W,H).
-// names are packed into rows inside the band — rows spaced by pill height so
+// names are packed into rows inside the band - rows spaced by pill height so
 // nothing collides, with a fixed per-row x-offset so the grid reads organic
 // rather than tabular. Fully deterministic, no randomness, no wiggle.
 function clusters() {
   return [
-    // generating (4) — left column, upper
+    // generating (4) - left column, upper
     { gi: 0, box: [0.020, 0.140, 0.215, 0.560], cols: 1 },
-    // evaluating (10) — right column, spanning
+    // evaluating (10) - right column, spanning
     { gi: 2, box: [0.770, 0.110, 0.990, 0.880], cols: 1 },
-    // staging (24) — the wide centre band, the engine's bulk
+    // staging (24) - the wide centre band, the engine's bulk
     { gi: 1, box: [0.255, 0.110, 0.730, 0.900], cols: 3 }
   ];
 }
@@ -127,7 +133,7 @@ function layout() {
     const start = nodes.length;
     let placed = 0;
     for (let r = 0; r < rows && placed < N; r++) {
-      // how many in this row (last row may be short — centre it)
+      // how many in this row (last row may be short - centre it)
       const inRow = Math.min(cols, N - placed);
       const rowY = by + (rows === 1 ? bh / 2 : (r + 0.5) / rows * bh);
       // a fixed horizontal stagger per row so columns zig-zag (network look)
@@ -146,7 +152,7 @@ function layout() {
     }
   });
 
-  // ─── structural edges — texture only, deterministic, no real links ───
+  // ─── structural edges - texture only, deterministic, no real links ───
   // within-cluster: connect each node to its phyllotaxis neighbour (i -> i+1)
   GROUPS.forEach((g, gi) => {
     const idx = nodes.map((n, k) => n.gi === gi ? k : -1).filter(k => k >= 0);
@@ -179,7 +185,7 @@ function draw() {
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
 
-  // soft cluster haloes — a faint rounded wash behind each region's box, so the
+  // soft cluster haloes - a faint rounded wash behind each region's box, so the
   // three activities read as three zones without a hard boundary
   clusters().forEach(cl => {
     const g = GROUPS[cl.gi];
@@ -199,7 +205,7 @@ function draw() {
     ctx.fillText(g.key, bx + 12, by + 8);
   });
 
-  // edges — faint threads, structural texture only
+  // edges - faint threads, structural texture only
   edges.forEach(e => {
     const a = nodes[e.a], b = nodes[e.b];
     if (!a || !b) return;
@@ -208,7 +214,7 @@ function draw() {
     ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
   });
 
-  // nodes — dot + name pill
+  // nodes - dot + name pill
   ctx.font = '11px "Segoe UI", system-ui, sans-serif';
   ctx.textBaseline = 'middle';
   nodes.forEach(n => {
@@ -242,7 +248,7 @@ function draw() {
   ctx.fillStyle = MUTED;
   ctx.font = 'italic 11px "Segoe UI", system-ui, sans-serif';
   ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
-  ctx.fillText('the engine’s skills — a facsimile (names only)', 14, H - 12);
+  ctx.fillText('the engine’s skills - a facsimile (names only)', 14, H - 12);
   ctx.textAlign = 'right';
   ctx.fillText('38 skills · 3 activities', W - 14, H - 12);
 }
@@ -254,7 +260,7 @@ function rr(x, y, w, h, r) {
   ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
 }
 
-// static — draw once, redraw only on resize. No animation, no wiggle.
+// static - draw once, redraw only on resize. No animation, no wiggle.
 resize();
 </script>
 </body>

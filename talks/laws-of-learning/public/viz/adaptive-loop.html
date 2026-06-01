@@ -3,294 +3,321 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Adaptive Loop — endogeneity made visible</title>
+<title>The Adaptive Loop</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
   body {
-    background: #0e1116; color: #c8cad0;
+    background: #0a0d12; color: #c8cad0;
     font-family: 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 100vh; padding: 1.1rem 1rem; -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased;
+    display: flex; flex-direction: column;
   }
-  .container { width: 100%; max-width: 940px; }
-  h1 { font-size: 1.28rem; font-weight: 600; color: #e6e8ee; margin-bottom: 0.12rem; text-align: center; }
-  h1 span { color: #6b8aaf; font-weight: 400; }
-  .sub { font-size: 0.84rem; color: #7a8190; text-align: center; margin-bottom: 0.7rem; font-style: italic; }
-  .canvas-wrap {
-    position: relative; width: 100%; aspect-ratio: 16 / 9;
-    border-radius: 6px; overflow: hidden; background: #0a0d12; box-shadow: 0 2px 22px rgba(0,0,0,0.45);
+  /* thin control strip - the only chrome; the slide carries the title + caption */
+  .bar {
+    flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center; flex-wrap: nowrap;
+    gap: 0.9rem; padding: 0.5rem 0.7rem;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
   }
-  canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-  .controls {
-    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.2rem;
-    margin-top: 0.8rem; padding: 0.6rem 0.9rem; background: rgba(255,255,255,0.04); border-radius: 6px;
+  .seg { display: inline-flex; border: 1px solid rgba(255,255,255,0.14); border-radius: 6px; overflow: hidden; }
+  .seg button {
+    background: transparent; border: 0; color: #aeb4c2;
+    padding: 0.34rem 0.85rem; font-size: 0.82rem; cursor: pointer; white-space: nowrap;
+    font-family: inherit;
   }
-  .controls label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; white-space: nowrap; }
-  .controls input[type="range"] { width: 130px; accent-color: #6b8aaf; }
-  .controls .val { display: inline-block; min-width: 2.6em; text-align: right; color: #9ba2b0; font-variant-numeric: tabular-nums; }
-  .controls button {
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-    color: #c8cad0; padding: 0.32rem 0.78rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer;
-  }
-  .controls button:hover { background: rgba(255,255,255,0.13); }
-  .controls button.active { border-color: #6b8aaf; background: rgba(107,138,175,0.18); color: #e6e8ee; }
-  .hint { margin-top: 0.5rem; font-size: 0.72rem; color: #5f6675; text-align: center; }
+  .seg button + button { border-left: 1px solid rgba(255,255,255,0.14); }
+  .seg button:hover { background: rgba(255,255,255,0.07); }
+  .seg button.active { background: rgba(107,138,175,0.22); color: #eef1f6; }
+  .bar label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; white-space: nowrap; color: #aeb4c2; }
+  .bar input[type="range"] { width: 120px; accent-color: #6b8aaf; }
+  .bar .val { min-width: 2.5em; text-align: right; color: #cdd2dc; font-variant-numeric: tabular-nums; }
+  .stage { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>The Adaptive Loop <span>— endogeneity made visible</span></h1>
-  <p class="sub">The slow control sets the field its fast parts live in. Then it reads them back.</p>
-
-  <div class="canvas-wrap" id="wrap">
-    <canvas id="cv"></canvas>
+<div class="bar">
+  <div class="seg">
+    <button id="drivenBtn" class="active">Driven</button>
+    <button id="adaptiveBtn">Adaptive</button>
   </div>
+  <label>delay
+    <input type="range" id="sep" min="1" max="6" step="0.5" value="3">
+    <span class="val" id="sepVal">3.0&times;</span>
+  </label>
+</div>
 
-  <div class="controls">
-    <button id="drivenBtn" class="active">Driven (loop open)</button>
-    <button id="adaptiveBtn">Adaptive (loop closed)</button>
-    <label>τ&nbsp;separation
-      <input type="range" id="sep" min="1" max="6" step="0.1" value="3.0">
-      <span class="val" id="sepVal">3.0×</span>
-    </label>
-  </div>
-  <p class="hint">Driven: the field is set from outside, the parts just settle. Adaptive: the control reads its own coarse measurement and updates — the red arrow closes the loop.</p>
+<div class="stage" id="stage">
+  <canvas id="cv"></canvas>
 </div>
 
 <script>
-// ─── palette (shared loop legs) ───────────────────────────────
-const BG=' #0a0d12'.trim();
-const INK='#d2d5dc', MUTED='#7a8190';
-const C_CTRL='#e8a84c';   // control θ — gold
-const C_ENV='#d4826a';    // environment / field — vermilion (the endogeneity arrow)
-const C_STATE='#7ec4a5';  // fast microstate — green
-const C_MEAS='#5cacee';   // measurement — blue
+// ── palette (shared loop legs) ───────────────────────────────────────────
+const BG   = '#0a0d12';
+const PANEL = 'rgba(255,255,255,0.10)';   // panel stroke
+const TITLE = '#e6e8ee';
+const MUTED = '#8b92a1';
+const C_CTRL  = '#e8a84c';   // control θ - gold (slow)
+const C_ENV   = '#d4826a';   // field / environment - vermilion (the endogeneity leg)
+const C_STATE = '#7ec4a5';   // fast microstate - green
+const C_MEAS  = '#5cacee';   // measurement - blue
 
-// ─── canvas ───────────────────────────────────────────────────
-const wrap=document.getElementById('wrap'), cv=document.getElementById('cv'), ctx=cv.getContext('2d');
-let W=0,H=0;
-function resize(){ const d=window.devicePixelRatio||1; const r=wrap.getBoundingClientRect();
-  W=Math.round(r.width); H=Math.round(r.height); cv.width=W*d; cv.height=H*d; ctx.setTransform(d,0,0,d,0,0); }
-window.addEventListener('resize',resize); resize();
+// ── canvas + HiDPI ───────────────────────────────────────────────────────
+const stage = document.getElementById('stage');
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+function resize(){
+  DPR = Math.max(1, window.devicePixelRatio || 1);
+  const r = stage.getBoundingClientRect();
+  W = Math.max(1, Math.round(r.width));
+  H = Math.max(1, Math.round(r.height));
+  cv.width  = Math.round(W * DPR);
+  cv.height = Math.round(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener('resize', resize);
+// The applet is embedded in an iframe whose box can change AFTER load (lazy
+// reveal, slide layout settle, presenter zoom). An iframe's content window gets
+// no resize event for that, so observe the stage element directly and always
+// re-fit the canvas to its true box.
+if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
 
-// ─── deterministic rng ────────────────────────────────────────
-function mb32(a){ return function(){ a|=0;a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a);
+// ── deterministic rng (no flicker across reloads) ────────────────────────
+function mb32(a){ return function(){ a|=0; a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a);
   t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
-const rng=mb32(424242);
+const rng = mb32(424242);
 
-// ─── state ────────────────────────────────────────────────────
-let mode='driven';      // 'driven' | 'adaptive'
-let sep=3.0;            // timescale separation (slow/fast)
-let theta=0.0;          // slow control
-let thetaTarget=0.6;    // external setpoint in driven mode
-let m=0.0;              // measured order parameter (delayed, coarse)
-let mDelayBuf=[];       // delay line for the measurement
-let clock=0;
-let thetaHist=[], mHist=[];
+// ── model state ──────────────────────────────────────────────────────────
+let mode = 'driven';     // 'driven' | 'adaptive'
+let sep = 3.0;           // feedback delay / timescale separation
+let theta = 0.0;         // slow control θ
+let thetaTarget = 0.0;   // external setpoint (driven)
+let m = 0.0;             // coarse, delayed measurement of ⟨O⟩
+let mDelay = [];         // delay line
+let clock = 0;
+let thetaHist = [], mHist = [];
+const HIST = 240;
 
-// N fast agents, each a position responding to the field h=Pi(theta)
-const NA=70;
-const agents=[];
-for(let i=0;i<NA;i++) agents.push({ x:(rng()*2-1)*0.6, v:0, y:rng() });
+// fast agents settling in the field well centred at h(θ)
+const NA = 60;
+const agents = [];
+for (let i=0;i<NA;i++) agents.push({ x:(rng()*2-1)*0.5, v:0, j:rng() });
+const fieldCentre = () => Math.tanh(1.5*theta);   // h = Π(θ), bounded
 
-// field the control generates: a potential well centred at h(theta)
-function fieldCentre(){ return Math.tanh(1.6*theta); }   // h = Pi(theta), bounded
-
-// ─── dynamics ─────────────────────────────────────────────────
-function step(){
-  clock += 0.016;
+// ── dynamics (paced slowly so settle vs ring is followable) ──────────────
+function step(dt){
+  // dt in "model ticks"; tuned so the slow control evolves over seconds, not frames
+  clock += dt;
   const hc = fieldCentre();
-  // fast agents relax toward the field centre (fast timescale), with noise
-  const kFast = 0.18;                       // fast relaxation rate
-  let mean=0;
-  for(const a of agents){
-    const force = (hc - a.x);
-    a.v = 0.7*a.v + kFast*force + (rng()*2-1)*0.012;
-    a.x += a.v;
-    mean += a.x;
+  // fast microstate relaxes toward the field centre (fast timescale) + small noise
+  let mean = 0;
+  for (const a of agents){
+    const force = hc - a.x;
+    a.v = 0.72*a.v + 0.16*force + (rng()*2-1)*0.010;
+    a.x += a.v; mean += a.x;
   }
   mean /= NA;
-  // coarse, delayed measurement of the order parameter
-  mDelayBuf.push(mean + (rng()*2-1)*0.02);
-  const delay = Math.round(10*sep);          // the read is stale by ~10*sep steps
-  while(mDelayBuf.length>delay) m = mDelayBuf.shift();
+  // coarse + DELAYED read of the order parameter ⟨O⟩
+  mDelay.push(mean + (rng()*2-1)*0.015);
+  // staleness of the read grows with the slider - this is what drives the loop
+  // past threshold. A LONGER delay => the control acts on older news => more
+  // overshoot => a stronger ring. (Independent of the control's own rate.)
+  const delaySteps = Math.round(6*sep*sep/3 + 4);
+  while (mDelay.length > delaySteps) m = mDelay.shift();
 
-  // slow control update — the timescale gap is 'sep'
-  const slow = 0.02 / sep;
-  if(mode==='driven'){
-    // external setpoint drives theta; the loop is OPEN (control ignores m)
-    thetaTarget = 0.6*Math.sin(clock*0.25);
-    theta += (thetaTarget - theta)*slow*sep;   // tracks the external command
+  // The control is the SLOW leg - a fixed rate, not tied to the delay, so the
+  // delay slider changes only how STALE the read is, never the control's speed.
+  const slow = 0.10;
+  if (mode === 'driven'){
+    // OPEN loop: an external command sets θ; control ignores its own measurement
+    thetaTarget = 0.62*Math.sin(clock*0.5);
+    theta += (thetaTarget - theta) * Math.min(1, slow*dt*4.0);
   } else {
-    // ADAPTIVE: the control reads its OWN measurement and pushes against a goal.
-    // The setpoint is offset so there is always something to chase, and the gain
-    // (acting through the measurement DELAY) is past threshold — so the closed
-    // loop overshoots and RINGS. That ringing is the endogenous instability: the
-    // system destabilises itself by reacting to a stale read of its own state.
-    const mStar = 0.45;
-    const gain = 14.0;                          // past the threshold set by the delay
-    theta += slow * gain * (mStar - m);        // closes the loop through m
+    // CLOSED loop: control chases a goal m* through its OWN stale read of m.
+    // With a fixed gain, the lag from `delaySteps` sets whether it rings - a
+    // bigger delay tips it further past threshold. The endogenous instability:
+    // a stable thing destabilised by listening to a lagged image of itself.
+    const mStar = 0.40;
+    const gain  = 5.4;
+    theta += slow * gain * (mStar - m) * dt;
   }
-  theta = Math.max(-1.2, Math.min(1.2, theta));
+  // soft saturation: ease into the bound so the ring stays rounded, not clipped
+  theta = 1.2*Math.tanh(theta/1.2);
 
-  thetaHist.push(theta); if(thetaHist.length>260) thetaHist.shift();
-  mHist.push(m); if(mHist.length>260) mHist.shift();
+  thetaHist.push(theta); if (thetaHist.length>HIST) thetaHist.shift();
+  mHist.push(m);         if (mHist.length>HIST)     mHist.shift();
 }
 
-// ─── drawing ──────────────────────────────────────────────────
-function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y);
-  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+// ── drawing helpers ──────────────────────────────────────────────────────
+function rr(x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
   ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
-function hexA(hex,a){ hex=hex.trim(); const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
+function hexA(hex,a){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
+function panel(x,y,w,h,label,col){
+  ctx.strokeStyle=PANEL; ctx.lineWidth=1; rr(x,y,w,h,7); ctx.stroke();
+  ctx.fillStyle=col||TITLE; ctx.font='600 13px "Segoe UI",system-ui,sans-serif';
+  ctx.textAlign='left'; ctx.textBaseline='top';
+  ctx.fillText(label, x+12, y+10);
+}
 
-function draw(){
-  step();
+// ── main draw ─────────────────────────────────────────────────────────────
+let lastT = performance.now();
+function draw(now){
+  const realDt = Math.min(0.05, (now-lastT)/1000); lastT = now;
+  // advance the model a fixed amount per real second (frame-rate independent, slow)
+  step(realDt * 11);
+
   ctx.clearRect(0,0,W,H); ctx.fillStyle=BG; ctx.fillRect(0,0,W,H);
 
-  // ── left: the physical picture — the field well + the agent swarm ──
-  const lx=16, ly=16, lw=W*0.5-24, lh=H-32;
-  ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=1; rr(lx,ly,lw,lh,6); ctx.stroke();
-  ctx.fillStyle='#e6e8ee'; ctx.font='600 13px "Segoe UI",system-ui,sans-serif';
-  ctx.textAlign='left'; ctx.textBaseline='top';
-  ctx.fillText('The field, and the parts living in it', lx+12, ly+9);
-
-  const ax=lx+24, aw=lw-48, ay=ly+46, ah=lh-100;
-  const X0=-1.3, X1=1.3;
-  const sx=(u)=>ax + (u-X0)/(X1-X0)*aw;
-  const hc=fieldCentre();
-  const VMAX=1.0;                                   // visible energy ceiling
-  // potential well V(x) = 0.45(x-hc)^2 drawn as a curve, base of well 70% down the panel
-  const sy=(v)=>ay+ah*0.72 - v/VMAX*(ah*0.62);
-  ctx.beginPath(); let pen=false;
-  for(let i=0;i<=110;i++){ const u=X0+(i/110)*(X1-X0); const V=0.45*(u-hc)*(u-hc);
-    if(V>VMAX){pen=false;continue;} const Y=sy(V);
-    if(!pen){ctx.moveTo(sx(u),Y);pen=true;} else ctx.lineTo(sx(u),Y); }
-  ctx.strokeStyle=hexA(C_ENV,0.8); ctx.lineWidth=2; ctx.stroke();
-  // the field-centre marker — this is h = Pi(theta), set by the control
-  ctx.fillStyle=C_ENV; ctx.beginPath(); ctx.arc(sx(hc), sy(0), 5, 0, 7); ctx.fill();
-  ctx.fillStyle=hexA(C_ENV,0.9); ctx.font='italic 11px "Segoe UI",system-ui,sans-serif';
-  ctx.textAlign='center'; ctx.textBaseline='top';
-  ctx.fillText('h = Π(θ)', sx(hc), sy(0)+9);
-
-  // agents sitting in the well (stacked above the floor so the swarm is legible)
-  let mean=0; for(const a of agents) mean+=a.x; mean/=NA;
-  for(const a of agents){
-    const V=0.45*(a.x-hc)*(a.x-hc);
-    if(V>VMAX) continue;
-    ctx.fillStyle=hexA(C_STATE,0.78);
-    ctx.beginPath(); ctx.arc(sx(a.x), sy(V)-4 - a.y*7, 2.6, 0, 7); ctx.fill();
-  }
-  // the order parameter <O> = mean position, drawn as a tick on the well floor
-  const floorY = ay+ah*0.72;
-  ctx.strokeStyle=C_MEAS; ctx.lineWidth=2;
-  ctx.beginPath(); ctx.moveTo(sx(mean), floorY+8); ctx.lineTo(sx(mean), floorY+20); ctx.stroke();
-  ctx.fillStyle=C_MEAS; ctx.font='11px "Segoe UI",system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='top';
-  ctx.fillText('⟨O⟩', sx(mean), floorY+22);
-
-  // control slider readout at the bottom
-  ctx.fillStyle=MUTED; ctx.font='11px "Segoe UI",system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='bottom';
-  ctx.fillText(`control θ = ${theta.toFixed(2)}   (slow)`, lx+12, ly+lh-10);
-
-  // ── right top: the loop diagram with the endogeneity arrow ──
-  const rx=W*0.5+8, rTop=12, rW=W*0.5-22, rTopH=H*0.5-16;
-  drawLoopDiagram(rx, rTop, rW, rTopH);
-
-  // ── right bottom: the two time series (theta slow, m fast/coarse) ──
-  const rBot=H*0.5+6, rBotH=H*0.5-18;
-  drawTraces(rx, rBot, rW, rBotH);
+  const pad = 12, gap = 12;
+  const colSplit = Math.round(W*0.46);
+  // LEFT: the physical picture (full height)
+  const Lx=pad, Ly=pad, Lw=colSplit-pad-gap/2, Lh=H-2*pad;
+  drawField(Lx,Ly,Lw,Lh);
+  // RIGHT: stacked - loop (top) + traces (bottom)
+  const Rx=colSplit+gap/2, Rw=W-pad-Rx;
+  const topH = Math.round((H-2*pad-gap)*0.56);
+  drawLoop(Rx, Ly, Rw, topH);
+  drawTraces(Rx, Ly+topH+gap, Rw, H-pad-(Ly+topH+gap));
 
   requestAnimationFrame(draw);
 }
 
-function drawLoopDiagram(x,y,w,h){
-  ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=1; rr(x,y,w,h,6); ctx.stroke();
-  const cx=x+w/2, cy=y+h/2+6, R=Math.min(w,h)*0.30;
-  const nodes=[
-    {a:-Math.PI/2, t:'θ control', c:C_CTRL},
-    {a:0,          t:'h field',   c:C_ENV},
-    {a:Math.PI/2,  t:'ρ state',   c:C_STATE},
-    {a:Math.PI,    t:'m measure', c:C_MEAS},
-  ];
-  const pos=nodes.map(n=>({x:cx+R*Math.cos(n.a), y:cy+R*Math.sin(n.a), ...n}));
-  // arcs
-  const pulse=(clock*0.4)%1;
-  for(let i=0;i<4;i++){
-    const a=pos[i], b=pos[(i+1)%4];
-    // the measure->control leg (i=3) is dashed/greyed in driven mode (loop open)
-    const isFeedback = (i===3);
-    const open = (mode==='driven' && isFeedback);
-    const a0=Math.atan2(a.y-cy,a.x-cx); let a1=Math.atan2(b.y-cy,b.x-cx); if(a1<a0)a1+=2*Math.PI;
-    ctx.strokeStyle= open ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.16)';
-    ctx.lineWidth=2; ctx.setLineDash(open?[4,5]:[]);
-    ctx.beginPath(); ctx.arc(cx,cy,R,a0,a1); ctx.stroke(); ctx.setLineDash([]);
-    // arrowhead
-    const tx=cx+R*Math.cos(a1), ty=cy+R*Math.sin(a1);
-    const tang=a1+Math.PI/2;
-    ctx.fillStyle= open ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.4)';
-    ctx.beginPath(); ctx.moveTo(tx,ty);
-    ctx.lineTo(tx-7*Math.cos(tang-0.4), ty-7*Math.sin(tang-0.4));
-    ctx.lineTo(tx-7*Math.cos(tang+0.4), ty-7*Math.sin(tang+0.4)); ctx.closePath(); ctx.fill();
-    // travelling pulse — only on closed legs
-    if(!open){
-      const segp=(pulse*4)-i;
-      if(segp>=0&&segp<1){ const ad=a0+(a1-a0)*segp; const dx=cx+R*Math.cos(ad),dy=cy+R*Math.sin(ad);
-        ctx.fillStyle=a.c; ctx.shadowColor=a.c; ctx.shadowBlur=9; ctx.beginPath(); ctx.arc(dx,dy,4,0,7); ctx.fill(); ctx.shadowBlur=0; }
-    }
-  }
-  // nodes + labels
-  for(const n of pos){
-    ctx.fillStyle=BG; ctx.strokeStyle=n.c; ctx.lineWidth=2;
-    ctx.beginPath(); ctx.arc(n.x,n.y,7,0,7); ctx.fill(); ctx.stroke();
-    ctx.fillStyle='#e6e8ee'; ctx.font='600 11px "Segoe UI",system-ui,sans-serif'; ctx.textAlign='center';
-    const lx=cx+(R+24)*Math.cos(n.a), ly=cy+(R+22)*Math.sin(n.a);
-    ctx.textBaseline=(n.a===Math.PI/2)?'top':(n.a===-Math.PI/2?'bottom':'middle');
-    ctx.fillText(n.t, lx, ly);
-  }
-  // the red endogeneity leg: control -> field, labelled
-  ctx.fillStyle=hexA(C_ENV,0.95); ctx.font='italic 11px "Segoe UI",system-ui,sans-serif';
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('it makes its own field', cx+R*0.95, cy-R*0.7);
-  // title / mode
-  ctx.fillStyle='#e6e8ee'; ctx.font='600 13px "Segoe UI",system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='top';
-  ctx.fillText(mode==='driven' ? 'Driven — the loop is open' : 'Adaptive — the loop is closed', x+12, y+9);
+// LEFT panel: field well + settling/ringing swarm + order parameter
+function drawField(x,y,w,h){
+  panel(x,y,w,h,'The field, and the parts in it', TITLE);
+  const ax=x+22, ay=y+40, aw=w-44, ah=h-66;
+  const X0=-1.35, X1=1.35;
+  const sx=u=>ax + (u-X0)/(X1-X0)*aw;
+  const hc=fieldCentre();
+  const VMAX=1.0;
+  const floor = ay+ah*0.78;                       // base of the well
+  const sy=v=>floor - v/VMAX*(ah*0.66);
+  // potential well V(x)=0.5(x-hc)^2
+  ctx.beginPath(); let pen=false;
+  for(let i=0;i<=120;i++){ const u=X0+(i/120)*(X1-X0); const V=0.5*(u-hc)*(u-hc);
+    if(V>VMAX){pen=false;continue;} const Y=sy(V);
+    pen?ctx.lineTo(sx(u),Y):(ctx.moveTo(sx(u),Y),pen=true); }
+  ctx.strokeStyle=hexA(C_ENV,0.85); ctx.lineWidth=2; ctx.stroke();
+  // field-centre marker h = Π(θ), set by the control - label sits ABOVE, clear of the swarm
+  const hx=sx(hc);
+  ctx.fillStyle=C_ENV; ctx.beginPath(); ctx.arc(hx, sy(0), 5, 0, 7); ctx.fill();
+  ctx.fillStyle=hexA(C_ENV,0.95); ctx.font='italic 12px "Segoe UI",system-ui,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='bottom';
+  ctx.fillText('h = Π(θ)', hx, ay+12);
+  // agents settling in the well (stacked above the curve so the swarm reads)
+  let mean=0; for(const a of agents) mean+=a.x; mean/=NA;
+  for(const a of agents){ const V=0.5*(a.x-hc)*(a.x-hc); if(V>VMAX) continue;
+    ctx.fillStyle=hexA(C_STATE,0.8);
+    ctx.beginPath(); ctx.arc(sx(a.x), sy(V)-4-a.j*7, 2.5, 0, 7); ctx.fill(); }
+  // order parameter ⟨O⟩ = mean position, a blue tick UNDER the floor with label below
+  const baseY=floor+6;
+  ctx.strokeStyle=C_MEAS; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(sx(mean), baseY); ctx.lineTo(sx(mean), baseY+12); ctx.stroke();
+  ctx.fillStyle=C_MEAS; ctx.font='12px "Segoe UI",system-ui,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillText('⟨O⟩', sx(mean), baseY+15);
+  // control readout, bottom-left, clear of the ⟨O⟩ tick
+  ctx.fillStyle=MUTED; ctx.font='12px "Segoe UI",system-ui,sans-serif';
+  ctx.textAlign='left'; ctx.textBaseline='bottom';
+  ctx.fillText('θ = '+theta.toFixed(2)+'  (slow control)', x+12, y+h-10);
 }
 
+// RIGHT-TOP: the four-node loop; feedback leg open (driven) / closed+red (adaptive)
+function drawLoop(x,y,w,h){
+  const open = (mode==='driven');
+  // short title - the toggle already shows Driven/Adaptive; keep canvas text minimal
+  panel(x,y,w,h, open ? 'the loop - open' : 'the loop - closed', TITLE);
+  // push the ring down so the top node label always clears the panel title,
+  // and cap the radius so the four labels stay inside even at narrow widths
+  const cx=x+w/2, cy=y+h*0.60, R=Math.min(w*0.30, (h-58)*0.42);
+  // node angles: control top, field right, state bottom, measure left
+  const nodes=[
+    {a:-Math.PI/2, t:'θ control', c:C_CTRL},
+    {a: 0,         t:'h field',        c:C_ENV},
+    {a: Math.PI/2, t:'ρ state',   c:C_STATE},
+    {a: Math.PI,   t:'m measure',      c:C_MEAS},
+  ];
+  const pos=nodes.map(n=>({ x:cx+R*Math.cos(n.a), y:cy+R*Math.sin(n.a), ...n }));
+  const pulse=(clock*0.22)%1;
+  for(let i=0;i<4;i++){
+    const a0=nodes[i].a; let a1=nodes[(i+1)%4].a; if(a1<a0) a1+=2*Math.PI;
+    const isFeedback=(i===3);                  // m -> control closes the loop
+    const legOpen=(open && isFeedback);
+    const legRed =(!open && isFeedback);       // light the endogeneity leg red when closed
+    ctx.strokeStyle= legOpen ? 'rgba(255,255,255,0.12)' : (legRed ? C_ENV : 'rgba(255,255,255,0.22)');
+    ctx.lineWidth= legRed?2.6:2; ctx.setLineDash(legOpen?[4,5]:[]);
+    ctx.beginPath(); ctx.arc(cx,cy,R,a0,a1); ctx.stroke(); ctx.setLineDash([]);
+    // arrowhead at a1
+    const tx=cx+R*Math.cos(a1), ty=cy+R*Math.sin(a1), tg=a1+Math.PI/2;
+    ctx.fillStyle= legOpen ? 'rgba(255,255,255,0.22)' : (legRed?C_ENV:'rgba(255,255,255,0.5)');
+    ctx.beginPath(); ctx.moveTo(tx,ty);
+    ctx.lineTo(tx-7*Math.cos(tg-0.4), ty-7*Math.sin(tg-0.4));
+    ctx.lineTo(tx-7*Math.cos(tg+0.4), ty-7*Math.sin(tg+0.4)); ctx.closePath(); ctx.fill();
+    // travelling pulse on closed legs (slow)
+    if(!legOpen){ const sp=(pulse*4)-i;
+      if(sp>=0&&sp<1){ const ad=a0+(a1-a0)*sp, px=cx+R*Math.cos(ad), py=cy+R*Math.sin(ad);
+        ctx.fillStyle=legRed?C_ENV:nodes[i].c; ctx.shadowColor=ctx.fillStyle; ctx.shadowBlur=8;
+        ctx.beginPath(); ctx.arc(px,py,3.6,0,7); ctx.fill(); ctx.shadowBlur=0; } }
+  }
+  // nodes + labels - labels pushed clear, anchored so they never cross the ring
+  for(const n of pos){
+    ctx.fillStyle=BG; ctx.strokeStyle=n.c; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(n.x,n.y,6.5,0,7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle=TITLE; ctx.font='600 11px "Segoe UI",system-ui,sans-serif';
+    const co=Math.cos(n.a), si=Math.sin(n.a);
+    const lx=n.x+co*16, ly=n.y+si*16;
+    ctx.textBaseline = si<-0.5?'bottom':(si>0.5?'top':'middle');
+    ctx.textAlign    = co<-0.5?'right':(co>0.5?'left':'center');
+    ctx.fillText(n.t, lx, ly);
+  }
+  // endogeneity annotation - only when the loop is CLOSED (that is when the
+  // control makes its own field). Centred INSIDE the ring so it fits at any
+  // width and never clips or crosses a node.
+  if(!open){
+    ctx.fillStyle=hexA(C_ENV,0.95); ctx.font='italic 11px "Segoe UI",system-ui,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('makes its own field', cx, cy);
+  }
+}
+
+// RIGHT-BOTTOM: θ (slow) and m (coarse) traces - the calm-vs-ring payoff
 function drawTraces(x,y,w,h){
-  ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=1; rr(x,y,w,h,6); ctx.stroke();
-  const ax=x+14, ay=y+24, aw=w-28, ah=h-40;
-  const sy=(v)=>ay+ah/2 - v*(ah*0.42);
-  // zero line
+  panel(x,y,w,h,'θ and m over time', TITLE);
+  const ax=x+12, ay=y+30, aw=w-24, ah=h-42;
+  const sy=v=>ay+ah/2 - v*(ah*0.42);
   ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(ax,sy(0)); ctx.lineTo(ax+aw,sy(0)); ctx.stroke();
-  // theta (slow, gold)
-  drawSeries(thetaHist, ax, aw, sy, C_CTRL, 2);
-  // m (coarse measurement, blue)
-  drawSeries(mHist, ax, aw, sy, C_MEAS, 1.6);
-  // labels
-  ctx.fillStyle='#e6e8ee'; ctx.font='600 12px "Segoe UI",system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='top';
-  ctx.fillText('θ and m over time', x+12, y+8);
-  ctx.font='11px "Segoe UI",system-ui,sans-serif';
-  ctx.fillStyle=C_CTRL; ctx.textAlign='right'; ctx.fillText('θ slow control', x+w-12, y+8);
-  ctx.fillStyle=C_MEAS; ctx.fillText('m measurement', x+w-12, y+22);
+  series(mHist, ax, aw, sy, C_MEAS, 1.6);
+  series(thetaHist, ax, aw, sy, C_CTRL, 2.2);
+  // compact colour key, right-aligned in the title row - just the glyphs (the
+  // loop panel already names them), so it never crowds the title at any width
+  ctx.font='600 12px "Segoe UI",system-ui,sans-serif'; ctx.textBaseline='top';
+  ctx.textAlign='right';
+  ctx.fillStyle=C_MEAS; ctx.fillText('m', x+w-14, y+10);
+  ctx.fillStyle=C_CTRL; ctx.fillText('θ', x+w-34, y+10);
 }
-function drawSeries(arr, ax, aw, sy, col, lw){
-  if(arr.length<2) return;
-  ctx.beginPath();
-  for(let i=0;i<arr.length;i++){ const X=ax+(i/(arr.length-1))*aw; const Y=sy(arr[i]);
-    i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }
+function series(arr, ax, aw, sy, col, lw){
+  if(arr.length<2) return; ctx.beginPath();
+  for(let i=0;i<arr.length;i++){ const X=ax+(i/(arr.length-1))*aw, Y=sy(arr[i]); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }
   ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.stroke();
 }
 
-// ─── controls ─────────────────────────────────────────────────
+// ── controls ───────────────────────────────────────────────────────────────
 const dB=document.getElementById('drivenBtn'), aB=document.getElementById('adaptiveBtn');
 function setMode(md){ mode=md; dB.classList.toggle('active',md==='driven'); aB.classList.toggle('active',md==='adaptive');
-  thetaHist.length=0; mHist.length=0; mDelayBuf.length=0; }
+  thetaHist.length=0; mHist.length=0; mDelay.length=0; clock=0; }
 dB.addEventListener('click',()=>setMode('driven'));
 aB.addEventListener('click',()=>setMode('adaptive'));
-document.getElementById('sep').addEventListener('input',e=>{ sep=parseFloat(e.target.value);
-  document.getElementById('sepVal').textContent=sep.toFixed(1)+'×'; });
+const sepEl=document.getElementById('sep'), sepVal=document.getElementById('sepVal');
+sepEl.addEventListener('input',e=>{ sep=parseFloat(e.target.value); sepVal.innerHTML=sep.toFixed(1)+'&times;'; });
 
+// ── go ───────────────────────────────────────────────────────────────────
+resize();
 requestAnimationFrame(draw);
 </script>
 </body>

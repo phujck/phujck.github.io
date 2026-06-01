@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phase Portrait — Damped Pendulum</title>
+<title>Phase Portrait - Damped Pendulum</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -110,7 +110,7 @@
 <body>
 
 <div class="container">
-  <h1>Phase Portrait <span>— Damped Pendulum</span></h1>
+  <h1>Phase Portrait <span>- Damped Pendulum</span></h1>
 
   <div class="canvas-wrap" id="wrap">
     <canvas id="bg"></canvas>
@@ -137,7 +137,7 @@
 
 <script>
 // ─── constants & config ───────────────────────────────────────
-const G_OVER_L  = 1.0;          // g/L — sets timescale
+const G_OVER_L  = 1.0;          // g/L - sets timescale
 const DT        = 0.008;        // integration timestep
 const STEPS_PER_FRAME = 60;     // sub-steps per animation frame
 const MAX_TRAJ  = 20;
@@ -320,7 +320,7 @@ function drawContours(ctx, w, h) {
   // Contour levels
   const levels = [];
   for (let e = -1.0; e <= 4.0; e += 0.25) {
-    if (Math.abs(e - H_sep) < 0.05) continue; // skip near separatrix — drawn separately
+    if (Math.abs(e - H_sep) < 0.05) continue; // skip near separatrix - drawn separately
     levels.push(e);
   }
 
@@ -344,7 +344,7 @@ function drawContours(ctx, w, h) {
 }
 
 function marchingSquaresLevel(ctx, field, RES, level, w, h) {
-  // Simple segment-based marching squares — emits disconnected line segments
+  // Simple segment-based marching squares - emits disconnected line segments
   const N = RES + 1;
   for (let j = 0; j < RES; j++) {
     for (let i = 0; i < RES; i++) {
@@ -356,7 +356,7 @@ function marchingSquaresLevel(ctx, field, RES, level, w, h) {
       const idx = (v00 > 0 ? 8 : 0) | (v10 > 0 ? 4 : 0) | (v11 > 0 ? 2 : 0) | (v01 > 0 ? 1 : 0);
       if (idx === 0 || idx === 15) continue;
 
-      // Interpolation helpers — return screen coords
+      // Interpolation helpers - return screen coords
       const lerpX = (va, vb, ix, iy) => {
         const t = va / (va - vb);
         const th = TH_MIN + (ix + t) * (TH_MAX - TH_MIN) / RES;
@@ -408,7 +408,7 @@ function drawTrajectories() {
     if (pts.length < 2) continue;
 
     const n = pts.length;
-    // Draw with fading opacity — older segments more transparent
+    // Draw with fading opacity - older segments more transparent
     // We batch into segments of similar opacity for performance
     const BATCH = 8;
     for (let k = 1; k < n; k++) {
@@ -508,7 +508,7 @@ document.getElementById('clearBtn').addEventListener('click', () => {
 
 // Redraw background when damping changes (contours don't depend on gamma, but
 // user might toggle contours while adjusting, so keep it responsive)
-// Actually energy contours are independent of damping — only redraw when toggled.
+// Actually energy contours are independent of damping - only redraw when toggled.
 
 // ─── start ────────────────────────────────────────────────────
 requestAnimationFrame(tick);
