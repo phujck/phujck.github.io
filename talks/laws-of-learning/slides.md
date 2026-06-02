@@ -23,6 +23,9 @@ class: paper text-center
 layout: center
 highlighter: shiki
 mdc: true
+# hash routing so a deep slide link survives a refresh on a static host (GitHub
+# Pages has no server rewrite - history mode 404s on reload of /talks/.../<n>).
+routerMode: hash
 fonts:
   serif: Lora
   sans: Inter

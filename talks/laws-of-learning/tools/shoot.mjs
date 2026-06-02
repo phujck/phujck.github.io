@@ -48,6 +48,7 @@ const serveOnly = flags.has('--serve')
 const [slidePart, clickPart] = String(positional[0] ?? '1').split('.')
 const slideNo = Number.parseInt(slidePart, 10)
 const clicks = Number.parseInt(getOpt('--clicks', clickPart ?? '0'), 10) || 0
+const extraWait = Number.parseInt(getOpt('--wait', '0'), 10) || 0  // extra ms before the shot (heavy applets)
 const width = Number.parseInt(getOpt('--width', '1280'), 10)
 const height = Number.parseInt(getOpt('--height', '720'), 10)
 let outPath = positional[1] && !positional[1].startsWith('--')
@@ -160,15 +161,16 @@ async function main() {
       deviceScaleFactor: 2, // crisp text for the agent to read
     })
     const page = await pageCtx.newPage()
-    // Slidev SPA route for a single slide is /<n>; the click state is honored
-    // via the ?clicks=<c> query, so v-click build-up steps are reproducible.
-    const target = `${base}/${slideNo}${clicks ? `?clicks=${clicks}` : ''}`
+    // The deck uses routerMode:hash (deep links survive a static-host refresh),
+    // so the slide route is /#/<n>; v-click reveals are advanced by keypress.
+    const target = `${base}/#/${slideNo}`
     await page.goto(target, { waitUntil: 'networkidle', timeout: 60000 })
     // Wait for the slide surface, then let fonts + KaTeX settle.
     await page.waitForSelector('.slidev-page, #slide-content, [class*="slidev-page"]', { timeout: 30000 })
       .catch(() => {})
     await page.evaluate(() => (document.fonts ? document.fonts.ready : Promise.resolve())).catch(() => {})
-    await page.waitForTimeout(clicks ? 900 : 700) // a touch longer to let click reveals transition in
+    for (let i = 0; i < clicks; i++) { await page.keyboard.press('Space'); await page.waitForTimeout(160) }
+    await page.waitForTimeout((clicks ? 900 : 700) + extraWait) // longer to let click reveals + heavy applets settle
     mkdirSync(dirname(outPath), { recursive: true })
     await page.screenshot({ path: outPath })
   }

@@ -4,7 +4,7 @@
   page shipping under viz/), not a baked frame. One component, any asset.
 -->
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 
 const props = defineProps<{
   src: string
@@ -21,14 +21,34 @@ const resolved = computed(() => {
   const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
   return s.startsWith('/') ? base + s : s
 })
+
+// Load the iframe only once its slide is on screen (and therefore sized).
+// Native loading="lazy" misfires inside Slidev's CSS-scaled slide - the asset
+// intermittently never loads. Eager loading is the opposite failure: every
+// applet inits at a transient 0-size, where canvas draws throw (negative radii).
+// An explicit IntersectionObserver loads each applet when its slide becomes
+// active, reliably and at real size, and never reloads it.
+const wrap = ref<HTMLElement | null>(null)
+const show = ref(false)
+let io: IntersectionObserver | null = null
+onMounted(() => {
+  if (typeof IntersectionObserver === 'undefined') { show.value = true; return }
+  io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) { show.value = true; io?.disconnect(); io = null; break }
+    }
+  }, { rootMargin: '150px' })
+  if (wrap.value) io.observe(wrap.value)
+})
+onBeforeUnmount(() => { io?.disconnect(); io = null })
 </script>
 
 <template>
-  <div class="dyn-embed">
+  <div class="dyn-embed" ref="wrap" :style="{ minHeight: (height ?? 420) + 'px' }">
     <iframe
+      v-if="show"
       :src="resolved"
       :height="height ?? 420"
-      loading="lazy"
       sandbox="allow-scripts allow-same-origin"
     />
   </div>
