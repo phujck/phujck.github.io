@@ -284,6 +284,12 @@ unclear, what lands. SURFACE its suggestions to the author, do not auto-apply. S
 + verify, before the structural dream (its findings feed the dream).
 
 ## V2 autonomous fix queue (2026-06-02, author asleep, full autonomy granted)
+**LATEST (v2 integrated, 32 slides, build clean):** all v2 slide fixes DONE & verified - title art
+embedded, model-loop applet (3 model slides consolidated into it), reservoir swap, slide-20 reword,
+thank-you (photo + acks + "Built by algebra"), 3 clickable static graphs. RUNNING: em-dash sweep on
+the new assets + blind PhD-student review (wf wtd64tmfr). NEXT: triage student notes (sensible only)
+-> deploy v2 (build from PowerShell w/ --base) + add talks.html entry -> meta-dream -> rewrite
+HANDOFF.md -> final commit+push.
 Deploy v1 now, fix -> v2, student-review, big dream, handoff, commit+push. Author authorised the
 public push and the engine-sans-content on the site. Update status inline as work lands.
 
@@ -294,7 +300,15 @@ at talk root, verify) - ORCHESTRATOR pushes. NEXT in order: model-loop slide (th
 reservoir embed swap (slide 9 -> reservoir-schematic), live engine-on-site graphs, slide-20 reword,
 thank-you rebuild (+ photo at public/figs/family.jpeg, AUTHOR drops), title-art embed (slide 1) ->
 PhD-student review -> push v2 -> meta-dream -> rewrite HANDOFF.md -> final commit+push.
-- [ ] **Deploy v1** - current build, graph slides (30-31) repointed to the STATIC snapshots (not
+
+**STATUS update:** v1 LIVE (49195d0 -> main). Wave-A assets DONE - `model-loop.html` (8-step
+walkthrough deriving the return map from FP2), `reservoir-schematic.html`, `title-art.html` (gloss
+stripped), and static-clickable `talk-graph.html` (B0-B10, 58 nodes) + `wiki-graph.html` (canon
+name-only, 79 nodes, firewall-clean). v2 integration+verify RUNNING (wf wvmd5pvbs): embeds + model
+consolidation + thank-you + slide-20 + graph repoints into slides.md, then render-check. THEN:
+review the middle -> deploy v2 (build from PowerShell --base) + add the talks.html listing entry ->
+meta-dream -> rewrite HANDOFF.md -> final commit+push.
+- [x] **Deploy v1 DONE** (commit 49195d0 -> main, live at /talks/laws-of-learning/, 0 broken requests). - current build, graph slides (30-31) repointed to the STATIC snapshots (not
   localhost) so nothing breaks publicly. To /talks/laws-of-learning/. Build + commit + push.
 - [ ] **Model loop slide** (author's central point, raised 2x): ONE slide on the loop figure, each
   part highlighted in turn with its equation + link - global variational principle <- low-level
@@ -307,7 +321,9 @@ PhD-student review -> push v2 -> meta-dream -> rewrite HANDOFF.md -> final commi
 - [ ] **Facsimile (32) scrollbar** - kill it, fit the frame.
 - [ ] **Slide 20** - reword "its slope there is one number...".
 - [ ] **Thank-you (34)**: photo at `public/figs/family.jpeg` (PRESENT - author dropped it; reference `/figs/family.jpeg`), acknowledgements (OpenAI, Google, Anthropic, long-suffering wife,
-  little learning machine), keep gmccaul.co.uk, tag "built by algebra".
+  little learning machine), keep gmccaul.co.uk, tag "Built by algebra" (CONFIRMED - it is the site's
+  own footer signature in talks.html). Listing to update = `talks.html` (root); laws-of-learning
+  already linked there, add the v2 entry beside it.
 - [ ] **Title art (1)**: algorithmic (p5.js) generative art, now the talk is settled. AUTHOR likes the
   art, BUT the agent added a GNOMIC SUBTITLE - STRIP it. Title slide = title + name + art ONLY, no
   subtitle. Hard rule (memory: no-gnomic-subtitles). Apply once wave-1 lands.
@@ -316,6 +332,9 @@ PhD-student review -> push v2 -> meta-dream -> rewrite HANDOFF.md -> final commi
 - [ ] **PhD-student review** (blind, slides-only, persona quick/attentive/not-omniscient) -> apply
   SENSIBLE notes only, do not flatten the talk.
 - [ ] **Push v2** as a second version on the page.
+- [ ] **Update the website talk-listing to LINK to the new version** (the publish-includes-listing
+  gap from the backlog). Find the listing page (homepage / talks index - mirror how
+  dynamics-as-computation is linked), add the v2 link and ensure v1 is reachable. Do at v2 deploy.
 - [ ] **Big dream**: spawn meta-dreamer (FRESH context, MAX-capacity model) to gather all learnings
   -> canon update via laplace_dream.
 - [ ] **Rewrite HANDOFF.md** myself + brief the dreamer.

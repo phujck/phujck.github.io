@@ -29,15 +29,13 @@ fonts:
   mono: JetBrains Mono
 ---
 
-# The Laws of Learning
+<div class="title-art-fill">
+  <Embed src="/viz/title-art.html" :height="540" />
+</div>
 
-<div class="accent-rule" style="background:#7eb8da;width:90px;height:2px;margin:1.4rem auto;"></div>
-
-<div class="author" style="color:#9ca3af;">Gerard McCaul</div>
-
-<!-- ART SLOT (fine-tune 2026-06-01): title-page art goes here, generated at the END once the
-whole talk's content is settled - algorithmic p5.js or image-gen - to make the title pop.
-Title + name only, per author. LEAVE AS-IS - the title slide is already stripped. -->
+<!-- TITLE ART (v2): the full-bleed title art carries the field + "The Laws of Learning" +
+"Gerard McCaul" in-canvas, the gnomic gloss already stripped. The markdown title / name /
+accent-rule are removed as redundant - the art is the title slide. No subtitle. -->
 
 <!--
 Open on the question, not the apparatus. The room is full of people building reservoirs.
@@ -342,7 +340,7 @@ There is one quantity that governs the behaviour. {.eq-note}
 ::right::
 
 <div class="embed-frame" v-click>
-  <Embed src="/viz/phase-portrait.html" :height="380" />
+  <Embed src="/viz/reservoir-schematic.html" :height="380" />
 </div>
 
 <!--
@@ -418,69 +416,6 @@ reserve - layers come later, as the escape. Establish that scope, then build the
 -->
 
 ---
-layout: two-cols-header
-class: paper
----
-
-# The Relaxation Time
-
-::left::
-
-Between updates, the fast level relaxes toward its constrained optimum. That takes a time $\tau$.
-
-<v-clicks>
-
-<div class="define">
-
-A scalar fast part in field $h$: $\;\dot x = -h\,(x - s\theta)$, so it relaxes with **$\tau = 1/h$**.
-
-</div>
-
-<div class="define">
-
-Read once per interval $T$. The reading carries a **memory** of the last one:
-
-</div>
-
-<div class="eq-hero">
-
-$$x_{k+1} = r\,x_k + (1-r)\,s\theta_k, \qquad r = e^{-T/\tau}$$
-
-</div>
-
-- $T \gg \tau$ - $r \to 0$. Equilibrated, a fresh read.
-- $T \ll \tau$ - $r \to 1$. The reading is stale.
-
-</v-clicks>
-
-::right::
-
-<div class="stage-card" v-click>
-
-<div class="stage-eq">
-
-$$r = e^{-T/\tau}$$
-
-</div>
-
-<div class="stage-note">
-
-how stale the reading is - the loop's analogue of a reservoir's leak
-
-</div>
-
-</div>
-
-<!--
-NEW slide for the missing model component (FINETUNE: tau was never introduced and is crucial).
-Keep it physical and short. The fast level does not read instantly - it relaxes with time tau,
-and the update period T sets how stale the reading is through the single memory factor r = exp(-T/tau).
-r is the loop's leaky-integration rate - a real rhyme with the reservoir's leak, not a forced one.
-This memory r is what carries the lag that makes the closed loop able to overshoot. (B3; PoH
-06_scalar, re-derived; ANF A1. tau is non-universal.)
--->
-
----
 layout: center
 class: paper embed-slide
 ---
@@ -510,101 +445,37 @@ layout: center
 class: paper embed-slide
 ---
 
-# The Loop, Part by Part
+# The Model, on One Loop
 
 <div class="embed-frame embed-wide" v-click>
-  <Embed src="/viz/adaptive-loop.html" :height="430" />
+  <Embed src="/viz/model-loop.html" :height="450" />
 </div>
 
 <!--
-THE SPINE OF ACT II, collapsed from the old four "move" slides into ONE zoomable loop (FINETUNE).
-The figure - control / environment / fast state / order parameter - is the central object; click
-through it by ZOOMING IN on each part in turn, each reveal saying WHY the model describes that part
-that way and WHAT governs it. The maths hangs off the loop's parts, in the load-bearing order:
+THE SPINE OF ACT II - ONE presenter-driven walkthrough applet (FINETUNE v2). Three former static
+slides collapse INTO this one instrument, which now CARRIES their content: the relaxation-time
+slide (tau / r), the part-by-part loop, and the self-consistency derivation. Do NOT re-add them as
+static slides - the applet shows them. Phenomenon first: the B3.5 phenomenology slide runs BEFORE
+this; here is the derivation it demands.
 
-  1. theta, the slow control, and h = Pi(theta), the field it generates - the control acts through
-     the field, never on the parts directly (the Act-0 arrow, now named).
-  2. the N fast parts relaxing under the OLD field h_k (fixed at the period start), scale-separated.
-  3. m = <O>, the coarse, noisy, delayed average - one number off the crowd, noise of order N^{-1/2}.
-  4. the update: theta_{k+1} = theta_k + alpha g e_k - the measurement moves the control, closing
-     the loop endogenously (leg four feeds leg one).
+Step through it (8 steps, "step ->" / "back", or click a pip). The load-bearing order:
+  1. theta, the global variational principle - the slow control.
+  2. h = Pi(theta), the environment it generates - the control acts through the field, never on the
+     parts directly (the Act-0 arrow, now named).
+  3. the N fast parts relaxing to rho_h under the OLD field held fixed within a period T, with
+     relaxation time tau and the memory factor r = e^(-T/tau) (the old relaxation-time slide, folded in).
+  4. m = <O>, the coarse, noisy, delayed average - one number off the crowd.
+  5. the periodic update theta_{k+1} = theta_k + alpha g e_k - the measurement moves the control,
+     closing the loop endogenously.
+  6-8. ASSEMBLE: the self-consistent fixed point FP2 (m(theta*) = O-hat(theta*)), linearise there
+     (the ordered timing gives the clean coefficient, no r*alpha cross-term), and the return map
+     EMERGES: e_{k+1} = (r - K_N) e_k, loop gain K_N = alpha chi_N g. x_{k+1} and r both come straight
+     from the fixed point - a derived map. A Z_2 symmetry kills the quadratic, so the leading
+     nonlinearity is cubic (supercritical flip); the cobweb at the side iterates it live.
 
-This is where the equations come from. Drive the zoom slowly, one part per click; for each, say why
-this captures the essential detail. The next slide does the collapse. (B0-B4 assembled on one figure;
-R1. Spine: the loop slide is the visual spine, the maths hangs off its parts.)
--->
-
----
-layout: two-cols-header
-class: paper
----
-
-# Self-Consistency Gives the Return Map
-
-::left::
-
-The fixed point is **self-consistent** - the mandate agrees with the statistics it induces, $m(\theta^*) = \hat O(\theta^*)$.
-
-<v-clicks>
-
-<div class="define">
-
-Linearise the loop there. Track only the **error** $e_k$ - how far the reading sits from consistency.
-
-</div>
-
-<div class="define">
-
-The one non-trivial input: at the fixed point both response slopes agree, $\;d_\theta \hat O = \chi_N\,\Pi' = g$.
-
-</div>
-
-The fast mode eliminates **exactly**. A four-part loop becomes one scalar recurrence.
-
-</v-clicks>
-
-::right::
-
-<div class="eq-hero" v-click>
-
-$$e_{k+1} = (r - K_N)\,e_k \;-\; \alpha\,c_N\,e_k^{3}\;+\;\cdots$$
-
-</div>
-
-<div class="eq-note" v-after>
-
-The ordered timing - fast relaxes, then slow updates - gives the clean $(r-K_N)$ with no cross-term. A $\mathbb{Z}_2$ symmetry forbids the quadratic, so the first nonlinearity is cubic.
-
-</div>
-
-<div class="eq-hero" v-click>
-
-$$K_N \;=\; \alpha\,\chi_N\,g$$
-
-</div>
-
-<div class="eq-note" v-after>
-
-The loop **gain**, built from the **susceptibility** $\chi_N$ - how hard the collective answers a nudge.
-
-</div>
-
-<!--
-THE FOUNDATION (FINETUNE: the deepest author-fork - the self-consistency derivation was missing).
-This is where e_{k+1} and the gain K_N come FROM, not stated as given. Do not grind the algebra on
-the slide - state what makes it work and that it is derived (and machine-verified) in the paper.
-
-The fixed point FP2 is self-consistent: the mandate is consistent with the statistics it induces.
-Linearise there, track the error e_k. The load-bearing order is the timing: the fast parts relax
-under the OLD field, THEN the slow law updates - which is what gives the clean (r - K_N) eigenvalue
-with no r*alpha cross-term. The self-consistency relation (both derivatives equal g at FP2) is the
-one non-trivial input. The Z_2 symmetry kills the quadratic, so the leading nonlinearity is cubic -
-a supercritical flip.
-
-Two things to bank: the memory r = exp(-T/tau) is the loop's leak, a real rhyme with reservoir
-leaky integration; and the whole fate of the system now rides in K_N, which is built from chi_N. The
-entire stability question has been funnelled into one object - how does chi_N behave? (B4; R1_derivation,
-machine-verified <1e-13; 03_return_map.)
+This is where ALL the model's equations come from - drive it slowly, one step per click, say why
+each part is described this way. The whole fate now rides in K_N, built from chi_N: how does chi_N
+behave? (B0-B4 on one instrument; R1, R1_derivation machine-verified <1e-13; 02_model / 03_return_map.)
 -->
 
 ---
@@ -825,7 +696,7 @@ class: paper
 
 ::left::
 
-Iterating the decimation operator $R$ has a fixed point. Its slope there is one number, $\lambda_0$.
+Iterating the decimation operator $R$ has a fixed point. Its slope there is the decimation eigenvalue $\lambda_0 = R'(m^*)$.
 
 <v-clicks>
 
@@ -1239,32 +1110,25 @@ class: paper embed-slide
 # The Conceptric - the Graph That Built This Talk
 
 <div class="embed-frame embed-wide" v-click>
-  <Embed src="/figs/conceptric_snapshot.html" :height="430" />
+  <Embed src="/figs/talk-graph.html" :height="430" />
 </div>
 
 <div class="eq-note" v-click style="margin-top:0.5rem;">
 
-Live, local: <code>python -m laplace.viewer --source substrate --path …/laws-of-learning/conceptric-source.md --port 8766</code>. The published deck needs the static-export step.
+The B0-B10 spine, clickable - descend into a beat, climb back, see what it rests on.
 
 </div>
 
 <!--
 THE CLIMAX, graph (1) of three. This is the talk's OWN conceptric - the DERIVATION_SPINE made
 navigable: nodes are the beats B0-B10 and their objects, edges are the "rests on" dependencies, so
-the reading order IS the graph's edge structure. It is LIVE and TRUE - the real graph, not the static
-facsimile the old draft shipped.
+the reading order IS the graph's edge structure. It is the real graph, exported from the engine.
 
-PRESENTING LOCALLY: launch the viewer first -
-  python -m laplace.viewer --source substrate \
-    --path C:\Users\gerar\VScodeProjects\phujck.github.io\talks\laws-of-learning\conceptric-source.md \
-    --port 8766
-then this iframe (http://localhost:8766) is fully interactive: descend into a result (say B4, the
-self-consistency foundation), climb back, see what each beat draws on. Scale-local - run through the
-levels, here are the levels at one point, here at the next.
-
-ON-SLIDE NOTE (kept, per spec): the PUBLISHED deck needs the static-export step before this is live
-off-localhost - until then it degrades when the viewer is not running. That export is the open build
-task. (B10; conceptric-source.md; laplace.viewer --source substrate.)
+This now ships as a SELF-CONTAINED clickable graph in the deck (public/figs/talk-graph.html), exported
+from laplace.viewer - it is live on the published page, no localhost dependency. Click a beat (say B4,
+the self-consistency foundation), descend, climb back, see what each beat draws on. Scale-local - run
+through the levels, here are the levels at one point, here at the next. (B10; talk-graph.html, exported
+from the conceptric source.)
 -->
 
 ---
@@ -1275,23 +1139,23 @@ class: paper embed-slide
 # The Engine Behind It - the Wiki
 
 <div class="embed-frame embed-wide" v-click>
-  <Embed src="/figs/conceptric_snapshot.html" :height="430" />
+  <Embed src="/figs/wiki-graph.html" :height="430" />
 </div>
 
 <div class="eq-note" v-click style="margin-top:0.5rem;">
 
-Live, local: <code>python -m laplace.viewer --source canon</code> - every node of the live canon, name-only.
+Every node of the live canon, name-only - the breadth behind the single talk-graph.
 
 </div>
 
 <!--
 Graph (2) of three: the engine WIKI, name-only - all the many nodes of the live canon, read straight
-from the engine. Launch the default source:
-  python -m laplace.viewer --source canon --port 8765
-then this iframe (http://localhost:8765) renders the whole canon scale-local - coarse nodes stand in
-for their clusters (voice_corpus, domains, skills...). Accurate by construction, no snapshot. This is
-"the many nodes of the wiki" - the breadth behind the single talk-graph. Name-only is the point here:
-the shape and scale of what the engine knows, not its prose. (B10 close; laplace.viewer --source canon.)
+from the engine. Ships as a SELF-CONTAINED clickable graph in the deck (public/figs/wiki-graph.html),
+exported from laplace.viewer --source canon - live on the published page, no localhost dependency. It
+renders the whole canon scale-local - coarse nodes stand in for their clusters (voice_corpus, domains,
+skills...). Accurate by construction. This is "the many nodes of the wiki" - the breadth behind the
+single talk-graph. Name-only is the point here: the shape and scale of what the engine knows, its prose
+held back. (B10 close; wiki-graph.html, exported from the canon.)
 -->
 
 ---
@@ -1377,34 +1241,38 @@ class: paper text-center
 
 # Thank You
 
-<div class="turn-quotes" style="margin-top:1rem;">
+<div class="thanks">
 
-<div class="turn-quote" v-click>
+<div class="thanks-photo" v-click>
+  <img src="/figs/family.jpeg" alt="the author's family" />
+</div>
 
-$\psi$ is to the loop what $\rho(W)$ is to the reservoir. A locally reasonable rule, summed and fed back over a large system, has phases - and one number names them.
+<div class="thanks-body">
 
+<div class="thanks-list" v-click>
+
+<div class="thanks-line">OpenAI, Google, and Anthropic - for the machines.</div>
+<div class="thanks-line">My long-suffering wife.</div>
+<div class="thanks-line">And the little learning machine.</div>
+
+</div>
+
+<div class="thanks-foot" v-click>
+<span class="thanks-url">gmccaul.co.uk</span>
+<span class="thanks-tag">Built by algebra.</span>
 </div>
 
 </div>
 
-<div class="eq-note" v-click style="margin-top:1.2rem;">
-
-With thanks to everyone who shaped this - the collaborators, the lineage it re-derives, and the engine it was built with.
-
 </div>
-
-<div class="kicker" v-click style="margin-top:1.6rem;">gmccaul.co.uk · the build is the talk is the engine</div>
 
 <!--
-The close (FINETUNE: keep gmccaul.co.uk and "the build is the talk is the engine"; ADD a thank-you /
-acknowledgements). Bring the arc home: Act 0 said learning is an endogenous loop; Act I showed the
-reservoir is one; Act II built it and found the exponent; Act III showed the exponent prices the phases
-and the window; Act IV turned the principle on the engine that built the talk; the laws are what stands,
-under construction. Thank the room and the people.
+The close, rebuilt (FINETUNE v2): a clean dark layout - the family photo, the thank-yous, the url, the
+tag. Photo at /figs/family.jpeg. Thank OpenAI, Google and Anthropic (the machines), the long-suffering
+wife, and the little learning machine (the child in the photo). Keep gmccaul.co.uk. The tag "Built by
+algebra." is the site's own footer signature. No subtitle, no gnomic line.
 
-The UV-catastrophe / Planck framing (a locally correct rule, lethal summed over modes; a classifier
-resolves it) is available as colour HERE if the room is warm and there is time - caveat (c): narrative
-colour, NOT load-bearing, deploy-or-drop. Author's call on which provisional colour to use. The real
-close is the rhyme: one number, the phases of learning. (Synthesis; caveat c; exact close at the
-agent's discretion per FINETUNE - landed as a thank-you on the rhyme.)
+Land it warmly and briefly - the people who made the work possible, on the picture. The Fig.vue invert
+filter is for the REVTeX plots only; this is a photograph, so it is a plain <img> with no inversion.
+(Synthesis; close per FINETUNE - photo + thanks + url + tag.)
 -->

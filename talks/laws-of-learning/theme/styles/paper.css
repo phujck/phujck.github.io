@@ -37,6 +37,32 @@
 .paper .accent { color: var(--pp-blue); }
 .paper a { color: var(--pp-blue); }
 
+/* ── title slide: the full-bleed title art ──
+   The title art carries the field + title + name in-canvas. It is full-bleed -
+   it covers the whole slide with no frame, border or seam, the canvas IS the
+   title slide. Absolutely positioned to the slide edges so the `center` layout's
+   content wrapper does not box it in. */
+.paper .title-art-fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.paper .title-art-fill .dyn-embed {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--pp-bg);
+}
+.paper .title-art-fill iframe {
+  width: 100%;
+  height: 100% !important;
+  display: block;
+  border: 0;
+}
+
 /* mathematics: give display equations room and let them breathe on dark */
 .paper .katex-display {
   margin: 0.9rem 0;
@@ -338,6 +364,67 @@
   font-size: 0.86rem;
   text-align: center;
   line-height: 1.45;
+}
+
+/* ── the close: thank-you slide (photo + thanks + url + tag) ──
+   A clean dark layout. The family photo sits beside the acknowledgements; the
+   url and the site's footer tag close it out. The photo is a photograph, NOT a
+   REVTeX plot, so it carries no invert filter - just a framed image. */
+.paper .thanks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.4rem;
+  max-width: 56rem;
+  margin: 1.6rem auto 0;
+  text-align: left;
+}
+.paper .thanks-photo {
+  flex: 0 0 auto;
+}
+.paper .thanks-photo img {
+  display: block;
+  width: 22rem;
+  max-width: 38vw;
+  max-height: 56vh;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--pp-rule);
+  box-shadow: 0 6px 34px rgba(0, 0, 0, 0.5);
+}
+.paper .thanks-body {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.paper .thanks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.paper .thanks-line {
+  font-size: 1.22rem;
+  line-height: 1.45;
+  color: var(--pp-ink);
+  border-left: 2px solid var(--pp-blue);
+  padding-left: 0.95rem;
+}
+.paper .thanks-foot {
+  margin-top: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.paper .thanks-url {
+  color: var(--pp-blue);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+.paper .thanks-tag {
+  color: var(--pp-gold);
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  font-size: 1rem;
 }
 
 /* ── per-figure opt-out: a light "card" behind a figure that inverts badly ──
