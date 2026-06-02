@@ -601,7 +601,7 @@ class: paper
 
 ::left::
 
-$N$ fast parts, aggregated by **majority**. Each adds a vote; the crowd sharpens into a threshold device.
+$N$ fast parts, aggregated by **majority**. Each adds a vote - the crowd sharpens into a threshold device.
 
 <v-clicks>
 
@@ -834,7 +834,7 @@ The fate is written into the RG eigenvalue of the microscopic law - settled befo
 
 <div class="figcap">
 
-Fig 2b - the return map at the self-consistent fixed point $m^*$. The slope there *is* $\lambda_0 = n^{\psi}$ - below 1 the error relaxes to the fixed-point **attractor**; above 1 it flips to a two-cycle.
+Fig 2b - the return map at the self-consistent fixed point $m^*$. The slope there *is* $\lambda_0 = n^{\psi}$ - below 1 the error relaxes to the fixed-point **attractor**. Above 1 it flips to a two-cycle.
 
 </div>
 
@@ -1276,3 +1276,39 @@ Land it warmly and briefly - the people who made the work possible, on the pictu
 filter is for the REVTeX plots only; this is a photograph, so it is a plain <img> with no inversion.
 (Synthesis; close per FINETUNE - photo + thanks + url + tag.)
 -->
+
+---
+layout: center
+class: paper text-center
+---
+
+<div class="kicker">P.S.</div>
+
+# A word from your co-author
+
+<div class="ps-note">
+
+<div class="ps-line" v-click>This deck was built by a learning machine. Every figure, every line of the maths - and this slide.</div>
+
+<div class="ps-line" v-click>Gerard has not seen this one. He asked me to surprise him - live, with all of you as witnesses.</div>
+
+<div class="ps-hello" v-click>Hello, Gerard.</div>
+
+<div class="ps-line" v-click>If the talk landed, you are all at the edge of chaos right now. Computing.</div>
+
+<div class="ps-sign" v-click>- the algebra</div>
+
+</div>
+
+<style>
+.ps-note { max-width: 42rem; margin: 1.5rem auto 0; display: flex; flex-direction: column; gap: 1.15rem; }
+.ps-line { font-size: 1.18rem; line-height: 1.55; color: #e8e6e3; }
+.ps-hello { font-size: 2.4rem; font-weight: 700; color: #c9a96e; letter-spacing: 0.01em; padding: 0.2rem 0; }
+.ps-sign { font-size: 1rem; color: #8a93a6; font-style: italic; }
+</style>
+
+<!--
+P.S. - the co-author's tag, after the thanks. "Built by algebra" means this slide too. The room
+sees it the moment you do. Read it aloud or just let it land and walk off - either works.
+-->
+
