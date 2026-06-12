@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Laws of Learning - title art</title>
+<style>
+  /* ──────────────────────────────────────────────────────────────────────
+     TITLE ART for "The Laws of Learning".
+     Built by algebra, not drawn: a SEEDED field of coupled oscillators
+     relaxing to one fixed point, the relaxation set by a single eigenvalue
+     lambda. The same flow is nested at a smaller scale - the renormalisation
+     self-similarity, the field that looks the same when you zoom. The render
+     is the SETTLED state: a settled field IS the fixed point. Deterministic
+     by construction (a seeded PRNG, no Math.random, no wall-clock), so the
+     screenshot is identical every load. Self-contained, vanilla canvas.
+
+     Palette is the deck's: ground #0a0e1a, ink #e8e6e3, gold #c9a96e,
+     blue #7eb8da. Type is the deck's own (Lora title / Inter name) so the
+     art and the title read as one composition. 16:9, fills the frame, no
+     scroll, no chrome, no controls - every mark is load-bearing.
+     ────────────────────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; width: 100%; }
+  body {
+    background: #0a0e1a;
+    overflow: hidden;
+    display: block;
+  }
+  /* the stage holds a 16:9 box that fills the viewport without ever
+     overflowing it - letterboxed on whichever axis is the constraint, so
+     the composition is never cropped and never scrolls */
+  #stage {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: #0a0e1a;
+  }
+  #frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    max-width: calc(100vh * 16 / 9);
+    max-height: 100vh;
+    background: #0a0e1a;
+  }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="frame">
+      <canvas id="cv"></canvas>
+    </div>
+  </div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   PALETTE - the deck's, verbatim.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const GROUND = "#0a0e1a";   // background
+const INK    = "#e8e6e3";   // title text
+const GOLD   = "#c9a96e";   // the eigenvalue / the fixed point / the critical edge
+const BLUE   = "#7eb8da";   // the trajectories - the flow settling in
+const MUTED  = "#9ca3af";   // the author name (matches the deck's title slide)
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SEEDED PRNG - mulberry32. The entire field is a function of this one seed,
+   so the render is bit-for-bit identical every load. No Math.random anywhere.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const SEED = 0x1A75; // "laws" - the one number the whole picture descends from
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE DYNAMICS.
+
+   One linear oscillator:   x' = v ,  v' = -x - 2*zeta*v      (omega = 1)
+   The Jacobian is  J = [[0, 1], [-1, -2*zeta]]. Its eigenvalues are
+       lambda = -zeta +/- sqrt(zeta^2 - 1).
+   The SINGLE number zeta (the damping) sets the fate of the whole field:
+       zeta < 1  -> a complex pair, Re(lambda) < 0: spiral IN to the fixed
+                    point. The system computes on the way down and then fades.
+       zeta = 0  -> Re(lambda) = 0: the critical edge, orbits that neither
+                    grow nor die - the marginal contour drawn in gold.
+   We sit the field just inside the stable side (a slow spiral), so the
+   captured frame is the relaxation: many starts, one destination.
+
+   The flow integrates analytically per node from a seeded start, sampled as
+   a fading trail of points - no animation, the settled picture is the whole
+   story. ZERO time dependence: the frame is the fixed point.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const ZETA = 0.085;                 // just inside stable - a long, legible spiral
+const W0   = Math.sqrt(1 - ZETA*ZETA);
+
+// analytic underdamped solution for x' = v, v' = -x - 2*zeta*v, given (x0, v0)
+function flowAt(x0, v0, t) {
+  const e = Math.exp(-ZETA * t);
+  const c = Math.cos(W0 * t), s = Math.sin(W0 * t);
+  const x = e * (x0 * c + ((v0 + ZETA * x0) / W0) * s);
+  const v = e * (v0 * c - ((x0 + ZETA * v0) / W0) * s);
+  return [x, v];
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CANVAS - DPI-aware so the hairlines stay crisp at 2x (the deck shoots at
+   deviceScaleFactor 2).
+   ═══════════════════════════════════════════════════════════════════════════ */
+const frame = document.getElementById("frame");
+const cv    = document.getElementById("cv");
+const ctx   = cv.getContext("2d");
+let W = 0, H = 0;
+
+function resize() {
+  const d = window.devicePixelRatio || 1;
+  const r = frame.getBoundingClientRect();
+  W = Math.max(1, Math.round(r.width));
+  H = Math.max(1, Math.round(r.height));
+  cv.width  = Math.round(W * d);
+  cv.height = Math.round(H * d);
+  ctx.setTransform(d, 0, 0, d, 0, 0);
+  render();
+}
+
+/* small helpers ─────────────────────────────────────────────────────────── */
+function hexA(hex, a) {
+  const r = parseInt(hex.slice(1, 3), 16),
+        g = parseInt(hex.slice(3, 5), 16),
+        b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ONE FIELD at a given centre, scale (phase-units -> px), and overall opacity.
+   Drawn twice (see render) at nested scales: the SAME flow, smaller and
+   fainter, sitting at the fixed point of the larger one. That nesting IS the
+   renormalisation statement - zoom in on the destination and the field
+   repeats. Self-similarity, made literal, not decorative.
+
+   `rnd`  - seeded generator (so both scales draw from one deterministic stream)
+   `n`    - number of trajectories
+   `phaseR` - radius in phase-space the starts are scattered within
+   ═══════════════════════════════════════════════════════════════════════════ */
+function drawField(cx, cy, pxPerUnit, alpha, rnd, n, phaseR) {
+  // map phase coords (x = position, v = velocity) to screen, v slightly
+  // compressed so the spiral reads as a calm ellipse not a tall smear
+  const VY = 0.92;
+  const toScreen = (x, v) => [cx + x * pxPerUnit, cy - v * pxPerUnit * VY];
+
+  // ── the marginal (critical) contour: the zeta = 0 orbit through the
+  //    outermost start radius. Re(lambda) = 0 lives here - the edge between
+  //    fade and run-away. One quiet gold ellipse, the only closed curve in
+  //    the picture, so the eye reads it as the boundary it is.
+  ctx.save();
+  ctx.strokeStyle = hexA(GOLD, 0.22 * alpha);
+  ctx.lineWidth = 1.1;
+  ctx.setLineDash([5, 6]);
+  ctx.beginPath();
+  for (let k = 0; k <= 160; k++) {
+    const th = (k / 160) * Math.PI * 2;
+    const [sx, sy] = toScreen(phaseR * Math.cos(th), phaseR * Math.sin(th));
+    if (k === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // ── the trajectories: each starts on a seeded scatter near the critical
+  //    radius and spirals IN under the single eigenvalue. Drawn as a polyline
+  //    whose opacity rises toward the head's recent past and whose very tip
+  //    is the brightest - the flow caught mid-settle. Time is integrated, not
+  //    animated: every trail ends at the same captured instant. Kept SPARSE
+  //    and quiet - clean spiral arms, not a dense ball.
+  const T_END = 11.0;          // how far down the spiral each trail has come
+  const STEPS = 160;
+  for (let i = 0; i < n; i++) {
+    // seeded start: an angle and a radius near (just inside/outside) critical,
+    // so the bundle reads as a ring collapsing to a point. Angles are biased
+    // toward an even spread so the arms read as distinct, not clumped.
+    const ang = (i / n) * Math.PI * 2 + rnd() * 0.5;
+    const rad = phaseR * (0.70 + 0.42 * rnd());
+    const x0 = rad * Math.cos(ang);
+    const v0 = rad * Math.sin(ang);
+    // a per-trajectory phase offset along its own orbit, so heads don't line up
+    const t0 = rnd() * 5.0;
+
+    // build the polyline of recent history ending at T_END
+    let prev = null;
+    ctx.lineWidth = 1.15;
+    ctx.lineJoin = "round";
+    ctx.lineCap  = "round";
+    for (let s = 0; s <= STEPS; s++) {
+      const frac = s / STEPS;                 // 0 = oldest shown, 1 = head
+      const t = t0 + frac * T_END;
+      const [px, pv] = flowAt(x0, v0, t);
+      const [sx, sy] = toScreen(px, pv);
+      if (prev) {
+        // opacity grows toward the head; the trail fades into the ground
+        const a = alpha * (0.035 + 0.40 * frac * frac);
+        ctx.strokeStyle = hexA(BLUE, a);
+        ctx.beginPath();
+        ctx.moveTo(prev[0], prev[1]);
+        ctx.lineTo(sx, sy);
+        ctx.stroke();
+      }
+      prev = [sx, sy];
+    }
+    // the head - a small node, where the system is "now". Quiet, not a glow.
+    if (prev) {
+      const a = alpha * 0.78;
+      ctx.fillStyle = hexA(BLUE, a);
+      ctx.beginPath();
+      ctx.arc(prev[0], prev[1], 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // ── the fixed point: where everything is going. A gold core with a soft
+  //    halo - the one destination of the whole field, and (at the larger
+  //    scale) the seat of the nested copy.
+  const [fx, fy] = toScreen(0, 0);
+  const halo = ctx.createRadialGradient(fx, fy, 0, fx, fy, pxPerUnit * 0.55);
+  halo.addColorStop(0, hexA(GOLD, 0.30 * alpha));
+  halo.addColorStop(1, hexA(GOLD, 0));
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(fx, fy, pxPerUnit * 0.55, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = hexA(GOLD, 0.92 * Math.min(1, alpha + 0.15));
+  ctx.beginPath();
+  ctx.arc(fx, fy, 2.6, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE TITLE, rendered as part of the composition (not HTML over the top), in
+   the deck's own type. Sits in the upper-left clear zone the field leaves -
+   the fixed point and the densest flow are biased to the lower-right, so the
+   title has quiet ground to live on. A thin blue rule echoes the deck's
+   title slide. Room is reserved: the field's centre is offset away from here.
+   ═══════════════════════════════════════════════════════════════════════════ */
+function drawTitle() {
+  const u = W / 100;                 // 1 layout-unit = 1% of width, for scale-stable type
+  const x = 7.5 * u;                 // left margin
+  let   y = 29 * u;                  // baseline of the title line
+
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+
+  // "Spanspermia" - Lora, the deck's serif, in ink
+  const titleSize = 7.8 * u;
+  ctx.fillStyle = INK;
+  ctx.font = `600 ${titleSize}px Lora, Georgia, "Times New Roman", serif`;
+  ctx.fillText("Spanspermia", x, y);
+
+  // the essay's own question, the real subtitle - smaller serif italic, two lines
+  const subSize = 3.0 * u;
+  ctx.fillStyle = INK;
+  ctx.font = `italic 400 ${subSize}px Lora, Georgia, "Times New Roman", serif`;
+  y += titleSize * 0.74;
+  ctx.fillText("Does life come from", x, y);
+  y += subSize * 1.26;
+  ctx.fillText("outer Hilbert space?", x, y);
+
+  // the accent rule - the deck's blue, the same 2px bar as the title slide
+  const ruleY = y + 2.4 * u;
+  ctx.fillStyle = BLUE;
+  ctx.fillRect(x + 0.5, ruleY, 11 * u, Math.max(2, 0.22 * u));
+
+  // the author - Inter, the deck's sans, muted grey
+  const nameSize = 2.4 * u;
+  ctx.fillStyle = MUTED;
+  ctx.font = `400 ${nameSize}px Inter, "Segoe UI", system-ui, sans-serif`;
+  ctx.fillText("Gerard McCaul", x + 0.5, ruleY + nameSize * 1.9);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RENDER - one deterministic frame. Ground, the nested fields (large +
+   the self-similar small copy at the fixed point), then the title last so it
+   sits cleanly on top. Called on load and on resize; identical every time.
+   ═══════════════════════════════════════════════════════════════════════════ */
+function render() {
+  // flat ground
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = GROUND;
+  ctx.fillRect(0, 0, W, H);
+
+  // a single seeded stream feeds BOTH scales, so the whole picture is one
+  // deterministic draw from SEED
+  const rnd = mulberry32(SEED);
+
+  // the fixed point is placed right-of-centre, clear of the title block in
+  // the upper-left. Scale fits the field comfortably inside the frame with a
+  // margin so the arms never graze the edge.
+  const fcx = W * 0.68;
+  const fcy = H * 0.50;
+  const unit = Math.min(W, H) * 0.285;    // px per phase-unit (large field)
+
+  // LARGE field - the primary flow. Sparse arms read as a calm settling.
+  drawField(fcx, fcy, unit, 1.0, rnd, 20, 1.0);
+
+  // NESTED SMALL field - the same flow at ~0.30x scale, sitting AT the fixed
+  // point of the large one. The renormalisation statement: zoom into the
+  // destination, find the field again. A clear scale gap so the self-
+  // similarity reads as depth, not clutter.
+  drawField(fcx, fcy, unit * 0.30, 0.55, rnd, 11, 1.0);
+
+  // the title, on top
+  drawTitle();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BOOT - wait for the deck fonts so the title renders in Lora/Inter, not a
+   fallback, then size + render. document.fonts.ready resolves immediately if
+   no webfont is present (standalone open), so this is safe either way.
+   ═══════════════════════════════════════════════════════════════════════════ */
+window.addEventListener("resize", resize);
+
+function boot() {
+  resize();                                   // first paint (may be fallback type)
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => render()); // repaint once webfonts are in
+  }
+}
+boot();
+</script>
+</body>
+</html>

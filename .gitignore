@@ -5,3 +5,6 @@ _site
 vendor
 
 .claude/
+
+# Slidev source for the spanspermia talk (built output committed under talks/spanspermia)
+_decks/spanspermia/
