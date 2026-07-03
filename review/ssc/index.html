@@ -529,6 +529,52 @@
     if(OUTBOX.length) everBanked=true; }
   function saveOutbox(){ try{localStorage.setItem(LS_OUTBOX, JSON.stringify(OUTBOX));}catch(e){} }
   function b64utf8(s){ return btoa(unescape(encodeURIComponent(s))); }
+  function ghToken(){ return (localStorage.getItem(LS_PAT)||"").trim() || (DATA && DATA.github_token) || ""; }
+  function apiUrlFor(id){ const path=CFG.inbox_path+"/"+id+".json";
+    return "https://api.github.com/repos/"+CFG.repo+"/contents/"+path.split("/").map(encodeURIComponent).join("/"); }
+  function ghHeaders(tok){ return {Authorization:"Bearer "+tok, Accept:"application/vnd.github+json",
+    "Content-Type":"application/json"}; }
+
+  // edit/delete a comment that is ALREADY in the repo (auto-push leaves almost no queued
+  // window, so this is the real path). Each comment is one file: edit = re-PUT it, delete
+  // = DELETE it. Needs the file's blob sha; we cache it from the push response and fetch
+  // it on demand otherwise. Once you've pulled + drained a comment at your desk the inbox
+  // file is gone, so the API returns 404/409 and we say so plainly.
+  async function fileSha(rec, tok){
+    if(rec._sha) return rec._sha;
+    try{ const g=await fetch(apiUrlFor(rec.id),{headers:{Authorization:"Bearer "+tok,
+           Accept:"application/vnd.github+json"}});
+      if(g.ok){ const j=await g.json(); rec._sha=j.sha; return j.sha; }
+      if(g.status===404) return "__GONE__";
+    }catch(e){}
+    return "";
+  }
+  async function editPushed(rec, newText){
+    const tok=ghToken(); if(!tok){ alert("Add a token first to edit a pushed comment."); return; }
+    const sha=await fileSha(rec, tok);
+    if(sha==="__GONE__"){ alert("This comment was already pulled to your desk — edit it there."); return; }
+    if(!sha){ alert("Couldn't reach GitHub to edit — try again."); return; }
+    const clean={...rec}; delete clean._state; delete clean._sha; clean.comment=newText;
+    const r=await fetch(apiUrlFor(rec.id),{method:"PUT",headers:ghHeaders(tok),
+      body:JSON.stringify({message:"edit review comment "+rec.id, branch:CFG.branch,
+        content:b64utf8(JSON.stringify(clean,null,2)), sha})});
+    if(r.ok){ const j=await r.json().catch(()=>({})); rec.comment=newText;
+      if(j&&j.content) rec._sha=j.content.sha; renderDrawer(); repaintAll(); }
+    else if(r.status===409){ delete rec._sha; alert("Edit conflicted — reopen and try once more."); }
+    else alert("Edit failed ("+r.status+") — the comment is unchanged in your repo.");
+  }
+  async function deletePushed(rec){
+    const tok=ghToken(); if(!tok){ alert("Add a token first to delete a pushed comment."); return; }
+    const sha=await fileSha(rec, tok);
+    if(sha==="__GONE__"){ DATA.feedback=DATA.feedback.filter(x=>x.id!==rec.id);
+      renderDrawer(); repaintAll(); alert("Already pulled to your desk — removed from this view; delete it there too."); return; }
+    if(!sha){ alert("Couldn't reach GitHub to delete — try again."); return; }
+    const r=await fetch(apiUrlFor(rec.id),{method:"DELETE",headers:ghHeaders(tok),
+      body:JSON.stringify({message:"delete review comment "+rec.id, branch:CFG.branch, sha})});
+    if(r.ok){ DATA.feedback=DATA.feedback.filter(x=>x.id!==rec.id); updateBadge(); renderDrawer(); repaintAll(); }
+    else if(r.status===409){ delete rec._sha; alert("Delete conflicted — try once more."); }
+    else alert("Delete failed ("+r.status+") — the comment is still in your repo.");
+  }
 
   // manual=true means the user pressed a button and MUST see an outcome, even a no-op.
   // Silent no-ops were the whole "flush does nothing" bug (his catch, 2026-07-03).
@@ -555,7 +601,9 @@
       if(r.status===201 || r.status===200 || r.status===422){
         // 422 = file already exists (a re-flush) → already in the repo, treat as pushed
         OUTBOX=OUTBOX.filter(x=>x.id!==rec.id);
-        const live=DATA.feedback.find(x=>x.id===rec.id); if(live) delete live._state;
+        const live=DATA.feedback.find(x=>x.id===rec.id);
+        if(live){ delete live._state;
+          try{ const j=await r.json(); if(j&&j.content&&j.content.sha) live._sha=j.content.sha; }catch(_){} }
         saveOutbox(); pushed++;
       } else if(r.status===401 || r.status===403){
         stop="token rejected ("+r.status+") — it needs Contents: read & write on "+CFG.repo; break;
@@ -654,22 +702,22 @@
         (queued?" · queued⇡":" · in repo")+'</span></div>'+
         '<div class="fb">'+esc(rec.comment)+'</div>'+
         '<div class="fn">'+esc(rec.node_id||"")+'</div>'+
-        (queued?'<div class="facts"><button data-edit="1">edit</button>'+
-                '<button data-del="1">delete</button></div>':'');
-      if(queued){
-        row.querySelector("[data-edit]").addEventListener("click",e=>{ e.stopPropagation();
-          const nv=prompt("Edit comment (before it's pushed):", rec.comment);
-          if(nv==null) return;
-          const t=nv.trim(); if(!t) return;
-          rec.comment=t;
-          const ob=OUTBOX.find(x=>x.id===rec.id); if(ob) ob.comment=t;
-          saveOutbox(); renderDrawer(); });
-        row.querySelector("[data-del]").addEventListener("click",e=>{ e.stopPropagation();
-          if(!confirm("Delete this queued comment? It hasn't been pushed yet.")) return;
-          OUTBOX=OUTBOX.filter(x=>x.id!==rec.id); saveOutbox();
+        '<div class="facts"><button data-edit="1">edit</button>'+
+        '<button data-del="1">delete</button></div>';
+      // edit/delete work whether the comment is still queued (local) or already pushed
+      // (rewrite/remove the repo file). Symmetric across every device.
+      row.querySelector("[data-edit]").addEventListener("click",async e=>{ e.stopPropagation();
+        const nv=prompt("Edit comment:", rec.comment);
+        if(nv==null) return; const t=nv.trim(); if(!t) return;
+        if(queued){ rec.comment=t; const ob=OUTBOX.find(x=>x.id===rec.id); if(ob) ob.comment=t;
+          saveOutbox(); renderDrawer(); }
+        else { await editPushed(rec, t); } });
+      row.querySelector("[data-del]").addEventListener("click",async e=>{ e.stopPropagation();
+        if(!confirm(queued?"Delete this queued comment (not yet pushed)?":"Delete this comment from your repo?")) return;
+        if(queued){ OUTBOX=OUTBOX.filter(x=>x.id!==rec.id); saveOutbox();
           DATA.feedback=DATA.feedback.filter(x=>x.id!==rec.id);
-          updateBadge(); renderDrawer(); repaintAll(); });
-      }
+          updateBadge(); renderDrawer(); repaintAll(); }
+        else { await deletePushed(rec); } });
       row.addEventListener("click",()=>{ if(a.page){ closeSheet("drawer");
         const pg=pageEl(a.page); if(pg){ pg.scrollIntoView({block:"center"});
           setTimeout(()=>{const pin=document.querySelector('.pin[data-fb="'+rec.id+'"]');
