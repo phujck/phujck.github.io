@@ -48,6 +48,13 @@
   #top .tbtn:hover{border-color:var(--accent);color:var(--accent)}
   #top .tbtn.on{border-color:var(--accent);color:var(--accent)}
   #top .badge{font-family:var(--mono);font-size:10px;color:var(--warn);margin-left:2px}
+  /* the sync pill — the anti-disappearance signal: it is IMPOSSIBLE to miss whether a
+     comment is only on this device or safely in your repo (his fear, 2026-07-03). */
+  #top .pill{font-size:12px;padding:5px 11px;border-radius:8px;cursor:pointer;font-weight:600;
+    white-space:nowrap;max-width:52vw;overflow:hidden;text-overflow:ellipsis}
+  #top .pill.warn{background:rgba(224,175,104,.16);color:var(--warn);border:1px solid var(--warn)}
+  #top .pill.push{background:rgba(122,162,247,.14);color:var(--accent);border:1px solid var(--accent)}
+  #top .pill.ok{background:rgba(158,206,106,.14);color:var(--ok);border:1px solid var(--ok)}
 
   /* ---- body: reader | drawer ---- */
   #body{flex:1;display:flex;min-height:0;position:relative}
@@ -133,6 +140,11 @@
   .frow .fa{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--dim)}
   .frow .fb{font-size:13px;color:var(--ink)}
   .frow .fn{font-family:var(--mono);font-size:10.5px;color:var(--teal);margin-top:3px}
+  .frow .facts{margin-top:7px;display:flex;gap:7px}
+  .frow .facts button{background:var(--panel);border:1px solid var(--edge2);color:var(--ink2);
+    border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer}
+  .frow .facts button:hover{border-color:var(--accent);color:var(--accent)}
+  .frow .facts button[data-del]:hover{border-color:var(--bad);color:var(--bad)}
   .srow{padding:8px 11px;border:1px solid var(--edge);border-radius:8px;background:var(--panel2);margin-bottom:6px}
   .srow .ss{font-weight:600;color:var(--accent);font-size:12.5px}
   .srow .sl{font-family:var(--mono);font-size:10px;color:var(--dim);margin-left:6px}
@@ -161,9 +173,14 @@
   /* ---- desktop: the drawer becomes a docked right panel ---- */
   @media (min-width:860px){
     #reader{padding:20px 20px 24px}
+    /* docked side panel: it must be a FLEX COLUMN that fills the row height and scrolls
+       internally — height:auto let it grow past the viewport so its lower buttons (save
+       token, forget, close) sat off-screen and unclickable with a real mouse (his catch,
+       2026-07-03: "settings buttons don't actually seem to work"). min-height:0 + a bounded
+       height is what makes overflow-y:auto engage. */
     body.dock #drawer{position:static;transform:none!important;border-radius:0;
       border-top:0;border-left:1px solid var(--edge2);width:380px;flex:none;max-height:none;
-      box-shadow:none;height:auto;overflow-y:auto}
+      box-shadow:none;min-height:0;overflow-y:auto;align-self:stretch}
     body.dock #drawer .grip{display:none}
     body.dock #drawer .dclose{display:none}
     body.dock #body{display:flex}
@@ -195,6 +212,7 @@
 <div id="top" class="hidden">
   <span class="ttl">review</span>
   <span class="stamp" id="stamp"></span>
+  <span class="pill" id="syncpill" style="display:none" role="button" tabindex="0"></span>
   <button class="tbtn" id="drawerbtn">panel<span class="badge" id="openbadge"></span></button>
 </div>
 
@@ -330,31 +348,41 @@
       DATA.n_pages+" pp · "+(DATA.corpus||"");
     syncDock();
     loadOutbox();
+    // queued comments persisted from a previous visit must reappear as pins + rows,
+    // not silently sit invisible until pushed (his "don't disappear" fear, 2026-07-03)
+    OUTBOX.forEach(rec=>{ if(!DATA.feedback.some(x=>x.id===rec.id)) DATA.feedback.unshift(rec); });
     renderPages();
     renderDrawer();
     updateBadge();
-    window.addEventListener("online", flushOutbox);
+    window.addEventListener("online", ()=>flushOutbox());
     flushOutbox();
   }
 
   // ---------- pages (lazy from decrypted memory) ----------
-  const io = new IntersectionObserver(ents=>{
-    ents.forEach(e=>{ if(e.isIntersecting){ mountPage(e.target); io.unobserve(e.target); } });
-  }, {root:$("reader"), rootMargin:"800px 0px"});
-
+  // Pages are ALREADY in memory (decrypted). Mount them in document order via a small
+  // bounded queue — no IntersectionObserver (the codebase flags element-root IO as
+  // unreliable; a blank page is exactly the failure the user can't diagnose). This
+  // guarantees every page appears, a few decoding at a time so it never janks.
   function renderPages(){
     const R=$("reader"); R.innerHTML="";
     DATA.pages.forEach((uri,i)=>{
       const pg=document.createElement("div"); pg.className="pg"; pg.dataset.page=i+1;
       pg.innerHTML='<div class="ph">page '+(i+1)+'</div><div class="pgnum">'+(i+1)+' / '+DATA.n_pages+'</div>';
-      R.appendChild(pg); io.observe(pg);
+      R.appendChild(pg);
     });
+    const shells=[...R.querySelectorAll('.pg')];
+    let next=0, active=0; const CONC=4;
+    const pump=()=>{ while(active<CONC && next<shells.length){
+      active++; mountPage(shells[next++], ()=>{ active--; pump(); }); } };
+    pump();
   }
-  function mountPage(pg){
+  function mountPage(pg, done){
     const i=(+pg.dataset.page)-1;
     const img=new Image(); img.decoding="async"; img.alt="page "+(i+1);
+    const finish=()=>{ if(done){const d=done;done=null;d();} };
     img.onload=()=>{ const ph=pg.querySelector(".ph"); if(ph) ph.remove();
-      buildTextLayer(pg,i); paintPins(pg); };
+      buildTextLayer(pg,i); paintPins(pg); finish(); };
+    img.onerror=finish;
     img.src=DATA.pages[i];
     pg.insertBefore(img, pg.firstChild);
     // events on the page wrapper
@@ -488,7 +516,7 @@
         text:PENDING.quote||undefined, rects:PENDING.rects||undefined },
       _state:"queued"
     };
-    OUTBOX.push(rec); saveOutbox();
+    OUTBOX.push(rec); saveOutbox(); everBanked=true;
     DATA.feedback.unshift(rec);
     closeSheet("compose");
     renderDrawer(); repaintAll(); updateBadge();
@@ -497,41 +525,74 @@
 
   // ---------- outbox → GitHub Contents API ----------
   let OUTBOX=[];
-  function loadOutbox(){ try{OUTBOX=JSON.parse(localStorage.getItem(LS_OUTBOX)||"[]");}catch(e){OUTBOX=[];} }
+  function loadOutbox(){ try{OUTBOX=JSON.parse(localStorage.getItem(LS_OUTBOX)||"[]");}catch(e){OUTBOX=[];}
+    if(OUTBOX.length) everBanked=true; }
   function saveOutbox(){ try{localStorage.setItem(LS_OUTBOX, JSON.stringify(OUTBOX));}catch(e){} }
   function b64utf8(s){ return btoa(unescape(encodeURIComponent(s))); }
 
-  async function flushOutbox(){
-    const pat=localStorage.getItem(LS_PAT);
-    if(!pat || !OUTBOX.length || !navigator.onLine) return;
+  // manual=true means the user pressed a button and MUST see an outcome, even a no-op.
+  // Silent no-ops were the whole "flush does nothing" bug (his catch, 2026-07-03).
+  async function flushOutbox(manual){
+    const pat=(localStorage.getItem(LS_PAT)||"").trim() || (DATA && DATA.github_token) || "";
+    if(!OUTBOX.length){ if(manual) setDrawerNote("nothing to push — every comment is already in your repo ✓"); return; }
+    if(!pat){ if(manual) setDrawerNote("no token yet — paste a GitHub token above and press “save token”, then push"); return; }
+    if(!navigator.onLine){ if(manual) setDrawerNote("you’re offline — comments will push automatically when you reconnect"); return; }
+    setDrawerNote("pushing "+OUTBOX.length+" comment"+(OUTBOX.length>1?"s":"")+"…");
+    let pushed=0, stop="";
     for(const rec of [...OUTBOX]){
       const clean={...rec}; delete clean._state;
       const path=CFG.inbox_path+"/"+rec.id+".json";
       const url="https://api.github.com/repos/"+CFG.repo+"/contents/"+
         path.split("/").map(encodeURIComponent).join("/");
+      let r;
       try{
-        const r=await fetch(url,{method:"PUT",
+        r=await fetch(url,{method:"PUT",
           headers:{Authorization:"Bearer "+pat, Accept:"application/vnd.github+json",
                    "Content-Type":"application/json"},
           body:JSON.stringify({message:"review comment "+rec.id, branch:CFG.branch,
             content:b64utf8(JSON.stringify(clean,null,2))})});
-        if(r.status===201 || r.status===200 || r.status===422){
-          // 422 = file already exists (a re-flush) → treat as banked
-          OUTBOX=OUTBOX.filter(x=>x.id!==rec.id);
-          const live=DATA.feedback.find(x=>x.id===rec.id); if(live) delete live._state;
-          saveOutbox();
-        } else if(r.status===401 || r.status===403){
-          setDrawerNote("token rejected ("+r.status+") — check settings"); break;
-        }
-      }catch(e){ /* offline / network — keep queued */ break; }
+      }catch(e){ stop="network error — your comments are safe on this device; try again"; break; }
+      if(r.status===201 || r.status===200 || r.status===422){
+        // 422 = file already exists (a re-flush) → already in the repo, treat as pushed
+        OUTBOX=OUTBOX.filter(x=>x.id!==rec.id);
+        const live=DATA.feedback.find(x=>x.id===rec.id); if(live) delete live._state;
+        saveOutbox(); pushed++;
+      } else if(r.status===401 || r.status===403){
+        stop="token rejected ("+r.status+") — it needs Contents: read & write on "+CFG.repo; break;
+      } else if(r.status===404){
+        stop="404 — the token can’t see "+CFG.repo+" (wrong repo scope, or repo access not granted)"; break;
+      } else { stop="GitHub error "+r.status+" — comments kept on this device"; break; }
     }
-    renderDrawer(); repaintAll(); updateBadge();
+    updateBadge(); repaintAll();
+    // set the OUTCOME note LAST so renderDrawer's default note can't overwrite it
+    renderDrawer();
+    if(pushed && !OUTBOX.length) setDrawerNote("✓ pushed "+pushed+" — all comments now in your repo. `git pull` to see them.");
+    else if(pushed) setDrawerNote("✓ pushed "+pushed+" · "+OUTBOX.length+" left — "+(stop||"press push again"));
+    else if(stop) setDrawerNote("⚠ "+stop);
   }
 
+  let everBanked=false;
   function updateBadge(){
     const q=OUTBOX.length;
+    const hasPat=!!((localStorage.getItem(LS_PAT)||"").trim() || (DATA && DATA.github_token));
     $("openbadge").textContent = q?(" "+q+"⇡"):"";
+    const pill=$("syncpill");
+    if(q>0 && !hasPat){
+      pill.style.display=""; pill.className="pill warn";
+      pill.textContent="⚠ "+q+" comment"+(q>1?"s":"")+" on THIS DEVICE only — tap to add a token & push";
+    } else if(q>0){
+      pill.style.display=""; pill.className="pill push";
+      pill.textContent="⇡ pushing "+q+"… (tap to retry)";
+    } else if(everBanked){
+      pill.style.display=""; pill.className="pill ok";
+      pill.textContent="✓ all comments saved to your repo";
+    } else { pill.style.display="none"; }
   }
+  $("syncpill").addEventListener("click",()=>{
+    if($("syncpill").classList.contains("ok")) return;
+    if(localStorage.getItem(LS_PAT)) flushOutbox();
+    else { openSheet("drawer"); drawerTab("settings"); }
+  });
   function setDrawerNote(t){ const el=$("patinfo"); if(el){ el.textContent=t; } }
 
   // ---------- pins + highlights ----------
@@ -587,11 +648,28 @@
       const row=document.createElement("div");
       row.className="frow"+(rec._state==="queued"?" queued":(rec.status!=="open"?" resolved":""));
       row.dataset.fb=rec.id;
+      const queued = rec._state==="queued";
       row.innerHTML='<div class="fh"><span class="fk">'+esc(rec.kind)+'</span>'+
         '<span class="fa">p'+esc(a.page||"?")+(a.line?" · :"+a.line:"")+
-        (rec._state==="queued"?" · queued⇡":"")+'</span></div>'+
+        (queued?" · queued⇡":" · in repo")+'</span></div>'+
         '<div class="fb">'+esc(rec.comment)+'</div>'+
-        '<div class="fn">'+esc(rec.node_id||"")+'</div>';
+        '<div class="fn">'+esc(rec.node_id||"")+'</div>'+
+        (queued?'<div class="facts"><button data-edit="1">edit</button>'+
+                '<button data-del="1">delete</button></div>':'');
+      if(queued){
+        row.querySelector("[data-edit]").addEventListener("click",e=>{ e.stopPropagation();
+          const nv=prompt("Edit comment (before it's pushed):", rec.comment);
+          if(nv==null) return;
+          const t=nv.trim(); if(!t) return;
+          rec.comment=t;
+          const ob=OUTBOX.find(x=>x.id===rec.id); if(ob) ob.comment=t;
+          saveOutbox(); renderDrawer(); });
+        row.querySelector("[data-del]").addEventListener("click",e=>{ e.stopPropagation();
+          if(!confirm("Delete this queued comment? It hasn't been pushed yet.")) return;
+          OUTBOX=OUTBOX.filter(x=>x.id!==rec.id); saveOutbox();
+          DATA.feedback=DATA.feedback.filter(x=>x.id!==rec.id);
+          updateBadge(); renderDrawer(); repaintAll(); });
+      }
       row.addEventListener("click",()=>{ if(a.page){ closeSheet("drawer");
         const pg=pageEl(a.page); if(pg){ pg.scrollIntoView({block:"center"});
           setTimeout(()=>{const pin=document.querySelector('.pin[data-fb="'+rec.id+'"]');
@@ -628,15 +706,17 @@
       (CFG.git_head?'git '+esc(CFG.git_head)+' · ':'')+DATA.n_pages+' pages · '+
       Object.keys(DATA.nodes||{}).length+' nodes';
     const pat=localStorage.getItem(LS_PAT);
-    setDrawerNote(pat? "token saved on this device ("+pat.slice(0,10)+"…) — writes go to "+CFG.repo
-      : "no token yet — comments queue locally until you add one. writes go to "+CFG.repo+" ("+CFG.inbox_path+")");
+    if(pat) setDrawerNote("token saved on this device ("+pat.slice(0,10)+"…) — writes go to "+CFG.repo);
+    else if(DATA && DATA.github_token) setDrawerNote("a token is baked into this bundle — comments push automatically to "+CFG.repo+". Paste your own below only to override.");
+    else setDrawerNote("no token yet — comments queue on this device until you add one. Writes go to "+CFG.repo+".");
     $("pat").value = pat || "";
   }
 
   $("savepat").addEventListener("click",()=>{ const v=$("pat").value.trim();
-    if(v) localStorage.setItem(LS_PAT,v); else localStorage.removeItem(LS_PAT);
-    renderDrawer(); flushOutbox(); });
-  $("flushnow").addEventListener("click", flushOutbox);
+    if(v){ localStorage.setItem(LS_PAT,v); renderDrawer();
+           setDrawerNote("token saved ✓ — pushing your queued comments…"); flushOutbox(true); }
+    else { localStorage.removeItem(LS_PAT); renderDrawer(); setDrawerNote("token cleared"); } });
+  $("flushnow").addEventListener("click", ()=>flushOutbox(true));
   $("forget").addEventListener("click", async ()=>{ await idbDel("key-"+CFG.corpus);
     setDrawerNote("passphrase forgotten — you'll be asked again next open"); });
 
