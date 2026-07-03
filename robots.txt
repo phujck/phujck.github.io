@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /assets/unlisted/
 Disallow: /unlisted/
+Disallow: /review/
 
 Sitemap: https://gmccaul.co.uk/sitemap.xml
