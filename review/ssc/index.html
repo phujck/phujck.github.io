@@ -167,7 +167,12 @@
     body.dock #drawer .grip{display:none}
     body.dock #drawer .dclose{display:none}
     body.dock #body{display:flex}
-    /* on desktop the sheets (strip/compose) still float over the reader, which is right */
+    /* the docked panel occupies the right 380px; keep the anchor strip, the composer
+       and the backdrop clear of it so the comment button is never hidden underneath
+       (his desktop catch, 2026-07-03). Only when the panel is actually open. */
+    body.dock.drawer-open #strip,
+    body.dock.drawer-open #compose,
+    body.dock.drawer-open #backdrop{right:380px}
   }
   ::-webkit-scrollbar{width:10px;height:10px}
   ::-webkit-scrollbar-thumb{background:var(--edge2);border-radius:6px;border:2px solid transparent;background-clip:padding-box}
@@ -246,7 +251,7 @@
   </div>
 </div>
 
-<script>window.CFG = {"corpus": "subset-sum-itqde", "repo": "phujck/laplace", "inbox_path": "synthetics papers/subset-sum-itqde/manuscript/whitepaper/feedback/inbox", "git_head": "f8ee148", "branch": "master"};</script>
+<script>window.CFG = {"corpus": "subset-sum-itqde", "repo": "phujck/laplace", "inbox_path": "synthetics papers/subset-sum-itqde/manuscript/whitepaper/feedback/inbox", "git_head": "d507b79", "branch": "master"};</script>
 <script>
 (function(){
   "use strict";
@@ -288,7 +293,7 @@
 
   let DATA=null, KEY=null;
 
-  async function unlock(password, remember){
+  async function unlock(password, remember, auto){
     const msg=$("lockmsg"); msg.classList.remove("bad"); msg.innerHTML='<span class="spin"></span>deriving key…';
     let raw, salt;
     try{
@@ -304,7 +309,14 @@
       const pt = await decryptBlob(raw, key);
       DATA = JSON.parse(new TextDecoder().decode(pt));
       KEY = key;
-    }catch(e){ msg.textContent="wrong passphrase"; msg.classList.add("bad"); return; }
+    }catch(e){
+      // a remembered key that no longer matches (the bundle was re-keyed): clear it and
+      // fall back to the prompt silently, rather than crying "wrong passphrase" at a user
+      // who typed nothing (his catch, 2026-07-03).
+      if(auto){ try{ await idbDel("key-"+CFG.corpus); }catch(_){}
+        msg.textContent="passphrase needed"; msg.classList.remove("bad"); return; }
+      msg.textContent="wrong passphrase"; msg.classList.add("bad"); return;
+    }
     if(remember){ try{ await idbSet("key-"+CFG.corpus, key); }catch(e){} }
     boot();
   }
@@ -316,7 +328,7 @@
     $("body").classList.remove("hidden");
     $("stamp").textContent = (CFG.git_head?("git "+CFG.git_head+" · "):"") +
       DATA.n_pages+" pp · "+(DATA.corpus||"");
-    if(window.matchMedia("(min-width:860px)").matches) document.body.classList.add("dock");
+    syncDock();
     loadOutbox();
     renderPages();
     renderDrawer();
@@ -632,18 +644,24 @@
   function openSheet(id){ $(id).classList.add("up"); if(!document.body.classList.contains("dock")||id==="compose") $("backdrop").classList.add("on"); }
   function closeSheet(id){ $(id).classList.remove("up"); $("backdrop").classList.remove("on"); }
   $("backdrop").addEventListener("click",()=>{ closeSheet("compose"); if(!document.body.classList.contains("dock")) closeSheet("drawer"); });
+  function syncDock(){
+    const dock = window.matchMedia("(min-width:860px)").matches;
+    document.body.classList.toggle("dock", dock);
+    const open = dock && !$("drawer").classList.contains("hidden");
+    document.body.classList.toggle("drawer-open", open);   // strip/composer clear the panel
+    $("drawerbtn").classList.toggle("on", dock ? open : false);
+  }
   $("drawerbtn").addEventListener("click",()=>{
     if(document.body.classList.contains("dock")){
-      const d=$("drawer"); d.classList.toggle("hidden");   // docked side-panel: show/hide
-      $("drawerbtn").classList.toggle("on", !d.classList.contains("hidden"));
+      $("drawer").classList.toggle("hidden");              // docked side-panel: show/hide
+      syncDock();
     } else openSheet("drawer");
   });
   $("drawerclose").addEventListener("click",()=>closeSheet("drawer"));
 
   // reposition pins/text on resize (percentage geometry → pure relayout)
   let rz=null; window.addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(()=>{
-    const dock=window.matchMedia("(min-width:860px)").matches;
-    document.body.classList.toggle("dock",dock);
+    syncDock();
     repaintAll();
   },150); });
 
@@ -656,7 +674,7 @@
     try{
       $("lockstamp").textContent = CFG.corpus ? "corpus: "+CFG.corpus : "";
       const k=await idbGet("key-"+CFG.corpus);
-      if(k){ unlock(k, false); }
+      if(k){ unlock(k, false, true); }
     }catch(e){}
   })();
 })();
