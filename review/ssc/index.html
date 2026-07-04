@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=6">
+<!-- native pinch-zoom OFF: it scales the whole visual viewport (composer, strip, pins) not
+     just the pdf (his catch, 2026-07-04). The pdf gets its own contained zoom (the lightbox);
+     the UI stays put. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="robots" content="noindex, nofollow">
 <title>review</title>
 <style>
@@ -69,6 +72,28 @@
     repeating-linear-gradient(-45deg,#eceef1,#eceef1 10px,#e2e4e8 10px,#e2e4e8 20px)}
   .pgnum{position:absolute;top:5px;right:7px;font-family:var(--mono);font-size:10px;
     color:var(--dim);background:rgba(14,17,22,.72);border-radius:4px;padding:1px 6px;z-index:3}
+  .pgzoom{position:absolute;top:4px;left:6px;z-index:5;background:rgba(14,17,22,.72);
+    border:1px solid var(--edge2);color:var(--ink);border-radius:6px;padding:3px 8px;
+    font-size:14px;line-height:1;cursor:pointer}
+  .pgzoom:hover{border-color:var(--accent);color:var(--accent)}
+  /* the pdf zoom lightbox: ONE page, its own transform-based pinch/pan, fully contained so
+     it never touches the reading UI. Native page zoom stays off. */
+  #zoom{position:fixed;inset:0;z-index:60;background:#0b0d11;display:none;
+    touch-action:none;overflow:hidden;user-select:none}
+  #zoom.on{display:block}
+  #zoom img{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;
+    -webkit-user-drag:none;user-select:none;pointer-events:none}
+  #zoom .zbar{position:fixed;left:0;right:0;bottom:0;z-index:61;display:flex;gap:8px;
+    align-items:center;justify-content:center;padding:10px calc(10px + env(safe-area-inset-bottom));
+    background:linear-gradient(transparent,rgba(11,13,17,.85) 40%)}
+  #zoom .zbar button{background:var(--panel);border:1px solid var(--edge2);color:var(--ink);
+    border-radius:9px;padding:9px 16px;font-size:17px;line-height:1;min-width:48px}
+  #zoom .zbar button:active{border-color:var(--accent)}
+  #zoom .zclose{position:fixed;top:calc(8px + env(safe-area-inset-top));right:10px;z-index:61;
+    background:var(--panel);border:1px solid var(--edge2);color:var(--ink);border-radius:9px;
+    padding:8px 14px;font-size:15px}
+  #zoom .zhint{position:fixed;top:calc(10px + env(safe-area-inset-top));left:12px;z-index:61;
+    font-family:var(--mono);font-size:11px;color:var(--dim)}
   /* the transparent, selectable text layer (word boxes) */
   .txt{position:absolute;inset:0;overflow:hidden;z-index:2}
   .txt span{position:absolute;color:transparent;white-space:pre;cursor:text;transform-origin:0 0}
@@ -84,7 +109,7 @@
   @keyframes pf{0%{box-shadow:0 0 0 0 rgba(224,175,104,.9)}70%{box-shadow:0 0 0 15px rgba(224,175,104,0)}}
 
   /* ---- anchor strip (tap → provenance + comment) ---- */
-  #strip{position:absolute;left:0;right:0;bottom:0;z-index:30;background:var(--panel);
+  #strip{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--panel);
     border-top:1px solid var(--edge2);padding:9px 12px calc(9px + env(safe-area-inset-bottom));
     display:flex;gap:10px;align-items:center;transform:translateY(110%);
     transition:transform 200ms var(--ease)}
@@ -99,7 +124,7 @@
   #strip .xbtn{flex:none;background:none;border:0;color:var(--dim);font-size:18px;padding:2px 6px}
 
   /* ---- sheets / drawer ---- */
-  .sheet{position:absolute;left:0;right:0;bottom:0;z-index:40;background:var(--panel);
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--panel);
     border-top:1px solid var(--edge2);border-radius:14px 14px 0 0;
     padding:14px 14px calc(14px + env(safe-area-inset-bottom));max-height:82vh;overflow-y:auto;
     transform:translateY(110%);transition:transform 220ms var(--ease);
@@ -163,7 +188,7 @@
   #settings .act button.warn{border-color:var(--bad);color:var(--bad)}
   .kv{font-family:var(--mono);font-size:11px;color:var(--dim);margin:3px 0}
   .empty{color:var(--dim);font-size:12.5px;padding:16px;text-align:center;line-height:1.6}
-  .backdrop{position:absolute;inset:0;z-index:35;background:rgba(0,0,0,.45);opacity:0;
+  .backdrop{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.45);opacity:0;
     pointer-events:none;transition:opacity 200ms}
   .backdrop.on{opacity:1;pointer-events:auto}
   .spin{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid var(--edge2);
@@ -269,7 +294,15 @@
   </div>
 </div>
 
-<script>window.CFG = {"corpus": "subset-sum-itqde", "repo": "phujck/laplace", "inbox_path": "synthetics papers/subset-sum-itqde/manuscript/whitepaper/feedback/inbox", "git_head": "d507b79", "branch": "master"};</script>
+<div id="zoom">
+  <img id="zoomimg" alt="page">
+  <span class="zhint" id="zoomhint"></span>
+  <button class="zclose" id="zoomclose">&times; close</button>
+  <div class="zbar"><button id="zoomout" aria-label="zoom out">&minus;</button>
+    <button id="zoomreset">fit</button><button id="zoomin" aria-label="zoom in">+</button></div>
+</div>
+
+<script>window.CFG = {"corpus": "subset-sum-itqde", "repo": "phujck/laplace", "inbox_path": "synthetics papers/subset-sum-itqde/manuscript/whitepaper/feedback/inbox", "git_head": "0e2312d", "branch": "master"};</script>
 <script>
 (function(){
   "use strict";
@@ -385,6 +418,11 @@
     img.onerror=finish;
     img.src=DATA.pages[i];
     pg.insertBefore(img, pg.firstChild);
+    const zb=document.createElement("button");
+    zb.className="pgzoom"; zb.textContent="⛶"; zb.title="zoom this page";
+    zb.setAttribute("aria-label","zoom page "+(i+1));
+    zb.addEventListener("click", ev=>{ ev.stopPropagation(); openZoom(i); });
+    pg.appendChild(zb);
     // events on the page wrapper
     pg.addEventListener("click", ev=>{
       if(!selCollapsed()) return;                 // a selection owns this
@@ -792,6 +830,69 @@
     syncDock();
     repaintAll();
   },150); });
+
+  // ---------- the pdf zoom lightbox: ONE page, contained transform pinch/pan/double-tap ----
+  // Entirely self-contained (its own fixed overlay), so zooming the pdf never scales or
+  // moves the reading UI. Buttons + double-tap are the always-works path; pinch on top.
+  (function(){
+    const zbox=$("zoom"), zimg=$("zoomimg");
+    let scale=1, fit=1, tx=0, ty=0, natW=0, natH=0;
+    const pts=new Map(); let panStart=null, pinch=null, lastTap=0;
+    const apply=()=>{ zimg.style.transform="translate("+tx+"px,"+ty+"px) scale("+scale+")"; };
+    const fitScale=()=> natW&&natH ? Math.min(window.innerWidth/natW, window.innerHeight/natH) : 1;
+    const recenter=()=>{ tx=(window.innerWidth-natW*scale)/2; ty=(window.innerHeight-natH*scale)/2; };
+    const reset=()=>{ scale=fit=fitScale(); recenter(); apply(); };
+    const clamp=s=> Math.max(fit*0.9, Math.min(fit*8, s));
+    const zoomAround=(factor,cx,cy)=>{ const ns=clamp(scale*factor), k=ns/scale;
+      tx=cx-(cx-tx)*k; ty=cy-(cy-ty)*k; scale=ns; apply(); };
+
+    window.openZoom=function(i){
+      zimg.onload=()=>{ natW=zimg.naturalWidth; natH=zimg.naturalHeight; reset();
+        $("zoomhint").textContent="page "+(i+1)+" · pinch or +/− · double-tap"; };
+      if(zimg.src===DATA.pages[i] && natW){ reset(); } else { zimg.src=DATA.pages[i]; }
+      zbox.classList.add("on");
+    };
+    const close=()=>{ zbox.classList.remove("on"); pts.clear(); panStart=pinch=null; };
+    $("zoomclose").addEventListener("click", close);
+    $("zoomin").addEventListener("click",()=>zoomAround(1.4, innerWidth/2, innerHeight/2));
+    $("zoomout").addEventListener("click",()=>zoomAround(1/1.4, innerWidth/2, innerHeight/2));
+    $("zoomreset").addEventListener("click", reset);
+    document.addEventListener("keydown",e=>{ if(zbox.classList.contains("on")&&e.key==="Escape") close(); });
+
+    zbox.addEventListener("pointerdown", e=>{
+      try{ zbox.setPointerCapture(e.pointerId); }catch(_){}   // never abort the gesture
+      pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+      if(pts.size===1){
+        panStart={x:e.clientX,y:e.clientY,tx,ty};
+        const now=Date.now();
+        if(now-lastTap<350){ zoomAround(scale>fit*1.6?fit/scale:2.5, e.clientX, e.clientY); lastTap=0; }
+        else lastTap=now;
+      } else if(pts.size===2){
+        const p=[...pts.values()];
+        pinch={d:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y), s:scale,
+               mx:(p[0].x+p[1].x)/2, my:(p[0].y+p[1].y)/2, tx, ty};
+        panStart=null;
+      }
+    });
+    zbox.addEventListener("pointermove", e=>{
+      if(!pts.has(e.pointerId)) return;
+      pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+      if(pts.size===2 && pinch){
+        const p=[...pts.values()];
+        const d=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);
+        const ns=clamp(pinch.s*(d/pinch.d)), k=ns/pinch.s;
+        tx=pinch.mx-(pinch.mx-pinch.tx)*k; ty=pinch.my-(pinch.my-pinch.ty)*k; scale=ns; apply();
+      } else if(pts.size===1 && panStart){
+        tx=panStart.tx+(e.clientX-panStart.x); ty=panStart.ty+(e.clientY-panStart.y); apply();
+      }
+    });
+    const drop=e=>{ pts.delete(e.pointerId);
+      if(pts.size===1){ const only=[...pts.values()][0]; panStart={x:only.x,y:only.y,tx,ty}; pinch=null; }
+      else if(pts.size===0){ panStart=pinch=null; } };
+    zbox.addEventListener("pointerup", drop);
+    zbox.addEventListener("pointercancel", drop);
+    window.addEventListener("resize",()=>{ if(zbox.classList.contains("on")) reset(); });
+  })();
 
   // ---------- lock screen wiring ----------
   $("lockform").addEventListener("submit",e=>{ e.preventDefault();
