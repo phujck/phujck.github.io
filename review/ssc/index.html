@@ -131,7 +131,13 @@
     box-shadow:0 -6px 30px rgba(0,0,0,.5)}
   .sheet.up{transform:translateY(0)}
   .sheet h3{margin:0 0 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
-  .grip{width:38px;height:4px;border-radius:2px;background:var(--edge2);margin:0 auto 12px}
+  /* a real drag handle: small visible bar, large transparent hit area, so it can be
+     grabbed and pulled down to dismiss the sheet (his mobile catch, 2026-07-04) */
+  .grip{height:5px;width:56px;border-radius:3px;background:var(--edge2);margin:0 auto 8px;
+    box-sizing:content-box;padding:11px 60px;background-clip:content-box;cursor:grab;
+    touch-action:none;-webkit-tap-highlight-color:transparent}
+  .grip:active{cursor:grabbing}
+  .pghl.pending{background:rgba(122,162,247,.30)}
   #compose select,#compose textarea{width:100%;background:var(--bg);color:var(--ink);
     border:1px solid var(--edge2);border-radius:9px;font:inherit;padding:10px 12px;margin-bottom:10px}
   #compose textarea{min-height:96px;resize:vertical;font-size:15px}
@@ -302,7 +308,7 @@
     <button id="zoomreset">fit</button><button id="zoomin" aria-label="zoom in">+</button></div>
 </div>
 
-<script>window.CFG = {"corpus": "subset-sum-itqde", "repo": "phujck/laplace", "inbox_path": "synthetics papers/subset-sum-itqde/manuscript/whitepaper/feedback/inbox", "git_head": "0e2312d", "branch": "master"};</script>
+<script>window.CFG = {"corpus": "subset-sum-itqde", "repo": "phujck/laplace", "inbox_path": "synthetics papers/subset-sum-itqde/manuscript/whitepaper/feedback/inbox", "git_head": "b95088e", "branch": "master"};</script>
 <script>
 (function(){
   "use strict";
@@ -498,7 +504,20 @@
     const a=resolveAnchor(i, yPt);
     PENDING={page:i+1, bp:{yPt, xPt:f.l/100*img.naturalWidth*72/DATA.dpi}, anchor:a, quote:text, rects};
     showStrip(a, text);
+    paintPending();
+    // dismiss the native selection popup (copy / share / web-search) so it can't cover the
+    // strip and composer — we've captured the text + rects and paint our own highlight.
+    setTimeout(()=>{ try{ window.getSelection().removeAllRanges(); }catch(e){} }, 0);
   }
+
+  // the in-progress selection highlight (our own, so we can drop the native selection UI)
+  function clearPending(){ document.querySelectorAll(".pghl.pending").forEach(e=>e.remove()); }
+  function paintPending(){ clearPending();
+    if(!PENDING || !Array.isArray(PENDING.rects)) return;
+    const w=pageEl(PENDING.page); if(!w) return;
+    PENDING.rects.forEach(r=>{ const h=document.createElement("div"); h.className="pghl pending";
+      h.style.left=r.l+"%"; h.style.top=r.t+"%"; h.style.width=r.w+"%"; h.style.height=r.h+"%";
+      w.appendChild(h); }); }
 
   function showStrip(a, quote){
     const loc=(a.file?a.file.split("/").pop():"")+(a.line?":"+a.line:"");
@@ -509,7 +528,7 @@
     $("strip").classList.add("up");
   }
   function hideStrip(){ $("strip").classList.remove("up"); }
-  $("stripclose").addEventListener("click", hideStrip);
+  $("stripclose").addEventListener("click", ()=>{ hideStrip(); clearPending(); });
   $("stripcomment").addEventListener("click", openCompose);
 
   // ---------- composer ----------
@@ -808,8 +827,23 @@
 
   // ---------- sheets / backdrop ----------
   function openSheet(id){ $(id).classList.add("up"); if(!document.body.classList.contains("dock")||id==="compose") $("backdrop").classList.add("on"); }
-  function closeSheet(id){ $(id).classList.remove("up"); $("backdrop").classList.remove("on"); }
+  function closeSheet(id){ $(id).classList.remove("up"); $(id).style.transform=""; $("backdrop").classList.remove("on"); if(id==="compose") clearPending(); }
   $("backdrop").addEventListener("click",()=>{ closeSheet("compose"); if(!document.body.classList.contains("dock")) closeSheet("drawer"); });
+  // grip = a real drag handle: pull the sheet down past a threshold to dismiss, else snap back.
+  function makeSheetDraggable(id){
+    const sheet=$(id), grip=sheet.querySelector(".grip");
+    if(!grip) return;
+    let sy=0, dy=0, on=false;
+    grip.addEventListener("pointerdown", e=>{ on=true; sy=e.clientY; dy=0;
+      sheet.style.transition="none"; try{ grip.setPointerCapture(e.pointerId); }catch(_){}} );
+    grip.addEventListener("pointermove", e=>{ if(!on) return;
+      dy=Math.max(0, e.clientY-sy); sheet.style.transform="translateY("+dy+"px)"; });
+    const end=()=>{ if(!on) return; on=false; sheet.style.transition="";
+      sheet.style.transform=""; if(dy>80) closeSheet(id); };
+    grip.addEventListener("pointerup", end);
+    grip.addEventListener("pointercancel", end);
+  }
+  makeSheetDraggable("compose"); makeSheetDraggable("drawer");
   function syncDock(){
     const dock = window.matchMedia("(min-width:860px)").matches;
     document.body.classList.toggle("dock", dock);
