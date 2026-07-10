@@ -172,6 +172,7 @@
     .row .meta { flex: 1; min-width: 0; }
     .row .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .row .sz { color: var(--text-muted); font-size: 0.8rem; }
+    .row .er { display: none; color: var(--rose); font-size: 0.78rem; line-height: 1.4; }
     .row .st { flex: none; font-family: var(--font-display); font-size: 0.78rem; letter-spacing: 0.03em; }
     .st.q { color: var(--text-muted); }
     .st.u { color: var(--accent-light); font-variant-numeric: tabular-nums; }
@@ -279,6 +280,7 @@
     <footer>
       Trouble uploading? WhatsApp your photos and videos to Gerard on
       <a href="https://wa.me/447540983126">+44 7540 983126</a>.
+      <span style="opacity:0.4"> · v2</span>
     </footer>
   </div>
 
@@ -354,6 +356,8 @@
           '<span class="ic">' + (isVid ? '🎬' : '📷') + '</span>' +
           '<span class="meta"><span class="nm">' + esc(it.file.name) + '</span>' +
           '<span class="sz"> ' + fmtSize(it.file.size) + '</span>' +
+          '<span class="er"' + (it.status === 'failed' && it.error ? ' style="display:block"' : '') + '>' +
+          (it.error ? esc(friendlyErr(it.error)) : '') + '</span>' +
           '<span class="bar"' + (it.status === 'uploading' ? ' style="display:block"' : '') + '><i style="width:' + pctNum(it) + '%"></i></span></span>' +
           '<span class="st ' + stCls + '">' + stTxt + '</span>';
         if (it.status === 'queued' && !uploading) {
@@ -384,10 +388,31 @@
       var st = it.el.querySelector('.st');
       var bar = it.el.querySelector('.bar');
       var fill = it.el.querySelector('.bar > i');
+      var er = it.el.querySelector('.er');
       st.className = 'st ' + ({ queued: 'q', uploading: 'u', done: 'd', failed: 'f' }[it.status]);
       st.textContent = { queued: 'ready', uploading: pct(it), done: 'sent ✓', failed: 'failed' }[it.status];
       bar.style.display = it.status === 'uploading' ? 'block' : 'none';
       fill.style.width = pctNum(it) + '%';
+      if (er) {
+        var show = it.status === 'failed' && it.error;
+        er.style.display = show ? 'block' : 'none';
+        er.textContent = show ? friendlyErr(it.error) : '';
+      }
+    }
+
+    function errText(e) {
+      return String((e && e.message) || e || 'unknown').slice(0, 140);
+    }
+
+    function friendlyErr(e) {
+      var m = errText(e);
+      if (/NotReadable|not be read|permission/i.test(m)) {
+        return 'Your phone wouldn’t let the page read this file — remove it (✕), then add it again.';
+      }
+      if (/network|stalled|timeout/i.test(m)) {
+        return 'Connection dropped — tap retry.';
+      }
+      return m;
     }
 
     function esc(s) {
@@ -526,8 +551,10 @@
         }, 2).catch(function () { /* log line is best-effort */ });
       }).catch(function (err) {
         it.status = 'failed'; it.error = err; updateRow(it);
+        if (window.console && console.error) console.error('upload failed:', it.file.name, err);
         return apiRetry('complete', {
-          name: $('name').value.trim(), fileName: it.file.name,
+          name: $('name').value.trim(),
+          fileName: it.file.name + ' — ERR: ' + errText(err),
           fileSize: it.file.size, ok: false
         }, 1).catch(function () { });
       });
