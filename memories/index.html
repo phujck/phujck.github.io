@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="robots" content="noindex, nofollow">
+
+  <title>Elizabeth McCaul — photos &amp; memories</title>
+  <meta name="description" content="Share your photos, videos and memories of Elizabeth.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Elizabeth McCaul — photos &amp; memories">
+  <meta property="og:description" content="Share your photos, videos and memories of Elizabeth. They go straight to the family.">
+  <meta property="og:locale" content="en_GB">
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0a0e1a;
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --text-primary: #e8e6e3;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent: #c9a96e;
+      --accent-light: #dfc599;
+      --accent-dim: rgba(201, 169, 110, 0.15);
+      --green: #10b981;
+      --rose: #f43f5e;
+      --font-body: 'Lora', Georgia, serif;
+      --font-display: 'Outfit', -apple-system, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100dvh;
+    }
+
+    /* Site grain + ambient glow */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+    body::after {
+      content: '';
+      position: fixed; top: -30%; left: 50%; transform: translateX(-50%);
+      width: 120%; height: 70%; pointer-events: none; z-index: 0;
+      background: radial-gradient(ellipse, rgba(201, 169, 110, 0.06) 0%, transparent 60%);
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: clamp(2rem, 6vh, 4rem) 1.25rem 3rem;
+    }
+
+    header { text-align: center; margin-bottom: 2.25rem; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(2rem, 7vw, 2.8rem);
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+    }
+    h1 .accent { color: var(--accent); }
+
+    .rule {
+      width: 72px; height: 1px; margin: 1.1rem auto;
+      background: linear-gradient(to right, transparent, var(--accent), transparent);
+    }
+
+    .intro {
+      color: var(--text-secondary);
+      font-size: 1.02rem;
+      max-width: 46ch;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      backdrop-filter: blur(8px);
+    }
+
+    label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin: 0 0 0.45rem;
+    }
+    .field { margin-bottom: 1.4rem; }
+    .hint { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem; }
+
+    input[type="text"], textarea {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 150ms ease;
+    }
+    input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
+    textarea { min-height: 7.5rem; resize: vertical; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      font-family: var(--font-display); font-weight: 600; font-size: 1rem;
+      border: none; border-radius: var(--radius-md);
+      padding: 0.8rem 1.4rem; cursor: pointer;
+      transition: transform 120ms ease, opacity 120ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn[disabled] { opacity: 0.45; cursor: default; }
+
+    .btn-primary { background: var(--accent); color: #0a0e1a; width: 100%; font-size: 1.1rem; padding: 0.95rem; }
+    .btn-ghost {
+      background: var(--accent-dim); color: var(--accent-light);
+      border: 1px solid rgba(201, 169, 110, 0.3); width: 100%;
+    }
+
+    .folder-link {
+      display: none;
+      font-size: 0.9rem; color: var(--text-muted);
+      text-align: center; margin-top: 0.55rem;
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-body); text-decoration: underline; text-underline-offset: 3px;
+      width: 100%;
+    }
+    @media (pointer: fine) { .folder-link { display: block; } }
+
+    .drop-hot { border-color: var(--accent) !important; background: var(--accent-dim) !important; }
+
+    /* File list */
+    #list { margin-top: 1.1rem; max-height: 46vh; overflow-y: auto; display: none; }
+    .row {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.55rem 0.2rem;
+      border-top: 1px solid var(--border-glass);
+      font-size: 0.92rem;
+    }
+    .row:first-child { border-top: none; }
+    .row .ic { flex: none; opacity: 0.8; }
+    .row .meta { flex: 1; min-width: 0; }
+    .row .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row .sz { color: var(--text-muted); font-size: 0.8rem; }
+    .row .st { flex: none; font-family: var(--font-display); font-size: 0.78rem; letter-spacing: 0.03em; }
+    .st.q { color: var(--text-muted); }
+    .st.u { color: var(--accent-light); font-variant-numeric: tabular-nums; }
+    .st.d { color: var(--green); }
+    .st.f { color: var(--rose); }
+    .row .rm, .row .rt {
+      flex: none; background: none; border: none; cursor: pointer;
+      color: var(--text-muted); font-size: 1rem; padding: 0.2rem 0.4rem;
+    }
+    .row .rt { color: var(--rose); font-size: 0.82rem; font-family: var(--font-display); }
+    .bar { height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; margin-top: 0.3rem; overflow: hidden; display: none; }
+    .bar > i { display: block; height: 100%; width: 0%; background: var(--accent); border-radius: 2px; transition: width 300ms ease; }
+
+    .totals { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.6rem; text-align: right; }
+
+    #status {
+      display: none; margin-top: 1.2rem; text-align: center;
+      font-size: 0.95rem; color: var(--text-secondary);
+    }
+    #status.warn { color: var(--accent-light); }
+
+    /* Thank-you state */
+    #thanks { display: none; text-align: center; padding: 1rem 0.5rem; }
+    #thanks .big { font-family: var(--font-display); font-size: 1.35rem; color: var(--accent-light); margin-bottom: 0.6rem; }
+    #thanks p { color: var(--text-secondary); max-width: 40ch; margin: 0 auto 1.3rem; }
+
+    footer {
+      text-align: center; margin-top: 2.2rem;
+      font-size: 0.9rem; color: var(--text-muted);
+    }
+    footer a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px; }
+
+    #notopen {
+      display: none; margin-bottom: 1.2rem; padding: 0.8rem 1rem;
+      border: 1px solid rgba(244, 63, 94, 0.35); border-radius: var(--radius-md);
+      color: var(--rose); font-size: 0.9rem; text-align: center;
+    }
+
+    /* Probe panel */
+    #probe { display: none; }
+    #probe pre {
+      background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); border-radius: var(--radius-md);
+      padding: 0.9rem; font-size: 0.75rem; line-height: 1.5; overflow-x: auto;
+      white-space: pre-wrap; word-break: break-all; color: var(--text-secondary);
+      margin-top: 1rem; min-height: 8rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <h1>Elizabeth <span class="accent">M<sup>c</sup>Caul</span></h1>
+      <div class="rule"></div>
+      <p class="intro">
+        We're gathering photographs, videos and memories of Elizabeth &mdash; to be shared
+        at her funeral, and kept by the family afterwards. If you have anything at all,
+        please add it here. It goes straight to the family, and nothing is public.
+      </p>
+    </header>
+
+    <div class="card" id="card">
+      <div id="notopen">The page isn't quite ready yet &mdash; please check back shortly.</div>
+
+      <form id="form" autocomplete="off">
+        <div class="field">
+          <label for="name">Your name</label>
+          <input type="text" id="name" placeholder="So the family knows who this came from" required maxlength="60">
+        </div>
+
+        <div class="field">
+          <label for="msg">A memory or message <span style="text-transform:none;letter-spacing:0;opacity:.7">(optional)</span></label>
+          <textarea id="msg" placeholder="A story, a memory, or just a few words."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Photos &amp; videos <span style="text-transform:none;letter-spacing:0;opacity:.7">(optional)</span></label>
+          <button type="button" class="btn btn-ghost" id="pick">＋ &nbsp;Add photos &amp; videos</button>
+          <button type="button" class="folder-link" id="pickdir">or add a whole folder</button>
+          <input type="file" id="fileinput" multiple accept="image/*,video/*" hidden>
+          <input type="file" id="dirinput" webkitdirectory hidden>
+          <div id="list"></div>
+          <div class="totals" id="totals"></div>
+          <p class="hint" id="bighint" style="display:none">Large videos are fine &mdash; just keep this page open until they finish.</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="send" disabled>Send</button>
+        <div id="status"></div>
+      </form>
+
+      <div id="thanks">
+        <div class="big">Thank you.</div>
+        <p id="thanksmsg">Everything arrived safely with the family.</p>
+        <button type="button" class="btn btn-ghost" id="more">Add something else</button>
+      </div>
+
+      <div id="probe">
+        <p class="hint">Diagnostic mode &mdash; tests the upload path from this device.</p>
+        <button type="button" class="btn btn-primary" id="runprobe" style="margin-top:0.8rem">Run upload probe</button>
+        <pre id="probelog">ready.</pre>
+      </div>
+    </div>
+
+    <footer>
+      Trouble uploading? WhatsApp your photos and videos to Gerard on
+      <a href="https://wa.me/447540983126">+44 7540 983126</a>.
+    </footer>
+  </div>
+
+  <script>
+    'use strict';
+
+    /* ================= configuration ================= */
+    var API_URL = 'https://script.google.com/macros/s/AKfycbwL0Ee6ud2DiyfA3k7Ep8sQayx9bCwr9PkWgE2ueOTiWxdasy6UgbaeO40QM5a3qbwA/exec';
+    var USE_RELAY = false;                 // flip to true only if the Day-0 probe fails
+    var SMALL_LIMIT = 4 * 1024 * 1024;     // whole-file base64 below this
+    var CHUNK_DIRECT = 16 * 1024 * 1024;   // direct PUT chunk (multiple of 256 KiB)
+    var CHUNK_RELAY = 24 * 1024 * 1024;    // relay chunk: base64 stays under Apps Script's 50 MB
+    /* ================================================= */
+
+    var $ = function (id) { return document.getElementById(id); };
+    var items = [];            // {file, status: queued|uploading|done|failed, sent, el}
+    var uploading = false;
+    var wakeLock = null;
+
+    var CONFIGURED = API_URL.indexOf('https://') === 0;
+    if (!CONFIGURED) { $('notopen').style.display = 'block'; }
+
+    /* ---------- name persistence ---------- */
+    try {
+      var savedName = localStorage.getItem('mem-name');
+      if (savedName) $('name').value = savedName;
+    } catch (e) { /* private mode */ }
+
+    /* ---------- file picking ---------- */
+    $('pick').addEventListener('click', function () { $('fileinput').click(); });
+    $('pickdir').addEventListener('click', function () { $('dirinput').click(); });
+    $('fileinput').addEventListener('change', function () { addFiles(this.files); this.value = ''; });
+    $('dirinput').addEventListener('change', function () { addFiles(this.files); this.value = ''; });
+
+    var card = $('card');
+    card.addEventListener('dragover', function (ev) { ev.preventDefault(); card.classList.add('drop-hot'); });
+    card.addEventListener('dragleave', function () { card.classList.remove('drop-hot'); });
+    card.addEventListener('drop', function (ev) {
+      ev.preventDefault(); card.classList.remove('drop-hot');
+      if (ev.dataTransfer && ev.dataTransfer.files) addFiles(ev.dataTransfer.files);
+    });
+
+    function addFiles(fileList) {
+      for (var i = 0; i < fileList.length; i++) {
+        var f = fileList[i];
+        if (f.name === '.DS_Store' || f.name === 'Thumbs.db') continue;
+        var dupe = items.some(function (it) { return it.file.name === f.name && it.file.size === f.size; });
+        if (!dupe) items.push({ file: f, status: 'queued', sent: 0, el: null });
+      }
+      renderList();
+      updateSend();
+    }
+
+    function fmtSize(b) {
+      if (b >= 1e9) return (b / 1e9).toFixed(1) + ' GB';
+      if (b >= 1e6) return Math.round(b / 1e6) + ' MB';
+      return Math.max(1, Math.round(b / 1e3)) + ' KB';
+    }
+
+    function renderList() {
+      var list = $('list');
+      list.innerHTML = '';
+      list.style.display = items.length ? 'block' : 'none';
+      var total = 0;
+      items.forEach(function (it, idx) {
+        total += it.file.size;
+        var row = document.createElement('div');
+        row.className = 'row';
+        var isVid = /^video\//.test(it.file.type) || /\.(mov|mp4|m4v|avi|3gp|webm|mkv)$/i.test(it.file.name);
+        var stCls = { queued: 'q', uploading: 'u', done: 'd', failed: 'f' }[it.status];
+        var stTxt = { queued: 'ready', uploading: pct(it), done: 'sent ✓', failed: 'failed' }[it.status];
+        row.innerHTML =
+          '<span class="ic">' + (isVid ? '🎬' : '📷') + '</span>' +
+          '<span class="meta"><span class="nm">' + esc(it.file.name) + '</span>' +
+          '<span class="sz"> ' + fmtSize(it.file.size) + '</span>' +
+          '<span class="bar"' + (it.status === 'uploading' ? ' style="display:block"' : '') + '><i style="width:' + pctNum(it) + '%"></i></span></span>' +
+          '<span class="st ' + stCls + '">' + stTxt + '</span>';
+        if (it.status === 'queued' && !uploading) {
+          var rm = document.createElement('button');
+          rm.type = 'button'; rm.className = 'rm'; rm.textContent = '✕'; rm.title = 'Remove';
+          rm.addEventListener('click', function () { items.splice(idx, 1); renderList(); updateSend(); });
+          row.appendChild(rm);
+        }
+        if (it.status === 'failed' && !uploading) {
+          var rt = document.createElement('button');
+          rt.type = 'button'; rt.className = 'rt'; rt.textContent = 'retry';
+          rt.addEventListener('click', function () { retryOne(it); });
+          row.appendChild(rt);
+        }
+        it.el = row;
+        list.appendChild(row);
+      });
+      $('totals').textContent = items.length
+        ? items.length + (items.length === 1 ? ' file · ' : ' files · ') + fmtSize(total) : '';
+      $('bighint').style.display = total > 100e6 ? 'block' : 'none';
+    }
+
+    function pctNum(it) { return it.file.size ? Math.min(100, Math.round(100 * it.sent / it.file.size)) : 0; }
+    function pct(it) { return pctNum(it) + '%'; }
+
+    function updateRow(it) {
+      if (!it.el) return;
+      var st = it.el.querySelector('.st');
+      var bar = it.el.querySelector('.bar');
+      var fill = it.el.querySelector('.bar > i');
+      st.className = 'st ' + ({ queued: 'q', uploading: 'u', done: 'd', failed: 'f' }[it.status]);
+      st.textContent = { queued: 'ready', uploading: pct(it), done: 'sent ✓', failed: 'failed' }[it.status];
+      bar.style.display = it.status === 'uploading' ? 'block' : 'none';
+      fill.style.width = pctNum(it) + '%';
+    }
+
+    function esc(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function updateSend() {
+      var hasName = $('name').value.trim().length > 0;
+      var hasSomething = items.length > 0 || $('msg').value.trim().length > 0;
+      $('send').disabled = !(CONFIGURED && hasName && hasSomething) || uploading;
+    }
+    $('name').addEventListener('input', updateSend);
+    $('msg').addEventListener('input', updateSend);
+
+    /* ---------- API ---------- */
+    function api(action, payload) {
+      var body = JSON.stringify(Object.assign({ action: action }, payload));
+      return fetch(API_URL, { method: 'POST', body: body }).then(function (res) {
+        if (!res.ok) throw new Error('server error ' + res.status);
+        return res.json();
+      }).then(function (j) {
+        if (j.error) throw new Error(j.error);
+        return j;
+      });
+    }
+
+    function apiRetry(action, payload, tries) {
+      tries = tries || 3;
+      return api(action, payload).catch(function (err) {
+        if (tries <= 1) throw err;
+        return sleep(1500 + Math.random() * 1500).then(function () {
+          return apiRetry(action, payload, tries - 1);
+        });
+      });
+    }
+
+    function sleep(ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); }
+
+    function blobToB64(blob) {
+      return new Promise(function (ok, no) {
+        var r = new FileReader();
+        r.onload = function () { ok(String(r.result).split(',')[1]); };
+        r.onerror = function () { no(r.error || new Error('read failed')); };
+        r.readAsDataURL(blob);
+      });
+    }
+
+    /* ---------- upload engines ---------- */
+    function uploadSmall(it, folderId) {
+      return blobToB64(it.file).then(function (b64) {
+        return apiRetry('smallUpload', {
+          folderId: folderId, fileName: it.file.name,
+          mimeType: it.file.type || 'application/octet-stream', bytesB64: b64
+        });
+      }).then(function () { it.sent = it.file.size; });
+    }
+
+    function uploadResumable(it, folderId) {
+      var file = it.file;
+      var chunkSize = USE_RELAY ? CHUNK_RELAY : CHUNK_DIRECT;
+      return apiRetry('initUpload', {
+        folderId: folderId, fileName: file.name,
+        mimeType: file.type || 'application/octet-stream', fileSize: file.size
+      }).then(function (r) {
+        var uploadUrl = r.uploadUrl;
+        var offset = 0;
+        function next() {
+          if (offset >= file.size) throw new Error('never got final 200');
+          var end = Math.min(offset + chunkSize, file.size);
+          var range = 'bytes ' + offset + '-' + (end - 1) + '/' + file.size;
+          var attempt = USE_RELAY
+            ? relayChunk(uploadUrl, file.slice(offset, end), range, it, end)
+            : putChunkWithRetry(uploadUrl, file.slice(offset, end), offset, end, file.size, it);
+          return attempt.then(function (status) {
+            if (status === 200 || status === 201) { it.sent = file.size; updateRow(it); return; }
+            if (status !== 308) throw new Error('upload rejected (HTTP ' + status + ')');
+            offset = end; it.sent = offset; updateRow(it);
+            return next();
+          });
+        }
+        return next();
+      });
+    }
+
+    function relayChunk(uploadUrl, blob, contentRange, it, endOffset) {
+      return blobToB64(blob).then(function (b64) {
+        return apiRetry('relayChunk', { uploadUrl: uploadUrl, contentRange: contentRange, bytesB64: b64 }, 4);
+      }).then(function (r) { return r.status; });
+    }
+
+    function putChunkWithRetry(url, blob, start, end, total, it, tries) {
+      tries = (tries === undefined) ? 5 : tries;
+      var attemptNo = 5 - tries;
+      return putChunkXHR(url, blob, start, end, total, it).then(function (status) {
+        if (status === 308 || status === 200 || status === 201) return status;
+        if (status >= 500 || status === 429) throw new Error('server ' + status);
+        return status; // hard 4xx — caller decides
+      }).catch(function (err) {
+        if (tries <= 1) throw err;
+        var wait = Math.min(30000, 1000 * Math.pow(2, attemptNo)) * (0.7 + Math.random() * 0.6);
+        return sleep(wait).then(function () {
+          return putChunkWithRetry(url, blob, start, end, total, it, tries - 1);
+        });
+      });
+    }
+
+    function putChunkXHR(url, blob, start, end, total, it) {
+      return new Promise(function (resolve, reject) {
+        var x = new XMLHttpRequest();
+        var last = Date.now();
+        var dog = setInterval(function () {           // stall watchdog: no progress for 45 s → abort → retry
+          if (Date.now() - last > 45000) { clearInterval(dog); x.abort(); }
+        }, 5000);
+        x.open('PUT', url);
+        x.setRequestHeader('Content-Range', 'bytes ' + start + '-' + (end - 1) + '/' + total);
+        x.upload.onprogress = function (ev) {
+          last = Date.now();
+          if (it) { it.sent = start + ev.loaded; updateRow(it); }
+        };
+        x.onload = function () { clearInterval(dog); resolve(x.status); };
+        x.onerror = function () { clearInterval(dog); reject(new Error('network')); };
+        x.ontimeout = function () { clearInterval(dog); reject(new Error('timeout')); };
+        x.onabort = function () { clearInterval(dog); reject(new Error('stalled')); };
+        x.send(blob);
+      });
+    }
+
+    function uploadOne(it, folderId) {
+      it.status = 'uploading'; it.sent = 0; updateRow(it);
+      var engine = it.file.size < SMALL_LIMIT ? uploadSmall : uploadResumable;
+      return engine(it, folderId).then(function () {
+        it.status = 'done'; updateRow(it);
+        return apiRetry('complete', {
+          name: $('name').value.trim(), fileName: it.file.name,
+          fileSize: it.file.size, ok: true
+        }, 2).catch(function () { /* log line is best-effort */ });
+      }).catch(function (err) {
+        it.status = 'failed'; it.error = err; updateRow(it);
+        return apiRetry('complete', {
+          name: $('name').value.trim(), fileName: it.file.name,
+          fileSize: it.file.size, ok: false
+        }, 1).catch(function () { });
+      });
+    }
+
+    /* ---------- send flow ---------- */
+    $('form').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      if (uploading) return;
+      var name = $('name').value.trim();
+      if (!name) return;
+      try { localStorage.setItem('mem-name', name); } catch (e) { }
+
+      uploading = true;
+      updateSend();
+      $('send').disabled = true;
+      setStatus('Saving…');
+      acquireWakeLock();
+
+      var message = $('msg').value.trim();
+      apiRetry('register', { name: name, message: message })
+        .then(function (r) {
+          if (message) { $('msg').value = ''; }   // don't double-send on a later Send
+          var queue = items.filter(function (it) { return it.status === 'queued' || it.status === 'failed'; });
+          if (!queue.length) return { folderId: r.folderId, done: 0, failed: 0 };
+          setStatus('Uploading — keep this page open…', true);
+          var chain = Promise.resolve();
+          queue.forEach(function (it) {
+            chain = chain.then(function () { return uploadOne(it, r.folderId); });
+          });
+          return chain.then(function () {
+            return {
+              folderId: r.folderId,
+              done: queue.filter(function (it) { return it.status === 'done'; }).length,
+              failed: queue.filter(function (it) { return it.status === 'failed'; }).length
+            };
+          });
+        })
+        .then(function (res) {
+          uploading = false;
+          releaseWakeLock();
+          if (res.failed > 0) {
+            setStatus(res.done + ' of ' + (res.done + res.failed) +
+              ' files made it. Tap “retry” on the ones that failed, or WhatsApp them to Gerard.', true);
+            renderList();
+            updateSend();
+          } else {
+            showThanks(res.done);
+          }
+        })
+        .catch(function (err) {
+          uploading = false;
+          releaseWakeLock();
+          setStatus('Something went wrong (' + err.message + '). Please try again, or WhatsApp Gerard.', true);
+          updateSend();
+        });
+    });
+
+    function retryOne(it) {
+      var name = $('name').value.trim();
+      if (!name || uploading) return;
+      uploading = true; updateSend(); setStatus('Retrying…', true); acquireWakeLock();
+      apiRetry('register', { name: name, message: '' })
+        .then(function (r) { return uploadOne(it, r.folderId); })
+        .then(function () {
+          uploading = false; releaseWakeLock(); renderList(); updateSend();
+          var anyFailed = items.some(function (x) { return x.status === 'failed'; });
+          var allDone = items.length && items.every(function (x) { return x.status === 'done'; });
+          if (allDone) showThanks(items.length);
+          else setStatus(anyFailed ? 'Still one or more stuck — WhatsApp them to Gerard if it keeps failing.' : '', true);
+        })
+        .catch(function (err) {
+          uploading = false; releaseWakeLock(); renderList(); updateSend();
+          setStatus('Retry failed (' + err.message + ') — WhatsApp them to Gerard if it keeps failing.', true);
+        });
+    }
+
+    function setStatus(text, warn) {
+      var s = $('status');
+      s.textContent = text || '';
+      s.style.display = text ? 'block' : 'none';
+      s.className = warn ? 'warn' : '';
+      s.id = 'status';
+    }
+
+    function showThanks(count) {
+      $('form').style.display = 'none';
+      $('thanks').style.display = 'block';
+      $('thanksmsg').textContent = count > 0
+        ? 'Everything arrived safely with the family' + (count > 1 ? ' — all ' + count + ' files.' : '.')
+        : 'Your message arrived safely with the family.';
+    }
+
+    $('more').addEventListener('click', function () {
+      items = [];
+      renderList();
+      $('thanks').style.display = 'none';
+      $('form').style.display = 'block';
+      setStatus('');
+      updateSend();
+    });
+
+    /* ---------- keep the upload alive ---------- */
+    window.addEventListener('beforeunload', function (ev) {
+      if (uploading) { ev.preventDefault(); ev.returnValue = ''; }
+    });
+
+    function acquireWakeLock() {
+      if (navigator.wakeLock && navigator.wakeLock.request) {
+        navigator.wakeLock.request('screen').then(function (wl) { wakeLock = wl; }).catch(function () { });
+      }
+    }
+    function releaseWakeLock() {
+      if (wakeLock) { wakeLock.release().catch(function () { }); wakeLock = null; }
+    }
+    document.addEventListener('visibilitychange', function () {
+      if (uploading && document.visibilityState === 'visible') acquireWakeLock();
+    });
+
+    /* ---------- probe mode (?probe) ---------- */
+    if (location.search.indexOf('probe') !== -1) {
+      $('form').style.display = 'none';
+      $('probe').style.display = 'block';
+      var LOG = $('probelog');
+      var plog = function (s) { LOG.textContent += '\n' + s; };
+
+      $('runprobe').addEventListener('click', function () {
+        LOG.textContent = 'probe started ' + new Date().toISOString();
+        var SIZE = 20 * 1024 * 1024;
+        var buf = new Uint8Array(SIZE);
+        for (var o = 0; o < SIZE; o += 65536) {
+          crypto.getRandomValues(buf.subarray(o, Math.min(o + 65536, SIZE)));
+        }
+        var blob = new Blob([buf], { type: 'application/octet-stream' });
+        var fname = 'probe_' + Date.now() + '.bin';
+        var folderId;
+
+        fetch(API_URL).then(function (r) { return r.json(); })
+          .then(function (j) { plog('GET ping: ' + JSON.stringify(j)); })
+          .then(function () { return api('register', { name: '_probe', message: '' }); })
+          .then(function (r) { folderId = r.folderId; plog('register ok, folder ' + folderId); })
+          .then(function () {
+            return api('initUpload', {
+              folderId: folderId, fileName: fname,
+              mimeType: 'application/octet-stream', fileSize: SIZE
+            });
+          })
+          .then(function (r) {
+            plog('initUpload ok, session URI acquired');
+            plog('PUT chunk 1/2 (16 MB, direct from browser)…');
+            return putChunkXHR(r.uploadUrl, blob.slice(0, CHUNK_DIRECT), 0, CHUNK_DIRECT, SIZE, null)
+              .then(function (status) {
+                plog('chunk 1 status: ' + status + (status === 308 ? ' (expected)' : ' (UNEXPECTED)'));
+                if (status !== 308) throw new Error('direct path bad status ' + status);
+                plog('PUT chunk 2/2 (final)…');
+                return putChunkXHR(r.uploadUrl, blob.slice(CHUNK_DIRECT), CHUNK_DIRECT, SIZE, SIZE, null);
+              })
+              .then(function (status) {
+                plog('final chunk status: ' + status);
+                if (status !== 200 && status !== 201) throw new Error('direct path final bad status ' + status);
+                plog('\n=== VERDICT: PRIMARY (direct) PATH WORKS — keep USE_RELAY=false ===');
+              });
+          })
+          .catch(function (err) {
+            plog('direct path FAILED: ' + err.message);
+            plog('trying RELAY path with a fresh session…');
+            return api('initUpload', {
+              folderId: folderId, fileName: 'probe_relay_' + Date.now() + '.bin',
+              mimeType: 'application/octet-stream', fileSize: SIZE
+            }).then(function (r) {
+              var range1 = 'bytes 0-' + (CHUNK_DIRECT - 1) + '/' + SIZE;
+              return blobToB64(blob.slice(0, CHUNK_DIRECT)).then(function (b64) {
+                return api('relayChunk', { uploadUrl: r.uploadUrl, contentRange: range1, bytesB64: b64 });
+              }).then(function (rr) {
+                plog('relay chunk 1 status: ' + rr.status);
+                var range2 = 'bytes ' + CHUNK_DIRECT + '-' + (SIZE - 1) + '/' + SIZE;
+                return blobToB64(blob.slice(CHUNK_DIRECT)).then(function (b64) {
+                  return api('relayChunk', { uploadUrl: r.uploadUrl, contentRange: range2, bytesB64: b64 });
+                });
+              }).then(function (rr) {
+                plog('relay final status: ' + rr.status);
+                if (rr.status === 200 || rr.status === 201) {
+                  plog('\n=== VERDICT: DIRECT BLOCKED — set USE_RELAY = true ===');
+                } else {
+                  plog('\n=== VERDICT: BOTH PATHS FAILED — check deployment ===');
+                }
+              });
+            }).catch(function (e2) {
+              plog('relay path ALSO failed: ' + e2.message);
+              plog('\n=== VERDICT: BACKEND UNREACHABLE — check the /exec URL and deployment ===');
+            });
+          });
+      });
+    }
+
+    updateSend();
+  </script>
+</body>
+
+</html>
