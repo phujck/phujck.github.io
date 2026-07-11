@@ -13,84 +13,107 @@
   try { DB = JSON.parse(RAW); } catch(e){ location.replace("index.html"); return; }
   window.__DEMO_DB = DB; window.__VISITOR = VISITOR;
 
-  // ── indices over the baked graph (draws = derives-from; shares = lateral) ──
-  var NODES = {}, DRAWS_FROM = {}, DRAWN_BY = {}, SHARES = {}, CONTAINS = {}, REACH = {};
-  (DB.graph.nodes||[]).forEach(function(n){ NODES[n.id]=n; });
-  function push(m,k,v){ (m[k]=m[k]||[]).push(v); }
-  (DB.graph.edges||[]).forEach(function(e){
-    if(e.rel==="draws"){ push(DRAWS_FROM,e.src,e.dst); push(DRAWN_BY,e.dst,e.src); }
-    else if(e.rel==="shares"){ push(SHARES,e.src,e.dst); push(SHARES,e.dst,e.src); }
-    else if(e.rel==="contains"){ push(CONTAINS,e.src,e.dst); }
-  });
-  Object.keys(NODES).forEach(function(id){ REACH[id]=(CONTAINS[id]||[]).length; });
-  var SPINE_BY_ID = {}; (DB.spine||[]).forEach(function(s){ SPINE_BY_ID[s.id]=s; });
+  // ── TWO corpora baked into one bundle; the shim switches by key ──
+  // DB = {corpora:{name:payload}, config:{default,repo,branch}, github_token}.
+  var CORPORA = DB.corpora || {};
+  var DEFAULT = (DB.config && DB.config.default) || Object.keys(CORPORA)[0];
+  var ACTIVE  = DEFAULT;                 // the dock/outbox follow this; views follow ?corpus=
 
-  function gradeOf(id){ var n=NODES[id]; if(!n) return 0;
+  // ── per-corpus index cache (draws = derives-from; shares = lateral) ──
+  var IDX = {};
+  function push(m,k,v){ (m[k]=m[k]||[]).push(v); }
+  function buildIndex(name){
+    var C = CORPORA[name]; if(!C) return null;
+    var I = {C:C, NODES:{}, DRAWS_FROM:{}, DRAWN_BY:{}, SHARES:{}, CONTAINS:{},
+             REACH:{}, SPINE_BY_ID:{}};
+    (C.graph.nodes||[]).forEach(function(n){ I.NODES[n.id]=n; });
+    (C.graph.edges||[]).forEach(function(e){
+      if(e.rel==="draws"){ push(I.DRAWS_FROM,e.src,e.dst); push(I.DRAWN_BY,e.dst,e.src); }
+      else if(e.rel==="shares"){ push(I.SHARES,e.src,e.dst); push(I.SHARES,e.dst,e.src); }
+      else if(e.rel==="contains"){ push(I.CONTAINS,e.src,e.dst); }
+    });
+    Object.keys(I.NODES).forEach(function(id){ I.REACH[id]=(I.CONTAINS[id]||[]).length; });
+    (C.spine||[]).forEach(function(s){ I.SPINE_BY_ID[s.id]=s; });
+    return I;
+  }
+  function idx(name){ name=name||ACTIVE; if(!IDX[name]) IDX[name]=buildIndex(name); return IDX[name]; }
+
+  function gradeOf(I,id){ var n=I.NODES[id]; if(!n) return 0;
     if(n.kind==="domain") return 0;
     return ((n.meta||{}).scale==="coarse") ? 0 : 1; }
-  function essOf(id){ var n=NODES[id]||{}, m=n.meta||{};
+  function essOf(I,id){ var n=I.NODES[id]||{}, m=n.meta||{};
     return m.summary || m.intent || n.label || id; }
-  function enrich(id, prov){ var n=NODES[id]||{};
-    return {id:id, kind:n.kind, essence:essOf(id), grade:gradeOf(id), prov:prov||"explicit"}; }
+  function enrich(I,id, prov){ var n=I.NODES[id]||{};
+    return {id:id, kind:n.kind, essence:essOf(I,id), grade:gradeOf(I,id), prov:prov||"explicit"}; }
 
-  function content(id){
-    var n=NODES[id]; if(!n) return {id:id, error:"unknown node"};
-    var draws=DRAWS_FROM[id]||[];
-    var cites=draws.filter(function(x){return NODES[x]&&NODES[x].kind==="result";})
-                   .map(function(x){return {id:x, essence:essOf(x)};});
-    var deps={explicit:draws.filter(function(x){return NODES[x]&&NODES[x].kind==="def";}), confirmed:[]};
-    return {id:id, kind:n.kind, grade:gradeOf(id), essence:essOf(id), keywords:null,
-            postulate:false, spine:(SPINE_BY_ID[id]||null), ctx:"", cites:cites, deps:deps,
+  function content(I,id){
+    var n=I.NODES[id]; if(!n) return {id:id, error:"unknown node"};
+    var draws=I.DRAWS_FROM[id]||[];
+    var cites=draws.filter(function(x){return I.NODES[x]&&I.NODES[x].kind==="result";})
+                   .map(function(x){return {id:x, essence:essOf(I,x)};});
+    var deps={explicit:draws.filter(function(x){return I.NODES[x]&&I.NODES[x].kind==="def";}), confirmed:[]};
+    return {id:id, kind:n.kind, grade:gradeOf(I,id), essence:essOf(I,id), keywords:null,
+            postulate:false, spine:(I.SPINE_BY_ID[id]||null), ctx:"", cites:cites, deps:deps,
             projection:{}, retired:false};
   }
-  function neighborhood(id){
-    var below=(DRAWS_FROM[id]||[]).map(function(x){return enrich(x);});
-    var above=(DRAWN_BY[id]||[]).map(function(x){return enrich(x);});
-    var lateral=(SHARES[id]||[]).map(function(x){
-      var e=enrich(x,"lateral");
-      var mine=DRAWS_FROM[id]||[], theirs=DRAWS_FROM[x]||[];
+  function neighborhood(I,id){
+    var below=(I.DRAWS_FROM[id]||[]).map(function(x){return enrich(I,x);});
+    var above=(I.DRAWN_BY[id]||[]).map(function(x){return enrich(I,x);});
+    var lateral=(I.SHARES[id]||[]).map(function(x){
+      var e=enrich(I,x,"lateral");
+      var mine=I.DRAWS_FROM[id]||[], theirs=I.DRAWS_FROM[x]||[];
       e.shared=mine.filter(function(d){return theirs.indexOf(d)>=0;}); return e; });
-    return {id:id, node:{id:id, kind:(NODES[id]||{}).kind, grade:gradeOf(id),
+    return {id:id, node:{id:id, kind:(I.NODES[id]||{}).kind, grade:gradeOf(I,id),
             n_below:below.length, n_above:above.length},
             below:below, above:above, lateral:lateral, truncated:{}};
   }
-  function gradeView(g){
-    var ids=Object.keys(NODES).filter(function(id){return gradeOf(id)===g;});
-    ids.sort(function(a,b){return (REACH[b]||0)-(REACH[a]||0);});
+  function gradeView(I,g){
+    var ids=Object.keys(I.NODES).filter(function(id){return gradeOf(I,id)===g;});
+    ids.sort(function(a,b){return (I.REACH[b]||0)-(I.REACH[a]||0);});
     var idset={}; ids.forEach(function(i){idset[i]=1;});
-    var out=ids.map(function(id){ var n=NODES[id];
-      return {id:id, label:(n.label||id), essence:essOf(id),
-              n_below:(CONTAINS[id]||[]).length, substrate_size:(REACH[id]||0), lenses:[]};});
+    var out=ids.map(function(id){ var n=I.NODES[id];
+      return {id:id, label:(n.label||id), essence:essOf(I,id),
+              n_below:(I.CONTAINS[id]||[]).length, substrate_size:(I.REACH[id]||0), lenses:[]};});
     var edges=[], seen={};
-    ids.forEach(function(a){ (SHARES[a]||[]).forEach(function(b){ if(!idset[b])return;
+    ids.forEach(function(a){ (I.SHARES[a]||[]).forEach(function(b){ if(!idset[b])return;
       var k=[a,b].sort().join("::"); if(seen[k])return; seen[k]=1;
       edges.push({a:a,b:b,out:1,"in":1,shared:1,conjectural:false}); }); });
     return {grade:g, lens:null, nodes:out, edges:edges, n_total_at_grade:ids.length, capped:false};
   }
-  function dagMap(){
-    return {nodes:Object.keys(NODES).map(function(id){var n=NODES[id];
-      return {id:id, label:(n.label||id), grade:gradeOf(id), essence:essOf(id), kind:n.kind};}),
-      edges:(DB.graph.edges||[]).map(function(e){return {a:e.src,b:e.dst,rel:e.rel};})};
+  function dagMap(I){
+    return {nodes:Object.keys(I.NODES).map(function(id){var n=I.NODES[id];
+      return {id:id, label:(n.label||id), grade:gradeOf(I,id), essence:essOf(I,id), kind:n.kind};}),
+      edges:(I.C.graph.edges||[]).map(function(e){return {a:e.src,b:e.dst,rel:e.rel};})};
   }
-  function search(q){
+  function search(I,q){
     q=(q||"").trim().toLowerCase(); if(!q) return {results:[]};
     var toks=q.split(/\W+/).filter(Boolean), out=[];
-    Object.keys(NODES).forEach(function(id){ var n=NODES[id];
-      var hay=(id+" "+(essOf(id))+" "+(n.kind||"")).toLowerCase(), s=0;
+    Object.keys(I.NODES).forEach(function(id){ var n=I.NODES[id];
+      var hay=(id+" "+(essOf(I,id))+" "+(n.kind||"")).toLowerCase(), s=0;
       if(hay.indexOf(q)>=0) s+=6;
       toks.forEach(function(t){ if(hay.indexOf(t)>=0) s+=2; });
-      if(s) out.push({id:id, kind:n.kind, essence:essOf(id), grade:gradeOf(id), score:s});});
+      if(s) out.push({id:id, kind:n.kind, essence:essOf(I,id), grade:gradeOf(I,id), score:s});});
     out.sort(function(a,b){return b.score-a.score;});
     return {results:out.slice(0,24)};
   }
 
   // ── the bankable write: mint by:"visitor:<name>", queue, flush via Contents API ──
-  var LS_OUTBOX="demo_outbox_"+DB.config.corpus, LS_PAT="demo_gh_pat";
-  var OUTBOX=[]; try{ OUTBOX=JSON.parse(localStorage.getItem(LS_OUTBOX)||"[]"); }catch(e){ OUTBOX=[]; }
+  // The outbox is PER-CORPUS: switching corpus swaps the queue, the record's project, and
+  // the inbox path the push targets. repo/branch/token are global (top-level DB.config).
+  var LS_PAT="demo_gh_pat";
+  var LS_OUTBOX, OUTBOX=[];
+  function loadOutbox(){
+    LS_OUTBOX="demo_outbox_"+ACTIVE;
+    try{ OUTBOX=JSON.parse(localStorage.getItem(LS_OUTBOX)||"[]"); }catch(e){ OUTBOX=[]; }
+    window.__demo_feed = OUTBOX;   // the visitor's own comments are the demo feedback feed
+  }
   function saveOutbox(){ try{ localStorage.setItem(LS_OUTBOX, JSON.stringify(OUTBOX)); }catch(e){} }
   function b64utf8(s){ return btoa(unescape(encodeURIComponent(s))); }
   function pad(n){ return String(n).padStart(2,"0"); }
   function ghToken(){ try{ return (localStorage.getItem(LS_PAT)||"").trim() || (DB.github_token||""); }catch(e){ return DB.github_token||""; } }
+  function activeCfg(){ return (CORPORA[ACTIVE]||{}).config || {}; }
+  function repo(){ return (DB.config&&DB.config.repo) || activeCfg().repo || ""; }
+  function branch(){ return (DB.config&&DB.config.branch) || activeCfg().branch || "master"; }
   // the editor keeps FOCUS as a lexical (not on window); the breadcrumb's current crumb
   // is the authoritative, always-rendered mirror of it.
   function curFocus(){ var el=document.querySelector("#crumb-list .crumb.cur");
@@ -102,13 +125,13 @@
     var id="FB-"+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+"-"+
       pad(now.getHours())+pad(now.getMinutes())+pad(now.getSeconds())+"-"+nodePart+"-"+
       Math.random().toString(36).slice(2,6);
-    return {id:id, project:DB.config.corpus, ts:now.toISOString().slice(0,19),
-      node_id:focus, node_label:(essOf(focus)||"").slice(0,80),
+    return {id:id, project:ACTIVE, ts:now.toISOString().slice(0,19),
+      node_id:focus, node_label:(essOf(idx(),focus)||"").slice(0,80),
       kind:kind||"comment", comment:comment, by:"visitor:"+VISITOR, status:"open",
       anchor:{}, _state:"queued"};   // by is LOCKED to the visitor — no author path exists
   }
-  function apiUrlFor(recId){ var path=DB.config.inbox_path+"/"+recId+".json";
-    return "https://api.github.com/repos/"+DB.config.repo+"/contents/"+
+  function apiUrlFor(recId){ var path=activeCfg().inbox_path+"/"+recId+".json";
+    return "https://api.github.com/repos/"+repo()+"/contents/"+
       path.split("/").map(encodeURIComponent).join("/"); }
   function setStatus(msg, cls){ var el=document.getElementById("demo-status");
     if(el){ el.textContent=msg; el.className="demo-status "+(cls||""); } }
@@ -126,7 +149,7 @@
       try{
         r=await fetch(apiUrlFor(rec.id),{method:"PUT",
           headers:{Authorization:"Bearer "+tok, Accept:"application/vnd.github+json","Content-Type":"application/json"},
-          body:JSON.stringify({message:"visitor comment "+rec.id, branch:DB.config.branch,
+          body:JSON.stringify({message:"visitor comment "+rec.id, branch:branch(),
             content:b64utf8(JSON.stringify(clean,null,2))})});
       }catch(e){ setStatus("network error — comments are safe on this device; try again","bad"); break; }
       if(r.status===201||r.status===200||r.status===422){
@@ -138,7 +161,7 @@
     if(pushed) setStatus(pushed+" comment(s) pushed ✓"+(OUTBOX.length?(" · "+OUTBOX.length+" still queued"):""),"ok");
     renderDock();
   }
-  window.__demo_feed = OUTBOX;   // the visitor's own comments are the demo feedback feed
+  loadOutbox();   // hydrate the active corpus's queue (window.__demo_feed) up front
   function queueComment(){
     var ta=document.getElementById("demo-comment"); var kindSel=document.getElementById("demo-kind");
     var txt=(ta.value||"").trim();
@@ -172,26 +195,30 @@
     }
     // the shared inspector probes /shared/plan (optional ancestry) — no such thing here
     if(path.indexOf("/shared/")===0) return J(null, 404);
+    // resolve the target corpus from ?corpus= (the editor stamps every request), fall to ACTIVE.
+    var cname = (qs.corpus && CORPORA[qs.corpus]) ? qs.corpus : ACTIVE;
+    var C = CORPORA[cname] || {};
+    var I = idx(cname);
     switch(path){
-      case "/corpus/list":        return J({corpora:[DB.corpus], "default":DB.corpus});
-      case "/corpus/meta":        return J(DB.meta);
-      case "/corpus/macros":      return J({macros:DB.macros});
-      case "/corpus/spine":       return J({spine:DB.spine});
-      case "/corpus/techniques":  return J({techniques:DB.techniques});
-      case "/corpus/gaps":        return J({gaps:DB.gaps});
-      case "/corpus/friction":    return J(DB.friction);
+      case "/corpus/list":        return J({corpora:Object.keys(CORPORA), "default":DEFAULT});
+      case "/corpus/meta":        return J(C.meta);
+      case "/corpus/macros":      return J({macros:C.macros});
+      case "/corpus/spine":       return J({spine:C.spine});
+      case "/corpus/techniques":  return J({techniques:C.techniques});
+      case "/corpus/gaps":        return J({gaps:C.gaps});
+      case "/corpus/friction":    return J(C.friction);
       case "/corpus/feedback":    return J({records:(window.__demo_feed||[]).slice(), n:(window.__demo_feed||[]).length});
-      case "/corpus/grade":       return J(gradeView(parseInt(qs.g||"1",10)));
+      case "/corpus/grade":       return J(gradeView(I, parseInt(qs.g||"1",10)));
       case "/corpus/grade_stats": return J({error:"regrade stats are not in this demo bundle"});
-      case "/corpus/map":         return J(dagMap());
-      case "/corpus/content":     return J(content(qs.id||""));
-      case "/corpus/neighborhood":return J(neighborhood(qs.id||""));
-      case "/corpus/search":      return J(search(qs.q||""));
+      case "/corpus/map":         return J(dagMap(I));
+      case "/corpus/content":     return J(content(I, qs.id||""));
+      case "/corpus/neighborhood":return J(neighborhood(I, qs.id||""));
+      case "/corpus/search":      return J(search(I, qs.q||""));
       case "/corpus/asset":       return J({error:"assets are not in this demo bundle"}, 404);
       case "/corpus/lit-search":  return J({error:"literature search is not in this demo bundle", results:[]});
-      // review READ trays (falqon-scoped)
-      case "/review/learned":     return J(DB.learned);
-      case "/review/substrate":   return J(DB.fork);
+      // review READ trays (per-corpus)
+      case "/review/learned":     return J(C.learned);
+      case "/review/substrate":   return J(C.fork);
       case "/review/findings":    return J({findings:[], counts:{total:0}, note:"no open findings on this corpus"});
     }
     if(path.indexOf("/corpus/")===0 || path.indexOf("/review/")===0 || path.indexOf("/manuscript/")===0)
@@ -206,7 +233,8 @@
   function honestVerb(){ setStatus("not in this bundle","warn"); }
   function renderDock(){
     var q=(window.__demo_feed||[]);
-    var h=DB.health||{}, orph=(h.def_orphans||[]), resc=(h.drafted_rescues||[]);
+    var AC=CORPORA[ACTIVE]||{};
+    var h=AC.health||{}, orph=(h.def_orphans||[]), resc=(h.drafted_rescues||[]);
     var qhtml = q.length ? q.slice().reverse().map(function(r){
       return "<div class='demo-row'><b>"+esc(r._state||"queued")+"</b> "+esc(r.kind)+" · "+
         esc(r.node_id)+"<br><span class='demo-dim'>"+esc((r.comment||"").slice(0,90))+"</span> "+
@@ -222,22 +250,22 @@
         "<textarea id='demo-comment' placeholder='your comment on this node…'></textarea>"+
         "<button id='demo-send'>queue comment</button>"+
         "<div id='demo-status' class='demo-status'></div>"+
-        "<div class='demo-subh'>your comments ("+q.length+")</div>"+qhtml;
+        "<div class='demo-subh'>your comments on <b>"+esc(ACTIVE)+"</b> ("+q.length+")</div>"+qhtml;
       var b=document.getElementById("demo-send"); if(b) b.onclick=queueComment;
     } else if(tab==="health"){
-      body.innerHTML="<div class='demo-subh'>connectivity</div>"+
-        "<div class='demo-row'><b>"+orph.length+" def-orphans</b><br><span class='demo-dim'>"+esc(orph.join(", "))+"</span></div>"+
+      body.innerHTML="<div class='demo-subh'>connectivity · "+esc(ACTIVE)+"</div>"+
+        "<div class='demo-row'><b>"+orph.length+" def-orphans</b><br><span class='demo-dim'>"+(esc(orph.join(", "))||"none — every term is grounded")+"</span></div>"+
         "<div class='demo-row'><b>"+resc.length+" drafted rescue</b><br><span class='demo-dim'>"+
           (resc.map(function(r){return esc(r.src+" → "+r.dst);}).join("<br>")||"—")+"</span></div>"+
         "<div class='demo-dim'>drafted edges: "+(h.drafted_edge_count||0)+"</div>";
     } else if(tab==="learned"){
-      var L=DB.learned||{};
-      body.innerHTML="<div class='demo-subh'>learned</div>"+
+      var L=AC.learned||{};
+      body.innerHTML="<div class='demo-subh'>learned · "+esc(ACTIVE)+"</div>"+
         "<div class='demo-row'>"+esc(L.note||"")+"</div>"+
         "<div class='demo-dim'>open frictions "+((L.open||{}).friction||0)+" · open forks "+((L.open||{}).fork||0)+"</div>";
     } else if(tab==="forks"){
-      var F=DB.fork||{};
-      body.innerHTML="<div class='demo-subh'>forks</div>"+
+      var F=AC.fork||{};
+      body.innerHTML="<div class='demo-subh'>forks · "+esc(ACTIVE)+"</div>"+
         "<div class='demo-row'>"+esc(F.note||"")+"</div>";
     }
   }
@@ -266,8 +294,122 @@
   }
   function buildBanner(){
     var b=document.createElement("div"); b.id="demo-banner";
-    b.innerHTML="Demo — falqon corpus, read-only except comments · commenting as <b>visitor:"+esc(VISITOR)+"</b>";
     document.body.insertBefore(b, document.body.firstChild);
+    renderBanner();
+  }
+  function renderBanner(){
+    var b=document.getElementById("demo-banner"); if(!b) return;
+    b.innerHTML="Demo — <b>"+esc(ACTIVE)+"</b> corpus ("+Object.keys(CORPORA).length+
+      " baked; switch at the corpus picker), read-only except comments · commenting as "+
+      "<b>visitor:"+esc(VISITOR)+"</b> · <a id='demo-tour-open'>what am I looking at?</a>";
+    var t=document.getElementById("demo-tour-open"); if(t) t.onclick=function(){ startTour(0); };
+  }
+  // ── corpus switch: the editor's own #corpus picker drives loadCorpus() (which re-fetches
+  // every /corpus/* with ?corpus=), so the graph/views follow natively. The dock + outbox
+  // live in this shim, so we watch the picker and swap ACTIVE (queue, project, health) to match.
+  function onCorpusSwitch(name){
+    if(!name || !CORPORA[name] || name===ACTIVE) return;
+    ACTIVE=name;
+    loadOutbox();                 // swap to this corpus's queue (window.__demo_feed)
+    renderBanner(); renderDock();
+  }
+
+  // ── the guided tour: spotlight each element, say what it is and how to use it ──
+  // Self-contained (no network); offered once on first unlock (localStorage flag),
+  // re-openable from the banner. Copy is mechanism-first per the site's de-slop law.
+  var TOUR=[
+    {sel:"#demo-banner", title:"The demo",
+     body:"This is the engine's own editor, running read-only over two real corpora, baked "+
+      "into this page at commit: the concept graph of a physics manuscript, and the concept "+
+      "graph of this system's own whitepaper. Switch between them at the corpus picker (top "+
+      "left). Nothing here talks to a server; the only thing you can add is a comment."},
+    {sel:"#left", title:"The index",
+     body:"Search finds any node by its content, never by id. Below it: the spine — the paper's "+
+      "argument in order; techniques — the machinery the corpus uses; gaps — what it currently "+
+      "admits it lacks. Click anything to focus it."},
+    {sel:"#centre", title:"The views",
+     body:"The centre shows the focused node's neighbourhood: what it draws from (its derivation), "+
+      "what draws from it (its consumers), and lateral nodes that share dependencies. The tabs "+
+      "change grain — tree and landscape show the whole graph; spine walks the argument."},
+    {sel:"#right", title:"The inspector",
+     body:"The focused node in full: its essence (what it claims, in one breath), its typed edges, "+
+      "and its citations. Follow an edge here and the focus moves with you — that walk down to "+
+      "evidence and back up is how the engine itself reads."},
+    {sel:"#demo-dock", title:"Comments",
+     body:"Open a node, pick a kind, write. Your comment is minted to the name you gave at the "+
+      "door and queues here; it lands in the engine's intake as a typed record, tied to the node "+
+      "you were on. Health, learned and forks show the corpus's own open ledger."},
+    {sel:null, title:"That's the machine",
+     body:"Wander. Everything is a node; every claim has edges; nothing is hidden behind the "+
+      "rendering. Reopen this tour any time from the banner."}
+  ];
+  var tourIdx=-1;
+  function tourEls(){
+    var w=document.getElementById("demo-tour-wrap");
+    if(w) return w;
+    w=document.createElement("div"); w.id="demo-tour-wrap";
+    w.innerHTML="<div id='demo-tour-spot'></div>"+
+      "<div id='demo-tour-card'><div id='demo-tour-title'></div><div id='demo-tour-body'></div>"+
+      "<div id='demo-tour-nav'><span id='demo-tour-count'></span><span style='flex:1'></span>"+
+      "<a id='demo-tour-prev'>back</a><a id='demo-tour-next'>next</a><a id='demo-tour-x'>close</a></div></div>";
+    document.body.appendChild(w);
+    document.getElementById("demo-tour-prev").onclick=function(){ showStep(tourIdx-1); };
+    document.getElementById("demo-tour-next").onclick=function(){ showStep(tourIdx+1); };
+    document.getElementById("demo-tour-x").onclick=endTour;
+    document.addEventListener("keydown", function(ev){
+      if(tourIdx<0) return;
+      if(ev.key==="Escape") endTour();
+      else if(ev.key==="ArrowRight") showStep(tourIdx+1);
+      else if(ev.key==="ArrowLeft") showStep(tourIdx-1);
+    });
+    window.addEventListener("resize", function(){ if(tourIdx>=0) placeStep(); });
+    return w;
+  }
+  function placeStep(){
+    var step=TOUR[tourIdx]; if(!step) return;
+    var spot=document.getElementById("demo-tour-spot");
+    var card=document.getElementById("demo-tour-card");
+    var el=step.sel ? document.querySelector(step.sel) : null;
+    if(el && el.scrollIntoView){ try{ el.scrollIntoView({block:"nearest"}); }catch(e){} }
+    if(el){
+      var r=el.getBoundingClientRect();
+      spot.style.display="block";
+      spot.style.left=(r.left-6)+"px"; spot.style.top=(r.top-6)+"px";
+      spot.style.width=(r.width+12)+"px"; spot.style.height=(r.height+12)+"px";
+      var below=r.bottom+16, ch=card.offsetHeight||180;
+      var top=(below+ch<window.innerHeight-12)? below : Math.max(12, r.top-ch-16);
+      card.style.top=top+"px";
+      var left=Math.min(Math.max(12, r.left), Math.max(12, window.innerWidth-card.offsetWidth-12));
+      card.style.left=left+"px";
+    } else {
+      spot.style.display="none";
+      card.style.top="50%"; card.style.left="50%";
+      card.style.transform="translate(-50%,-50%)"; return;
+    }
+    card.style.transform="";
+  }
+  function showStep(i){
+    if(i<0) i=0;
+    if(i>=TOUR.length){ endTour(); return; }
+    tourIdx=i; var step=TOUR[i]; tourEls().style.display="block";
+    // skip a step whose target is absent (layout variants)
+    if(step.sel && !document.querySelector(step.sel)){ showStep(i+1); return; }
+    document.getElementById("demo-tour-title").textContent=step.title;
+    document.getElementById("demo-tour-body").textContent=step.body;
+    document.getElementById("demo-tour-count").textContent=(i+1)+" / "+TOUR.length;
+    document.getElementById("demo-tour-prev").style.visibility = i===0 ? "hidden" : "visible";
+    document.getElementById("demo-tour-next").textContent = (i===TOUR.length-1) ? "done" : "next";
+    placeStep();
+  }
+  function startTour(i){ tourEls(); showStep(i||0); }
+  function endTour(){
+    tourIdx=-1; var w=document.getElementById("demo-tour-wrap");
+    if(w) w.style.display="none";
+    try{ localStorage.setItem("demo_tour_seen","1"); }catch(e){}
+  }
+  function offerTour(){
+    var seen=null; try{ seen=localStorage.getItem("demo_tour_seen"); }catch(e){}
+    if(!seen) startTour(0);
   }
   var STYLE = "#demo-banner{flex:none;background:#1a212c;"+
     "color:#e0af68;border-bottom:1px solid #2d3744;font:11.5px/1.5 ui-monospace,Menlo,monospace;"+
@@ -288,6 +430,19 @@
     "border-radius:6px;padding:5px;margin-bottom:4px}"+
     "#demo-dock-body button{background:#7aa2f7;color:#0e1116;border:0;border-radius:6px;padding:7px 10px;"+
     "font-weight:600;cursor:pointer;width:100%}"+
+    "#demo-banner a{color:#5ee6b0;cursor:pointer;text-decoration:underline}"+
+    "#demo-tour-wrap{display:none}"+
+    "#demo-tour-spot{position:fixed;z-index:10000;pointer-events:none;border:1.5px solid #e0af68;"+
+    "border-radius:8px;box-shadow:0 0 0 9999px rgba(6,9,14,.62)}"+
+    "#demo-tour-card{position:fixed;z-index:10001;width:min(340px,calc(100vw - 24px));"+
+    "background:#141a23;border:1px solid #2d3744;border-radius:10px;padding:12px 14px;"+
+    "color:#d7dee8;font:12.5px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;"+
+    "box-shadow:0 8px 30px rgba(0,0,0,.5)}"+
+    "#demo-tour-title{color:#e0af68;font-weight:700;margin-bottom:5px}"+
+    "#demo-tour-nav{display:flex;gap:12px;margin-top:10px;align-items:baseline}"+
+    "#demo-tour-nav a{color:#7aa2f7;cursor:pointer;font-weight:600}"+
+    "#demo-tour-nav #demo-tour-x{color:#6b7689;font-weight:400}"+
+    "#demo-tour-count{color:#6b7689;font-size:11px}"+
     ".demo-status{font-size:11px;margin-top:6px;min-height:14px;color:#9aa5b4}"+
     ".demo-status.ok{color:#9ece6a}.demo-status.warn{color:#e0af68}.demo-status.bad{color:#f7768e}"+
     ".demo-sub{color:#9aa5b4;margin-bottom:6px}.demo-subh{margin:10px 0 4px;color:#7aa2f7;font-weight:600;"+
@@ -329,11 +484,15 @@
       if(h.charAt(0)==="/" || offpage){ ev.preventDefault(); honestVerb(); }
     }, true);
     // keep window.__DEMO_FOCUS + the dock's focus line synced to the breadcrumb (the
-    // editor's FOCUS is lexical; the current crumb is its authoritative mirror).
+    // editor's FOCUS is lexical; the current crumb is its authoritative mirror), and watch
+    // the editor's #corpus picker to swap the dock/outbox when the corpus changes.
     setInterval(function(){
       var f=curFocus(); if(f) window.__DEMO_FOCUS=f;
       var el=document.getElementById("demo-focus"); if(el && f) el.textContent=f;
+      var sel=document.getElementById("corpus");
+      if(sel && sel.value && sel.value!==ACTIVE && CORPORA[sel.value]) onCorpusSwitch(sel.value);
     }, 250);
+    offerTour();   // first unlock only (localStorage flag); the banner reopens it
   }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", installLayer);
   else installLayer();

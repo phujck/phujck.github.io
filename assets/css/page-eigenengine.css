@@ -1,0 +1,270 @@
+/* page-eigenengine.css — layout for the EigenEngine page.
+   Uses only the shell's identity tokens (--accent gold, --link blue,
+   --refused red for refusals only, --evidence, --font families). No new hues. */
+
+.ee-mono { font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace; }
+
+/* ---- The exhibit: one object, many projections (graph centerpiece) ---- */
+.ee-exhibit {
+  margin-top: -1rem;
+}
+.ee-exhibit .container { max-width: 1180px; }
+.ee-overline {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.ee-exhibit-frame {
+  background:
+    radial-gradient(120% 90% at 12% 0%, rgba(201,169,110,0.06), transparent 60%),
+    var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -32px rgba(0,0,0,0.65);
+}
+.ee-exhibit-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 1.1rem 1.35rem 0.9rem;
+  border-bottom: 1px solid var(--border-glass);
+}
+.ee-exhibit-head h2 {
+  font-size: clamp(1.35rem, 3.4vw, 1.9rem);
+  line-height: 1.15;
+  margin: 0;
+  color: var(--text-primary);
+}
+.ee-exhibit-head h2 em { color: var(--accent-light); font-style: normal; }
+.ee-bakeline {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  text-align: right;
+  line-height: 1.5;
+}
+.ee-bakeline .num { color: var(--evidence); }
+
+.ee-graph-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(220px, 1fr);
+}
+.ee-canvas-wrap {
+  position: relative;
+  min-height: 460px;
+  border-right: 1px solid var(--border-glass);
+  background:
+    radial-gradient(90% 80% at 50% 45%, rgba(126,184,218,0.05), transparent 70%);
+  touch-action: pan-y; /* let vertical page scroll pass through on touch */
+}
+#ee-graph { display: block; width: 100%; height: 100%; cursor: grab; }
+#ee-graph.dragging { cursor: grabbing; }
+.ee-canvas-fallback {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem; text-align: center;
+  color: var(--text-secondary); font-size: 0.9rem;
+}
+.ee-graph-controls {
+  position: absolute; left: 12px; bottom: 12px;
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.ee-btn {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.68rem; letter-spacing: 0.04em;
+  background: rgba(10,14,26,0.72);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-glass);
+  border-radius: 6px; padding: 4px 9px; cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: color .15s, border-color .15s;
+}
+.ee-btn:hover, .ee-btn:focus-visible { color: var(--accent); border-color: var(--accent-dim); outline: none; }
+
+/* readout side panel */
+.ee-readout {
+  padding: 1.1rem 1.25rem;
+  display: flex; flex-direction: column; gap: 0.85rem;
+  min-height: 460px;
+}
+.ee-readout-kind {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent);
+}
+.ee-readout-label {
+  color: var(--text-primary); font-size: 0.98rem; line-height: 1.4;
+  min-height: 2.4em;
+}
+.ee-readout-id {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem; color: var(--evidence); word-break: break-all;
+}
+.ee-readout-edges { font-size: 0.82rem; color: var(--text-secondary); }
+.ee-readout-edges .num { color: var(--accent); }
+.ee-readout-hint { color: var(--text-muted); font-size: 0.82rem; line-height: 1.5; }
+.ee-legend { margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
+.ee-legend-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.76rem; color: var(--text-secondary);
+  background: none; border: 0; padding: 2px 0; cursor: pointer; text-align: left; width: 100%;
+  font-family: inherit;
+}
+.ee-legend-row:hover { color: var(--text-primary); }
+.ee-legend-row.dimmed { opacity: 0.4; }
+.ee-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 10px; }
+.ee-legend-row .num { color: var(--text-muted); margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; }
+.ee-orphan-note { font-size: 0.72rem; color: var(--refused); line-height: 1.5; }
+
+/* ---- Pipeline diagram ---- */
+.ee-pipeline-frame {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 1.4rem 1.35rem 1.1rem;
+}
+.ee-pipeline-svg-wrap { width: 100%; overflow-x: auto; }
+#ee-pipeline { display: block; width: 100%; height: auto; min-width: 620px; }
+.ee-stage rect, .ee-stage circle, .ee-stage polygon { transition: fill .18s, stroke .18s; cursor: pointer; }
+.ee-stage text { pointer-events: none; }
+.ee-stage:focus-visible { outline: none; }
+.ee-stage:focus-visible .ee-stage-shape { stroke: var(--accent-light); }
+.ee-pipe-edge { stroke: var(--border-glass); stroke-width: 1.5; fill: none; }
+.ee-pipe-edge.hot { stroke: var(--accent); }
+.ee-pipeline-card {
+  margin-top: 0.9rem;
+  min-height: 3.2em;
+  padding: 0.8rem 1rem;
+  border-left: 2px solid var(--accent);
+  background: var(--bg-glass);
+  border-radius: 0 8px 8px 0;
+}
+.ee-pipeline-card .k {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+  display: block; margin-bottom: 0.3rem;
+}
+.ee-pipeline-card p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.55; }
+.ee-pipeline-card .ee-addr { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; color: var(--evidence); }
+
+/* ---- Claim as asymmetric split ---- */
+.ee-claim-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 2.2rem;
+  align-items: start;
+}
+.ee-claim-rail {
+  position: sticky; top: 90px;
+  display: flex; flex-direction: column; gap: 0.75rem;
+  border-left: 1px solid var(--border-glass);
+  padding-left: 1.3rem;
+}
+.ee-stat { display: flex; flex-direction: column; }
+.ee-stat .v {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem; color: var(--accent); line-height: 1;
+}
+.ee-stat .l { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+/* ---- Principles as asymmetric two-column ---- */
+.ee-principles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.4rem;
+}
+.ee-principle {
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  padding: 1.15rem 1.25rem;
+  background: var(--bg-card);
+  position: relative;
+  transition: border-color .18s, transform .18s;
+}
+.ee-principle:hover { border-color: var(--accent-dim); transform: translateY(-2px); }
+.ee-principle::before {
+  content: attr(data-n);
+  position: absolute; top: 0.9rem; right: 1.1rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.ee-principle h3 { font-size: 1.02rem; color: var(--text-primary); margin: 0 0 0.5rem; padding-right: 2rem; }
+.ee-principle p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; margin: 0 0 0.7rem; }
+.ee-principle .ee-addr { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--evidence); }
+/* first principle spans wide for asymmetry */
+.ee-principles-grid > .ee-principle:first-child { grid-column: 1 / -1; }
+.ee-principles-grid > .ee-principle:first-child p { max-width: 62ch; }
+
+/* ---- Artifacts as staggered offset cards ---- */
+.ee-artifacts { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1.1rem; }
+.ee-artifact {
+  border: 1px solid var(--border-glass); border-radius: 12px;
+  padding: 1.2rem 1.25rem; background: var(--bg-card);
+  display: flex; flex-direction: column; gap: 0.55rem;
+  transition: border-color .18s, transform .18s;
+}
+.ee-artifact:hover { border-color: var(--accent-dim); transform: translateY(-3px); }
+.ee-artifact:nth-child(2) { transform: translateY(1.4rem); }
+.ee-artifact:nth-child(2):hover { transform: translateY(calc(1.4rem - 3px)); }
+.ee-artifact .src {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.66rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+}
+.ee-artifact h3 { margin: 0; font-size: 1.05rem; line-height: 1.25; }
+.ee-artifact h3 a { color: var(--text-primary); text-decoration: none; }
+.ee-artifact h3 a:hover { color: var(--link); }
+.ee-artifact p { margin: 0; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.55; }
+.ee-artifact .ee-artifact-links { margin-top: auto; display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: baseline; padding-top: 0.4rem; }
+.ee-artifact .ee-artifact-links a { color: var(--link); text-decoration: none; font-size: 0.85rem; }
+.ee-artifact .ee-artifact-links a:hover { color: var(--link-hover); }
+.ee-artifact .ee-addr { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--evidence); width: 100%; }
+
+/* ---- Refusals: keep the red left-border language ---- */
+.ee-refusals { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem 1.4rem; }
+.ee-refusal {
+  border-left: 2px solid var(--refused);
+  background: var(--refused-dim);
+  border-radius: 0 10px 10px 0;
+  padding: 1.05rem 1.2rem;
+}
+.ee-refusal h3 { margin: 0 0 0.5rem; font-size: 0.98rem; color: var(--text-primary); }
+.ee-refusal p { margin: 0 0 0.6rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+.ee-refusal .ee-addr { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--refused); }
+
+/* ---- Section header row (label + rule) ---- */
+.ee-sec-head { margin-bottom: 1.4rem; }
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .ee-graph-grid { grid-template-columns: 1fr; }
+  .ee-canvas-wrap { border-right: 0; border-bottom: 1px solid var(--border-glass); min-height: 360px; }
+  #ee-graph { min-height: 360px; }
+  .ee-readout { min-height: 0; }
+  .ee-legend { margin-top: 0.5rem; }
+  .ee-claim-grid { grid-template-columns: 1fr; gap: 1.4rem; }
+  .ee-claim-rail { position: static; border-left: 0; border-top: 1px solid var(--border-glass); padding-left: 0; padding-top: 1.2rem; flex-direction: row; flex-wrap: wrap; gap: 1.6rem; }
+  .ee-artifacts { grid-template-columns: 1fr; }
+  .ee-artifact:nth-child(2) { transform: none; }
+  .ee-artifact:nth-child(2):hover { transform: translateY(-3px); }
+  .ee-principles-grid { grid-template-columns: 1fr; }
+  .ee-refusals { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .ee-canvas-wrap { min-height: 300px; }
+  #ee-graph { min-height: 300px; }
+  .ee-bakeline { text-align: left; }
+  .ee-exhibit-head { padding: 1rem 1rem 0.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ee-principle, .ee-artifact { transition: none; }
+  .ee-principle:hover, .ee-artifact:hover { transform: none; }
+}

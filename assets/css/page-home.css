@@ -1,0 +1,189 @@
+/* ============================================================
+   page-home.css — home-only composition. Loaded from inside
+   site/content/index.html (the innards), not the shared shell.
+   Colour comes only from the projected identity tokens
+   (--accent, --border-glass, ...). No new palette here.
+   ============================================================ */
+
+/* ---------- Hero: quiet generative backdrop ---------- */
+/* The sketch background (.page-hero-bg, z-index:-1) stays. A canvas
+   constellation sits above it and below the content; content is lifted
+   into its own stacking layer so text always reads on top. */
+.hero-constellation {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.hero .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- The Work: two programmes + three outlets ---------- */
+.work-programmes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.work-outlets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.work-cell {
+  position: relative;
+  min-width: 0;
+  padding: var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: background var(--transition-base),
+              border-color var(--transition-base),
+              transform var(--transition-base);
+}
+
+/* the interactive touch: an accent rule that draws in on hover,
+   left-anchored. Evidence stays permanently visible (address density
+   is the aesthetic here) — the rule is the only added motion. */
+.work-cell::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--transition-slow);
+}
+
+.work-cell:hover,
+.work-cell:focus-within {
+  background: var(--bg-card-hover);
+  border-color: rgba(201, 169, 110, 0.35);
+  transform: translateY(-2px);
+}
+
+.work-cell:hover::after,
+.work-cell:focus-within::after {
+  transform: scaleX(1);
+}
+
+.work-panel {
+  padding: var(--space-xl);
+}
+
+.work-cell .pub-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  line-height: 1.35;
+}
+
+.work-panel .pub-title {
+  font-size: 1.35rem;
+}
+
+.work-outlet .pub-title {
+  font-size: 1.05rem;
+}
+
+.work-cell .pub-title a {
+  color: var(--text-primary);
+}
+
+.work-cell .pub-title a:hover {
+  color: var(--accent);
+}
+
+.work-cell .pub-blurb {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.work-outlet .pub-blurb {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.work-cell .pub-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.work-cell .evidence {
+  overflow-wrap: anywhere;
+}
+
+/* the writing outlet's latest-post hydration block keeps its ids;
+   only the spacing is home-local so it sits in the smaller cell. */
+.work-outlet #home-latest-post {
+  margin-top: var(--space-md);
+}
+
+/* ---------- Engine exhibit: one live figure, welded to gold ---------- */
+.engine-figure {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5ch;
+  margin-top: var(--space-lg);
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(201, 169, 110, 0.3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--evidence);
+  letter-spacing: 0.01em;
+}
+
+.engine-figure b {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ---------- Responsive: 375px is a hard gate ---------- */
+@media (max-width: 720px) {
+  .work-programmes {
+    grid-template-columns: 1fr;
+  }
+  .work-outlets {
+    grid-template-columns: 1fr;
+  }
+  .work-panel {
+    padding: var(--space-lg);
+  }
+  .work-panel .pub-title {
+    font-size: 1.2rem;
+  }
+}
+
+/* ---------- Reduced motion: the rules and lift go quiet ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .work-cell,
+  .work-cell::after {
+    transition: none;
+  }
+  .work-cell:hover,
+  .work-cell:focus-within {
+    transform: none;
+  }
+  .work-cell:hover::after,
+  .work-cell:focus-within::after {
+    transform: scaleX(1);
+  }
+}

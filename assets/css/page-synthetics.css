@@ -1,0 +1,321 @@
+/* page-synthetics.css — form for the synthetics page (N55 anti-generative
+   grammar): the layout is the theory's own shape, not decoration. Two set
+   pieces — the synthetic decomposition drawn as a sorting diagram beside the
+   premise, and the result ladder as a connected vertical spine. Self-contained,
+   no network references. Progressive enhancement: every reveal/interaction is
+   gated on the `.syn-js` root class the script adds, so JS-off reads straight
+   through. */
+
+/* ============================================================
+   1 · THE SYNTHETIC DECOMPOSITION — premise + sorting diagram
+   ============================================================ */
+
+.syn-premise-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: var(--space-2xl);
+  align-items: start;
+}
+
+/* the three terms in the prose are the diagram's three channels */
+.syn-term {
+  font-style: italic;
+  color: var(--text-secondary);
+  border-bottom: 1px dashed transparent;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  cursor: help;
+}
+.syn-term[data-term="null"].is-lit    { color: var(--text-primary); border-bottom-color: var(--text-muted); }
+.syn-term[data-term="cost"].is-lit    { color: var(--accent-light); border-bottom-color: var(--accent); }
+.syn-term[data-term="residue"].is-lit { color: #d98b80; border-bottom-color: var(--refused); }
+
+/* the figure column */
+.syn-figure {
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-lg));
+  margin: 0;
+}
+
+.syn-diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* input trajectories: a lawful world, many faint paths */
+.syn-input {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  opacity: 0.28;
+}
+.syn-input.syn-flow {
+  stroke-dasharray: 5 9;
+  animation: syn-drift 5.5s linear infinite;
+}
+
+/* the finite aperture — the description */
+.syn-aperture {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  opacity: 0.85;
+}
+.syn-aperture-core { fill: var(--accent-dim); }
+
+/* the three output channels */
+.syn-channel { cursor: pointer; }
+.syn-channel:focus { outline: none; }
+
+.syn-channel-path {
+  fill: none;
+  stroke-width: 1.4;
+  transition: stroke-width var(--transition-fast), opacity var(--transition-fast);
+}
+.syn-channel[data-channel="null"]    .syn-channel-path { stroke: var(--text-muted); }
+.syn-channel[data-channel="cost"]    .syn-channel-path { stroke: var(--accent);     stroke-width: 2; }
+.syn-channel[data-channel="residue"] .syn-channel-path { stroke: var(--refused);    stroke-dasharray: 6 5; }
+
+/* null law fades out — absorbed; the fade is a real gradient stroke */
+.syn-channel[data-channel="null"] .syn-channel-path { opacity: 0.45; }
+
+.syn-channel-hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.syn-channel-flow {
+  stroke-dasharray: 4 8;
+  animation: syn-drift 4s linear infinite;
+}
+.syn-channel[data-channel="residue"] .syn-channel-flow { animation-duration: 5.5s; }
+
+/* channel endpoint markers */
+.syn-node { transition: r var(--transition-fast), opacity var(--transition-fast); }
+.syn-channel[data-channel="null"]    .syn-node { fill: var(--text-muted); opacity: 0.5; }
+.syn-channel[data-channel="cost"]    .syn-node { fill: var(--accent); }
+.syn-channel[data-channel="residue"] .syn-node { fill: var(--refused); }
+
+/* channel labels — mono, evidence register */
+.syn-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  fill: var(--evidence);
+  transition: fill var(--transition-fast);
+}
+.syn-label-tag {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  fill: var(--text-muted);
+}
+
+/* lit state (hover / focus / matched from prose) */
+.syn-channel.is-lit .syn-channel-path { stroke-width: 3; opacity: 1; }
+.syn-channel.is-lit .syn-node { r: 6; opacity: 1; }
+.syn-channel[data-channel="null"].is-lit    .syn-label { fill: var(--text-primary); }
+.syn-channel[data-channel="cost"].is-lit    .syn-label { fill: var(--accent-light); }
+.syn-channel[data-channel="residue"].is-lit .syn-label { fill: #d98b80; }
+
+/* factual hover card */
+.syn-cards { margin-top: var(--space-md); min-height: 3.5rem; }
+.syn-card {
+  display: none;
+  border-left: 2px solid var(--border-glass);
+  padding: var(--space-sm) 0 var(--space-sm) var(--space-md);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.syn-card.is-shown { display: block; }
+.syn-card[data-card="null"]    { border-left-color: var(--text-muted); }
+.syn-card[data-card="cost"]    { border-left-color: var(--accent); }
+.syn-card[data-card="residue"] { border-left-color: var(--refused); }
+.syn-card b { color: var(--text-primary); font-weight: 600; }
+.syn-card-hint {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding-left: var(--space-md);
+}
+.syn-js .syn-card-hint.is-hidden { display: none; }
+
+/* ============================================================
+   2 · THE RESULT LADDER — five drafts on one connected spine
+   ============================================================ */
+
+.syn-ladder {
+  position: relative;
+  margin-top: var(--space-xl);
+  padding-left: 2.75rem;
+}
+
+/* the spine */
+.syn-rail {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 2px;
+  background: var(--border-glass);
+  overflow: visible;
+}
+.syn-rail-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: top;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-warm-2) 55%, var(--refused) 100%);
+  opacity: 0.85;
+}
+/* under JS the fill grows on scroll; without JS it is simply present */
+.syn-js .syn-rail-fill { transform: scaleY(0); transition: transform 900ms var(--ease-out); }
+.syn-js .syn-ladder.is-revealed .syn-rail-fill { transform: scaleY(1); }
+
+.syn-rungs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.syn-rung {
+  position: relative;
+}
+
+/* the node on the spine */
+.syn-rung::before {
+  content: '';
+  position: absolute;
+  left: -2.34rem;
+  top: 1.15rem;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 2px solid var(--text-muted);
+  transition: border-color var(--transition-base), background var(--transition-base),
+              transform var(--transition-base), box-shadow var(--transition-base);
+  z-index: 2;
+}
+/* the connector stub from spine to card */
+.syn-rung::after {
+  content: '';
+  position: absolute;
+  left: -1.9rem;
+  top: 1.48rem;
+  width: 1.55rem;
+  height: 1px;
+  background: var(--border-glass);
+  transition: background var(--transition-base), width var(--transition-base);
+  z-index: 1;
+}
+
+/* the foundation rung — larger node, the base the rest spend against */
+.syn-rung.is-foundation::before {
+  width: 15px;
+  height: 15px;
+  left: -2.45rem;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-dim);
+}
+
+/* the experimental rung — dashed, an open laboratory */
+.syn-rung.is-open::before {
+  border-style: dashed;
+  border-color: var(--refused);
+}
+
+/* reveal-on-scroll (JS only) */
+.syn-js .syn-rung { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+.syn-js .syn-rung.is-in { opacity: 1; transform: none; }
+
+/* hover / focus-within: the rung joins the argument */
+.syn-rung:hover::before,
+.syn-rung:focus-within::before {
+  border-color: var(--accent);
+  transform: scale(1.25);
+  box-shadow: 0 0 0 5px var(--accent-dim);
+}
+.syn-rung.is-foundation:hover::before,
+.syn-rung.is-foundation:focus-within::before { transform: scale(1.1); }
+.syn-rung:hover::after,
+.syn-rung:focus-within::after {
+  background: var(--accent);
+  width: 1.75rem;
+}
+
+.syn-rung .pub-item { margin: 0; }
+
+.syn-rung-index {
+  position: absolute;
+  left: -2.75rem;
+  top: -0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: -0.02em;
+}
+
+/* the ledger axis note running alongside the spine */
+.syn-ladder-axis {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: left center;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ============================================================
+   3 · count-up (JS sets the start; no-JS shows the real number)
+   ============================================================ */
+.syn-js .syn-count[data-count] { font-variant-numeric: tabular-nums; }
+
+/* ============================================================
+   MOBILE — 375px must be clean: stack, simplify, no overflow
+   ============================================================ */
+@media (max-width: 720px) {
+  .syn-premise-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
+  .syn-figure { position: static; order: 2; }
+  /* thin the densest faint input lines so the small figure stays legible */
+  .syn-input.syn-input-extra { display: none; }
+  .syn-label { font-size: 13px; }
+  .syn-ladder-axis { display: none; }
+  .syn-ladder { padding-left: 2.25rem; }
+  .syn-rung-index { left: -2.25rem; }
+}
+
+@media (max-width: 480px) {
+  .syn-ladder { padding-left: 2rem; }
+  .syn-rung::before { left: -1.85rem; }
+  .syn-rung.is-foundation::before { left: -1.95rem; }
+  .syn-rung::after { left: -1.45rem; width: 1.1rem; }
+  .syn-rung-index { left: -2rem; }
+}
+
+/* ============================================================
+   MOTION — respect the reduced-motion preference absolutely
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .syn-input.syn-flow,
+  .syn-channel-flow { animation: none; }
+  .syn-js .syn-rail-fill { transform: scaleY(1); transition: none; }
+  .syn-js .syn-rung { opacity: 1; transform: none; transition: none; }
+  .syn-node, .syn-channel-path, .syn-rung::before, .syn-rung::after { transition: none; }
+}
+
+@keyframes syn-drift {
+  to { stroke-dashoffset: -28; }
+}

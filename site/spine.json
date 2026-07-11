@@ -16,14 +16,14 @@
         "href": "/synthetics.html"
       },
       {
+        "key": "eigenengine",
+        "label": "EigenEngine",
+        "href": "/eigenengine.html"
+      },
+      {
         "key": "physics",
         "label": "Physics",
         "href": "/physics.html"
-      },
-      {
-        "key": "visualisations",
-        "label": "Visualisations",
-        "href": "/visualisations.html"
       },
       {
         "key": "talks",
@@ -185,46 +185,43 @@
       "body_scripts": "  <script>\n    fetch('https://littlelearningmachine.substack.com/api/v1/posts/?limit=1')\n      .then(function (r) { return r.json(); })\n      .then(function (posts) {\n        if (!posts || !posts.length) return;\n        var p = posts[0];\n        document.getElementById('substack-latest-link').href = p.canonical_url;\n        document.getElementById('substack-latest-title').textContent = p.title;\n        if (p.subtitle) document.getElementById('substack-latest-subtitle').textContent = p.subtitle;\n        var date = new Date(p.post_date).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });\n        document.getElementById('substack-latest-date').textContent = date;\n        document.getElementById('substack-latest').style.display = '';\n      })\n      .catch(function () { });\n  </script>"
     },
     {
-      "path": "visualisations.html",
-      "layout": "full",
-      "nav_active": "visualisations",
-      "title": "Visualisations — Gerard McCaul",
-      "description": "Interactive mathematical visualisations by Dr. Gerard McCaul  -  dynamical systems, Koopman operators, phase portraits, and Carleman lifting.",
-      "canonical": "https://gmccaul.co.uk/visualisations.html",
-      "og_type": "website",
-      "og_title": "Visualisations — Gerard McCaul",
-      "og_description": "Interactive mathematical visualisations: phase portraits, Koopman operators, Carleman lifting, and the dimensionality-nonlinearity trade.",
-      "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
-      "twitter_card": "summary",
-      "twitter_title": "Visualisations — Gerard McCaul",
-      "twitter_description": "Interactive mathematical visualisations: dynamical systems, Koopman operators, Carleman lifting.",
-      "twitter_image": "https://gmccaul.co.uk/assets/img/me.jpg",
-      "extra_css": [
-        "/assets/css/page-visualisations.css"
-      ],
-      "og_image_width": "1200",
-      "og_image_height": "630",
-      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"CollectionPage\",\n    \"name\": \"Visualisations  -  Gerard McCaul\",\n    \"description\": \"Interactive mathematical visualisations by Dr. Gerard McCaul.\",\n    \"url\": \"https://gmccaul.co.uk/visualisations.html\",\n    \"author\": {\n      \"@type\": \"Person\",\n      \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n      \"name\": \"Gerard McCaul\"\n    }\n  }"
-    },
-    {
       "path": "synthetics.html",
       "layout": "full",
       "nav_active": "synthetics",
       "title": "Synthetics — Gerard McCaul",
-      "description": "Synthetics: Statistical Lawhood Under Finite Description. A master guide and living experiment in agentic orchestration.",
+      "description": "Synthetics: statistical lawhood under finite description. The premise, the result ladder of five working drafts, and the engine built from the theory.",
       "canonical": "https://gmccaul.co.uk/synthetics.html",
       "og_type": "website",
       "og_title": "Synthetics — Gerard McCaul",
-      "og_description": "Synthetics: Statistical Lawhood Under Finite Description. A master guide and living experiment in agentic orchestration.",
+      "og_description": "Synthetics: statistical lawhood under finite description. The premise, the result ladder of five working drafts, and the engine built from the theory.",
       "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
       "twitter_card": "summary",
       "twitter_title": "Synthetics — Gerard McCaul",
-      "twitter_description": "Synthetics: Statistical Lawhood Under Finite Description. A master guide and living experiment in agentic orchestration.",
+      "twitter_description": "Statistical lawhood under finite description: the premise, five working drafts, and the engine.",
       "twitter_image": "https://gmccaul.co.uk/assets/img/me.jpg",
       "extra_css": [],
       "og_image_width": "1200",
       "og_image_height": "630",
       "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"Person\",\n    \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n    \"name\": \"Gerard McCaul\",\n    \"honorificPrefix\": \"Dr.\",\n    \"url\": \"https://gmccaul.co.uk/\",\n    \"image\": \"https://gmccaul.co.uk/assets/img/me.jpg\",\n    \"jobTitle\": \"Research Associate\",\n    \"sameAs\": [\n      \"https://scholar.google.com/citations?user=GMHiq1IAAAAJ&hl=en\",\n      \"https://orcid.org/0000-0001-7972-456X\",\n      \"https://github.com/phujck\",\n      \"https://littlelearningmachine.substack.com/\"\n    ]\n  }"
+    },
+    {
+      "path": "eigenengine.html",
+      "layout": "full",
+      "nav_active": "eigenengine",
+      "title": "EigenEngine — Gerard McCaul",
+      "description": "EigenEngine: the synthetics built into a machine. A corpus compiled into a graded structure, documents generated from it by reconstruction — with the engine's own process records as evidence.",
+      "canonical": "https://gmccaul.co.uk/eigenengine.html",
+      "og_type": "website",
+      "og_title": "EigenEngine — Gerard McCaul",
+      "og_description": "The synthetics built into a machine: memory as reconstruction, generation as projection, evidence from the engine's own process records.",
+      "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "twitter_card": "summary",
+      "twitter_title": "EigenEngine — Gerard McCaul",
+      "twitter_description": "The synthetics built into a machine: memory as reconstruction, generation as projection.",
+      "extra_css": [],
+      "og_image_width": "1200",
+      "og_image_height": "630",
+      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"WebPage\",\n    \"name\": \"EigenEngine - Gerard McCaul\",\n    \"description\": \"EigenEngine: the synthetics built into a machine.\",\n    \"url\": \"https://gmccaul.co.uk/eigenengine.html\",\n    \"author\": {\n      \"@type\": \"Person\",\n      \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n      \"name\": \"Gerard McCaul\"\n    }\n  }"
     },
     {
       "path": "404.html",

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Laplace — falqon cockpit (sealed demo)</title>
+<title>Laplace — conceptric cockpit (sealed demo)</title>
 <style>
   :root{ color-scheme: dark; }
   html,body{margin:0;height:100%;background:#0e1116;color:#d7dee8;
@@ -26,8 +26,9 @@
 </head>
 <body>
   <div class="card">
-    <h1><b>Laplace</b> · falqon cockpit</h1>
-    <p class="sub">The conceptric cockpit for the paper_falqon corpus. Read-only except comments.</p>
+    <h1><b>Laplace</b> · conceptric cockpit</h1>
+    <p class="sub">The conceptric cockpit over two real corpora — a physics manuscript and
+      this system's own whitepaper. Read-only except comments.</p>
     <label for="pass">passphrase</label>
     <input id="pass" type="password" autocomplete="off" placeholder="passphrase">
     <label for="name">your display name <span style="color:#e0af68">(required)</span></label>
@@ -35,8 +36,8 @@
     <button id="go">unlock</button>
     <div id="msg" class="msg"></div>
     <div class="use"><b>how your comment is used:</b> a comment becomes a JSON record stamped
-      <code>visitor:&lt;name&gt;</code>; with a push token set, it is written to the paper_falqon
-      inbox on GitHub.</div>
+      <code>visitor:&lt;name&gt;</code> and tagged with the corpus you were viewing; with a push
+      token set, it is written to that corpus's inbox on GitHub.</div>
   </div>
 <script>
 
