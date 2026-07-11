@@ -1,27 +1,71 @@
 /* ============================================================
    page-home.css — home-only composition. Loaded from inside
-   site/content/index.html (the innards), not the shared shell.
+   site/content/index.html (the innards), after the shared shell
+   style.css, so its rules win on equal specificity.
    Colour comes only from the projected identity tokens
    (--accent, --border-glass, ...). No new palette here.
+
+   Round 2 (his verdict: "too gimmicky ... do assets properly"):
+   the pointer-parallax constellation is gone. The hero rests on
+   the author's own gold-on-black montage — a real artifact —
+   composed as one static, right-anchored texture. Motion budget
+   is effectively zero: no drift, no hover-lift, no rule draw-in.
    ============================================================ */
 
-/* ---------- Hero: quiet generative backdrop ---------- */
-/* The sketch background (.page-hero-bg, z-index:-1) stays. A canvas
-   constellation sits above it and below the content; content is lifted
-   into its own stacking layer so text always reads on top. */
-.hero-constellation {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.9;
+/* ---------- Hero: the montage, composed and static ---------- */
+/* The author's home_hero_sketch.png (guitars, bra-kets, a Bloch
+   sphere, staves, a quill) is gold-on-black already — screen blend
+   drops the black and lets only the gold ink read, so it sits in
+   the palette without a filter. Anchored right, behind the portrait
+   cluster; masked out over the text column on the left so the bio
+   stays crisp. This is the asset done properly, not decoration on
+   top of it. */
+.home-hero {
+  /* the scaled portrait's transparent margins would otherwise push
+     the document wider than the viewport — clip them (no scrollbar,
+     vertical layout untouched). */
+  overflow-x: clip;
+}
+
+.home-hero-bg {
+  background-image: url('/assets/img/home_hero_sketch.png');
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  filter: none;
+  opacity: 0.3;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 40%, #000 80%, #000 100%);
+  mask-image: linear-gradient(to right, transparent 0%, transparent 40%, #000 80%, #000 100%);
 }
 
 .hero .container {
   position: relative;
   z-index: 1;
+}
+
+/* The portrait: contained so it never drives horizontal overflow,
+   still large enough to command the right of the hero. */
+.home-hero .hero-sketch {
+  transform: scale(1.5) translateX(4%);
+}
+
+/* The credit sits quietly under the portrait, right-aligned to the
+   drawing. The margin clears the visually-scaled sketch (transform
+   does not reflow, so flow position needs the offset). */
+.home-hero .sketch-caption {
+  margin-top: 6.5rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: right;
+  color: var(--text-muted);
+  opacity: 0.85;
+  position: relative;
+  z-index: 3;
+}
+
+.home-hero .sketch-caption a {
+  color: var(--link);
 }
 
 /* ---------- The Work: two programmes + three outlets ---------- */
@@ -39,45 +83,30 @@
   margin-top: var(--space-md);
 }
 
+/* Each cell is a specimen, not a floating glass card: a static left
+   accent rule (echoing the engine panel below), and the mono address
+   pinned to a shared baseline across the row. No lift, no draw-in —
+   the composition carries itself at rest. The only hover response is
+   colour: the rule warms, the title takes the accent and underlines. */
 .work-cell {
   position: relative;
   min-width: 0;
-  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg) var(--space-xl);
   background: var(--bg-card);
   border: 1px solid var(--border-glass);
+  border-left: 2px solid var(--accent-dim);
   border-radius: var(--radius-md);
-  overflow: hidden;
   transition: background var(--transition-base),
-              border-color var(--transition-base),
-              transform var(--transition-base);
-}
-
-/* the interactive touch: an accent rule that draws in on hover,
-   left-anchored. Evidence stays permanently visible (address density
-   is the aesthetic here) — the rule is the only added motion. */
-.work-cell::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 100%;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform var(--transition-slow);
+              border-color var(--transition-base);
 }
 
 .work-cell:hover,
 .work-cell:focus-within {
   background: var(--bg-card-hover);
-  border-color: rgba(201, 169, 110, 0.35);
-  transform: translateY(-2px);
-}
-
-.work-cell:hover::after,
-.work-cell:focus-within::after {
-  transform: scaleX(1);
+  border-color: var(--border-glass);
+  border-left-color: var(--accent);
 }
 
 .work-panel {
@@ -101,10 +130,17 @@
 
 .work-cell .pub-title a {
   color: var(--text-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
 }
 
+.work-cell:hover .pub-title a,
+.work-cell:focus-within .pub-title a,
 .work-cell .pub-title a:hover {
   color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
 
 .work-cell .pub-blurb {
@@ -117,13 +153,19 @@
 .work-outlet .pub-blurb {
   font-size: 0.85rem;
   color: var(--text-muted);
+  line-height: 1.65;
 }
 
+/* the mono address row, pinned to the bottom of every cell that has
+   one, above a hairline — so the evidence lines sit on one baseline
+   across the row (address density is the aesthetic; it stays put). */
 .work-cell .pub-links {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
-  margin-top: var(--space-md);
+  margin-top: auto;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-glass);
 }
 
 .work-cell .evidence {
@@ -136,12 +178,22 @@
   margin-top: var(--space-md);
 }
 
-/* ---------- Engine exhibit: one live figure, welded to gold ---------- */
+/* ---------- Engine exhibit: the corpora as record ---------- */
+/* Two real corpora, each pill keyed to the conceptric it counts
+   (paths in the title attribute). Numbers verified against
+   paper_falqon/ and eigenengine/ manuscripts. */
+.engine-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
 .engine-figure {
   display: inline-flex;
   align-items: baseline;
   gap: 0.5ch;
-  margin-top: var(--space-lg);
   padding: 0.3rem 0.7rem;
   border: 1px solid rgba(201, 169, 110, 0.3);
   border-radius: var(--radius-sm);
@@ -149,6 +201,15 @@
   font-size: 0.8rem;
   color: var(--evidence);
   letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.engine-figure .corpus {
+  font-size: 0.82em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-right: 0.4ch;
 }
 
 .engine-figure b {
@@ -170,20 +231,26 @@
   .work-panel .pub-title {
     font-size: 1.2rem;
   }
+  /* the montage would fight the stacked, full-width text on a phone;
+     drop it to a quiet ambient level and let it read behind the
+     portrait at the top only. */
+  .home-hero-bg {
+    opacity: 0.22;
+    background-position: center top;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
+  }
+  /* reclaim the phone's width: the shell's engine panel pads by 3rem
+     each side, which crowds the corpus pills and lede at 375px. */
+  .engine-panel {
+    padding: var(--space-lg);
+  }
 }
 
-/* ---------- Reduced motion: the rules and lift go quiet ---------- */
+/* ---------- Reduced motion: colour transitions go quiet ---------- */
 @media (prefers-reduced-motion: reduce) {
   .work-cell,
-  .work-cell::after {
+  .work-cell .pub-title a {
     transition: none;
-  }
-  .work-cell:hover,
-  .work-cell:focus-within {
-    transform: none;
-  }
-  .work-cell:hover::after,
-  .work-cell:focus-within::after {
-    transform: scaleX(1);
   }
 }

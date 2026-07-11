@@ -123,77 +123,64 @@
         </div>
 
         <figure class="syn-figure">
-          <svg id="syn-diagram" class="syn-diagram" viewBox="0 0 500 340" role="img"
+          <svg id="syn-diagram" class="syn-diagram" viewBox="0 0 640 300" role="img"
                aria-labelledby="syn-diagram-title syn-diagram-desc" preserveAspectRatio="xMidYMid meet">
             <title id="syn-diagram-title">The synthetic decomposition</title>
             <desc id="syn-diagram-desc">A lawful world of many trajectories is forced through a finite
               aperture — the description — and sorted into three channels: null law absorbed to the
               background, visible cost retained and paid for, and closure residue as structured failure.</desc>
 
-            <!-- input: a lawful world, many faint trajectories -->
+            <!-- input: a lawful world of many trajectories -->
             <g aria-hidden="true">
-              <path class="syn-input syn-flow syn-input-extra" d="M0,60 C60,72 120,140 178,168" />
-              <path class="syn-input syn-flow" d="M0,95 C70,100 130,150 178,169" />
-              <path class="syn-input syn-flow syn-input-extra" d="M0,120 C80,122 130,155 178,169" />
-              <path class="syn-input syn-flow" d="M0,135 C70,140 130,160 178,170" />
-              <path class="syn-input syn-flow" d="M0,170 C60,170 120,170 178,170" />
-              <path class="syn-input syn-flow" d="M0,205 C70,200 130,180 178,171" />
-              <path class="syn-input syn-flow" d="M0,245 C70,240 130,190 178,172" />
-              <path class="syn-input syn-flow syn-input-extra" d="M0,285 C60,278 120,200 178,173" />
+              <path class="syn-input syn-input-extra" d="M6,54 C74,70 132,120 183,148" />
+              <path class="syn-input"                 d="M6,88 C74,100 132,136 183,149" />
+              <path class="syn-input syn-input-extra" d="M6,118 C74,124 132,146 183,150" />
+              <path class="syn-input"                 d="M6,150 C74,150 132,150 183,150" />
+              <path class="syn-input"                 d="M6,184 C74,178 132,160 183,151" />
+              <path class="syn-input syn-input-extra" d="M6,214 C74,204 132,170 183,152" />
+              <path class="syn-input"                 d="M6,246 C74,234 132,180 183,153" />
             </g>
+            <text class="syn-orient" x="6" y="30">a lawful world</text>
 
             <!-- the finite aperture: the description -->
             <g aria-hidden="true">
-              <path class="syn-aperture-core" d="M188,142 C204,156 204,184 188,198 C172,184 172,156 188,142 Z" />
-              <path class="syn-aperture" d="M188,140 C206,155 206,185 188,200 C170,185 170,155 188,140 Z" />
+              <path class="syn-aperture-core" d="M195,122 C209,138 209,162 195,178 C181,162 181,138 195,122 Z" />
+              <path class="syn-aperture"      d="M195,120 C210,137 210,163 195,180 C180,163 180,137 195,120 Z" />
             </g>
+            <text class="syn-orient syn-orient-mid" x="195" y="196" text-anchor="middle">the description</text>
 
             <!-- channel 1: null law, absorbed -->
             <g class="syn-channel" data-channel="null" aria-label="null law, absorbed to the background">
-              <path class="syn-channel-path syn-channel-flow" d="M205,170 C280,150 330,90 405,62" />
-              <circle class="syn-node" cx="410" cy="60" r="4" />
-              <text class="syn-label" x="400" y="44" text-anchor="end">null law</text>
-              <text class="syn-label-tag" x="400" y="57" text-anchor="end">absorbed</text>
-              <rect class="syn-channel-hit" x="205" y="40" width="205" height="70" />
+              <path class="syn-channel-path" d="M210,148 C285,140 330,95 386,62" />
+              <circle class="syn-node" cx="388" cy="60" r="4" />
+              <text class="syn-label"     x="404" y="57">null law</text>
+              <text class="syn-label-tag" x="404" y="75">absorbed</text>
+              <rect class="syn-channel-hit" x="205" y="34" width="200" height="66" />
             </g>
 
             <!-- channel 2: visible cost, retained -->
             <g class="syn-channel" data-channel="cost" aria-label="visible cost, retained and paid for">
-              <path class="syn-channel-path syn-channel-flow" d="M205,170 C285,170 340,170 405,170" />
-              <circle class="syn-node" cx="410" cy="170" r="4.5" />
-              <text class="syn-label" x="400" y="158" text-anchor="end">visible cost</text>
-              <text class="syn-label-tag" x="400" y="188" text-anchor="end">retained · KL</text>
-              <rect class="syn-channel-hit" x="205" y="140" width="205" height="60" />
+              <path class="syn-channel-path" d="M210,150 L386,150" />
+              <circle class="syn-node" cx="388" cy="150" r="4.5" />
+              <text class="syn-label"     x="404" y="147">visible cost</text>
+              <text class="syn-label-tag" x="404" y="165">retained · KL</text>
+              <rect class="syn-channel-hit" x="205" y="118" width="200" height="64" />
             </g>
 
             <!-- channel 3: closure residue, structured failure -->
             <g class="syn-channel" data-channel="residue" aria-label="closure residue, structured failure">
-              <path class="syn-channel-path syn-channel-flow" d="M205,170 C280,190 330,250 405,278" />
-              <circle class="syn-node" cx="410" cy="280" r="4.5" />
+              <path class="syn-channel-path" d="M210,152 C285,160 330,205 386,240" />
+              <circle class="syn-node" cx="388" cy="242" r="4.5" />
               <g class="syn-residue-scatter" aria-hidden="true">
-                <line class="syn-channel-path" x1="392" y1="266" x2="400" y2="266" />
-                <line class="syn-channel-path" x1="388" y1="292" x2="398" y2="292" />
-                <line class="syn-channel-path" x1="420" y1="268" x2="428" y2="268" />
-                <line class="syn-channel-path" x1="422" y1="292" x2="430" y2="292" />
+                <circle cx="402" cy="234" r="1.7" />
+                <circle cx="410" cy="250" r="1.7" />
+                <circle cx="398" cy="256" r="1.7" />
               </g>
-              <text class="syn-label" x="380" y="302" text-anchor="end">closure residue</text>
-              <text class="syn-label-tag" x="380" y="315" text-anchor="end">structured failure</text>
-              <rect class="syn-channel-hit" x="205" y="230" width="205" height="90" />
+              <text class="syn-label"     x="420" y="239">closure residue</text>
+              <text class="syn-label-tag" x="420" y="257">structured failure</text>
+              <rect class="syn-channel-hit" x="205" y="200" width="200" height="80" />
             </g>
           </svg>
-
-          <figcaption class="syn-cards">
-            <p class="syn-card-hint">Hover a channel or an italicised term.</p>
-            <p class="syn-card" data-card="null"><b>Null law.</b> The background the antecedent generator
-              structure carries that the description absorbs — it contributes no law and leaves no cost on
-              the ledger.</p>
-            <p class="syn-card" data-card="cost"><b>Visible cost.</b> The complexity the description retains
-              and pays for. Four axioms force the KL divergence as the unique measure of this retained
-              lawhood.</p>
-            <p class="syn-card" data-card="residue"><b>Closure residue.</b> The structured way the
-              description fails to close. Effective physics is classified here — closure failure carrying a
-              definite shape.</p>
-          </figcaption>
         </figure>
       </div>
     </div>
@@ -207,15 +194,15 @@
       <p class="section-subtitle fade-in">Five drafts, presented foundation first. None is refereed yet;
         the derivations are in the PDFs.</p>
       <div class="evidence-strip fade-in">
-        <span><span class="num syn-count" data-count="5">5</span> working drafts</span>
+        <span><span class="num">5</span> working drafts</span>
         <span>/assets/docs/</span>
         <span>not refereed</span>
       </div>
 
       <div class="syn-ladder">
         <span class="syn-ladder-axis">foundation first</span>
-        <div class="syn-rail" aria-hidden="true"><span class="syn-rail-fill"></span></div>
-        <ol class="syn-rungs stagger-children">
+        <div class="syn-rail" aria-hidden="true"></div>
+        <ol class="syn-rungs">
 
           <li class="syn-rung is-foundation">
             <span class="syn-rung-index" aria-hidden="true">01</span>
