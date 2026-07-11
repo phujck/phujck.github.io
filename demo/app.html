@@ -266,8 +266,107 @@
   }
   function buildBanner(){
     var b=document.createElement("div"); b.id="demo-banner";
-    b.innerHTML="Demo — falqon corpus, read-only except comments · commenting as <b>visitor:"+esc(VISITOR)+"</b>";
+    b.innerHTML="Demo — falqon corpus, read-only except comments · commenting as <b>visitor:"+esc(VISITOR)+"</b>"+
+      " · <a id='demo-tour-open'>what am I looking at?</a>";
     document.body.insertBefore(b, document.body.firstChild);
+    var t=document.getElementById("demo-tour-open"); if(t) t.onclick=function(){ startTour(0); };
+  }
+
+  // ── the guided tour: spotlight each element, say what it is and how to use it ──
+  // Self-contained (no network); offered once on first unlock (localStorage flag),
+  // re-openable from the banner. Copy is mechanism-first per the site's de-slop law.
+  var TOUR=[
+    {sel:"#demo-banner", title:"The demo",
+     body:"This is the engine's own editor, running read-only over a real corpus: the concept "+
+      "graph of a physics manuscript (91 nodes, 140 edges), baked into this page at commit. "+
+      "Nothing here talks to a server; the only thing you can add is a comment."},
+    {sel:"#left", title:"The index",
+     body:"Search finds any node by its content, never by id. Below it: the spine — the paper's "+
+      "argument in order; techniques — the machinery the corpus uses; gaps — what it currently "+
+      "admits it lacks. Click anything to focus it."},
+    {sel:"#centre", title:"The views",
+     body:"The centre shows the focused node's neighbourhood: what it draws from (its derivation), "+
+      "what draws from it (its consumers), and lateral nodes that share dependencies. The tabs "+
+      "change grain — tree and landscape show the whole graph; spine walks the argument."},
+    {sel:"#right", title:"The inspector",
+     body:"The focused node in full: its essence (what it claims, in one breath), its typed edges, "+
+      "and its citations. Follow an edge here and the focus moves with you — that walk down to "+
+      "evidence and back up is how the engine itself reads."},
+    {sel:"#demo-dock", title:"Comments",
+     body:"Open a node, pick a kind, write. Your comment is minted to the name you gave at the "+
+      "door and queues here; it lands in the engine's intake as a typed record, tied to the node "+
+      "you were on. Health, learned and forks show the corpus's own open ledger."},
+    {sel:null, title:"That's the machine",
+     body:"Wander. Everything is a node; every claim has edges; nothing is hidden behind the "+
+      "rendering. Reopen this tour any time from the banner."}
+  ];
+  var tourIdx=-1;
+  function tourEls(){
+    var w=document.getElementById("demo-tour-wrap");
+    if(w) return w;
+    w=document.createElement("div"); w.id="demo-tour-wrap";
+    w.innerHTML="<div id='demo-tour-spot'></div>"+
+      "<div id='demo-tour-card'><div id='demo-tour-title'></div><div id='demo-tour-body'></div>"+
+      "<div id='demo-tour-nav'><span id='demo-tour-count'></span><span style='flex:1'></span>"+
+      "<a id='demo-tour-prev'>back</a><a id='demo-tour-next'>next</a><a id='demo-tour-x'>close</a></div></div>";
+    document.body.appendChild(w);
+    document.getElementById("demo-tour-prev").onclick=function(){ showStep(tourIdx-1); };
+    document.getElementById("demo-tour-next").onclick=function(){ showStep(tourIdx+1); };
+    document.getElementById("demo-tour-x").onclick=endTour;
+    document.addEventListener("keydown", function(ev){
+      if(tourIdx<0) return;
+      if(ev.key==="Escape") endTour();
+      else if(ev.key==="ArrowRight") showStep(tourIdx+1);
+      else if(ev.key==="ArrowLeft") showStep(tourIdx-1);
+    });
+    window.addEventListener("resize", function(){ if(tourIdx>=0) placeStep(); });
+    return w;
+  }
+  function placeStep(){
+    var step=TOUR[tourIdx]; if(!step) return;
+    var spot=document.getElementById("demo-tour-spot");
+    var card=document.getElementById("demo-tour-card");
+    var el=step.sel ? document.querySelector(step.sel) : null;
+    if(el && el.scrollIntoView){ try{ el.scrollIntoView({block:"nearest"}); }catch(e){} }
+    if(el){
+      var r=el.getBoundingClientRect();
+      spot.style.display="block";
+      spot.style.left=(r.left-6)+"px"; spot.style.top=(r.top-6)+"px";
+      spot.style.width=(r.width+12)+"px"; spot.style.height=(r.height+12)+"px";
+      var below=r.bottom+16, ch=card.offsetHeight||180;
+      var top=(below+ch<window.innerHeight-12)? below : Math.max(12, r.top-ch-16);
+      card.style.top=top+"px";
+      var left=Math.min(Math.max(12, r.left), Math.max(12, window.innerWidth-card.offsetWidth-12));
+      card.style.left=left+"px";
+    } else {
+      spot.style.display="none";
+      card.style.top="50%"; card.style.left="50%";
+      card.style.transform="translate(-50%,-50%)"; return;
+    }
+    card.style.transform="";
+  }
+  function showStep(i){
+    if(i<0) i=0;
+    if(i>=TOUR.length){ endTour(); return; }
+    tourIdx=i; var step=TOUR[i]; tourEls().style.display="block";
+    // skip a step whose target is absent (layout variants)
+    if(step.sel && !document.querySelector(step.sel)){ showStep(i+1); return; }
+    document.getElementById("demo-tour-title").textContent=step.title;
+    document.getElementById("demo-tour-body").textContent=step.body;
+    document.getElementById("demo-tour-count").textContent=(i+1)+" / "+TOUR.length;
+    document.getElementById("demo-tour-prev").style.visibility = i===0 ? "hidden" : "visible";
+    document.getElementById("demo-tour-next").textContent = (i===TOUR.length-1) ? "done" : "next";
+    placeStep();
+  }
+  function startTour(i){ tourEls(); showStep(i||0); }
+  function endTour(){
+    tourIdx=-1; var w=document.getElementById("demo-tour-wrap");
+    if(w) w.style.display="none";
+    try{ localStorage.setItem("demo_tour_seen","1"); }catch(e){}
+  }
+  function offerTour(){
+    var seen=null; try{ seen=localStorage.getItem("demo_tour_seen"); }catch(e){}
+    if(!seen) startTour(0);
   }
   var STYLE = "#demo-banner{flex:none;background:#1a212c;"+
     "color:#e0af68;border-bottom:1px solid #2d3744;font:11.5px/1.5 ui-monospace,Menlo,monospace;"+
@@ -288,6 +387,19 @@
     "border-radius:6px;padding:5px;margin-bottom:4px}"+
     "#demo-dock-body button{background:#7aa2f7;color:#0e1116;border:0;border-radius:6px;padding:7px 10px;"+
     "font-weight:600;cursor:pointer;width:100%}"+
+    "#demo-banner a{color:#5ee6b0;cursor:pointer;text-decoration:underline}"+
+    "#demo-tour-wrap{display:none}"+
+    "#demo-tour-spot{position:fixed;z-index:10000;pointer-events:none;border:1.5px solid #e0af68;"+
+    "border-radius:8px;box-shadow:0 0 0 9999px rgba(6,9,14,.62)}"+
+    "#demo-tour-card{position:fixed;z-index:10001;width:min(340px,calc(100vw - 24px));"+
+    "background:#141a23;border:1px solid #2d3744;border-radius:10px;padding:12px 14px;"+
+    "color:#d7dee8;font:12.5px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;"+
+    "box-shadow:0 8px 30px rgba(0,0,0,.5)}"+
+    "#demo-tour-title{color:#e0af68;font-weight:700;margin-bottom:5px}"+
+    "#demo-tour-nav{display:flex;gap:12px;margin-top:10px;align-items:baseline}"+
+    "#demo-tour-nav a{color:#7aa2f7;cursor:pointer;font-weight:600}"+
+    "#demo-tour-nav #demo-tour-x{color:#6b7689;font-weight:400}"+
+    "#demo-tour-count{color:#6b7689;font-size:11px}"+
     ".demo-status{font-size:11px;margin-top:6px;min-height:14px;color:#9aa5b4}"+
     ".demo-status.ok{color:#9ece6a}.demo-status.warn{color:#e0af68}.demo-status.bad{color:#f7768e}"+
     ".demo-sub{color:#9aa5b4;margin-bottom:6px}.demo-subh{margin:10px 0 4px;color:#7aa2f7;font-weight:600;"+
@@ -334,6 +446,7 @@
       var f=curFocus(); if(f) window.__DEMO_FOCUS=f;
       var el=document.getElementById("demo-focus"); if(el && f) el.textContent=f;
     }, 250);
+    offerTour();   // first unlock only (localStorage flag); the banner reopens it
   }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", installLayer);
   else installLayer();
