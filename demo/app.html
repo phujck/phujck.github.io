@@ -1,0 +1,2252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+
+(function(){
+  "use strict";
+  // ── hydrate from the gate (sessionStorage handoff; cleared on tab close) ──
+  var RAW = null, VISITOR = "";
+  try { RAW = sessionStorage.getItem("__demo_payload"); VISITOR = sessionStorage.getItem("__demo_visitor") || ""; } catch(e){}
+  if(!RAW || !VISITOR){ location.replace("index.html"); return; }
+  var DB;
+  try { DB = JSON.parse(RAW); } catch(e){ location.replace("index.html"); return; }
+  window.__DEMO_DB = DB; window.__VISITOR = VISITOR;
+
+  // ── indices over the baked graph (draws = derives-from; shares = lateral) ──
+  var NODES = {}, DRAWS_FROM = {}, DRAWN_BY = {}, SHARES = {}, CONTAINS = {}, REACH = {};
+  (DB.graph.nodes||[]).forEach(function(n){ NODES[n.id]=n; });
+  function push(m,k,v){ (m[k]=m[k]||[]).push(v); }
+  (DB.graph.edges||[]).forEach(function(e){
+    if(e.rel==="draws"){ push(DRAWS_FROM,e.src,e.dst); push(DRAWN_BY,e.dst,e.src); }
+    else if(e.rel==="shares"){ push(SHARES,e.src,e.dst); push(SHARES,e.dst,e.src); }
+    else if(e.rel==="contains"){ push(CONTAINS,e.src,e.dst); }
+  });
+  Object.keys(NODES).forEach(function(id){ REACH[id]=(CONTAINS[id]||[]).length; });
+  var SPINE_BY_ID = {}; (DB.spine||[]).forEach(function(s){ SPINE_BY_ID[s.id]=s; });
+
+  function gradeOf(id){ var n=NODES[id]; if(!n) return 0;
+    if(n.kind==="domain") return 0;
+    return ((n.meta||{}).scale==="coarse") ? 0 : 1; }
+  function essOf(id){ var n=NODES[id]||{}, m=n.meta||{};
+    return m.summary || m.intent || n.label || id; }
+  function enrich(id, prov){ var n=NODES[id]||{};
+    return {id:id, kind:n.kind, essence:essOf(id), grade:gradeOf(id), prov:prov||"explicit"}; }
+
+  function content(id){
+    var n=NODES[id]; if(!n) return {id:id, error:"unknown node"};
+    var draws=DRAWS_FROM[id]||[];
+    var cites=draws.filter(function(x){return NODES[x]&&NODES[x].kind==="result";})
+                   .map(function(x){return {id:x, essence:essOf(x)};});
+    var deps={explicit:draws.filter(function(x){return NODES[x]&&NODES[x].kind==="def";}), confirmed:[]};
+    return {id:id, kind:n.kind, grade:gradeOf(id), essence:essOf(id), keywords:null,
+            postulate:false, spine:(SPINE_BY_ID[id]||null), ctx:"", cites:cites, deps:deps,
+            projection:{}, retired:false};
+  }
+  function neighborhood(id){
+    var below=(DRAWS_FROM[id]||[]).map(function(x){return enrich(x);});
+    var above=(DRAWN_BY[id]||[]).map(function(x){return enrich(x);});
+    var lateral=(SHARES[id]||[]).map(function(x){
+      var e=enrich(x,"lateral");
+      var mine=DRAWS_FROM[id]||[], theirs=DRAWS_FROM[x]||[];
+      e.shared=mine.filter(function(d){return theirs.indexOf(d)>=0;}); return e; });
+    return {id:id, node:{id:id, kind:(NODES[id]||{}).kind, grade:gradeOf(id),
+            n_below:below.length, n_above:above.length},
+            below:below, above:above, lateral:lateral, truncated:{}};
+  }
+  function gradeView(g){
+    var ids=Object.keys(NODES).filter(function(id){return gradeOf(id)===g;});
+    ids.sort(function(a,b){return (REACH[b]||0)-(REACH[a]||0);});
+    var idset={}; ids.forEach(function(i){idset[i]=1;});
+    var out=ids.map(function(id){ var n=NODES[id];
+      return {id:id, label:(n.label||id), essence:essOf(id),
+              n_below:(CONTAINS[id]||[]).length, substrate_size:(REACH[id]||0), lenses:[]};});
+    var edges=[], seen={};
+    ids.forEach(function(a){ (SHARES[a]||[]).forEach(function(b){ if(!idset[b])return;
+      var k=[a,b].sort().join("::"); if(seen[k])return; seen[k]=1;
+      edges.push({a:a,b:b,out:1,"in":1,shared:1,conjectural:false}); }); });
+    return {grade:g, lens:null, nodes:out, edges:edges, n_total_at_grade:ids.length, capped:false};
+  }
+  function dagMap(){
+    return {nodes:Object.keys(NODES).map(function(id){var n=NODES[id];
+      return {id:id, label:(n.label||id), grade:gradeOf(id), essence:essOf(id), kind:n.kind};}),
+      edges:(DB.graph.edges||[]).map(function(e){return {a:e.src,b:e.dst,rel:e.rel};})};
+  }
+  function search(q){
+    q=(q||"").trim().toLowerCase(); if(!q) return {results:[]};
+    var toks=q.split(/\W+/).filter(Boolean), out=[];
+    Object.keys(NODES).forEach(function(id){ var n=NODES[id];
+      var hay=(id+" "+(essOf(id))+" "+(n.kind||"")).toLowerCase(), s=0;
+      if(hay.indexOf(q)>=0) s+=6;
+      toks.forEach(function(t){ if(hay.indexOf(t)>=0) s+=2; });
+      if(s) out.push({id:id, kind:n.kind, essence:essOf(id), grade:gradeOf(id), score:s});});
+    out.sort(function(a,b){return b.score-a.score;});
+    return {results:out.slice(0,24)};
+  }
+
+  // ── the bankable write: mint by:"visitor:<name>", queue, flush via Contents API ──
+  var LS_OUTBOX="demo_outbox_"+DB.config.corpus, LS_PAT="demo_gh_pat";
+  var OUTBOX=[]; try{ OUTBOX=JSON.parse(localStorage.getItem(LS_OUTBOX)||"[]"); }catch(e){ OUTBOX=[]; }
+  function saveOutbox(){ try{ localStorage.setItem(LS_OUTBOX, JSON.stringify(OUTBOX)); }catch(e){} }
+  function b64utf8(s){ return btoa(unescape(encodeURIComponent(s))); }
+  function pad(n){ return String(n).padStart(2,"0"); }
+  function ghToken(){ try{ return (localStorage.getItem(LS_PAT)||"").trim() || (DB.github_token||""); }catch(e){ return DB.github_token||""; } }
+  // the editor keeps FOCUS as a lexical (not on window); the breadcrumb's current crumb
+  // is the authoritative, always-rendered mirror of it.
+  function curFocus(){ var el=document.querySelector("#crumb-list .crumb.cur");
+    return el ? (el.textContent||"").trim() : (window.__DEMO_FOCUS||null); }
+  function mintRecord(comment, kind){
+    var now=new Date();
+    var focus=curFocus()||"unknown";
+    var nodePart=String(focus).split("#").pop().split(":").pop();
+    var id="FB-"+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+"-"+
+      pad(now.getHours())+pad(now.getMinutes())+pad(now.getSeconds())+"-"+nodePart+"-"+
+      Math.random().toString(36).slice(2,6);
+    return {id:id, project:DB.config.corpus, ts:now.toISOString().slice(0,19),
+      node_id:focus, node_label:(essOf(focus)||"").slice(0,80),
+      kind:kind||"comment", comment:comment, by:"visitor:"+VISITOR, status:"open",
+      anchor:{}, _state:"queued"};   // by is LOCKED to the visitor — no author path exists
+  }
+  function apiUrlFor(recId){ var path=DB.config.inbox_path+"/"+recId+".json";
+    return "https://api.github.com/repos/"+DB.config.repo+"/contents/"+
+      path.split("/").map(encodeURIComponent).join("/"); }
+  function setStatus(msg, cls){ var el=document.getElementById("demo-status");
+    if(el){ el.textContent=msg; el.className="demo-status "+(cls||""); } }
+  async function flushOutbox(manual){
+    var tok=ghToken();
+    if(!OUTBOX.length){ if(manual) setStatus("nothing queued — every comment is pushed ✓","ok"); return; }
+    if(!tok){ setStatus(OUTBOX.length+" comment(s) queued locally — no push token in this dev bundle (needs-token)","warn"); return; }
+    if(!navigator.onLine){ setStatus("offline — your comments are safe on this device","warn"); return; }
+    setStatus("pushing "+OUTBOX.length+" comment(s)…","");
+    var pushed=0;
+    var list=OUTBOX.slice();
+    for(var i=0;i<list.length;i++){
+      var rec=list[i]; var clean={}; for(var k in rec){ if(k!=="_state") clean[k]=rec[k]; }
+      var r;
+      try{
+        r=await fetch(apiUrlFor(rec.id),{method:"PUT",
+          headers:{Authorization:"Bearer "+tok, Accept:"application/vnd.github+json","Content-Type":"application/json"},
+          body:JSON.stringify({message:"visitor comment "+rec.id, branch:DB.config.branch,
+            content:b64utf8(JSON.stringify(clean,null,2))})});
+      }catch(e){ setStatus("network error — comments are safe on this device; try again","bad"); break; }
+      if(r.status===201||r.status===200||r.status===422){
+        OUTBOX=OUTBOX.filter(function(x){return x.id!==rec.id;}); saveOutbox(); pushed++;
+        var live=(window.__demo_feed||[]).find(function(x){return x.id===rec.id;}); if(live) live._state="pushed";
+      } else if(r.status===401||r.status===403){ setStatus("token rejected ("+r.status+") — needs a contents-write PAT","bad"); break; }
+      else { setStatus("push failed ("+r.status+")","bad"); break; }
+    }
+    if(pushed) setStatus(pushed+" comment(s) pushed ✓"+(OUTBOX.length?(" · "+OUTBOX.length+" still queued"):""),"ok");
+    renderDock();
+  }
+  window.__demo_feed = OUTBOX;   // the visitor's own comments are the demo feedback feed
+  function queueComment(){
+    var ta=document.getElementById("demo-comment"); var kindSel=document.getElementById("demo-kind");
+    var txt=(ta.value||"").trim();
+    if(!txt){ setStatus("empty comment","bad"); return; }
+    if(!curFocus()){ setStatus("open a node first, then comment","warn"); return; }
+    var rec=mintRecord(txt, kindSel? kindSel.value : "comment");
+    OUTBOX.push(rec); saveOutbox(); ta.value="";
+    setStatus("queued "+rec.id+" · by "+rec.by,"ok");
+    renderDock(); flushOutbox(false);
+  }
+
+  // ── fetch shim: baked GETs, refused author POSTs, no scanner, no CDN ──
+  var _fetch = window.fetch.bind(window);
+  function J(obj, status){ return new Response(JSON.stringify(obj),
+    {status:status||200, headers:{"Content-Type":"application/json"}}); }
+  window.fetch = function(input, init){
+    var url = (typeof input==="string") ? input : (input && input.url) || "";
+    var method = ((init&&init.method) || (input&&input.method) || "GET").toUpperCase();
+    var abs = /^https?:\/\//i.test(url);
+    // the ONLY allowed off-page host: the GitHub Contents API for the bankable write.
+    if(abs){
+      if(url.indexOf("https://api.github.com/")===0) return _fetch(input, init);
+      return J({error:"external requests are not in this demo bundle"}, 403);
+    }
+    var path = url.split("?")[0]; var qs = {};
+    (url.split("?")[1]||"").split("&").forEach(function(kv){ if(!kv) return;
+      var p=kv.split("="); qs[decodeURIComponent(p[0])]=decodeURIComponent((p[1]||"").replace(/\+/g," ")); });
+    // author verbs — REFUSED with honesty (never silently)
+    if(method!=="GET" || path==="/corpus/rewire"){
+      return J({error:"author verbs are not in this bundle", ok:false, applied:false}, 403);
+    }
+    // the shared inspector probes /shared/plan (optional ancestry) — no such thing here
+    if(path.indexOf("/shared/")===0) return J(null, 404);
+    switch(path){
+      case "/corpus/list":        return J({corpora:[DB.corpus], "default":DB.corpus});
+      case "/corpus/meta":        return J(DB.meta);
+      case "/corpus/macros":      return J({macros:DB.macros});
+      case "/corpus/spine":       return J({spine:DB.spine});
+      case "/corpus/techniques":  return J({techniques:DB.techniques});
+      case "/corpus/gaps":        return J({gaps:DB.gaps});
+      case "/corpus/friction":    return J(DB.friction);
+      case "/corpus/feedback":    return J({records:(window.__demo_feed||[]).slice(), n:(window.__demo_feed||[]).length});
+      case "/corpus/grade":       return J(gradeView(parseInt(qs.g||"1",10)));
+      case "/corpus/grade_stats": return J({error:"regrade stats are not in this demo bundle"});
+      case "/corpus/map":         return J(dagMap());
+      case "/corpus/content":     return J(content(qs.id||""));
+      case "/corpus/neighborhood":return J(neighborhood(qs.id||""));
+      case "/corpus/search":      return J(search(qs.q||""));
+      case "/corpus/asset":       return J({error:"assets are not in this demo bundle"}, 404);
+      case "/corpus/lit-search":  return J({error:"literature search is not in this demo bundle", results:[]});
+      // review READ trays (falqon-scoped)
+      case "/review/learned":     return J(DB.learned);
+      case "/review/substrate":   return J(DB.fork);
+      case "/review/findings":    return J({findings:[], counts:{total:0}, note:"no open findings on this corpus"});
+    }
+    if(path.indexOf("/corpus/")===0 || path.indexOf("/review/")===0 || path.indexOf("/manuscript/")===0)
+      return J({error:"not in this demo bundle", records:[], nodes:[], results:[]}, 404);
+    return _fetch(input, init);   // same-page relative assets (shared/*) fall through to disk
+  };
+
+  // ── the DEMO layer: banner, browse-lock, verb strip, comment dock ──
+  var AUTHOR_VERBS=["rewire","addNodeAffordance","openEssenceEditor","promoteSpine","confirmDelete",
+    "editNarrative","pickDep","pickConsumer","pullLiteratureForFocus","pullLiteratureProject",
+    "findSimilar","setProjectGoal","removeEdge","addNodeStage"];
+  function honestVerb(){ setStatus("not in this bundle","warn"); }
+  function renderDock(){
+    var q=(window.__demo_feed||[]);
+    var h=DB.health||{}, orph=(h.def_orphans||[]), resc=(h.drafted_rescues||[]);
+    var qhtml = q.length ? q.slice().reverse().map(function(r){
+      return "<div class='demo-row'><b>"+esc(r._state||"queued")+"</b> "+esc(r.kind)+" · "+
+        esc(r.node_id)+"<br><span class='demo-dim'>"+esc((r.comment||"").slice(0,90))+"</span> "+
+        "<span class='demo-dim'>— "+esc(r.by)+"</span></div>"; }).join("")
+      : "<div class='demo-dim'>no comments yet — open a node and comment as visitor:"+esc(VISITOR)+"</div>";
+    var body=document.getElementById("demo-dock-body"); if(!body) return;
+    var tab=body.getAttribute("data-tab")||"comment";
+    if(tab==="comment"){
+      body.innerHTML =
+        "<div class='demo-sub'>commenting as <b>visitor:"+esc(VISITOR)+"</b> · on <span id='demo-focus'>"+esc(curFocus()||"(open a node)")+"</span></div>"+
+        "<select id='demo-kind'><option value='comment'>comment</option><option value='question'>question</option>"+
+        "<option value='correction'>correction</option><option value='praise'>praise</option></select>"+
+        "<textarea id='demo-comment' placeholder='your comment on this node…'></textarea>"+
+        "<button id='demo-send'>queue comment</button>"+
+        "<div id='demo-status' class='demo-status'></div>"+
+        "<div class='demo-subh'>your comments ("+q.length+")</div>"+qhtml;
+      var b=document.getElementById("demo-send"); if(b) b.onclick=queueComment;
+    } else if(tab==="health"){
+      body.innerHTML="<div class='demo-subh'>connectivity</div>"+
+        "<div class='demo-row'><b>"+orph.length+" def-orphans</b><br><span class='demo-dim'>"+esc(orph.join(", "))+"</span></div>"+
+        "<div class='demo-row'><b>"+resc.length+" drafted rescue</b><br><span class='demo-dim'>"+
+          (resc.map(function(r){return esc(r.src+" → "+r.dst);}).join("<br>")||"—")+"</span></div>"+
+        "<div class='demo-dim'>drafted edges: "+(h.drafted_edge_count||0)+"</div>";
+    } else if(tab==="learned"){
+      var L=DB.learned||{};
+      body.innerHTML="<div class='demo-subh'>learned</div>"+
+        "<div class='demo-row'>"+esc(L.note||"")+"</div>"+
+        "<div class='demo-dim'>open frictions "+((L.open||{}).friction||0)+" · open forks "+((L.open||{}).fork||0)+"</div>";
+    } else if(tab==="forks"){
+      var F=DB.fork||{};
+      body.innerHTML="<div class='demo-subh'>forks</div>"+
+        "<div class='demo-row'>"+esc(F.note||"")+"</div>";
+    }
+  }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>\"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+  function buildDock(){
+    var dock=document.createElement("div"); dock.id="demo-dock";
+    dock.innerHTML=
+      "<div id='demo-dock-hd'><b>demo</b> "+
+        "<span class='demo-tabs'>"+
+        "<a data-t='comment' class='on'>comment</a><a data-t='health'>health</a>"+
+        "<a data-t='learned'>learned</a><a data-t='forks'>forks</a></span>"+
+        "<span id='demo-min'>–</span></div>"+
+      "<div id='demo-dock-body' data-tab='comment'></div>";
+    document.body.appendChild(dock);
+    dock.querySelectorAll(".demo-tabs a").forEach(function(a){ a.onclick=function(){
+      dock.querySelectorAll(".demo-tabs a").forEach(function(x){x.classList.remove("on");});
+      a.classList.add("on");
+      document.getElementById("demo-dock-body").setAttribute("data-tab", a.getAttribute("data-t"));
+      renderDock(); }; });
+    var minBtn=document.getElementById("demo-min");
+    minBtn.onclick=function(){ dock.classList.toggle("min");
+      minBtn.textContent=dock.classList.contains("min")?"+":"–"; };
+    if(window.innerWidth<=700){ dock.classList.add("min"); minBtn.textContent="+"; }   // phones: start out of the way
+    renderDock();
+  }
+  function buildBanner(){
+    var b=document.createElement("div"); b.id="demo-banner";
+    b.innerHTML="Demo — falqon corpus, read-only except comments · commenting as <b>visitor:"+esc(VISITOR)+"</b>";
+    document.body.insertBefore(b, document.body.firstChild);
+  }
+  var STYLE = "#demo-banner{flex:none;background:#1a212c;"+
+    "color:#e0af68;border-bottom:1px solid #2d3744;font:11.5px/1.5 ui-monospace,Menlo,monospace;"+
+    "padding:4px 12px;text-align:center}#demo-banner b{color:#7aa2f7}"+
+    "#demo-dock{position:fixed;right:14px;bottom:14px;width:320px;max-height:70vh;z-index:9999;"+
+    "background:#141a23;border:1px solid #2d3744;border-radius:10px;color:#d7dee8;"+
+    "font:12px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;display:flex;flex-direction:column;"+
+    "box-shadow:0 8px 30px rgba(0,0,0,.45);overflow:hidden}"+
+    "#demo-dock.min #demo-dock-body{display:none}"+
+    "#demo-dock-hd{padding:8px 10px;background:#1a212c;border-bottom:1px solid #222a36;cursor:default}"+
+    "#demo-dock-hd b{color:#7aa2f7}#demo-min{float:right;cursor:pointer;color:#6b7689;font-weight:700}"+
+    ".demo-tabs{margin-left:8px}.demo-tabs a{color:#6b7689;cursor:pointer;margin-right:8px;font-size:11px}"+
+    ".demo-tabs a.on{color:#5ee6b0}"+
+    "#demo-dock-body{padding:10px;overflow:auto}"+
+    "#demo-dock-body textarea{width:100%;min-height:64px;background:#0e1116;color:#d7dee8;"+
+    "border:1px solid #2d3744;border-radius:6px;padding:6px;font:12px/1.4 inherit;margin:6px 0}"+
+    "#demo-dock-body select{width:100%;background:#0e1116;color:#d7dee8;border:1px solid #2d3744;"+
+    "border-radius:6px;padding:5px;margin-bottom:4px}"+
+    "#demo-dock-body button{background:#7aa2f7;color:#0e1116;border:0;border-radius:6px;padding:7px 10px;"+
+    "font-weight:600;cursor:pointer;width:100%}"+
+    ".demo-status{font-size:11px;margin-top:6px;min-height:14px;color:#9aa5b4}"+
+    ".demo-status.ok{color:#9ece6a}.demo-status.warn{color:#e0af68}.demo-status.bad{color:#f7768e}"+
+    ".demo-sub{color:#9aa5b4;margin-bottom:6px}.demo-subh{margin:10px 0 4px;color:#7aa2f7;font-weight:600;"+
+    "border-top:1px solid #222a36;padding-top:8px}.demo-row{margin:6px 0;padding-bottom:6px;"+
+    "border-bottom:1px solid #1a212c}.demo-dim{color:#6b7689}"+
+    ".hy-fb-sec{display:none!important}"+
+    // ── mobile: the upstream cockpit is a fixed 3-column row (#left 300 + centre +
+    // #right 380) that overflows a phone. Adapt in the THIN LAYER only — stack the panes,
+    // scroll the pane row (not the page), keep the tab strip scrolling inside itself, and
+    // dock the composer as a full-width bottom sheet.
+    "@media (max-width:700px){"+
+      "html,body{overflow-x:hidden!important}"+
+      "#body{flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important}"+
+      "#left{width:100%!important;max-height:38vh;border-right:none!important;"+
+        "border-bottom:1px solid var(--edge)}"+
+      "#centre{width:100%!important;min-height:46vh}"+
+      "#right{width:100%!important;border-left:none!important;border-top:1px solid var(--edge)}"+
+      "#tabs{overflow-x:auto;flex-wrap:nowrap}#topbar{flex-wrap:wrap}"+
+      "#demo-dock{left:0;right:0;bottom:0;width:auto;max-height:62vh;border-radius:12px 12px 0 0}"+
+    "}";
+
+  function installLayer(){
+    var st=document.createElement("style"); st.textContent=STYLE; document.head.appendChild(st);
+    buildBanner(); buildDock();
+    // strip author verbs — force browse, remove the edit toggle, neuter every verb fn
+    try{ if(typeof window.setMode==="function") window.setMode("browse"); }catch(e){}
+    var realSetMode=window.setMode;
+    window.setMode=function(){ if(realSetMode) realSetMode("browse"); };   // edit is unreachable
+    var seg=document.querySelector(".seg"); if(seg) seg.remove();
+    ["addNodeBtn","pullLitProjectBtn"].forEach(function(idn){ var el=document.getElementById(idn); if(el) el.remove(); });
+    AUTHOR_VERBS.forEach(function(fn){ window[fn]=honestVerb; });
+    // neutralise scanner / other-surface nav (the shared shell injects its links late, so
+    // delegate at the document in the capture phase to catch them all). Absolute-path and
+    // off-page links are blocked; the demo's own relative + in-page links pass.
+    document.addEventListener("click", function(ev){
+      var t=ev.target, a=t && t.closest ? t.closest("a[href]") : null; if(!a) return;
+      var h=a.getAttribute("href")||"";
+      var offpage=/^https?:\/\//.test(h) && h.indexOf("api.github.com")<0;
+      if(h.charAt(0)==="/" || offpage){ ev.preventDefault(); honestVerb(); }
+    }, true);
+    // keep window.__DEMO_FOCUS + the dock's focus line synced to the breadcrumb (the
+    // editor's FOCUS is lexical; the current crumb is its authoritative mirror).
+    setInterval(function(){
+      var f=curFocus(); if(f) window.__DEMO_FOCUS=f;
+      var el=document.getElementById("demo-focus"); if(el && f) el.textContent=f;
+    }, 250);
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", installLayer);
+  else installLayer();
+})();
+
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conceptric Editor — v2</title>
+<!-- the shared layer (shell + inspector + hymn palette); each 404s harmlessly if /shared is absent -->
+<link rel="stylesheet" href="shared/hymn.css">
+<script defer src="shared/shell.js"></script>
+<script defer src="shared/inspector.js"></script>
+<!-- KaTeX is VENDORED (/shared/katex, shared_ui.py allowlist) — no CDN, so the
+     editor boots with no network (RW-20260711-103301-400001); math renders
+     plain via the window.katex guards below if the asset is ever absent. -->
+<link rel="stylesheet" href="shared/katex/katex.min.css">
+<script defer src="shared/katex/katex.min.js"></script>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#141a23; --panel2:#1a212c; --edge:#222a36; --edge2:#2d3744;
+    --ink:#d7dee8; --ink2:#9aa5b4; --dim:#6b7689;
+    --accent:#7aa2f7; --teal:#5ee6b0; --warn:#e0af68; --bad:#f7768e; --ok:#9ece6a; --keystone:#bb9af7;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:13.5px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+  /* column flex (not calc heights): the top bar may wrap at narrow widths and the
+     shared shell may claim a strip — the panes always fill what remains */
+  body{display:flex;flex-direction:column}
+
+  /* ─── TOP BAR ─── */
+  #topbar{min-height:46px;flex:none;display:flex;align-items:center;gap:14px;padding:0 16px;
+    border-bottom:1px solid var(--edge);background:var(--panel)}
+  #topbar .brand{font-weight:700;color:var(--accent);letter-spacing:.2px}
+  #topbar .brand small{color:var(--dim);font-weight:400;margin-left:6px;font-size:11px}
+  #topbar select,#topbar input{background:var(--bg);color:var(--ink);border:1px solid var(--edge);
+    border-radius:6px;padding:4px 9px;font:inherit;font-size:12.5px}
+  #topbar select:hover{border-color:var(--edge2)}
+  .seg{display:inline-flex;border:1px solid var(--edge);border-radius:6px;overflow:hidden}
+  .seg button{background:none;border:0;color:var(--dim);font:inherit;font-size:12px;
+    padding:4px 12px;cursor:pointer}
+  .seg button.on{background:var(--keystone);color:#0b0d11;font-weight:600}
+  .seg button:not(.on):hover{color:var(--ink)}
+  #topbar .spacer{flex:1}
+  #topbar .ico{padding:4px 10px;border:1px solid var(--edge);border-radius:6px;background:none;
+    color:var(--ink);cursor:pointer;font:inherit;font-size:12.5px}
+  #topbar .ico:hover{border-color:var(--accent);color:var(--accent)}
+  #topbar a.nav-link{color:var(--dim);font-size:12px;text-decoration:none}
+  #topbar a.nav-link:hover{color:var(--accent)}
+
+  /* ─── BREADCRUMB ─── */
+  #crumbs{height:30px;flex:none;display:flex;align-items:center;padding:0 16px;
+    background:var(--bg);border-bottom:1px solid var(--edge);gap:5px;font-size:11.5px;overflow:hidden}
+  #crumbs .lab{color:var(--dim);text-transform:uppercase;letter-spacing:.08em;font-size:10px;margin-right:8px;flex:none}
+  .crumb{font-family:var(--mono);color:var(--ink2);cursor:pointer;padding:2px 6px;border-radius:4px;
+    flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px}
+  .crumb:hover{color:var(--accent);background:var(--panel)}
+  .crumb.cur{color:var(--ink);background:var(--panel2)}
+  .crumb-sep{color:var(--dim);font-size:10px;flex:none}
+
+  /* ─── THREE-PANE LAYOUT ─── */
+  #body{display:flex;flex:1;min-height:0}
+  #left{width:300px;flex:none;border-right:1px solid var(--edge);overflow:auto;background:var(--bg)}
+  #centre{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+  #right{width:380px;flex:none;border-left:1px solid var(--edge);overflow:auto;background:var(--bg)}
+
+  /* ─── LEFT INDEX ─── */
+  .lsect{padding:12px 14px;border-bottom:1px solid var(--edge)}
+  .lsect-h{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);
+    font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+  .lsect-h .count{color:var(--ink2);font-family:var(--mono);font-weight:400;font-size:10px}
+  .lsearch{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--edge);
+    border-radius:7px;padding:7px 10px;font:inherit;font-size:12.5px}
+  .lsearch::placeholder{color:var(--dim)}
+  .lsearch:focus{outline:none;border-color:var(--accent)}
+  .lsres{margin-top:8px}
+  .lsres .sres{padding:6px 8px;border-radius:6px;cursor:pointer;font-size:12px}
+  .lsres .sres:hover{background:var(--panel)}
+  .lsres .sres .sid{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:2px}
+
+  .spcard{display:flex;gap:9px;padding:8px 9px;border:1px solid var(--edge);border-left:3px solid var(--keystone);
+    border-radius:8px;margin-bottom:7px;cursor:pointer;background:var(--panel)}
+  .spcard:hover{border-color:var(--accent)}
+  .spcard.cur{background:var(--panel2);outline:1px solid var(--accent)}
+  .spcard .num{width:18px;height:18px;flex:none;border-radius:50%;background:var(--keystone);
+    color:#0b0d11;font-weight:700;font-size:10px;display:flex;align-items:center;justify-content:center}
+  .spcard .bd{flex:1;min-width:0}
+  .spcard .ess{font-size:12px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .spcard .id{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:2px}
+
+  .tech-row{display:flex;justify-content:space-between;font-size:12px;cursor:pointer;border-radius:5px;padding:5px 7px}
+  .tech-row:hover{background:var(--panel)}
+  .tech-row .n{color:var(--dim);font-family:var(--mono);font-size:10.5px}
+
+  .gap-row{display:flex;gap:7px;padding:7px 9px;border:1px solid var(--edge);border-left:3px solid var(--warn);
+    border-radius:7px;margin-bottom:6px;cursor:pointer;background:var(--panel);font-size:11.5px}
+  .gap-row:hover{border-color:var(--warn)}
+  .gap-row .gid{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:2px}
+
+  .empty-line{font-size:11.5px;color:var(--dim);font-style:italic}
+
+  /* ─── CENTRE: TABS ─── */
+  #tabs{display:flex;align-items:center;border-bottom:1px solid var(--edge);background:var(--bg);
+    padding:0 18px;height:36px;gap:2px}
+  .tab{font-size:12px;padding:8px 16px;border:0;background:none;color:var(--dim);cursor:pointer;
+    border-bottom:2px solid transparent;font:inherit;margin-bottom:-1px}
+  .tab:hover{color:var(--ink)}
+  .tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+  #tabs .spacer{flex:1}
+  #tabs .legend{font-size:10.5px;color:var(--dim);display:flex;gap:14px}
+  #tabs .legend span::before{content:"●";margin-right:5px;font-size:10px}
+  .leg-sp::before{color:var(--keystone)} .leg-gap::before{color:var(--warn)}
+  .leg-post::before{color:var(--ok)} .leg-tech::before{color:var(--accent)}
+
+  #views{flex:1;overflow:auto;padding:18px 22px}
+  .view{display:none}
+  .view.on{display:block}
+
+  /* ─── LOCAL VIEW ─── */
+  .loc-band{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+  .loc-lab{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);
+    text-align:center;margin:18px 0 10px;position:relative}
+  .loc-lab::before,.loc-lab::after{content:"";position:absolute;top:50%;width:30%;height:1px;background:var(--edge)}
+  .loc-lab::before{left:5%} .loc-lab::after{right:5%}
+  .chip{background:var(--panel);border:1px solid var(--edge);border-radius:9px;padding:9px 13px;
+    cursor:pointer;max-width:340px;position:relative;text-align:left}
+  .chip:hover{border-color:var(--accent)}
+  .chip .math{font-size:13px;overflow-x:auto}
+  .chip .crow{display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap}
+  .chip .cid{font-size:9.5px;color:var(--dim);font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;max-width:220px;white-space:nowrap}
+  .chip .kbadge{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;color:#0b0d11;letter-spacing:.05em}
+  .kbadge.def,.kbadge.definition{background:var(--accent)}
+  .kbadge.res,.kbadge.result{background:var(--ok)}
+  .kbadge.thm,.kbadge.theorem{background:var(--keystone)}
+  .kbadge.lem,.kbadge.lemma{background:var(--teal)}
+  .kbadge.step,.kbadge.derivation-step{background:var(--dim)}
+  .kbadge.pos,.kbadge.postulate{background:var(--ok)}
+  .kbadge.tech,.kbadge.technique{background:var(--warn)}
+  .kbadge.fig,.kbadge.figure{background:var(--warn)}
+  .kbadge.equation{background:var(--keystone)}
+  .kbadge.support,.kbadge.sup{background:var(--ink2)}
+  .kbadge.intermediate-result,.kbadge.ires{background:var(--teal)}
+  .kbadge.portal{background:var(--accent)}
+  .kbadge.goal{background:linear-gradient(135deg,var(--accent),var(--keystone));color:#0b0d11}
+
+  /* the project-goal slot — the spine's orientation node, prose not math, sits above #1 */
+  .goal-card{border:1px solid rgba(122,162,247,.45);border-left:4px solid var(--accent);
+    background:linear-gradient(135deg,rgba(122,162,247,.10),rgba(187,154,247,.05));
+    border-radius:9px;padding:10px 12px;margin-bottom:12px;cursor:pointer}
+  .goal-card:hover{border-color:var(--accent);background:rgba(122,162,247,.13)}
+  .goal-card.cur{outline:1px solid var(--accent);background:rgba(122,162,247,.16)}
+  .goal-card .lab{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);
+    font-weight:700;margin-bottom:5px}
+  .goal-card .text{font-size:12.5px;color:var(--ink);line-height:1.55}
+  .goal-card .gid{font-size:9.5px;color:var(--dim);font-family:var(--mono);margin-top:5px}
+  .goal-empty{border:1px dashed var(--edge);border-radius:9px;padding:10px 12px;margin-bottom:12px;
+    color:var(--dim);font-size:12px;text-align:center;cursor:pointer;font-style:italic}
+  .goal-empty:hover{border-color:var(--accent);color:var(--accent);background:rgba(122,162,247,.05)}
+  body:not(.mode-edit) .goal-empty{display:none}
+  .goal-banner{border:1px solid rgba(122,162,247,.45);border-left:4px solid var(--accent);
+    background:linear-gradient(135deg,rgba(122,162,247,.10),rgba(187,154,247,.05));
+    border-radius:12px;padding:16px 20px;margin-bottom:18px;cursor:pointer}
+  .goal-banner:hover{border-color:var(--accent)}
+  .goal-banner.cur{outline:1px solid var(--accent)}
+  .goal-banner .lab{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);
+    font-weight:700;margin-bottom:8px}
+  .goal-banner .text{font-size:16px;color:var(--ink);line-height:1.6}
+  .goal-banner .gid{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:9px}
+  .chip .gbadge{font-size:9.5px;padding:1px 6px;border-radius:8px;background:var(--edge);color:var(--ink2);font-family:var(--mono)}
+  .chip .provb{font-size:8.5px;padding:1px 5px;border-radius:3px;font-weight:700;letter-spacing:.04em}
+  .provb.explicit{background:rgba(122,162,247,.18);color:var(--accent)}
+  .provb.confirmed{background:rgba(158,206,106,.18);color:var(--ok)}
+  .provb.candidate,.provb.semantic{background:rgba(187,154,247,.18);color:var(--keystone)}
+  .chip.focus{border-color:var(--keystone);border-width:2px;background:var(--panel2);
+    box-shadow:0 0 0 4px rgba(187,154,247,.10);cursor:default;max-width:520px}
+  .chip.add{border-style:dashed;color:var(--dim);text-align:center;min-width:160px;font-size:12px}
+  .chip.add:hover{color:var(--accent)}
+  body:not(.mode-edit) .chip.add{display:none}
+  .loc-arrows{display:flex;justify-content:center;margin:6px 0;color:var(--dim);font-size:14px}
+
+  .loc-lateral-hd{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:22px;
+    padding-top:14px;border-top:1px dashed var(--edge);flex-wrap:wrap}
+  .loc-lateral-hd .lhd-lab{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
+  .lat-axis{background:var(--bg);color:var(--ink);border:1px solid var(--edge);border-radius:5px;
+    padding:3px 8px;font:inherit;font-size:11px}
+  .lat-axis:focus{outline:none;border-color:var(--accent)}
+  .loc-lateral{display:flex;justify-content:center;gap:9px;margin-top:12px;flex-wrap:wrap}
+  .lchip{background:var(--bg);border:1px solid var(--edge);border-left:3px solid var(--warn);
+    border-radius:7px;padding:5px 10px;font-size:11.5px;cursor:pointer;color:var(--ink2);max-width:300px}
+  .lchip:hover{border-color:var(--accent);color:var(--ink)}
+  .lchip .id{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:2px}
+
+  /* ─── TREE VIEW — connected DAG, edges drawn, spine highlighted ─── */
+  .tree-host{position:relative;min-height:200px;padding:8px 0 24px}
+  .tree-host svg{position:absolute;inset:0;width:100%;pointer-events:none;z-index:0}
+  .tband{position:relative;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;
+    justify-content:center;align-items:flex-start;padding:18px 60px 6px;z-index:1}
+  .tband-lab{position:absolute;left:8px;top:18px;font-size:10px;color:var(--dim);
+    font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+  .tband-meta{position:absolute;right:8px;top:18px;font-size:10px;color:var(--dim);
+    font-family:var(--mono)}
+  .tnode{background:var(--panel);border:1px solid var(--edge);border-radius:7px;padding:6px 11px;
+    font-size:11.5px;font-family:var(--mono);color:var(--ink2);cursor:pointer;max-width:240px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;
+    transition:transform .08s ease,border-color .08s ease}
+  .tnode:hover{border-color:var(--accent);color:var(--ink);transform:translateY(-1px);z-index:3}
+  .tnode.spine{border-color:var(--keystone);color:var(--ink);
+    background:linear-gradient(135deg,rgba(187,154,247,.10),var(--panel))}
+  .tnode.spine::before{content:attr(data-ord);position:absolute;top:-7px;left:-7px;width:16px;
+    height:16px;background:var(--keystone);color:#0b0d11;font-weight:700;font-size:9px;
+    border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:inherit}
+  .tnode.goal{border-color:var(--accent);
+    background:linear-gradient(135deg,rgba(122,162,247,.15),rgba(187,154,247,.05));color:var(--ink)}
+  .tnode.gap{border-left:3px solid var(--warn)}
+  .tnode.post{border-left:3px solid var(--ok)}
+  .tnode.focus{outline:2px solid var(--accent);background:var(--panel2);color:var(--ink);z-index:3}
+  .tree-legend{font-size:10.5px;color:var(--dim);display:flex;gap:14px;margin-bottom:10px;
+    padding-left:8px;align-items:center}
+  .tree-legend .lh{flex:1}
+
+  /* ─── LANDSCAPE VIEW ─── */
+  .lscape-band{margin-bottom:18px}
+  .lscape-bandhd{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);
+    margin-bottom:7px;display:flex;gap:8px;align-items:center}
+  .lscape-bandhd .gnum{color:var(--ink2);font-family:var(--mono)}
+  .lscape-row{display:flex;flex-wrap:wrap;gap:6px}
+  .mn{background:var(--panel);border:1px solid var(--edge);border-radius:6px;padding:4px 9px;
+    font-size:11px;font-family:var(--mono);color:var(--ink2);cursor:pointer;max-width:280px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mn:hover{border-color:var(--accent);color:var(--ink)}
+  .mn.spine{border-color:var(--keystone);color:var(--ink)}
+  .mn.gap{border-left:3px solid var(--warn)}
+  .mn.post{border-left:3px solid var(--ok)}
+  .mn.focus{border-color:var(--accent);background:var(--panel2);color:var(--ink)}
+
+  /* ─── SPINE VIEW ─── */
+  .sp-big{display:flex;gap:14px;padding:14px 16px;border:1px solid var(--edge);
+    border-left:3px solid var(--keystone);border-radius:10px;background:var(--panel);
+    margin-bottom:10px;cursor:pointer}
+  .sp-big:hover{border-color:var(--accent)}
+  .sp-big.cur{border-color:var(--accent)}
+  .sp-big .num{width:26px;height:26px;flex:none;border-radius:50%;background:var(--keystone);
+    color:#0b0d11;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+  .sp-big .bd{flex:1;min-width:0}
+  .sp-big .ess{font-size:14.5px;color:var(--ink)}
+  .sp-big .narr{font-size:12.5px;color:var(--ink2);margin-top:7px;line-height:1.55}
+  .sp-big .id{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:6px}
+
+  /* ─── LIST VIEW ─── */
+  .lst-grp{margin-bottom:14px}
+  .lst-h{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);
+    border-bottom:1px solid var(--edge);padding-bottom:5px;margin-bottom:8px;
+    display:flex;justify-content:space-between}
+  .lst-row{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:12.5px}
+  .lst-row:hover{background:var(--panel)}
+  .lst-row.cur{background:var(--panel2)}
+  .lst-row .id{font-family:var(--mono);font-size:11px;color:var(--ink2);min-width:170px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lst-row .ess{flex:1;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lst-row .g{font-family:var(--mono);font-size:10px;color:var(--dim)}
+
+  /* ─── LOOPS: SUB-TABS ─── */
+  #loop-subtabs{display:flex;gap:2px;border-bottom:1px solid var(--edge);margin:-2px -2px 18px}
+  .lsub{font-size:12px;padding:8px 18px;border:0;background:none;color:var(--dim);cursor:pointer;
+    border-bottom:2px solid transparent;font:inherit;margin-bottom:-1px}
+  .lsub:hover{color:var(--ink)}
+  .lsub.on{color:var(--keystone);border-bottom-color:var(--keystone)}
+  .lcap{font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.55;max-width:680px}
+  .loop-panel{display:none}
+  .loop-panel.on{display:block}
+  .loop-item{border:1px solid var(--edge);border-radius:8px;padding:10px 13px;margin-bottom:8px;
+    background:var(--panel);max-width:780px}
+  .loop-item .lid{font-family:var(--mono);font-size:10px;color:var(--dim)}
+  .loop-item .less{font-size:12.5px;margin-top:5px;color:var(--ink2);line-height:1.55}
+  .loop-item .lact{display:flex;gap:7px;margin-top:9px;align-items:center}
+  .loop-item button,.loop-fire button{font:inherit;font-size:11.5px;border:1px solid var(--edge);
+    background:var(--bg);color:var(--ink);border-radius:5px;padding:4px 11px;cursor:pointer}
+  .loop-item button.pri,.loop-fire button.pri{background:var(--accent);color:#0b0d11;border-color:var(--accent);font-weight:600}
+  .loop-item button:hover{border-color:var(--accent);color:var(--accent)}
+  .loop-item button.pri:hover{background:#92b2f8;color:#0b0d11}
+  .loop-fire{margin-top:18px;padding-top:12px;border-top:1px dashed var(--edge);font-size:12px;color:var(--dim);max-width:780px}
+  .verdict{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:1px 7px;
+    border-radius:3px;font-family:var(--mono);font-weight:700;letter-spacing:.04em}
+  .verdict.ok{background:rgba(158,206,106,.16);color:var(--ok)}
+  .verdict.bad{background:rgba(247,118,142,.16);color:var(--bad)}
+  .verdict.warn{background:rgba(224,175,104,.16);color:var(--warn)}
+  .stub{padding:24px;border:1px dashed var(--edge);border-radius:10px;color:var(--dim);
+    background:var(--panel);max-width:780px;line-height:1.65}
+  .stub b{color:var(--ink2)}
+
+  /* ─── RIGHT: FOCUS NODE CARD ─── */
+  #right .rhd{padding:14px 16px;border-bottom:1px solid var(--edge);background:var(--panel)}
+  #right .rhd .ess{font-size:14.5px;line-height:1.45}
+  #right .rhd .chiprow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:9px}
+  #right .rhd .nid{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:6px;word-break:break-all}
+  #right .rhd .rolerow{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+  .rolechip{font-size:9.5px;padding:1px 7px;border-radius:3px;font-weight:700;letter-spacing:.04em}
+  .rolechip.spine{background:var(--keystone);color:#0b0d11}
+  .rolechip.post{background:var(--ok);color:#0b0d11}
+  .rolechip.gap{background:var(--warn);color:#0b0d11}
+  .rsec{padding:12px 16px;border-bottom:1px solid var(--edge)}
+  .rsec-h{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);font-weight:700;
+    margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
+  .rsec-h .add{font-size:10px;color:var(--accent);cursor:pointer}
+  body:not(.mode-edit) .rsec-h .add{display:none}
+  body:not(.mode-edit) .edit-only{display:none}
+  .dep{display:flex;align-items:center;gap:8px;padding:5px 8px;border:1px solid var(--edge);
+    border-radius:6px;margin-bottom:5px;font-size:11.5px;cursor:pointer}
+  .dep:hover{border-color:var(--accent)}
+  .dep .did{flex:1;font-family:var(--mono);font-size:11px;color:var(--ink2);overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .dep .prov{font-size:8.5px;padding:1px 5px;border-radius:3px;font-weight:700;letter-spacing:.04em;flex:none}
+  .prov.exp,.prov.explicit{background:rgba(122,162,247,.18);color:var(--accent)}
+  .prov.cnf,.prov.confirmed{background:rgba(158,206,106,.18);color:var(--ok)}
+  .prov.semantic,.prov.candidate{background:rgba(187,154,247,.18);color:var(--keystone)}
+  .dep .x{padding:2px 7px;font-size:10px;border:1px solid var(--edge);background:none;
+    color:var(--dim);border-radius:4px;cursor:pointer}
+  .dep .x:hover{color:var(--bad);border-color:var(--bad)}
+  .ctxbox{font-size:12.5px;color:var(--ink2);background:var(--panel);border-left:2px solid var(--dim);
+    border-radius:0 6px 6px 0;padding:9px 11px;line-height:1.55}
+  .citerow{display:flex;flex-wrap:wrap;gap:5px}
+  .cchip{font-size:11px;color:var(--ok);background:rgba(158,206,106,.08);border:1px solid rgba(158,206,106,.25);
+    border-radius:5px;padding:2px 7px;cursor:pointer;font-family:var(--mono)}
+  .cchip:hover{border-color:var(--ok)}
+  .actrow{display:flex;gap:7px;flex-wrap:wrap}
+  .actrow button{font:inherit;font-size:11.5px;border:1px solid var(--edge);background:var(--panel);
+    color:var(--ink);border-radius:6px;padding:5px 11px;cursor:pointer}
+  .actrow button.pri{background:var(--accent);color:#0b0d11;border-color:var(--accent);font-weight:600}
+  .actrow button:hover{border-color:var(--accent);color:var(--accent)}
+  .actrow button.pri:hover{background:#92b2f8;color:#0b0d11}
+  .actrow button.danger:hover{border-color:var(--bad);color:var(--bad)}
+  .kind-retag{display:flex;align-items:center;gap:9px;font-size:12px;flex-wrap:wrap}
+  .kind-retag select{background:var(--bg);color:var(--ink);border:1px solid var(--edge);
+    border-radius:5px;padding:3px 7px;font:inherit;font-size:12px}
+  .essarea{width:100%;min-height:80px;background:var(--bg);color:var(--ink);border:1px solid var(--edge);
+    border-radius:7px;padding:8px 10px;font:12px var(--mono);resize:vertical}
+  .essarea:focus{outline:none;border-color:var(--accent)}
+
+  /* ─── FIGURE PREVIEW (right-pane, when kind=figure) ─── */
+  .figbox{border:1px solid var(--edge);border-radius:8px;overflow:hidden;background:var(--panel);margin-bottom:8px}
+  .figbox img,.figbox embed,.figbox object{width:100%;max-height:340px;display:block;background:#fff}
+  .figbox .ph{height:160px;display:flex;align-items:center;justify-content:center;color:var(--dim);
+    background:repeating-linear-gradient(45deg,var(--bg),var(--bg) 10px,var(--panel) 10px,var(--panel) 20px);
+    font-size:11px;font-family:var(--mono);padding:14px;text-align:center;line-height:1.6}
+  .figbox .cap{padding:8px 11px;font-size:11.5px;color:var(--ink2);border-top:1px solid var(--edge);line-height:1.5}
+  .gencode{font-size:11px;font-family:var(--mono);color:var(--ink2);background:var(--bg);
+    border:1px solid var(--edge);border-radius:6px;padding:8px 10px;margin-top:6px;overflow-x:auto;max-height:200px;overflow-y:auto}
+
+  /* ─── PICKER OVERLAY ─── */
+  #picker,#litpicker{position:fixed;inset:0;background:rgba(8,10,14,.6);z-index:80;display:none;
+    align-items:flex-start;justify-content:center}
+  #picker.on,#litpicker.on{display:flex}
+  .pickbox{margin-top:8vh;width:min(640px,92vw);background:var(--panel);border:1px solid var(--accent);
+    border-radius:12px;padding:14px;box-shadow:0 18px 60px rgba(0,0,0,.5)}
+  .litbox{margin-top:6vh;width:min(820px,94vw);max-height:84vh;display:flex;flex-direction:column;
+    background:var(--panel);border:1px solid var(--accent);border-radius:12px;padding:16px;
+    box-shadow:0 18px 60px rgba(0,0,0,.5)}
+  .litbox h3{margin:0 0 10px;font-size:14px;color:var(--ink)}
+  .litbox h3 .for{color:var(--dim);font-family:var(--mono);font-size:11px;font-weight:400;margin-left:6px}
+  .lit-qrow{display:flex;gap:7px;align-items:center;margin-bottom:10px}
+  .lit-qrow input{flex:1;background:var(--bg);color:var(--ink);border:1px solid var(--edge);
+    border-radius:7px;padding:7px 10px;font:13px inherit}
+  .lit-qrow input:focus{outline:none;border-color:var(--accent)}
+  .lit-qrow button{font:inherit;font-size:12px;padding:7px 14px;background:var(--accent);
+    color:#0b0d11;border:0;border-radius:6px;cursor:pointer;font-weight:600}
+  .lit-qrow button.ghost{background:none;border:1px solid var(--edge);color:var(--ink);font-weight:400}
+  .lit-qrow button:hover{filter:brightness(1.1)}
+  .lit-status{font-size:11.5px;color:var(--dim);margin-bottom:8px;font-style:italic}
+  .lit-status.err{color:var(--bad);font-style:normal}
+  .lit-results{flex:1;overflow-y:auto;border:1px solid var(--edge);border-radius:8px;background:var(--bg);
+    padding:4px;min-height:200px}
+  .lcand{display:flex;gap:10px;padding:9px 11px;border-radius:7px;cursor:pointer;align-items:flex-start;
+    border:1px solid transparent;margin-bottom:2px}
+  .lcand:hover{background:var(--panel2)}
+  .lcand.sel{background:rgba(122,162,247,.10);border-color:rgba(122,162,247,.4)}
+  .lcand input[type=checkbox]{margin-top:3px;cursor:pointer;flex:none;width:16px;height:16px;accent-color:var(--accent)}
+  .lcand .lbody{flex:1;min-width:0}
+  .lcand .ltitle{font-size:13px;color:var(--ink);line-height:1.4}
+  .lcand .lmeta{font-size:11px;color:var(--ink2);margin-top:3px;font-family:var(--mono)}
+  .lcand .lkey{color:var(--accent)} .lcand .lyear{color:var(--keystone)} .lcand .lcites{color:var(--ok)}
+  .lcand .labstract{font-size:11px;color:var(--dim);margin-top:5px;line-height:1.5;display:none}
+  .lcand:hover .labstract,.lcand.sel .labstract{display:block}
+  .lcand .lurl{font-size:10.5px;color:var(--accent);margin-top:4px;font-family:var(--mono)}
+  .lcand .lurl a{color:inherit;text-decoration:none} .lcand .lurl a:hover{text-decoration:underline}
+  .lit-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:10px}
+  .lit-footer .lcnt{font-size:11.5px;color:var(--dim);font-family:var(--mono)}
+  .lit-footer button{font:inherit;font-size:12px;padding:7px 16px;border-radius:6px;cursor:pointer;border:1px solid var(--edge);background:var(--panel);color:var(--ink)}
+  .lit-footer button.pri{background:var(--accent);color:#0b0d11;border-color:var(--accent);font-weight:600}
+  .lit-footer button:hover{filter:brightness(1.15)}
+  .lit-footer button:disabled{opacity:.4;cursor:not-allowed}
+  .pickbox .pcap{font-size:12px;color:var(--dim);margin-bottom:9px}
+  .pickbox input{width:100%;background:var(--bg);color:var(--ink);border:1px solid var(--edge);
+    border-radius:8px;padding:9px 11px;font:14px inherit}
+  .pickbox input:focus{outline:none;border-color:var(--accent)}
+  #pres{max-height:48vh;overflow:auto;margin-top:10px}
+  .prow{display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:7px;cursor:pointer}
+  .prow:hover{background:var(--panel2)}
+  .prow .pk{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;color:#0b0d11;flex:none;letter-spacing:.04em}
+  .prow .pe{flex:1;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .prow .pid{font-size:9.5px;color:var(--dim);font-family:var(--mono);flex:none}
+
+  /* ─── FOOTER STATUS STRIP ─── */
+  #footer{min-height:26px;flex:none;border-top:1px solid var(--edge);background:var(--panel);
+    display:flex;align-items:center;padding:0 16px;gap:18px;font-size:11.5px;color:var(--ink2);font-family:var(--mono)}
+  #footer .stat{display:flex;align-items:center;gap:5px}
+  #footer .stat .k{color:var(--dim)}
+  #footer .stat .v{color:var(--ink)}
+  #footer .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok)}
+  #footer .pulse.warn{background:var(--warn)}
+  #footer .pulse.bad{background:var(--bad)}
+  #footer .spacer{flex:1}
+  #footer .key{color:var(--dim)}
+  #footer kbd{background:var(--bg);border:1px solid var(--edge);border-radius:3px;
+    padding:0 4px;font-family:var(--mono);font-size:10px;color:var(--ink2)}
+
+  .note{font-size:11.5px;color:var(--dim);font-style:italic;margin-top:4px}
+  .math{font-size:13.5px;overflow-x:auto}
+
+  /* ─── REGRADE VIEW ─── */
+  .rg-sec{margin-bottom:26px;max-width:880px}
+  .rg-h{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);font-weight:700;
+    margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .rg-h .sub{font-size:10.5px;color:var(--dim);font-weight:400;text-transform:none;letter-spacing:0;font-style:italic}
+  .rg-box{border:1px solid var(--edge);border-radius:10px;background:var(--panel);padding:14px 16px}
+  .rg-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:10.5px;color:var(--ink2)}
+  .rg-legend .ki{display:inline-flex;align-items:center;gap:5px}
+  .rg-legend .sw{width:9px;height:9px;border-radius:2px;display:inline-block}
+  .rg-grow{display:flex;align-items:center;gap:10px;padding:6px 0}
+  .rg-grow .glab{width:150px;flex:none;font-size:11.5px;color:var(--ink2)}
+  .rg-grow .glab b{color:var(--ink);font-family:var(--mono)}
+  .rg-grow .gbar{height:15px;border-radius:3px;background:var(--keystone);opacity:.85;min-width:2px}
+  .rg-grow .gnum{font-family:var(--mono);font-size:11px;color:var(--ink)}
+  .rg-grow .gsz{font-family:var(--mono);font-size:10px;color:var(--dim);margin-left:auto;flex:none}
+  .rg-ratio{padding:0 0 0 150px;font-family:var(--mono);font-size:10px;color:var(--warn)}
+  .rg-cols{display:flex;gap:16px;flex-wrap:wrap}
+  .rg-cols .rg-col{flex:1;min-width:320px}
+  .rg-row{display:flex;align-items:center;gap:8px;padding:5px 8px;border:1px solid var(--edge);
+    border-radius:6px;margin-bottom:5px;cursor:pointer;font-size:11.5px;background:var(--panel)}
+  .rg-row:hover{border-color:var(--accent)}
+  .rg-row .rid{flex:1;font-family:var(--mono);font-size:11px;color:var(--ink2);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rg-row .rn{font-family:var(--mono);font-size:10.5px;color:var(--dim);flex:none}
+  .rg-row.big{border-left:3px solid var(--bad)}
+  .rg-row.thin{border-left:3px solid var(--warn)}
+</style>
+</head>
+<body class="mode-edit">
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <span class="brand">Conceptric Editor <small>v2</small></span>
+  <select id="corpus" title="which paper to navigate"></select>
+  <div class="seg">
+    <button id="m-browse" onclick="setMode('browse')">browse</button>
+    <button id="m-edit"   class="on" onclick="setMode('edit')">edit</button>
+  </div>
+  <button class="ico edit-only" id="addNodeBtn" onclick="addNodeAffordance()">+ node</button>
+  <button class="ico edit-only" id="pullLitProjectBtn" onclick="pullLiteratureProject()" title="open Google Scholar with a query derived from the project goal">pull lit ↗</button>
+  <span class="spacer"></span>
+  <span id="topmeta" style="color:var(--dim);font-size:11.5px;font-family:var(--mono)"></span>
+  <a class="nav-link" href="/navigator">navigator ↗</a>
+</div>
+
+<!-- BREADCRUMB -->
+<div id="crumbs">
+  <span class="lab">path</span>
+  <div id="crumb-list" style="display:flex;align-items:center;gap:5px;overflow:hidden;flex:1"></div>
+</div>
+
+<!-- BODY: 3 panes -->
+<div id="body">
+
+  <div id="left">
+    <div class="lsect">
+      <input id="lsearch" class="lsearch" placeholder="find any node by content — never by id" autocomplete="off">
+      <div id="lsres" class="lsres" style="display:none"></div>
+    </div>
+    <div class="lsect">
+      <div class="lsect-h">the spine <span class="count" id="spcount"></span></div>
+      <div id="spine-list"></div>
+    </div>
+    <div class="lsect">
+      <div class="lsect-h">techniques <span class="count" id="techcount"></span></div>
+      <div id="tech-list"></div>
+    </div>
+    <div class="lsect">
+      <div class="lsect-h">gaps <span class="count" id="gapcount"></span></div>
+      <div id="gap-list"></div>
+    </div>
+  </div>
+
+  <div id="centre">
+    <div id="tabs">
+      <button class="tab on" data-v="local"     onclick="setView('local')">local</button>
+      <button class="tab"    data-v="tree"      onclick="setView('tree')">tree</button>
+      <button class="tab"    data-v="landscape" onclick="setView('landscape')">landscape</button>
+      <button class="tab"    data-v="spine"     onclick="setView('spine')">spine</button>
+      <button class="tab"    data-v="list"      onclick="setView('list')">list</button>
+      <button class="tab"    data-v="friction"  onclick="setView('friction')">friction</button>
+      <button class="tab"    data-v="regrade"   onclick="setView('regrade')">regrade</button>
+      <span class="spacer"></span>
+      <div class="legend">
+        <span class="leg-sp">spine</span>
+        <span class="leg-post">postulate</span>
+        <span class="leg-tech">technique</span>
+        <span class="leg-gap">gap</span>
+      </div>
+    </div>
+
+    <div id="views">
+      <div class="view on" id="v-local"></div>
+      <div class="view"    id="v-tree"></div>
+      <div class="view"    id="v-landscape"></div>
+      <div class="view"    id="v-spine"></div>
+      <div class="view"    id="v-list"></div>
+      <div class="view"    id="v-friction"></div>
+      <div class="view"    id="v-regrade"></div>
+    </div>
+  </div>
+
+  <div id="right"></div>
+
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+  <span class="stat"><span class="pulse" id="ft-pulse"></span><span class="k">corpus</span><span class="v" id="ft-corpus">—</span></span>
+  <span class="stat"><span class="k">nodes</span><span class="v" id="ft-nodes">—</span></span>
+  <span class="stat"><span class="k">gaps</span><span class="v" id="ft-gaps">—</span></span>
+  <span class="stat"><span class="pulse" id="ft-fric-p"></span><span class="k">friction</span><span class="v" id="ft-fric">—</span></span>
+  <span class="stat"><span class="k">re-project</span><span class="v" id="ft-reproj">—</span></span>
+  <span class="stat"><span class="pulse" id="ft-panel-p"></span><span class="k">panel</span><span class="v" id="ft-panel">—</span></span>
+  <span class="spacer"></span>
+  <span class="key"><kbd>/</kbd> search · <kbd>h</kbd>/<kbd>l</kbd> ascend/descend · <kbd>b</kbd> back · <kbd>e</kbd> edit · <kbd>1-7</kbd> tabs</span>
+</div>
+
+<!-- PICKER -->
+<div id="picker" onclick="if(event.target.id==='picker') closePicker()">
+  <div class="pickbox">
+    <div class="pcap" id="pcap">pick a node — search its content</div>
+    <input id="pinput" placeholder="content search…">
+    <div id="pres"></div>
+  </div>
+</div>
+
+<!-- LITERATURE BULK-STAGE PICKER -->
+<div id="litpicker" onclick="if(event.target.id==='litpicker') closeLitPicker()">
+  <div class="litbox">
+    <h3>literature search <span class="for" id="lit-for"></span></h3>
+    <div class="lit-qrow">
+      <input id="lit-q" placeholder="query…">
+      <button class="ghost" onclick="closeLitPicker()">cancel</button>
+      <button onclick="runLitSearch()">↻ search</button>
+      <button class="ghost" onclick="openScholarFromQuery()" title="open the query in Google Scholar directly">scholar ↗</button>
+    </div>
+    <div class="lit-status" id="lit-status">type or paste a query, then ↻ search</div>
+    <div class="lit-results" id="lit-results"></div>
+    <div class="lit-footer">
+      <span class="lcnt" id="lit-cnt">0 selected</span>
+      <div>
+        <button id="lit-add" class="pri" disabled onclick="addSelectedLiterature()">add selected as ref: nodes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── state ─────────────────────────────────────────────────────────────
+  let CORPUS  = null;
+  let FOCUS   = null;        // current node id
+  let MODE    = 'edit';
+  let VIEW    = 'local';
+  let LAT_AXIS = 'grade';    // 'grade' | 'technique' | 'citation'
+  let MACROS  = {};
+  let CONTENT = {};          // id -> content cache
+  let NB      = {};          // id -> neighborhood cache
+  let SPINE   = [];
+  let TECHS   = [];
+  let GAPS    = [];
+  let META    = {};
+  let FRICTION = [];
+  let HISTORY = [];          // breadcrumb stack of recently-visited foci
+  let STATS   = null;        // /corpus/grade_stats cache (regrade tab)
+
+  // kind → colour, mirroring the .kbadge palette (concrete hex so inline SVG can use it)
+  const KIND_COLORS = {
+    'definition':'#7aa2f7', 'result':'#9ece6a', 'theorem':'#bb9af7', 'lemma':'#5ee6b0',
+    'derivation-step':'#6b7689', 'postulate':'#9ece6a', 'intermediate-result':'#5ee6b0',
+    'technique':'#e0af68', 'figure':'#e0af68', 'equation':'#bb9af7', 'support':'#9aa5b4',
+    'citation':'#73daca', 'goal':'#7aa2f7', 'portal':'#7aa2f7',
+  };
+  function kindColor(k){ return KIND_COLORS[k] || '#565f89'; }
+
+  // ─── helpers ──────────────────────────────────────────────────────────
+  const qs  = s => document.querySelector(s);
+  const qsa = s => Array.from(document.querySelectorAll(s));
+  const esc = s => (s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  async function jget(u){ const r = await fetch(u); return r.json(); }
+  async function jpost(u, body){
+    const r = await fetch(u, {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)});
+    return r.json();
+  }
+
+  function cleanTex(s){
+    return (s||'').replace(/\\label\{[^}]*\}/g,'')
+      .replace(/\\(begin|end)\{[^}]*\}/g,'')
+      .replace(/\\nonumber|\\notag/g,'')
+      .replace(/&/g,' ').replace(/\\\\/g,' ').trim();
+  }
+  function mathHTML(s){
+    const t = cleanTex(s);
+    try {
+      return window.katex
+        ? katex.renderToString(t,{throwOnError:false,displayMode:false,macros:MACROS})
+        : esc(t);
+    } catch(e){ return esc(t); }
+  }
+  function mathHTMLDisplay(s){
+    const t = cleanTex(s);
+    try {
+      return window.katex
+        ? katex.renderToString(t,{throwOnError:false,displayMode:true,macros:MACROS})
+        : esc(t);
+    } catch(e){ return esc(t); }
+  }
+  // Render prose with inline `$...$` and display `\[...\]` math via KaTeX, prose escaped.
+  // Used for prose+math essences (IRFs, supports, results) that the pure-math path
+  // would otherwise show as raw `$\tau$`-style text.
+  function renderProseMath(s, len){
+    const text = (s||'').slice(0, len||4000);
+    let out = '', last = 0;
+    // \\[...\\] display first (greedy non-overlap), then $...$ inline.
+    const re = /\\\[([\s\S]+?)\\\]|\$([^$\n]+?)\$/g;
+    let m;
+    while((m = re.exec(text)) !== null){
+      out += esc(text.slice(last, m.index));
+      if(m[1] !== undefined){
+        out += "<span class='math-display'>"+mathHTMLDisplay(m[1])+"</span>";
+      } else {
+        out += "<span class='math-inline'>"+mathHTML(m[2])+"</span>";
+      }
+      last = m.index + m[0].length;
+    }
+    out += esc(text.slice(last));
+    return out;
+  }
+  const MATH_KINDS = ['equation','definition','postulate','derivation-step','lemma',
+                      'intermediate-result','result','theorem'];
+  function looksProse(s){
+    const stripped=(s||'').replace(/\\text\{[^}]*\}/g,' ').replace(/\\[a-zA-Z]+/g,' ')
+      .replace(/[{}^_$&|]/g,' ');
+    return (stripped.match(/[A-Za-z]{3,}/g)||[]).length >= 7;
+  }
+  function mathEss(kind, essence, id, len){
+    const e = essence||id||'';
+    // Pure-math node (short, math-heavy): KaTeX-render the whole string.
+    if(MATH_KINDS.includes(kind) && !looksProse(e)) return mathHTML(e);
+    // Otherwise: split on $...$ and \[...\] markers, render math blocks inline.
+    return renderProseMath(e, len);
+  }
+  function shortKind(k){
+    return ({'derivation-step':'step','intermediate-result':'ires',
+             'definition':'def','postulate':'pos','result':'res','theorem':'thm',
+             'lemma':'lem','support':'sup','technique':'tech','figure':'fig'}[k])
+      || (k||'').slice(0,4);
+  }
+  function kbadge(kind){
+    return "<span class='kbadge "+esc(kind||'')+"'>"+esc(shortKind(kind))+"</span>";
+  }
+
+  // ─── boot ─────────────────────────────────────────────────────────────
+  async function boot(){
+    const list = await jget('/corpus/list');
+    const sel = qs('#corpus');
+    sel.innerHTML = (list.corpora||[]).map(c => '<option>'+esc(c)+'</option>').join('');
+    sel.onchange = () => { CORPUS = sel.value; loadCorpus(); };
+    const p = new URLSearchParams(location.search);
+    const cp = p.get('corpus');
+    if(cp && list.corpora.includes(cp)) sel.value = cp;
+    else if(list.default && list.corpora.includes(list.default)) sel.value = list.default;
+    CORPUS = sel.value;
+    await loadCorpus();
+    const np = p.get('node');
+    if(np) await setFocus(np);
+    // shell hook: the shared header's node search focuses in-page instead of navigating
+    window.__hymnOpenNode = setFocus;
+  }
+
+  async function loadCorpus(){
+    HISTORY = [];
+    POLL_LAST = null;   // fresh corpus, fresh poll baseline
+    // keep ?corpus= in the URL current — the shared shell reads it at hop time
+    try{
+      const u = new URL(location.href);
+      u.searchParams.set('corpus', CORPUS);
+      history.replaceState(null, '', u);
+    }catch(e){ /* cosmetic only */ }
+    qs('#right').innerHTML = '<div style="padding:30px;color:var(--dim);font-size:12px">loading…</div>';
+    MACROS  = (await jget('/corpus/macros?corpus='+CORPUS)).macros || {};
+    META    = await jget('/corpus/meta?corpus='+CORPUS);
+    const sp = await jget('/corpus/spine?corpus='+CORPUS);
+    SPINE   = sp.spine || [];
+    const t = await jget('/corpus/techniques?corpus='+CORPUS);
+    TECHS   = t.techniques || [];
+    const g = await jget('/corpus/gaps?corpus='+CORPUS);
+    GAPS    = g.gaps || [];
+    const f = await jget('/corpus/friction?corpus='+CORPUS);
+    FRICTION = f.records || [];
+    CONTENT = {}; NB = {}; MAP = null; STATS = null;
+    renderLeft();
+    renderFooter();
+    qs('#topmeta').textContent = META.n_nodes + ' nodes · ' + (META.n_gaps||0) + ' gaps';
+    // initial focus: first spine result, else first apex
+    let initial = SPINE[0]?.id;
+    if(!initial){
+      const apex = await jget('/corpus/grade?corpus='+CORPUS+'&g=1');
+      initial = (apex.nodes||[])[0]?.id;
+    }
+    if(initial) await setFocus(initial);
+    else qs('#right').innerHTML = '<div style="padding:30px;color:var(--dim);font-size:12px">empty corpus</div>';
+  }
+
+  // ─── focus ────────────────────────────────────────────────────────────
+  async function setFocus(id, opts){
+    opts = opts || {};
+    if(!id) return;
+    if(FOCUS && FOCUS !== id){
+      HISTORY.push(FOCUS);
+      if(HISTORY.length > 8) HISTORY.shift();
+    }
+    FOCUS = id;
+    if(!CONTENT[id]) CONTENT[id] = await jget('/corpus/content?corpus='+CORPUS+'&id='+encodeURIComponent(id));
+    if(!NB[id])      NB[id]      = await jget('/corpus/neighborhood?corpus='+CORPUS+'&id='+encodeURIComponent(id));
+    renderCrumbs();
+    renderRight();
+    renderActiveView();
+    // sync highlighting in left index
+    qsa('.spcard').forEach(el => el.classList.toggle('cur', el.dataset.id === id));
+  }
+  function goBack(){
+    if(!HISTORY.length) return;
+    const last = HISTORY.pop();
+    FOCUS = null;
+    setFocus(last);
+  }
+
+  // ─── breadcrumb ───────────────────────────────────────────────────────
+  function renderCrumbs(){
+    const host = qs('#crumb-list'); host.innerHTML = '';
+    const hist = [...HISTORY, FOCUS].slice(-5);
+    hist.forEach((id, i) => {
+      const span = document.createElement('span');
+      span.className = 'crumb' + (i === hist.length-1 ? ' cur' : '');
+      span.textContent = id;
+      span.onclick = () => setFocus(id);
+      host.appendChild(span);
+      if(i < hist.length-1){
+        const sep = document.createElement('span');
+        sep.className = 'crumb-sep'; sep.textContent = '›';
+        host.appendChild(sep);
+      }
+    });
+  }
+
+  // ─── LEFT INDEX ───────────────────────────────────────────────────────
+  function renderLeft(){
+    // spine — goal first (the orientation), then the numbered chain
+    const goal = SPINE.find(s => s.kind === 'goal');
+    const rest = SPINE.filter(s => s.kind !== 'goal');
+    qs('#spcount').textContent = rest.length + ' on spine' + (goal ? ' · goal set' : '');
+    const sp = qs('#spine-list'); sp.innerHTML = '';
+    // goal slot
+    if(goal){
+      const gc = document.createElement('div');
+      gc.className = 'goal-card' + (goal.id === FOCUS ? ' cur' : '');
+      gc.innerHTML = "<div class='lab'>★ project goal</div>"+
+        "<div class='text'>"+esc(goal.essence || '')+"</div>"+
+        "<div class='gid'>"+esc(goal.id)+"</div>";
+      gc.onclick = () => setFocus(goal.id);
+      sp.appendChild(gc);
+    } else {
+      const empty = document.createElement('div');
+      empty.className = 'goal-empty';
+      empty.textContent = '+ set the project goal — orient the spine';
+      empty.onclick = () => setProjectGoal();
+      sp.appendChild(empty);
+    }
+    // the numbered chain
+    if(!rest.length){
+      const e = document.createElement('div'); e.className='empty-line';
+      e.textContent = 'no spine yet — promote a result to the spine to seed it';
+      sp.appendChild(e);
+    }
+    rest.forEach((s, i) => {
+      const el = document.createElement('div');
+      el.className = 'spcard' + (s.id === FOCUS ? ' cur' : ''); el.dataset.id = s.id;
+      // one-line HANDLE, never the full essence (that's the inspector's estate):
+      // title = the canonical term when the projector coined one, else a short clean tail;
+      // second line = the narrative connective (falls back to the id).
+      const title = s.term || cleanTex(s.essence).replace(/\$/g,'').replace(/\s+/g,' ').slice(0, 70) || s.id;
+      const sub = (s.narrative || '').trim() || s.id;
+      el.title = s.id;
+      el.innerHTML = "<div class='num'>"+(i+1)+"</div><div class='bd'>"+
+        "<div class='ess'>"+esc(title)+"</div>"+
+        "<div class='id'>"+esc(sub.slice(0, 90))+"</div></div>";
+      el.onclick = () => setFocus(s.id);
+      sp.appendChild(el);
+    });
+    // techniques
+    qs('#techcount').textContent = TECHS.length;
+    const tl = qs('#tech-list'); tl.innerHTML = '';
+    if(!TECHS.length){
+      tl.innerHTML = '<div class="empty-line">no technique nodes yet</div>';
+    }
+    TECHS.slice(0, 12).forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'tech-row';
+      el.innerHTML = "<span>"+esc(t.essence||t.id)+"</span>"+
+        "<span class='n'>×"+(t.users?t.users.length:0)+"</span>";
+      el.onclick = () => setFocus(t.id);
+      tl.appendChild(el);
+    });
+    // gaps
+    qs('#gapcount').textContent = GAPS.length;
+    const gl = qs('#gap-list'); gl.innerHTML = '';
+    if(!GAPS.length){
+      gl.innerHTML = '<div class="empty-line">no derivation gaps — every step has a parent</div>';
+    }
+    GAPS.slice(0, 14).forEach(gp => {
+      const el = document.createElement('div');
+      el.className = 'gap-row';
+      el.innerHTML = "<div><div>"+esc((gp.essence||'').slice(0,100))+"</div>"+
+        "<div class='gid'>"+esc(gp.id)+"</div></div>";
+      el.onclick = () => setFocus(gp.id);
+      gl.appendChild(el);
+    });
+    // search
+    qs('#lsearch').oninput = onSearch;
+  }
+
+  let _SEARCH_T = null;
+  function onSearch(e){
+    clearTimeout(_SEARCH_T);
+    const qv = e.target.value;
+    const host = qs('#lsres');
+    if(!qv.trim()){ host.style.display='none'; host.innerHTML=''; return; }
+    _SEARCH_T = setTimeout(async () => {
+      const r = await jget('/corpus/search?corpus='+CORPUS+'&q='+encodeURIComponent(qv));
+      const rows = r.results || [];
+      host.style.display = 'block';
+      host.innerHTML = rows.slice(0, 18).map(n =>
+        "<div class='sres' data-id='"+esc(n.id)+"'>"+
+          "<div>"+esc((n.essence||'').slice(0,100))+"</div>"+
+          "<div class='sid'>"+esc(n.id)+" · "+esc(n.kind||'')+"</div></div>"
+      ).join('');
+      host.querySelectorAll('.sres').forEach(el =>
+        el.onclick = () => { setFocus(el.dataset.id); qs('#lsearch').value=''; host.style.display='none'; }
+      );
+    }, 120);
+  }
+
+  // ─── RIGHT: FOCUS NODE CARD ───────────────────────────────────────────
+  function renderRight(){
+    const c = CONTENT[FOCUS]; const nb = NB[FOCUS];
+    if(!c){ qs('#right').innerHTML = '<div style="padding:30px;color:var(--dim);font-size:12px">no focus</div>'; return; }
+    // the shared inspector idiom (inspector.js) when the /shared layer is up;
+    // the legacy renderer below is the graceful fallback when it is not.
+    if(window.HymnInspector){ renderRightShared(c, nb); return; }
+    // media preview triggers on id-prefix (fig:/code:), not just kind === 'figure' — PDF-sourced
+    // conceptrics carry these as `support` nodes with the file named in the essence.
+    const isFigure = FOCUS.startsWith('fig:');
+    const isCode   = FOCUS.startsWith('code:');
+    const isGap = nb && nb.node && !c.postulate && nb.node.n_below === 0 && c.kind && c.kind !== 'figure' && c.kind !== 'section' && c.kind !== 'citation' && !isFigure && !isCode;
+    const roles = [];
+    if(c.spine) roles.push("<span class='rolechip spine'>on spine · #"+c.spine.ord+"</span>");
+    if(c.postulate) roles.push("<span class='rolechip post'>postulate</span>");
+    if(isGap) roles.push("<span class='rolechip gap'>gap</span>");
+
+    const html = [
+      "<div class='rhd'>",
+      "  <div class='ess'>"+mathEss(c.kind, c.essence, c.id, 4000)+"</div>",
+      "  <div class='chiprow'>"+kbadge(c.kind)+
+           "<span class='gbadge'>grade "+(c.grade!=null?c.grade:'?')+"</span></div>",
+      "  <div class='rolerow'>"+roles.join('')+"</div>",
+      "  <div class='nid'>"+esc(c.id)+"</div>",
+      "</div>",
+      // MEDIA preview (figure or code-script — id-prefix-driven)
+      isFigure ? renderFigureSection(c) : isCode ? renderCodeSection(c) : '',
+      // narrative
+      "<div class='rsec'>",
+      "  <div class='rsec-h'>narrative · what this node says <span class='add edit-only' onclick='editNarrative()'>edit</span></div>",
+      c.ctx
+        ? "<div class='ctxbox'>"+esc(c.ctx)+"</div>"
+        : "<div class='note'>no derivation lead-in captured for this node</div>",
+      "</div>",
+      // kind retag (edit only)
+      "<div class='rsec edit-only'>",
+      "  <div class='rsec-h'>kind</div>",
+      "  <div class='kind-retag'>",
+      "    <span style='color:var(--dim)'>current:</span>",
+      kindSelectHTML(c.kind),
+      "  </div>",
+      "</div>",
+      // deps (below — derives from)
+      "<div class='rsec'>",
+      "  <div class='rsec-h'>depends on · derives from "+
+        "<span class='add edit-only' onclick='pickDep()'>+ add</span></div>",
+      renderDepsList(nb && nb.below || [], 'below'),
+      "</div>",
+      // consumers (above — used by)
+      "<div class='rsec'>",
+      "  <div class='rsec-h'>used by · consumers "+
+        "<span style='color:var(--dim);font-size:10px;text-transform:none;letter-spacing:0'>"+
+          (nb && nb.node ? nb.node.n_above+' above' : '')+"</span></div>",
+      renderDepsList(nb && nb.above || [], 'above'),
+      "</div>",
+      // citations — always rendered, even when empty, so the "pull literature" trigger
+      // is visible on substrate nodes that have nothing wired in yet (the common case).
+      "<div class='rsec'>",
+      "  <div class='rsec-h'>citations · "+((c.cites && c.cites.length)||0)+
+        "    <span class='add edit-only' onclick='pullLiteratureForFocus()' title='open Scholar with a query from this node — find & wire candidates'>↻ pull literature ↗</span>"+
+      "  </div>",
+      (c.cites && c.cites.length)
+        ? "<div class='citerow'>"+
+            c.cites.map(x => "<span class='cchip' onclick=\"setFocus('"+esc(x.id)+"')\">"+
+              esc((x.essence||x.id).slice(0,60))+"</span>").join('')+
+          "</div>"
+        : "<div class='note'>no citations wired — pull literature to find candidates</div>",
+      "</div>",
+      // actions
+      "<div class='rsec edit-only'>",
+      "  <div class='rsec-h'>actions</div>",
+      "  <div class='actrow'>",
+      "    <button class='pri' onclick='openEssenceEditor()'>edit essence</button>",
+      c.spine
+        ? "<button onclick=\"rewire({kind:'unset-spine',node:FOCUS})\">off spine</button>"
+        : "<button onclick='promoteSpine()'>promote to spine</button>",
+      "    <button onclick='findSimilar()'>find similar</button>",
+      "    <button class='danger' onclick='confirmDelete()'>delete node</button>",
+      "  </div>",
+      "</div>",
+    ].join('');
+    qs('#right').innerHTML = html;
+  }
+
+  // the shared-inspector path: HymnInspector renders the structured core (kind badge +
+  // TERM title, id secondary, essence with in-place editing, edge chips, slots, ancestry
+  // breadcrumb, cross-links); the page keeps its own sections — media preview, narrative,
+  // kind retag, citations, actions — as extraHTML, so no behaviour is lost.
+  function renderRightShared(c, nb){
+    const isFigure = FOCUS.startsWith('fig:');
+    const isCode   = FOCUS.startsWith('code:');
+    const isGap = nb && nb.node && !c.postulate && nb.node.n_below === 0 && c.kind && c.kind !== 'figure' && c.kind !== 'section' && c.kind !== 'citation' && !isFigure && !isCode;
+    const extra = [
+      // MEDIA preview (figure or code-script — id-prefix-driven)
+      isFigure ? renderFigureSection(c) : isCode ? renderCodeSection(c) : '',
+      // narrative
+      "<div class='rsec'>",
+      "  <div class='rsec-h'>narrative · what this node says <span class='add edit-only' onclick='editNarrative()'>edit</span></div>",
+      c.ctx
+        ? "<div class='ctxbox'>"+esc(c.ctx)+"</div>"
+        : "<div class='note'>no derivation lead-in captured for this node</div>",
+      "</div>",
+      // kind retag (edit only)
+      "<div class='rsec edit-only'>",
+      "  <div class='rsec-h'>kind</div>",
+      "  <div class='kind-retag'>",
+      "    <span style='color:var(--dim)'>current:</span>",
+      kindSelectHTML(c.kind),
+      "  </div>",
+      "</div>",
+      // citations — always rendered so the pull-literature trigger stays visible
+      "<div class='rsec'>",
+      "  <div class='rsec-h'>citations · "+((c.cites && c.cites.length)||0)+
+      "    <span class='add edit-only' onclick='pullLiteratureForFocus()' title='open Scholar with a query from this node — find & wire candidates'>↻ pull literature ↗</span>"+
+      "  </div>",
+      (c.cites && c.cites.length)
+        ? "<div class='citerow'>"+
+            c.cites.map(x => "<span class='cchip' onclick=\"setFocus('"+esc(x.id)+"')\">"+
+              esc((x.essence||x.id).slice(0,60))+"</span>").join('')+
+          "</div>"
+        : "<div class='note'>no citations wired — pull literature to find candidates</div>",
+      "</div>",
+      // actions
+      "<div class='rsec edit-only'>",
+      "  <div class='rsec-h'>actions</div>",
+      "  <div class='actrow'>",
+      "    <button class='pri' onclick='openEssenceEditor()'>edit essence</button>",
+      c.spine
+        ? "<button onclick=\"rewire({kind:'unset-spine',node:FOCUS})\">off spine</button>"
+        : "<button onclick='promoteSpine()'>promote to spine</button>",
+      "    <button onclick='findSimilar()'>find similar</button>",
+      "    <button class='danger' onclick='confirmDelete()'>delete node</button>",
+      "  </div>",
+      "</div>",
+    ].join('');
+    HymnInspector.render(qs('#right'), {
+      corpus: CORPUS, id: FOCUS, content: c, nb: nb, spine: SPINE,
+      roles: isGap ? [{label:'gap', cls:'gap'}] : [],
+      renderEssence: cc => mathEss(cc.kind, cc.essence, cc.id, 4000),
+      onFocus: setFocus,
+      edit: MODE === 'edit'
+        ? {enabled:true, onRemoveOut: removeEdge, onAddOut: pickDep, onAddIn: pickConsumer}
+        : null,
+      hideLinks: {hideConceptric: true},   // we ARE conceptric2 — offer projection only
+      extraHTML: extra,
+      onSaved: async () => {
+        CONTENT[FOCUS] = null; NB[FOCUS] = null;
+        const f = await jget('/corpus/friction?corpus='+CORPUS);
+        FRICTION = f.records || [];
+        renderFooter();
+        setFocus(FOCUS);
+      },
+    });
+  }
+
+  function renderFigureSection(c){
+    const url = '/corpus/asset?corpus='+CORPUS+'&id='+encodeURIComponent(c.id);
+    return [
+      "<div class='rsec'>",
+      "  <div class='rsec-h'>figure preview</div>",
+      "  <div class='figbox'>",
+      "    <embed src='"+url+"' onerror=\"this.style.display='none';this.nextElementSibling.style.display='flex'\">",
+      "    <div class='ph' style='display:none'>asset not found — node has no resolvable file<br><span style='color:var(--ink2)'>"+esc(c.id)+"</span></div>",
+      "    <div class='cap'>"+esc(c.essence||'')+"</div>",
+      "  </div>",
+      "</div>",
+    ].join('');
+  }
+  function renderCodeSection(c){
+    const url = '/corpus/asset?corpus='+CORPUS+'&id='+encodeURIComponent(c.id);
+    // fetch the script body lazily (small files; capped by the server). The element waits in the DOM.
+    setTimeout(async () => {
+      const host = document.getElementById('code-preview-'+CSS.escape(c.id).replace(/[^a-zA-Z0-9_-]/g,'_'));
+      if(!host) return;
+      try {
+        const r = await fetch(url);
+        if(!r.ok){ host.textContent = 'asset not found — '+c.id; host.style.color='var(--dim)'; return; }
+        const txt = await r.text();
+        host.textContent = txt.length > 12000 ? txt.slice(0, 12000) + '\n… (truncated, '+(txt.length-12000)+' more bytes)' : txt;
+      } catch(e){ host.textContent = 'fetch error: '+e.message; }
+    }, 0);
+    const safeId = c.id.replace(/[^a-zA-Z0-9_-]/g,'_');
+    return [
+      "<div class='rsec'>",
+      "  <div class='rsec-h'>code · <a href='"+url+"' target='_blank' style='color:var(--accent);text-decoration:none'>open raw ↗</a></div>",
+      "  <div class='figbox'>",
+      "    <pre class='gencode' style='margin:0;border:0;border-radius:0;max-height:340px' id='code-preview-"+safeId+"'>loading…</pre>",
+      "    <div class='cap'>"+esc(c.essence||'')+"</div>",
+      "  </div>",
+      "</div>",
+    ].join('');
+  }
+
+  function renderDepsList(arr, side){
+    if(!arr.length) return "<div class='note'>none</div>";
+    return arr.map(d => {
+      const x = MODE === 'edit' && side === 'below'
+        ? "<button class='x' onclick=\"event.stopPropagation();removeEdge('"+esc(d.id)+"')\">×</button>" : '';
+      return "<div class='dep' onclick=\"setFocus('"+esc(d.id)+"')\">"+
+        "<span class='did'>"+esc(d.id)+"</span>"+
+        "<span class='prov "+(d.prov||'')+"'>"+(d.prov||'—')+"</span>"+
+        x+
+        "</div>";
+    }).join('');
+  }
+
+  const LOGICAL_KINDS = ['goal','definition','postulate','derivation-step','lemma','intermediate-result',
+                         'result','theorem','support','technique','portal'];
+  function kindSelectHTML(cur){
+    const known = LOGICAL_KINDS.includes(cur);
+    const head = known ? '' : "<option selected disabled>"+esc(cur||'—')+" · retag ↓</option>";
+    return "<select onchange=\"rewire({kind:'set-kind',node:FOCUS,value:this.value})\">"+
+      head + LOGICAL_KINDS.map(k => "<option"+(known && k===cur ? ' selected':'')+">"+k+"</option>").join('')+
+      "</select>";
+  }
+
+  // ─── RENDER ACTIVE VIEW ───────────────────────────────────────────────
+  function renderActiveView(){
+    if(VIEW === 'local')         renderLocal();
+    else if(VIEW === 'tree')     renderTree();
+    else if(VIEW === 'landscape') renderLandscape();
+    else if(VIEW === 'spine')    renderSpineView();
+    else if(VIEW === 'list')     renderListView();
+    else if(VIEW === 'friction') renderFriction();
+    else if(VIEW === 'regrade')  renderRegrade();
+  }
+
+  function setView(v){
+    VIEW = v;
+    qsa('.tab').forEach(t => t.classList.toggle('on', t.dataset.v === v));
+    qsa('.view').forEach(el => el.classList.toggle('on', el.id === 'v-'+v));
+    renderActiveView();
+  }
+  function setMode(m){
+    MODE = m;
+    document.body.classList.toggle('mode-edit', m === 'edit');
+    qs('#m-browse').classList.toggle('on', m === 'browse');
+    qs('#m-edit').classList.toggle('on', m === 'edit');
+    if(FOCUS) renderRight();   // edit affordances change
+    renderActiveView();
+  }
+
+  // ─── LOCAL VIEW ───────────────────────────────────────────────────────
+  function chipHTML(n, classes){
+    const cls = ['chip', ...(classes||[])].join(' ');
+    const prov = n.prov && n.prov!=='self' && n.prov!=='lateral'
+      ? "<span class='provb "+esc(n.prov)+"'>"+esc(n.prov)+"</span>" : '';
+    return "<div class='"+cls+"' data-id='"+esc(n.id)+"' onclick=\"setFocus('"+esc(n.id)+"')\">"+
+      "<div class='math'>"+mathEss(n.kind, n.essence, n.id, 200)+"</div>"+
+      "<div class='crow'>"+kbadge(n.kind)+
+        "<span class='gbadge'>g"+(n.grade!=null?n.grade:'?')+"</span>"+
+        "<span class='cid'>"+esc(n.id)+"</span>"+prov+
+      "</div></div>";
+  }
+  function focusChipHTML(c, nb){
+    const roles = [];
+    if(c.spine) roles.push("<span class='rolechip spine'>spine #"+c.spine.ord+"</span>");
+    if(c.postulate) roles.push("<span class='rolechip post'>postulate</span>");
+    if(nb && nb.node && !c.postulate && nb.node.n_below === 0 && c.kind !== 'figure' && c.kind !== 'section')
+      roles.push("<span class='rolechip gap'>gap</span>");
+    return "<div class='chip focus'>"+
+      "<div class='math'>"+mathEss(c.kind, c.essence, c.id, 600)+"</div>"+
+      "<div class='crow'>"+kbadge(c.kind)+
+        "<span class='gbadge'>g"+(c.grade!=null?c.grade:'?')+"</span>"+
+        "<span class='cid'>"+esc(c.id)+"</span>"+roles.join('')+
+        (nb && nb.node ? "<span style='color:var(--dim);font-size:10px;font-family:var(--mono)'>· "+nb.node.n_above+"↑ "+nb.node.n_below+"↓</span>":'')+
+      "</div></div>";
+  }
+
+  function renderLocal(){
+    const host = qs('#v-local'); host.innerHTML = '';
+    const c = CONTENT[FOCUS], nb = NB[FOCUS];
+    if(!c){ host.innerHTML = '<div class="note">no focus</div>'; return; }
+    const above = nb && nb.above || [];
+    const below = nb && nb.below || [];
+
+    // parents (above)
+    const lab1 = document.createElement('div'); lab1.className='loc-lab';
+    lab1.textContent = 'parents · ascend ('+above.length+(nb && nb.truncated && nb.truncated.above ? '+'+nb.truncated.above:'')+')';
+    host.appendChild(lab1);
+    const band1 = document.createElement('div'); band1.className='loc-band';
+    above.forEach(n => band1.insertAdjacentHTML('beforeend', chipHTML(n)));
+    band1.insertAdjacentHTML('beforeend', "<div class='chip add' onclick='pickConsumer()'>+ add parent</div>");
+    host.appendChild(band1);
+
+    const a1 = document.createElement('div'); a1.className='loc-arrows'; a1.textContent='↑';
+    host.appendChild(a1);
+
+    // focus
+    const band2 = document.createElement('div'); band2.className='loc-band';
+    band2.insertAdjacentHTML('beforeend', focusChipHTML(c, nb));
+    host.appendChild(band2);
+
+    const a2 = document.createElement('div'); a2.className='loc-arrows'; a2.textContent='↓';
+    host.appendChild(a2);
+
+    // children (below)
+    const lab2 = document.createElement('div'); lab2.className='loc-lab';
+    lab2.textContent = 'children · descend ('+below.length+(nb && nb.truncated && nb.truncated.below ? '+'+nb.truncated.below:'')+')';
+    host.appendChild(lab2);
+    const band3 = document.createElement('div'); band3.className='loc-band';
+    below.forEach(n => band3.insertAdjacentHTML('beforeend', chipHTML(n)));
+    band3.insertAdjacentHTML('beforeend', "<div class='chip add' onclick='pickDep()'>+ add child</div>");
+    host.appendChild(band3);
+
+    // lateral with axis switcher
+    const lhd = document.createElement('div'); lhd.className='loc-lateral-hd';
+    lhd.innerHTML =
+      "<span class='lhd-lab'>lateral neighbours · axis</span>"+
+      "<select class='lat-axis' onchange='setLatAxis(this.value)'>"+
+      "<option value='grade'"+(LAT_AXIS==='grade'?' selected':'')+">same-grade · shared dependency</option>"+
+      "<option value='technique'"+(LAT_AXIS==='technique'?' selected':'')+">same technique</option>"+
+      "<option value='citation'"+(LAT_AXIS==='citation'?' selected':'')+">shared citations</option>"+
+      "</select>";
+    host.appendChild(lhd);
+    const lat = document.createElement('div'); lat.className='loc-lateral';
+    const lats = computeLateral(LAT_AXIS, c, nb);
+    if(!lats.length){
+      lat.innerHTML = "<div class='note'>no lateral neighbours on this axis</div>";
+    } else {
+      lats.slice(0, 14).forEach(n => {
+        const el = document.createElement('div'); el.className='lchip';
+        el.innerHTML = esc((n.essence||n.id).slice(0,80))+
+          "<div class='id'>"+esc(n.id)+(n.via?' · '+esc(n.via):'')+"</div>";
+        el.onclick = () => setFocus(n.id);
+        lat.appendChild(el);
+      });
+    }
+    host.appendChild(lat);
+  }
+
+  function computeLateral(axis, c, nb){
+    if(axis === 'grade'){
+      return (nb && nb.lateral || []).map(n => ({...n, via:'shares '+(n.shared||[]).length+' dep'}));
+    }
+    if(axis === 'technique'){
+      // techniques the focus uses → other nodes using them
+      const usesTech = TECHS.filter(t => (t.users||[]).some(u => u.id === FOCUS));
+      const seen = new Set([FOCUS]);
+      const out = [];
+      usesTech.forEach(t => {
+        (t.users||[]).forEach(u => {
+          if(!seen.has(u.id)){ seen.add(u.id); out.push({...u, via:t.essence||t.id}); }
+        });
+      });
+      return out;
+    }
+    if(axis === 'citation'){
+      // shared citations: this requires knowing other nodes' cites. Cheap heuristic: nodes
+      // that cite something the focus also cites — would need a bulk endpoint. For now degrade
+      // gracefully: empty list with a note unless we have it locally.
+      const myCites = (c.cites||[]).map(x => x.id);
+      if(!myCites.length) return [];
+      return [];   // TODO: needs a /corpus/co-cited endpoint
+    }
+    return [];
+  }
+  function setLatAxis(v){ LAT_AXIS = v; renderLocal(); }
+
+  // ─── LANDSCAPE VIEW ───────────────────────────────────────────────────
+  let MAP = null;
+  async function renderLandscape(){
+    const host = qs('#v-landscape'); host.innerHTML = '<div class="note">loading map…</div>';
+    if(!MAP) MAP = await jget('/corpus/map?corpus='+CORPUS);
+    const byG = {};
+    (MAP.nodes||[]).forEach(n => { (byG[n.grade]=byG[n.grade]||[]).push(n); });
+    const grades = Object.keys(byG).map(Number).sort((a,b)=>b-a);
+    host.innerHTML = '';
+    grades.forEach(g => {
+      const band = document.createElement('div'); band.className='lscape-band';
+      band.innerHTML = "<div class='lscape-bandhd'><span class='gnum'>g"+g+"</span> "+
+        (g===Math.max(...grades)?'apex · postulates + finished results':
+         g===0?'primitives · raw symbols':'intermediates · steps + definitions')+
+        " · "+byG[g].length+" nodes</div><div class='lscape-row' id='lsr-"+g+"'></div>";
+      host.appendChild(band);
+      const row = band.querySelector('.lscape-row');
+      byG[g].forEach(n => {
+        const cls = ['mn'];
+        if(n.spine) cls.push('spine');
+        if(n.gap) cls.push('gap');
+        if(n.postulate) cls.push('post');
+        if(n.id === FOCUS) cls.push('focus');
+        const el = document.createElement('span');
+        el.className = cls.join(' ');
+        el.textContent = n.id;
+        el.title = (n.essence||'').slice(0,200);
+        el.onclick = () => setFocus(n.id);
+        row.appendChild(el);
+      });
+    });
+    if(MAP.truncated)
+      host.insertAdjacentHTML('beforeend',
+        "<div class='note'>+"+MAP.truncated+" lower-degree nodes hidden (cap 500)</div>");
+  }
+
+  // ─── TREE VIEW — the connected DAG, edges drawn, spine highlighted as the backbone ──
+  async function renderTree(){
+    const host = qs('#v-tree');
+    host.innerHTML = '<div class="note">computing layout…</div>';
+    if(!MAP) MAP = await jget('/corpus/map?corpus='+CORPUS);
+    const nodes = MAP.nodes || [], edges = MAP.edges || [];
+    if(!nodes.length){ host.innerHTML = '<div class="note">empty conceptric</div>'; return; }
+
+    // spine-ord by id (skip goal — it isn't a deriv kind so doesn't appear in /corpus/map anyway)
+    const spineOrd = {};
+    SPINE.filter(s => s.kind !== 'goal').forEach((s,i) => { spineOrd[s.id] = i + 1; });
+
+    // bucket by grade (dep-grade, apex highest); within each band, spine entries left-to-right
+    // by spine ord, then other nodes alphabetically — a stable, readable order.
+    const byG = {};
+    nodes.forEach(n => { (byG[n.grade]=byG[n.grade]||[]).push(n); });
+    const grades = Object.keys(byG).map(Number).sort((a,b)=>b-a);
+    grades.forEach(g => byG[g].sort((a,b) => {
+      const oa = spineOrd[a.id], ob = spineOrd[b.id];
+      if(oa !== undefined && ob !== undefined) return oa - ob;
+      if(oa !== undefined) return -1;
+      if(ob !== undefined) return 1;
+      // postulates next, then gaps last, then alphabetic
+      if(a.postulate && !b.postulate) return -1;
+      if(b.postulate && !a.postulate) return 1;
+      if(a.gap && !b.gap) return 1;
+      if(b.gap && !a.gap) return -1;
+      return a.id.localeCompare(b.id);
+    }));
+
+    // build the band markup
+    let html =
+      "<div class='tree-legend'>"+
+      "<span class='lh'>apex (high grade) at top · postulates at floor · edges = derives-from</span>"+
+      (MAP.truncated ? "<span>+"+MAP.truncated+" hidden</span>" : '')+
+      "</div>"+
+      "<div class='tree-host' id='tree-host'>"+
+      "<svg id='tree-svg' xmlns='http://www.w3.org/2000/svg'></svg>";
+    grades.forEach(g => {
+      const row = byG[g];
+      html += "<div class='tband' data-g='"+g+"'>"+
+        "<div class='tband-lab'>g"+g+"</div>"+
+        "<div class='tband-meta'>"+row.length+"</div>";
+      row.forEach(n => {
+        const cls = ['tnode'];
+        if(n.spine) cls.push('spine');
+        if(n.gap) cls.push('gap');
+        if(n.postulate) cls.push('post');
+        if(n.id === FOCUS) cls.push('focus');
+        const ord = spineOrd[n.id];
+        const label = (n.essence && n.essence.length < 60) ? n.essence : n.id;
+        html += "<div class='"+cls.join(' ')+"' data-id='"+esc(n.id)+"'"+
+          (ord?" data-ord='"+ord+"'":'')+
+          " title='"+esc(n.id+'\n'+(n.essence||'').slice(0,200))+"'>"+
+          esc(label.slice(0,60))+"</div>";
+      });
+      html += "</div>";
+    });
+    html += "</div>";
+    host.innerHTML = html;
+
+    // wire click
+    host.querySelectorAll('.tnode').forEach(el => {
+      el.onclick = () => setFocus(el.dataset.id);
+    });
+
+    // draw edges AFTER the rows have laid out (so getBoundingClientRect is real)
+    requestAnimationFrame(() => drawTreeEdges(edges));
+  }
+
+  function drawTreeEdges(edges){
+    const host = qs('#tree-host'); const svg = qs('#tree-svg');
+    if(!host || !svg) return;
+    const hb = host.getBoundingClientRect();
+    const H = host.scrollHeight;
+    svg.setAttribute('viewBox', '0 0 '+hb.width+' '+H);
+    svg.setAttribute('preserveAspectRatio','none');
+    svg.style.height = H + 'px';
+
+    const centres = {};
+    host.querySelectorAll('.tnode').forEach(el => {
+      const r = el.getBoundingClientRect();
+      centres[el.dataset.id] = {
+        x: r.left - hb.left + r.width/2,
+        yt: r.top - hb.top,
+        yb: r.bottom - hb.top,
+      };
+    });
+
+    const focusEdges = new Set();
+    if(FOCUS && NB[FOCUS]){
+      (NB[FOCUS].above || []).forEach(n => focusEdges.add(n.id + '→' + FOCUS));
+      (NB[FOCUS].below || []).forEach(n => focusEdges.add(FOCUS + '→' + n.id));
+    }
+
+    let paths = '';
+    edges.forEach(e => {
+      const f = centres[e.from], t = centres[e.to];
+      if(!f || !t) return;
+      // f derives from t — so f is above (higher grade), t is below (lower grade). Edge runs
+      // from f.bottom down to t.top.
+      const mid = (f.yb + t.yt) / 2;
+      const key = e.from + '→' + e.to;
+      const isFocusEdge = focusEdges.has(key);
+      const stroke = isFocusEdge ? 'var(--accent)' : 'var(--edge2)';
+      const width  = isFocusEdge ? '2'              : '1.2';
+      const opacity = isFocusEdge ? '0.95'           : '0.5';
+      paths += "<path d='M"+f.x+","+f.yb+" C"+f.x+","+mid+" "+t.x+","+mid+" "+t.x+","+t.yt+"' "+
+        "stroke='"+stroke+"' stroke-width='"+width+"' fill='none' opacity='"+opacity+"'/>";
+    });
+    svg.innerHTML = paths;
+  }
+
+  // ─── SPINE VIEW ───────────────────────────────────────────────────────
+  function renderSpineView(){
+    const host = qs('#v-spine'); host.innerHTML = '';
+    const goal = SPINE.find(s => s.kind === 'goal');
+    const rest = SPINE.filter(s => s.kind !== 'goal');
+    // goal banner — what the whole spine is FOR
+    if(goal){
+      const gb = document.createElement('div');
+      gb.className = 'goal-banner' + (goal.id === FOCUS ? ' cur' : '');
+      gb.innerHTML = "<div class='lab'>★ project goal · what this conceptric is for</div>"+
+        "<div class='text'>"+esc(goal.essence || '')+"</div>"+
+        "<div class='gid'>"+esc(goal.id)+"</div>";
+      gb.onclick = () => setFocus(goal.id);
+      host.appendChild(gb);
+    } else if(MODE === 'edit'){
+      const e = document.createElement('div');
+      e.className = 'goal-empty'; e.style.marginBottom = '18px';
+      e.textContent = '+ set the project goal — one sentence orienting the spine';
+      e.onclick = () => setProjectGoal();
+      host.appendChild(e);
+    }
+    if(!rest.length){
+      host.insertAdjacentHTML('beforeend',
+        '<div class="note">no spine yet — promote a result to seed the apex narrative</div>');
+      return;
+    }
+    rest.forEach((s, i) => {
+      const el = document.createElement('div');
+      el.className = 'sp-big'+(s.id===FOCUS?' cur':'');
+      el.innerHTML = "<div class='num'>"+(i+1)+"</div><div class='bd'>"+
+        "<div class='ess'>"+mathEss(s.kind, s.essence, s.id, 600)+"</div>"+
+        (s.narrative ? "<div class='narr'>"+esc(s.narrative)+"</div>":'')+
+        "<div class='id'>"+esc(s.id)+" · "+esc(s.kind||'')+"</div></div>";
+      el.onclick = () => setFocus(s.id);
+      host.appendChild(el);
+    });
+  }
+
+  // ─── SET PROJECT GOAL — mint a goal: node and seat it on the spine at ord 0 ──
+  async function setProjectGoal(){
+    const text = prompt(
+      'the project goal — one or two sentences that orient the whole spine\n'+
+      '(what does this paper CLAIM? what would a reader take away?):', '');
+    if(!text || !text.trim()) return;
+    // mint a short slug from the words, fall back to "project"
+    const words = (text.toLowerCase().match(/[a-z][a-z0-9]+/g) || []).slice(0, 4);
+    const slug = words.length ? words.join('-') : 'project';
+    const nid = 'goal:' + slug;
+    // 1) add the node
+    let out = await jpost('/corpus/rewire', {corpus:CORPUS, kind:'add-node', node:nid,
+      parent:'paper://', node_kind:'goal', essence:text.trim()});
+    if(out.error){ alert(out.error); return; }
+    // 2) place it on the spine at ord 0
+    out = await jpost('/corpus/rewire', {corpus:CORPUS, kind:'set-spine', node:nid,
+      ord:0, narrative:''});
+    if(out.error){ alert(out.error); return; }
+    await loadCorpus();
+    setFocus(nid);
+  }
+
+  // ─── LIST VIEW ────────────────────────────────────────────────────────
+  async function renderListView(){
+    const host = qs('#v-list'); host.innerHTML = '<div class="note">loading…</div>';
+    // pull a few grades to assemble; cap each
+    const grades = [3,2,1,0];
+    const byKind = {};
+    for(const g of grades){
+      const r = await jget('/corpus/grade?corpus='+CORPUS+'&g='+g);
+      (r.nodes||[]).forEach(n => {
+        const k = n.kind || 'other';
+        (byKind[k] = byKind[k] || []).push({...n, grade:g});
+      });
+    }
+    host.innerHTML = '';
+    const order = ['result','theorem','intermediate-result','lemma','derivation-step','definition',
+                   'postulate','support','technique','figure','equation','citation','section','other'];
+    order.forEach(k => {
+      const arr = byKind[k]; if(!arr) return;
+      const grp = document.createElement('div'); grp.className='lst-grp';
+      grp.innerHTML = "<div class='lst-h'><span>"+esc(k)+" · "+arr.length+"</span></div>";
+      arr.slice(0, 200).forEach(n => {
+        const row = document.createElement('div');
+        row.className = 'lst-row'+(n.id===FOCUS?' cur':'');
+        row.innerHTML = "<span class='id'>"+esc(n.id)+"</span>"+
+          "<span class='ess'>"+esc((n.essence||'').slice(0,140))+"</span>"+
+          "<span class='g'>g"+n.grade+"</span>";
+        row.onclick = () => setFocus(n.id);
+        grp.appendChild(row);
+      });
+      host.appendChild(grp);
+    });
+  }
+
+  // ─── FRICTION (the up-operator queue) ────────────────────────────────
+  function renderFriction(){
+    const host = qs('#v-friction');
+    host.innerHTML =
+      "<div class='lcap'><b>friction → conceptric.</b> The current per-node state the friction ledger "+
+      "collapses to — one deposit per live node (retired/superseded dropped), newest first, not the raw "+
+      "event log. Reader marks, panel verdicts, your own corrections all land here. ("+FRICTION.length+" live nodes)</div>";
+    if(!FRICTION.length){
+      host.innerHTML += "<div class='note'>no friction yet for "+esc(CORPUS)+"</div>";
+      return;
+    }
+    FRICTION.slice().reverse().slice(0, 200).forEach(rec => {
+      const el = document.createElement('div'); el.className='loop-item';
+      el.innerHTML =
+        "<div class='lid'>"+esc(rec.kind||'?')+" · "+esc(rec.ts||'')+" · by "+esc(rec.by||'?')+" · "+
+          (rec.applied?'<span class="verdict ok">APPLIED</span>':
+           rec.error?'<span class="verdict bad">ERROR · '+esc(rec.error).slice(0,40)+'</span>':
+                     '<span class="verdict warn">PENDING</span>')+"</div>"+
+        "<div class='less'>node: <span style='font-family:var(--mono)'>"+esc(rec.node||'?')+"</span>"+
+          (rec.target?" · target: <span style='font-family:var(--mono)'>"+esc(rec.target)+"</span>":'')+
+          (rec.value?"<br><span style='color:var(--ink)'>value:</span> "+esc((''+rec.value).slice(0,300)):'')+
+          (rec.essence?"<br><span style='color:var(--ink)'>essence:</span> "+esc((''+rec.essence).slice(0,300)):'')+"</div>"+
+        "<div class='lact'>"+(rec.node?"<button onclick=\"setFocus('"+esc(rec.node)+"')\">open node</button>":'')+"</div>";
+      host.appendChild(el);
+    });
+  }
+
+  // ─── REGRADE — the size/grade watch. The power law is WATCHED, never imposed:
+  // the panel reports counts, sizes and the raw ratio sequence; it fits nothing. ──────
+  async function renderRegrade(){
+    const host = qs('#v-regrade');
+    if(!STATS){
+      host.innerHTML = '<div class="note">measuring…</div>';
+      try { STATS = await jget('/corpus/grade_stats?corpus='+encodeURIComponent(CORPUS)); }
+      catch(e){ host.innerHTML = '<div class="note">/corpus/grade_stats unreachable — '+esc(e.message)+' (dispatch not wired?)</div>'; return; }
+    }
+    const S = STATS;
+    if(S.error){ host.innerHTML = '<div class="note">'+esc(S.error)+'</div>'; return; }
+
+    let html = "<div class='lcap'><b>regrade — the right amount of content per node.</b> "+
+      "Too large is a split candidate; too small is functionally content-free. "+
+      S.n_live+" live nodes ("+S.n_retired+" retired excluded from outliers) · "+S.n_beats+" spine beats.</div>";
+
+    // 1) size histogram — log-x (doubling bins), stacked per kind
+    html += "<div class='rg-sec'><div class='rg-h'>node size · chars of essence "+
+      "<span class='sub'>log-spaced bins · live nodes · colour = kind</span></div>"+
+      "<div class='rg-box'>"+histogramSVG(S.histogram.bins)+kindLegendHTML(S.histogram.bins)+"</div></div>";
+
+    // 2) the grade ladder — the watched power law
+    html += "<div class='rg-sec'><div class='rg-h'>grade ladder · structural proxy "+
+      "<span class='sub'>g0 = spine beats, g1/g2 = 1/2 hops out, g3 = rest · "+
+      "the power law is watched, not imposed — ratios reported, nothing fitted</span></div>"+
+      "<div class='rg-box'>"+ladderHTML(S.grades, S.count_ratios)+"</div></div>";
+
+    // 3) outliers — both lists open the node in the inspector (setFocus)
+    html += "<div class='rg-sec'><div class='rg-h'>outliers</div><div class='rg-cols'>"+
+      "<div class='rg-col'><div class='rg-h'><span>split candidates · largest live</span></div>"+
+      outlierRows(S.outliers.split_candidates, 'big', r => r.chars+' ch')+"</div>"+
+      "<div class='rg-col'><div class='rg-h'><span>content-free candidates · &lt;120 chars</span></div>"+
+      outlierRows(S.outliers.content_free, 'thin', r => r.chars+' ch · '+r.words+' w')+"</div>"+
+      "</div></div>";
+
+    host.innerHTML = html;
+    // wire clicks through the editor's existing node-open mechanism
+    host.querySelectorAll('.rg-row[data-id]').forEach(el => {
+      el.onclick = () => setFocus(el.dataset.id);
+    });
+  }
+
+  function histogramSVG(bins){
+    const W = 820, H = 190, padL = 34, padB = 26, padT = 8;
+    const maxC = Math.max(1, ...bins.map(b => b.count));
+    const bw = (W - padL - 8) / Math.max(1, bins.length);
+    let out = "<svg viewBox='0 0 "+W+" "+H+"' style='width:100%;height:auto' xmlns='http://www.w3.org/2000/svg'>";
+    // y gridlines (0, max/2, max)
+    [0, .5, 1].forEach(f => {
+      const y = H - padB - f * (H - padB - padT);
+      out += "<line x1='"+padL+"' y1='"+y+"' x2='"+W+"' y2='"+y+"' stroke='var(--edge)' stroke-width='1'/>"+
+        "<text x='"+(padL-5)+"' y='"+(y+3)+"' text-anchor='end' font-size='9' fill='var(--dim)' font-family='monospace'>"+
+        Math.round(f*maxC)+"</text>";
+    });
+    bins.forEach((b, i) => {
+      const x = padL + i * bw;
+      let y = H - padB;
+      // stack per kind, largest slice first for stable reading
+      Object.entries(b.by_kind).sort((a,c) => c[1]-a[1]).forEach(([k, n]) => {
+        const h = n / maxC * (H - padB - padT);
+        y -= h;
+        out += "<rect x='"+(x+2)+"' y='"+y+"' width='"+(bw-4)+"' height='"+h+"' rx='1.5' fill='"+kindColor(k)+"'>"+
+          "<title>"+esc(k)+" · "+n+" node"+(n>1?'s':'')+" in ["+b.lo+", "+b.hi+")</title></rect>";
+      });
+      // x tick: bin lower edge (log scale is carried by the doubling edges)
+      out += "<text x='"+(x+bw/2)+"' y='"+(H-padB+13)+"' text-anchor='middle' font-size='8.5' "+
+        "fill='var(--dim)' font-family='monospace'>"+b.lo+"</text>";
+      if(b.count) out += "<text x='"+(x+bw/2)+"' y='"+(y-4)+"' text-anchor='middle' font-size='8.5' "+
+        "fill='var(--ink2)' font-family='monospace'>"+b.count+"</text>";
+    });
+    out += "<text x='"+(W/2)+"' y='"+(H-2)+"' text-anchor='middle' font-size='9' fill='var(--dim)'>chars (log₂ bins)</text>";
+    return out + "</svg>";
+  }
+
+  function kindLegendHTML(bins){
+    const kinds = new Set();
+    bins.forEach(b => Object.keys(b.by_kind).forEach(k => kinds.add(k)));
+    if(!kinds.size) return '';
+    return "<div class='rg-legend'>"+[...kinds].sort().map(k =>
+      "<span class='ki'><span class='sw' style='background:"+kindColor(k)+"'></span>"+esc(k)+"</span>"
+    ).join('')+"</div>";
+  }
+
+  function ladderHTML(grades, ratios){
+    const maxC = Math.max(1, ...grades.map(g => g.count));
+    let out = '';
+    grades.forEach((g, i) => {
+      out += "<div class='rg-grow'>"+
+        "<span class='glab'><b>g"+g.grade+"</b> · "+esc(g.label)+"</span>"+
+        "<span class='gbar' style='width:"+Math.max(1, g.count/maxC*420)+"px'></span>"+
+        "<span class='gnum'>"+g.count+"</span>"+
+        "<span class='gsz'>"+(g.mean_chars!=null ? 'mean '+g.mean_chars+' · median '+g.median_chars+' ch' : '—')+"</span>"+
+        "</div>";
+      if(i < grades.length-1 && ratios[i] != null)
+        out += "<div class='rg-ratio'>↓ ×"+ratios[i]+"</div>";
+    });
+    return out;
+  }
+
+  function outlierRows(rows, cls, meta){
+    if(!rows || !rows.length) return "<div class='note'>none flagged</div>";
+    return rows.map(r =>
+      "<div class='rg-row "+cls+"' data-id='"+esc(r.id)+"' title='open in inspector'>"+
+        kbadge(r.kind)+"<span class='rid'>"+esc(r.id)+"</span>"+
+        "<span class='rn'>"+esc(meta(r))+"</span></div>"
+    ).join('');
+  }
+
+  // ─── FOOTER ───────────────────────────────────────────────────────────
+  function renderFooter(){
+    qs('#ft-corpus').textContent = CORPUS;
+    qs('#ft-nodes').textContent  = META.n_nodes || 0;
+    qs('#ft-gaps').textContent   = (META.n_gaps != null ? META.n_gaps : GAPS.length);
+    const pending = FRICTION.filter(r => !r.applied && !r.error).length;
+    qs('#ft-fric').textContent   = pending+' pending · '+FRICTION.length+' total';
+    qs('#ft-fric-p').className   = 'pulse'+(pending?' warn':'');
+    qs('#ft-reproj').textContent = 'not wired';
+    qs('#ft-panel').textContent  = 'not wired';
+    qs('#ft-panel-p').className  = 'pulse';
+    qs('#ft-pulse').className    = 'pulse';
+  }
+
+  // ─── REWIRE ACTIONS ───────────────────────────────────────────────────
+  async function rewire(payload){
+    payload.corpus = CORPUS;
+    const out = await jpost('/corpus/rewire', payload);
+    if(out.error){ alert(out.error); return; }
+    // structural reshape → reload corpus; otherwise just refresh focus + footer
+    const structural = ['add-node','delete-node','move-node','set-kind','set-spine','unset-spine'].includes(payload.kind);
+    if(structural){
+      await loadCorpus();
+      if(payload.kind !== 'delete-node') setFocus(payload.node);
+    } else {
+      CONTENT[FOCUS] = null; NB[FOCUS] = null;
+      const f = await jget('/corpus/friction?corpus='+CORPUS);
+      FRICTION = f.records || [];
+      renderFooter();
+      setFocus(FOCUS);
+    }
+  }
+  function removeEdge(target){ rewire({kind:'remove-edge', node:FOCUS, target}); }
+  function promoteSpine(){
+    const ord = parseInt(prompt('spine order (1 = first)','1') || '0', 10);
+    const narr = prompt('narrative — the prose connective from the previous result','') || '';
+    if(ord > 0) rewire({kind:'set-spine', node:FOCUS, ord, narrative:narr});
+  }
+  function confirmDelete(){
+    if(confirm('delete '+FOCUS+'? children reparent to its parent.'))
+      rewire({kind:'delete-node', node:FOCUS});
+  }
+  function openEssenceEditor(){
+    const c = CONTENT[FOCUS];
+    const cur = c.essence || '';
+    const v = prompt('essence:', cur);
+    if(v != null && v !== cur) rewire({kind:'edit-essence', node:FOCUS, value:v});
+  }
+  function editNarrative(){
+    const c = CONTENT[FOCUS];
+    if(!c.spine){ alert('not on the spine — promote first'); return; }
+    const v = prompt('narrative connective:', c.spine.narrative || '');
+    if(v != null) rewire({kind:'set-spine', node:FOCUS, ord:c.spine.ord, narrative:v});
+  }
+  function findSimilar(){
+    qs('#lsearch').focus();
+    qs('#lsearch').value = (CONTENT[FOCUS].essence||'').slice(0,40);
+    qs('#lsearch').dispatchEvent(new Event('input'));
+  }
+
+  // ─── LITERATURE SEARCH — fetch candidates, multi-select stage, bulk-mint ref: nodes ──
+  let LIT_TARGET = null;     // the node whose citations will receive the picks; null = project-level
+  let LIT_RESULTS = [];      // current candidate list (from /corpus/lit-search)
+
+  function buildScholarQuery(parts){
+    const q = parts.filter(Boolean).map(s => (''+s).replace(/\$[^$]*\$/g, '').replace(/\\[a-zA-Z]+/g,' ')
+        .replace(/[{}^_$&|\\]/g,' ').replace(/\s+/g,' ').trim())
+      .filter(s => s).slice(0, 3).join(' ');
+    return q.slice(0, 220);
+  }
+  function openLitPicker(target, prefilledQuery, headerLabel){
+    LIT_TARGET = target;
+    LIT_RESULTS = [];
+    qs('#lit-for').textContent = headerLabel || (target ? '· wire into '+target : '· project-level');
+    qs('#lit-q').value = prefilledQuery || '';
+    qs('#lit-results').innerHTML = '';
+    qs('#lit-status').className = 'lit-status';
+    qs('#lit-status').textContent = prefilledQuery ? 'press ↻ search to query Scholar' : 'type a query, then ↻ search';
+    qs('#lit-cnt').textContent = '0 selected';
+    qs('#lit-add').disabled = true;
+    qs('#litpicker').classList.add('on');
+    setTimeout(() => qs('#lit-q').focus(), 30);
+    if(prefilledQuery) runLitSearch();   // auto-fire when we have a query
+  }
+  function closeLitPicker(){ qs('#litpicker').classList.remove('on'); LIT_TARGET = null; LIT_RESULTS = []; }
+  function openScholarFromQuery(){
+    const q = qs('#lit-q').value.trim();
+    if(!q) return;
+    window.open('#author-verbs-not-in-this-bundle?q='+encodeURIComponent(q), '_blank', 'noopener');
+  }
+  async function runLitSearch(){
+    const q = qs('#lit-q').value.trim();
+    if(!q){ qs('#lit-status').textContent = 'query is empty'; return; }
+    const status = qs('#lit-status'); status.className = 'lit-status'; status.textContent = 'querying Scholar…';
+    qs('#lit-results').innerHTML = '';
+    let url = '/corpus/lit-search?corpus='+encodeURIComponent(CORPUS)+'&k=10';
+    // if we have an id-target, pass it so the server builds the query from the node's content;
+    // otherwise pass the user's free text
+    if(LIT_TARGET) url += '&id='+encodeURIComponent(LIT_TARGET);
+    url += '&q='+encodeURIComponent(q);
+    let data;
+    try { data = await jget(url); }
+    catch(e){ status.className='lit-status err'; status.textContent='fetch failed: '+e.message; return; }
+    if(data.error){
+      status.className = 'lit-status err';
+      status.textContent = 'Scholar query failed — ' + data.error +
+        ' · try opening directly with the scholar ↗ button';
+      return;
+    }
+    LIT_RESULTS = data.candidates || [];
+    if(!LIT_RESULTS.length){
+      status.textContent = 'no candidates returned for: ' + (data.query || q);
+      return;
+    }
+    status.textContent = LIT_RESULTS.length + ' candidates · '+
+      (data.cached ? '(cached)' : 'fresh from Scholar') + ' · check the ones to add';
+    qs('#lit-results').innerHTML = LIT_RESULTS.map((c,i) =>
+      "<label class='lcand' for='lcand-"+i+"'>"+
+        "<input type='checkbox' id='lcand-"+i+"' data-idx='"+i+"' onchange='updateLitCount()'>"+
+        "<div class='lbody'>"+
+          "<div class='ltitle'>"+esc(c.title || '(untitled)')+"</div>"+
+          "<div class='lmeta'>"+
+            "<span class='lkey'>ref:"+esc(c.bibkey)+"</span> · "+
+            "<span>"+esc((c.authors||[]).slice(0,3).join(', '))+
+                    ((c.authors||[]).length>3 ? ' et al.':'')+"</span> · "+
+            "<span class='lyear'>"+esc(c.year||'?')+"</span>"+
+            (c.venue ? " · <span>"+esc(c.venue)+"</span>" : '') +
+            (c.n_cites ? " · <span class='lcites'>"+c.n_cites+" cites</span>" : '')+
+          "</div>"+
+          (c.abstract ? "<div class='labstract'>"+esc(c.abstract)+"</div>" : '')+
+          (c.url ? "<div class='lurl'><a href='"+esc(c.url)+"' target='_blank' rel='noopener'>"+esc(c.url)+"</a></div>" : '')+
+        "</div>"+
+      "</label>"
+    ).join('');
+    // toggle the .sel class on label for visual feedback
+    qsa('.lcand input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', () => cb.closest('.lcand').classList.toggle('sel', cb.checked));
+    });
+  }
+  function updateLitCount(){
+    const sel = qsa('.lcand input[type=checkbox]:checked').length;
+    qs('#lit-cnt').textContent = sel + ' selected';
+    qs('#lit-add').disabled = sel === 0;
+  }
+  async function addSelectedLiterature(){
+    const sel = qsa('.lcand input[type=checkbox]:checked').map(cb => LIT_RESULTS[+cb.dataset.idx]);
+    if(!sel.length) return;
+    qs('#lit-add').disabled = true;
+    const status = qs('#lit-status'); status.textContent = 'adding '+sel.length+' refs…';
+    let added = 0, failed = 0;
+    for(const c of sel){
+      const nid = 'ref:' + c.bibkey;
+      // a compact, BibTeX-flavoured essence for the citation node — what the editor will display
+      const ess = [c.authors && c.authors[0], c.year, '—', c.title]
+        .filter(Boolean).join(' ').slice(0,300);
+      const r1 = await jpost('/corpus/rewire', {corpus:CORPUS, kind:'add-node', node:nid,
+        parent:'references', node_kind:'citation', essence:ess});
+      if(r1.error){ failed++; continue; }
+      if(LIT_TARGET){
+        // wire the citation into the target node (target = the cited-from node)
+        const r2 = await jpost('/corpus/rewire', {corpus:CORPUS, kind:'add-edge',
+          node:LIT_TARGET, target:c.bibkey});   // target is the bibkey, ref: prefix is added server-side
+        if(r2.error){ /* still count the add as a partial success */ }
+      }
+      added++;
+    }
+    status.textContent = added+' added'+(failed?' · '+failed+' failed':'');
+    closeLitPicker();
+    await loadCorpus();
+    if(LIT_TARGET) setFocus(LIT_TARGET);
+  }
+  // public entry points (wire into the right-pane button + top-bar button)
+  function pullLiteratureForFocus(){
+    const c = CONTENT[FOCUS]; if(!c) return;
+    const q = buildScholarQuery([c.essence, c.ctx, (c.keywords||[]).join(' ')]) || c.id;
+    openLitPicker(FOCUS, q, '· wire into ' + FOCUS);
+  }
+  function pullLiteratureProject(){
+    const goal = SPINE.find(s => s.kind === 'goal');
+    const q = buildScholarQuery([
+      goal && goal.essence,
+      ...SPINE.filter(s => s.kind !== 'goal').slice(0,2).map(s => s.essence),
+      CORPUS,
+    ]) || CORPUS;
+    openLitPicker(null, q, '· project-level (add to references, no edge)');
+  }
+  function addNodeAffordance(){
+    const kind = prompt(
+      'new node — kind (one of: '+LOGICAL_KINDS.join(', ')+')',
+      'derivation-step');
+    if(!kind || !LOGICAL_KINDS.includes(kind)){
+      if(kind) alert('kind must be one of: '+LOGICAL_KINDS.join(', '));
+      return;
+    }
+    const essence = prompt('the node\'s statement / essence:', '');
+    if(!essence || !essence.trim()) return;
+    // mint id from the kind prefix + a slug
+    const _PFX = {goal:'goal:',definition:'def:',postulate:'pos:','derivation-step':'step:',
+                  lemma:'lem:','intermediate-result':'ires:',result:'res:',theorem:'thm:',
+                  support:'sup:',technique:'tech:',portal:'portal:'};
+    const slug = (essence.toLowerCase().match(/[a-z][a-z0-9]+/g) || ['node']).slice(0,3).join('-');
+    const nid = (_PFX[kind] || 'node:') + slug;
+    const parent = FOCUS || 'paper://';
+    rewire({kind:'add-node', node:nid, parent, node_kind:kind, essence:essence.trim()});
+  }
+
+  // ─── PICKER ───────────────────────────────────────────────────────────
+  let PICK_CB = null;
+  function openPicker(cap, cb, filterKind){
+    PICK_CB = cb;
+    qs('#picker').classList.add('on');
+    qs('#pcap').textContent = cap || 'pick a node by content';
+    qs('#pres').innerHTML = '';
+    const inp = qs('#pinput');
+    inp.value = ''; inp.focus();
+    inp.oninput = async () => {
+      const q = inp.value.trim(); if(!q){ qs('#pres').innerHTML=''; return; }
+      const r = await jget('/corpus/search?corpus='+CORPUS+'&q='+encodeURIComponent(q));
+      qs('#pres').innerHTML = (r.results||[]).filter(n => n.id !== FOCUS &&
+        (!filterKind || n.kind === filterKind)).slice(0,30).map(n =>
+        "<div class='prow' data-id='"+esc(n.id)+"'>"+
+          "<span class='pk' style='background:var(--accent)'>"+esc(shortKind(n.kind))+"</span>"+
+          "<span class='pe'>"+esc((n.essence||'').slice(0,140))+"</span>"+
+          "<span class='pid'>"+esc(n.id)+"</span></div>").join('');
+      qs('#pres').querySelectorAll('.prow').forEach(el =>
+        el.onclick = () => { closePicker(); PICK_CB(el.dataset.id); });
+    };
+  }
+  function closePicker(){ qs('#picker').classList.remove('on'); PICK_CB = null; }
+  function pickDep(){ openPicker('pick what THIS derives from',
+    t => rewire({kind:'add-edge', node:FOCUS, target:t})); }
+  function pickConsumer(){ openPicker('pick a result/step that derives from THIS',
+    t => rewire({kind:'add-edge', node:t, target:FOCUS})); }
+
+  // ─── KEYBOARD ─────────────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if(e.target.matches('input,textarea,select')) return;
+    const map = {'1':'local','2':'tree','3':'landscape','4':'spine','5':'list','6':'friction','7':'regrade'};
+    if(map[e.key]) { setView(map[e.key]); return; }
+    if(e.key === 'e'){ setMode(MODE === 'edit' ? 'browse' : 'edit'); return; }
+    if(e.key === '/'){ e.preventDefault(); qs('#lsearch').focus(); return; }
+    if(e.key === 'Escape'){ closePicker(); closeLitPicker(); return; }
+    if(e.key === 'h' || e.key === 'ArrowLeft'){
+      // ascend: jump to first parent
+      const above = (NB[FOCUS] && NB[FOCUS].above) || [];
+      if(above.length) setFocus(above[0].id);
+    }
+    if(e.key === 'l' || e.key === 'ArrowRight'){
+      // descend: jump to first child
+      const below = (NB[FOCUS] && NB[FOCUS].below) || [];
+      if(below.length) setFocus(below[0].id);
+    }
+    if(e.key === 'b'){ goBack(); }
+  });
+
+  // ─── LIVE-UPDATE POLLING — 3s heartbeat on /corpus/meta to catch out-of-band edits ───
+  // Compares (n_nodes, n_gaps, n_friction) against last-seen. Any growth (another tab,
+  // another agent, a hand-edit of the friction file) triggers a soft refresh: spine, techs,
+  // gaps, friction, meta, MAP — and re-render the active view. Paused when the tab is hidden.
+  let POLL_LAST = null;
+  let POLL_TIMER = null;
+  async function pollTick(){
+    if(document.hidden) return;
+    if(!CORPUS) return;
+    let m;
+    try { m = await jget('/corpus/meta?corpus=' + encodeURIComponent(CORPUS)); }
+    catch(e){ return; }   // network blip — ignore, next tick will retry
+    if(m.error) return;
+    const sig = [m.n_nodes, m.n_gaps, m.n_friction].join(':');
+    if(POLL_LAST === null){ POLL_LAST = sig; return; }
+    if(sig === POLL_LAST) return;
+    POLL_LAST = sig;
+    // something changed — soft refresh (don't reset the focus or history)
+    META = m;
+    const sp = await jget('/corpus/spine?corpus='+CORPUS);     SPINE = sp.spine || [];
+    const t  = await jget('/corpus/techniques?corpus='+CORPUS); TECHS = t.techniques || [];
+    const g  = await jget('/corpus/gaps?corpus='+CORPUS);       GAPS  = g.gaps || [];
+    const f  = await jget('/corpus/friction?corpus='+CORPUS);   FRICTION = f.records || [];
+    MAP = null; STATS = null;                                    // invalidate map + regrade caches
+    // invalidate all per-node caches (a change anywhere could ripple — e.g. add-edge X→Y
+    // invalidates Y's "used-by" view in addition to X's deps view)
+    CONTENT = {}; NB = {};
+    renderLeft(); renderFooter();
+    if(FOCUS){
+      CONTENT[FOCUS] = await jget('/corpus/content?corpus='+CORPUS+'&id='+encodeURIComponent(FOCUS));
+      NB[FOCUS]      = await jget('/corpus/neighborhood?corpus='+CORPUS+'&id='+encodeURIComponent(FOCUS));
+      renderRight();
+    }
+    renderActiveView();
+  }
+  function startPoll(){
+    if(POLL_TIMER) clearInterval(POLL_TIMER);
+    POLL_LAST = null;
+    POLL_TIMER = setInterval(pollTick, 3000);
+  }
+  document.addEventListener('visibilitychange', () => {
+    // when the tab regains focus, re-check immediately
+    if(!document.hidden && CORPUS) pollTick();
+  });
+
+  // prefer KaTeX for first paint, but NEVER spin on it: the old unbounded wait
+  // meant an unreachable script src left the editor blank forever (the scout's
+  // offline boot bug). Boot proceeds after a short bounded wait; the math()
+  // helpers already degrade to plain text while window.katex is absent.
+  window.addEventListener('load', () => {
+    if(window.katex) { boot().then(startPoll); return; }
+    const t0 = Date.now();
+    const t = setInterval(() => {
+      if(window.katex || Date.now() - t0 > 2000){ clearInterval(t); boot().then(startPoll); }
+    }, 50);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   hymn.css — the one hymn sheet for the Laplace applets.
+
+   The :root custom properties below are the CANONICAL palette, extracted
+   from conceptric_editor_v2_mockup.html (the flagship). Every applet keeps
+   a local :root fallback so it still renders if /shared/ is absent; this
+   file is injected AFTER the inline styles, so when it loads it wins and
+   all six applets sing from the same sheet.
+
+   Served by src/laplace/shared_ui.py at GET /shared/hymn.css.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#0e1116; --panel:#141a23; --panel2:#1a212c; --edge:#222a36; --edge2:#2d3744;
+  --ink:#d7dee8; --ink2:#9aa5b4; --dim:#6b7689;
+  --accent:#7aa2f7; --teal:#5ee6b0; --warn:#e0af68; --bad:#f7768e; --ok:#9ece6a; --keystone:#bb9af7;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --hy-shell-h:30px;
+}
+
+/* ─── THE SHELL — one slim header on every applet (injected by shell.js) ─── */
+#hy-shell{position:fixed;top:0;left:0;right:0;z-index:4000;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  min-height:var(--hy-shell-h);padding:2px 10px;
+  background:var(--panel2);border-bottom:1px solid var(--edge2);
+  font:12px/1.4 -apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink2)}
+#hy-shell .hy-mark{font-weight:700;color:var(--keystone);letter-spacing:.4px;
+  font-family:var(--mono);font-size:12px;cursor:default;flex:none}
+#hy-shell .hy-mark small{color:var(--dim);font-weight:400;margin-left:4px}
+#hy-shell nav{display:flex;gap:2px;flex:none}
+#hy-shell nav a{color:var(--dim);text-decoration:none;padding:3px 9px;border-radius:5px;
+  font-size:11.5px;white-space:nowrap}
+#hy-shell nav a:hover{color:var(--ink);background:var(--panel)}
+#hy-shell nav a.on{color:var(--accent);background:var(--bg)}
+#hy-shell select{background:var(--bg);color:var(--ink);border:1px solid var(--edge);
+  border-radius:5px;padding:2px 6px;font:inherit;font-size:11.5px;max-width:170px}
+#hy-shell select:focus{outline:none;border-color:var(--accent)}
+#hy-shell .hy-search{position:relative;flex:1;min-width:120px;max-width:340px;margin-left:auto}
+#hy-shell .hy-search input{width:100%;background:var(--bg);color:var(--ink);
+  border:1px solid var(--edge);border-radius:5px;padding:3px 8px;font:inherit;font-size:11.5px}
+#hy-shell .hy-search input::placeholder{color:var(--dim)}
+#hy-shell .hy-search input:focus{outline:none;border-color:var(--accent)}
+#hy-shell .hy-sres{position:absolute;top:calc(100% + 4px);right:0;left:0;z-index:4001;
+  background:var(--panel);border:1px solid var(--edge2);border-radius:7px;
+  max-height:60vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.55);display:none}
+#hy-shell .hy-sres.on{display:block}
+#hy-shell .hy-sres .hy-srow{padding:6px 9px;cursor:pointer;font-size:11.5px;color:var(--ink)}
+#hy-shell .hy-sres .hy-srow:hover{background:var(--panel2)}
+#hy-shell .hy-sres .hy-srow .sid{font-family:var(--mono);font-size:9.5px;color:var(--dim);margin-top:2px}
+
+/* ─── THE INSPECTOR — the shared node idiom (inspector.js) ─── */
+.hy-ins{font:12.5px/1.5 -apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink)}
+.hy-ins-head{padding:12px 14px 10px;border-bottom:1px solid var(--edge);background:var(--panel)}
+.hy-ins-head .hy-titlerow{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.hy-term{font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.35}
+.hy-nid{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:5px;word-break:break-all}
+.hy-roles{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.hy-role{font-size:9.5px;padding:1px 7px;border-radius:3px;font-weight:700;letter-spacing:.04em}
+.hy-role.spine{background:var(--keystone);color:#0b0d11}
+.hy-role.post{background:var(--ok);color:#0b0d11}
+.hy-role.gap{background:var(--warn);color:#0b0d11}
+.hy-role.retired{background:var(--bad);color:#0b0d11}
+.hy-role.grade{background:var(--edge);color:var(--ink2);font-family:var(--mono);font-weight:400}
+
+.hy-kbadge{flex:none;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+  color:#0b0d11;background:var(--ink2);border-radius:4px;padding:2px 6px;align-self:center}
+.hy-kbadge.definition,.hy-kbadge.def{background:var(--accent)}
+.hy-kbadge.result,.hy-kbadge.res{background:var(--ok)}
+.hy-kbadge.theorem,.hy-kbadge.thm,.hy-kbadge.equation{background:var(--keystone)}
+.hy-kbadge.lemma,.hy-kbadge.lem,.hy-kbadge.intermediate-result,.hy-kbadge.ires{background:var(--teal)}
+.hy-kbadge.derivation-step,.hy-kbadge.step{background:var(--dim);color:#e8ecf2}
+.hy-kbadge.postulate,.hy-kbadge.pos{background:var(--ok)}
+.hy-kbadge.technique,.hy-kbadge.tech,.hy-kbadge.figure,.hy-kbadge.fig{background:var(--warn)}
+.hy-kbadge.support,.hy-kbadge.sup{background:var(--ink2)}
+.hy-kbadge.citation,.hy-kbadge.ref{background:var(--teal)}
+.hy-kbadge.goal{background:linear-gradient(135deg,var(--accent),var(--keystone))}
+.hy-kbadge.portal{background:var(--accent)}
+
+.hy-sec{padding:10px 14px;border-bottom:1px solid var(--edge)}
+.hy-sec-h{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);
+  font-weight:700;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.hy-sec-h .hy-act{font-size:10px;color:var(--accent);cursor:pointer;text-transform:none;
+  letter-spacing:0;font-weight:400}
+.hy-sec-h .hy-act:hover{text-decoration:underline}
+.hy-ess-body{font-size:13px;line-height:1.55;overflow-x:auto}
+.hy-ess-editor{display:none}
+.hy-ess-editor.on{display:block}
+.hy-ess-editor textarea{width:100%;min-height:90px;background:var(--bg);color:var(--ink);
+  border:1px solid var(--accent);border-radius:7px;padding:8px 10px;
+  font:12px var(--mono);resize:vertical;box-sizing:border-box}
+.hy-ess-editor textarea:focus{outline:none}
+.hy-ess-editor .hy-ess-btns{display:flex;gap:7px;margin-top:7px;align-items:center}
+.hy-ess-editor button{font:inherit;font-size:11.5px;border:1px solid var(--edge);
+  background:var(--panel);color:var(--ink);border-radius:5px;padding:4px 12px;cursor:pointer}
+.hy-ess-editor button.pri{background:var(--accent);color:#0b0d11;border-color:var(--accent);font-weight:600}
+.hy-ess-editor button:hover{border-color:var(--accent)}
+.hy-ess-editor .hy-ess-msg{font-size:10.5px;color:var(--dim);font-family:var(--mono)}
+.hy-ess-editor .hy-ess-msg.bad{color:var(--bad)}
+
+.hy-edges{display:flex;flex-wrap:wrap;gap:5px}
+.hy-echip{display:inline-flex;align-items:center;gap:6px;max-width:100%;
+  font-family:var(--mono);font-size:10.5px;color:var(--ink2);
+  background:var(--bg);border:1px solid var(--edge);border-radius:6px;
+  padding:3px 8px;cursor:pointer}
+.hy-echip:hover{border-color:var(--accent);color:var(--ink)}
+.hy-echip .eid{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}
+.hy-echip .eprov{font-size:8.5px;padding:0 4px;border-radius:3px;font-weight:700;
+  letter-spacing:.04em;flex:none;font-family:-apple-system,"Segoe UI",sans-serif}
+.hy-echip .eprov.explicit,.hy-echip .eprov.exp{background:rgba(122,162,247,.18);color:var(--accent)}
+.hy-echip .eprov.confirmed,.hy-echip .eprov.cnf{background:rgba(158,206,106,.18);color:var(--ok)}
+.hy-echip .eprov.semantic,.hy-echip .eprov.candidate{background:rgba(187,154,247,.18);color:var(--keystone)}
+.hy-echip .ex{border:0;background:none;color:var(--dim);cursor:pointer;font-size:11px;
+  padding:0 2px;line-height:1;flex:none}
+.hy-echip .ex:hover{color:var(--bad)}
+.hy-echip.add{border-style:dashed;color:var(--dim);cursor:pointer}
+.hy-echip.add:hover{color:var(--accent);border-color:var(--accent)}
+.hy-none{font-size:11px;color:var(--dim);font-style:italic}
+
+.hy-slots{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:11px}
+.hy-slots .sk{color:var(--dim);font-family:var(--mono);font-size:10px;white-space:nowrap;padding-top:1px}
+.hy-slots .sv{color:var(--ink2);font-family:var(--mono);font-size:10.5px;word-break:break-all}
+.hy-slots .sv.retired{color:var(--bad)}
+
+.hy-anc{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:11px}
+.hy-anc .hop{font-family:var(--mono);font-size:10px;color:var(--ink2);cursor:pointer;
+  padding:2px 6px;border-radius:4px;background:var(--bg);border:1px solid var(--edge);
+  max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hy-anc .hop:hover{border-color:var(--accent);color:var(--ink)}
+.hy-anc .hop.beat{border-color:var(--keystone);color:var(--ink)}
+.hy-anc .sep{color:var(--dim);font-size:10px}
+.hy-anc .hy-none{padding:0}
+
+.hy-links{display:flex;gap:7px;flex-wrap:wrap}
+.hy-links a{font-size:11px;color:var(--accent);text-decoration:none;
+  border:1px solid var(--edge);border-radius:6px;padding:3px 10px;background:var(--panel)}
+.hy-links a:hover{border-color:var(--accent)}
+
+/* compact variant — the projection viewer's per-span node cards */
+.hy-ins.compact{border:1px solid var(--edge2);border-radius:8px;background:var(--bg);
+  margin:6px 0 0;overflow:hidden}
+.hy-ins.compact .hy-ins-head{padding:8px 10px 7px}
+.hy-ins.compact .hy-term{font-size:12px}
+.hy-ins.compact .hy-sec{padding:7px 10px}
+.hy-ins.compact .hy-ess-body{font-size:11.5px}
+.hy-ins.compact .hy-echip .eid{max-width:150px}
+
+/* ─── RESPONSIVE FLOOR (~550px): wrap, never clip; tabs never vanish ─── */
+@media (max-width:640px){
+  #hy-shell{padding:2px 6px;gap:5px}
+  #hy-shell nav a{padding:3px 6px;font-size:10.5px}
+  #hy-shell .hy-search{min-width:90px}
+  /* applet top bars wrap instead of clipping */
+  #topbar{flex-wrap:wrap;height:auto !important;min-height:0;padding:4px 8px;row-gap:4px}
+  /* conceptric2 footer chips wrap; keyboard legend yields first */
+  #footer{flex-wrap:wrap;height:auto !important;min-height:26px;row-gap:2px;padding:2px 10px}
+  #footer .key{display:none}
+  /* centre-pane tabs scroll horizontally, never vanish */
+  #tabs{overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;scrollbar-width:thin}
+  #tabs .legend{display:none}
+  /* conceptric2 side panes give ground (scoped via #body so other applets are untouched) */
+  #body>#left{width:180px}
+  #body>#right{width:250px}
+}
+
+/* ── node comments (the inspector's review-signal section, 2026-07-08) ── */
+.hy-fb-row{font-size:11.5px;line-height:1.45;padding:6px 8px;margin-bottom:5px;
+  background:var(--bg);border:1px solid var(--edge);border-radius:6px}
+.hy-fb-row.resolved{opacity:.55}
+.hy-fb-kind-tag{font-family:var(--mono);font-size:9.5px;color:var(--teal);
+  border:1px solid var(--edge);border-radius:4px;padding:0 4px;margin-right:4px}
+.hy-fb-meta{font-family:var(--mono);font-size:9.5px;color:var(--dim);margin-top:3px}
+.hy-fb-editor select{width:100%;margin:4px 0;background:var(--bg);color:var(--fg);
+  border:1px solid var(--edge);border-radius:5px;padding:3px 6px;font-size:11px}
+.hy-fb-editor textarea{width:100%;min-height:56px;background:var(--bg);color:var(--fg);
+  border:1px solid var(--edge);border-radius:6px;padding:6px;font-size:11.5px;resize:vertical}
