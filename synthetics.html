@@ -90,6 +90,8 @@
     </div>
   </nav>
 
+  <link rel="stylesheet" href="/assets/css/page-synthetics.css">
+
   <!-- Page Header -->
   <header class="page-hero">
     <div class="container">
@@ -104,21 +106,95 @@
     <div class="container">
       <span class="section-label fade-in">The Premise</span>
       <h2 class="section-title fade-in">Statistical Lawhood Under Finite Description</h2>
-      <div class="pub-list stagger-children">
-        <div class="pub-item">
-          <div class="pub-blurb prose">
-            <p>Every quantitative theory is built by throwing away detail. The usual reading treats this as a
-              practical concession: the world is large, the page is finite, so we coarse-grain and apologise.
-              Synthetics treats the description itself as the physical object. A representation sorts the
-              antecedent generator structure into three parts — <em>null law</em>, the background the
-              description absorbs; <em>visible cost</em>, the complexity it retains and pays for; and
-              <em>closure residue</em>, the structured way it fails.</p>
-            <p style="margin-top: 1rem;">Four axioms on scalar law-content then force a unique measure of
-              lawhood — the KL divergence — and with it a definite accounting. Effective physics is classified
-              as structured closure failure, and the thermodynamic shape that every coarse theory seems to
-              acquire stops being a coincidence.</p>
-          </div>
+
+      <div class="syn-premise-grid fade-in">
+        <div class="pub-blurb prose">
+          <p>Every quantitative theory is built by throwing away detail. The usual reading treats this as a
+            practical concession: the world is large, the page is finite, so we coarse-grain and apologise.
+            Synthetics treats the description itself as the physical object. A representation sorts the
+            antecedent generator structure into three parts — <em class="syn-term" data-term="null">null
+            law</em>, the background the description absorbs; <em class="syn-term" data-term="cost">visible
+            cost</em>, the complexity it retains and pays for; and <em class="syn-term" data-term="residue">closure
+            residue</em>, the structured way it fails.</p>
+          <p style="margin-top: 1rem;">Four axioms on scalar law-content then force a unique measure of
+            lawhood — the KL divergence — and with it a definite accounting. Effective physics is classified
+            as structured closure failure, and the thermodynamic shape that every coarse theory seems to
+            acquire stops being a coincidence.</p>
         </div>
+
+        <figure class="syn-figure">
+          <svg id="syn-diagram" class="syn-diagram" viewBox="0 0 500 340" role="img"
+               aria-labelledby="syn-diagram-title syn-diagram-desc" preserveAspectRatio="xMidYMid meet">
+            <title id="syn-diagram-title">The synthetic decomposition</title>
+            <desc id="syn-diagram-desc">A lawful world of many trajectories is forced through a finite
+              aperture — the description — and sorted into three channels: null law absorbed to the
+              background, visible cost retained and paid for, and closure residue as structured failure.</desc>
+
+            <!-- input: a lawful world, many faint trajectories -->
+            <g aria-hidden="true">
+              <path class="syn-input syn-flow syn-input-extra" d="M0,60 C60,72 120,140 178,168" />
+              <path class="syn-input syn-flow" d="M0,95 C70,100 130,150 178,169" />
+              <path class="syn-input syn-flow syn-input-extra" d="M0,120 C80,122 130,155 178,169" />
+              <path class="syn-input syn-flow" d="M0,135 C70,140 130,160 178,170" />
+              <path class="syn-input syn-flow" d="M0,170 C60,170 120,170 178,170" />
+              <path class="syn-input syn-flow" d="M0,205 C70,200 130,180 178,171" />
+              <path class="syn-input syn-flow" d="M0,245 C70,240 130,190 178,172" />
+              <path class="syn-input syn-flow syn-input-extra" d="M0,285 C60,278 120,200 178,173" />
+            </g>
+
+            <!-- the finite aperture: the description -->
+            <g aria-hidden="true">
+              <path class="syn-aperture-core" d="M188,142 C204,156 204,184 188,198 C172,184 172,156 188,142 Z" />
+              <path class="syn-aperture" d="M188,140 C206,155 206,185 188,200 C170,185 170,155 188,140 Z" />
+            </g>
+
+            <!-- channel 1: null law, absorbed -->
+            <g class="syn-channel" data-channel="null" aria-label="null law, absorbed to the background">
+              <path class="syn-channel-path syn-channel-flow" d="M205,170 C280,150 330,90 405,62" />
+              <circle class="syn-node" cx="410" cy="60" r="4" />
+              <text class="syn-label" x="400" y="44" text-anchor="end">null law</text>
+              <text class="syn-label-tag" x="400" y="57" text-anchor="end">absorbed</text>
+              <rect class="syn-channel-hit" x="205" y="40" width="205" height="70" />
+            </g>
+
+            <!-- channel 2: visible cost, retained -->
+            <g class="syn-channel" data-channel="cost" aria-label="visible cost, retained and paid for">
+              <path class="syn-channel-path syn-channel-flow" d="M205,170 C285,170 340,170 405,170" />
+              <circle class="syn-node" cx="410" cy="170" r="4.5" />
+              <text class="syn-label" x="400" y="158" text-anchor="end">visible cost</text>
+              <text class="syn-label-tag" x="400" y="188" text-anchor="end">retained · KL</text>
+              <rect class="syn-channel-hit" x="205" y="140" width="205" height="60" />
+            </g>
+
+            <!-- channel 3: closure residue, structured failure -->
+            <g class="syn-channel" data-channel="residue" aria-label="closure residue, structured failure">
+              <path class="syn-channel-path syn-channel-flow" d="M205,170 C280,190 330,250 405,278" />
+              <circle class="syn-node" cx="410" cy="280" r="4.5" />
+              <g class="syn-residue-scatter" aria-hidden="true">
+                <line class="syn-channel-path" x1="392" y1="266" x2="400" y2="266" />
+                <line class="syn-channel-path" x1="388" y1="292" x2="398" y2="292" />
+                <line class="syn-channel-path" x1="420" y1="268" x2="428" y2="268" />
+                <line class="syn-channel-path" x1="422" y1="292" x2="430" y2="292" />
+              </g>
+              <text class="syn-label" x="380" y="302" text-anchor="end">closure residue</text>
+              <text class="syn-label-tag" x="380" y="315" text-anchor="end">structured failure</text>
+              <rect class="syn-channel-hit" x="205" y="230" width="205" height="90" />
+            </g>
+          </svg>
+
+          <figcaption class="syn-cards">
+            <p class="syn-card-hint">Hover a channel or an italicised term.</p>
+            <p class="syn-card" data-card="null"><b>Null law.</b> The background the antecedent generator
+              structure carries that the description absorbs — it contributes no law and leaves no cost on
+              the ledger.</p>
+            <p class="syn-card" data-card="cost"><b>Visible cost.</b> The complexity the description retains
+              and pays for. Four axioms force the KL divergence as the unique measure of this retained
+              lawhood.</p>
+            <p class="syn-card" data-card="residue"><b>Closure residue.</b> The structured way the
+              description fails to close. Effective physics is classified here — closure failure carrying a
+              definite shape.</p>
+          </figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -131,88 +207,107 @@
       <p class="section-subtitle fade-in">Five drafts, presented foundation first. None is refereed yet;
         the derivations are in the PDFs.</p>
       <div class="evidence-strip fade-in">
-        <span><span class="num">5</span> working drafts</span>
+        <span><span class="num syn-count" data-count="5">5</span> working drafts</span>
         <span>/assets/docs/</span>
         <span>not refereed</span>
       </div>
 
-      <div class="pub-list stagger-children">
+      <div class="syn-ladder">
+        <span class="syn-ladder-axis">foundation first</span>
+        <div class="syn-rail" aria-hidden="true"><span class="syn-rail-fill"></span></div>
+        <ol class="syn-rungs stagger-children">
 
-        <div class="pub-item">
-          <div class="pub-title"><a href="/assets/docs/the-law-of-laws.pdf" target="_blank" rel="noopener">Synthetics: Statistical Lawhood Under Finite Description</a></div>
-          <div class="pub-journal">Working draft — the foundation</div>
-          <div class="pub-blurb">Four axioms on scalar law-content force the KL divergence as the unique
-            measure of lawhood, and the synthetic decomposition — null law, visible cost, closure residue —
-            follows as bookkeeping rather than metaphor. Effective physics is classified as structured
-            closure failure. Quantum mechanics appears as the rigid spectral fixed point of
-            partition-dynamics obstruction.</div>
-          <div class="pub-links">
-            <a href="/assets/docs/the-law-of-laws.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
-            <span class="evidence">the-law-of-laws.pdf</span>
-          </div>
-        </div>
+          <li class="syn-rung is-foundation">
+            <span class="syn-rung-index" aria-hidden="true">01</span>
+            <div class="pub-item">
+              <div class="pub-title"><a href="/assets/docs/the-law-of-laws.pdf" target="_blank" rel="noopener">Synthetics: Statistical Lawhood Under Finite Description</a></div>
+              <div class="pub-journal">Working draft — the foundation</div>
+              <div class="pub-blurb">Four axioms on scalar law-content force the KL divergence as the unique
+                measure of lawhood, and the synthetic decomposition — null law, visible cost, closure residue —
+                follows as bookkeeping rather than metaphor. Effective physics is classified as structured
+                closure failure. Quantum mechanics appears as the rigid spectral fixed point of
+                partition-dynamics obstruction.</div>
+              <div class="pub-links">
+                <a href="/assets/docs/the-law-of-laws.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
+                <span class="evidence">the-law-of-laws.pdf</span>
+              </div>
+            </div>
+          </li>
 
-        <div class="pub-item">
-          <div class="pub-title"><a href="/assets/docs/the-cost-of-complexity.pdf" target="_blank" rel="noopener">The Cost of Complexity</a></div>
-          <div class="pub-journal">Working draft</div>
-          <div class="pub-blurb">Representations are instantiated in matter, and matter has a price. Drawing
-            a distinction — defining a macrostate boundary — carries a strictly non-zero thermodynamic cost,
-            so choosing a coarser description is a physical act that incurs a physical bill. This is the
-            ledger the rest of the programme spends against.</div>
-          <div class="pub-links">
-            <a href="/assets/docs/the-cost-of-complexity.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
-            <span class="evidence">the-cost-of-complexity.pdf</span>
-          </div>
-        </div>
+          <li class="syn-rung">
+            <span class="syn-rung-index" aria-hidden="true">02</span>
+            <div class="pub-item">
+              <div class="pub-title"><a href="/assets/docs/the-cost-of-complexity.pdf" target="_blank" rel="noopener">The Cost of Complexity</a></div>
+              <div class="pub-journal">Working draft</div>
+              <div class="pub-blurb">Representations are instantiated in matter, and matter has a price. Drawing
+                a distinction — defining a macrostate boundary — carries a strictly non-zero thermodynamic cost,
+                so choosing a coarser description is a physical act that incurs a physical bill. This is the
+                ledger the rest of the programme spends against.</div>
+              <div class="pub-links">
+                <a href="/assets/docs/the-cost-of-complexity.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
+                <span class="evidence">the-cost-of-complexity.pdf</span>
+              </div>
+            </div>
+          </li>
 
-        <div class="pub-item">
-          <div class="pub-title"><a href="/assets/docs/HMF_AI.pdf" target="_blank" rel="noopener">Equilibrium from the Inside Out: Exact Hamiltonian of Mean Force</a></div>
-          <div class="pub-journal">Working draft — the exact case</div>
-          <div class="pub-blurb">The Hamiltonian of mean force is usually bought with a weak-coupling
-            apology. Dropping the requirement of system–bath commutativity gives the closure exactly,
-            non-perturbatively: a reduced equilibrium description that survives strong coupling. One place
-            where the general programme meets an exact result.</div>
-          <div class="pub-links">
-            <a href="/assets/docs/HMF_AI.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
-            <span class="evidence">HMF_AI.pdf</span>
-          </div>
-        </div>
+          <li class="syn-rung">
+            <span class="syn-rung-index" aria-hidden="true">03</span>
+            <div class="pub-item">
+              <div class="pub-title"><a href="/assets/docs/HMF_AI.pdf" target="_blank" rel="noopener">Equilibrium from the Inside Out: Exact Hamiltonian of Mean Force</a></div>
+              <div class="pub-journal">Working draft — the exact case</div>
+              <div class="pub-blurb">The Hamiltonian of mean force is usually bought with a weak-coupling
+                apology. Dropping the requirement of system–bath commutativity gives the closure exactly,
+                non-perturbatively: a reduced equilibrium description that survives strong coupling. One place
+                where the general programme meets an exact result.</div>
+              <div class="pub-links">
+                <a href="/assets/docs/HMF_AI.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
+                <span class="evidence">HMF_AI.pdf</span>
+              </div>
+            </div>
+          </li>
 
-        <div class="pub-item">
-          <div class="pub-title"><a href="/assets/docs/self-consistent-loss-geometries.pdf" target="_blank" rel="noopener">Self-Consistent Loss Geometries and the Laws of Learning</a></div>
-          <div class="pub-journal">Working draft</div>
-          <div class="pub-blurb">Learning happens in physical systems constrained by energy budgets. Three
-            postulates force the loss function to be a local physical quantity rather than a global
-            criterion imposed from outside — adaptation as a consequence of the physics, not an optimisation
-            story laid on top of it.</div>
-          <div class="pub-links">
-            <a href="/assets/docs/self-consistent-loss-geometries.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
-            <span class="evidence">self-consistent-loss-geometries.pdf</span>
-          </div>
-        </div>
+          <li class="syn-rung">
+            <span class="syn-rung-index" aria-hidden="true">04</span>
+            <div class="pub-item">
+              <div class="pub-title"><a href="/assets/docs/self-consistent-loss-geometries.pdf" target="_blank" rel="noopener">Self-Consistent Loss Geometries and the Laws of Learning</a></div>
+              <div class="pub-journal">Working draft</div>
+              <div class="pub-blurb">Learning happens in physical systems constrained by energy budgets. Three
+                postulates force the loss function to be a local physical quantity rather than a global
+                criterion imposed from outside — adaptation as a consequence of the physics, not an optimisation
+                story laid on top of it.</div>
+              <div class="pub-links">
+                <a href="/assets/docs/self-consistent-loss-geometries.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
+                <span class="evidence">self-consistent-loss-geometries.pdf</span>
+              </div>
+            </div>
+          </li>
 
-        <div class="pub-item" id="phases-of-hierarchy">
-          <div class="pub-title"><a href="/assets/docs/the-phases-of-hierarchy.pdf" target="_blank" rel="noopener">The Laws of Learning: Dynamical Phases of Hierarchical Adaptive Systems and the Ultraepistemic Catastrophe</a></div>
-          <div class="pub-journal">Experimental draft (algorithmic research) — an active laboratory, not a final formalism</div>
-          <div class="pub-blurb">
-            <p>Force many components to coordinate through one narrow channel and each part must update
-              against a delayed reflection of the whole. Past a critical effective gain the stable
-              configuration flips to an oscillating 2-cycle — the ultraepistemic catastrophe — and the
-              energetic and operational loss surges.</p>
-            <p style="margin-top: 1rem;">Hierarchy is the dampener. Sequential, modular layers attenuate the
-              transmission of the macro-state and postpone the catastrophe to much larger populations, which
-              sorts adaptive systems into flat, modular and inertial phases: the flat phase shatters on
-              growth, the modular phase balances instability against the cost of depth, the inertial phase
-              is safe and cannot learn. Layer normalisation inside a deep transformer is this attenuation —
-              the same operation under the canonical normal form, formalised as a real-space Laplacian
-              renormalisation group flow.</p>
-          </div>
-          <div class="pub-links">
-            <a href="/assets/docs/the-phases-of-hierarchy.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
-            <span class="evidence">the-phases-of-hierarchy.pdf</span>
-          </div>
-        </div>
+          <li class="syn-rung is-open">
+            <span class="syn-rung-index" aria-hidden="true">05</span>
+            <div class="pub-item" id="phases-of-hierarchy">
+              <div class="pub-title"><a href="/assets/docs/the-phases-of-hierarchy.pdf" target="_blank" rel="noopener">The Laws of Learning: Dynamical Phases of Hierarchical Adaptive Systems and the Ultraepistemic Catastrophe</a></div>
+              <div class="pub-journal">Experimental draft (algorithmic research) — an active laboratory, not a final formalism</div>
+              <div class="pub-blurb">
+                <p>Force many components to coordinate through one narrow channel and each part must update
+                  against a delayed reflection of the whole. Past a critical effective gain the stable
+                  configuration flips to an oscillating 2-cycle — the ultraepistemic catastrophe — and the
+                  energetic and operational loss surges.</p>
+                <p style="margin-top: 1rem;">Hierarchy is the dampener. Sequential, modular layers attenuate the
+                  transmission of the macro-state and postpone the catastrophe to much larger populations, which
+                  sorts adaptive systems into flat, modular and inertial phases: the flat phase shatters on
+                  growth, the modular phase balances instability against the cost of depth, the inertial phase
+                  is safe and cannot learn. Layer normalisation inside a deep transformer is this attenuation —
+                  the same operation under the canonical normal form, formalised as a real-space Laplacian
+                  renormalisation group flow.</p>
+              </div>
+              <div class="pub-links">
+                <a href="/assets/docs/the-phases-of-hierarchy.pdf" target="_blank" rel="noopener" class="pub-link">PDF</a>
+                <span class="evidence">the-phases-of-hierarchy.pdf</span>
+              </div>
+            </div>
+          </li>
 
+        </ol>
       </div>
     </div>
   </section>
@@ -240,6 +335,8 @@
       </div>
     </div>
   </section>
+
+  <script src="/assets/js/synthetics.js" defer></script>
 
   <footer class="footer">
     <div class="container">
