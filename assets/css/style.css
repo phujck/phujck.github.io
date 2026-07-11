@@ -654,6 +654,15 @@ h1, h2, h3, h4, h5, h6 {
   padding-left: var(--space-md);
 }
 
+/* Body prose inside a pub-item: the annotation style above is for short notes
+   under a title; multi-paragraph sections (a premise, a claim) read as the
+   page's main text, not a footnote. */
+.pub-item .pub-blurb.prose {
+  font-style: normal;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
 /* ---------- Research Areas ---------- */
 .research-grid {
   display: grid;
