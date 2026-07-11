@@ -301,7 +301,8 @@
     var b=document.getElementById("demo-banner"); if(!b) return;
     b.innerHTML="Demo — <b>"+esc(ACTIVE)+"</b> corpus ("+Object.keys(CORPORA).length+
       " baked; switch at the corpus picker), read-only except comments · commenting as "+
-      "<b>visitor:"+esc(VISITOR)+"</b> · <a id='demo-tour-open'>what am I looking at?</a>";
+      "<b>visitor:"+esc(VISITOR)+"</b> · <a id='demo-proj-link' href='projection.html'>projection editor →</a>"+
+      " · <a id='demo-tour-open'>what am I looking at?</a>";
     var t=document.getElementById("demo-tour-open"); if(t) t.onclick=function(){ startTour(0); };
   }
   // ── corpus switch: the editor's own #corpus picker drives loadCorpus() (which re-fetches
@@ -339,6 +340,11 @@
      body:"Open a node, pick a kind, write. Your comment is minted to the name you gave at the "+
       "door and queues here; it lands in the engine's intake as a typed record, tied to the node "+
       "you were on. Health, learned and forks show the corpus's own open ledger."},
+    {sel:"#demo-proj-link", title:"The projection editor",
+     body:"The same object, one altitude up. This graph is what the manuscript is made OF; the "+
+      "projection editor is the manuscript being MADE — the section plan over the conceptric "+
+      "spine, and the real converged prose each section projected, with the neutral/voiced "+
+      "register toggle. Open it here; every view returns to this one."},
     {sel:null, title:"That's the machine",
      body:"Wander. Everything is a node; every claim has edges; nothing is hidden behind the "+
       "rendering. Reopen this tour any time from the banner."}
