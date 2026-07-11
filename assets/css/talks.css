@@ -171,8 +171,8 @@
   width: 0.52rem;
   height: 0.52rem;
   border-radius: 50%;
-  background: var(--highlight-green);
-  box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+  background: var(--link);
+  box-shadow: 0 0 16px rgba(126, 184, 218, 0.4);
 }
 
 .talk-archive-note {

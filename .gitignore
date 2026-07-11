@@ -8,3 +8,6 @@ vendor
 
 # Slidev source for the spanspermia talk (built output committed under talks/spanspermia)
 _decks/spanspermia/
+
+# B3 review screenshots (local artifact, not deployed)
+site/_b3_screens/

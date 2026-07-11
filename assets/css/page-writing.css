@@ -1,0 +1,122 @@
+/* ============================================
+   Writing page — local styles
+   Relocated from the spine head_extra inline <style> (B3). The purple highlight
+   hue is remapped to the cool counterpoint (N55). The Substack orange (#ff6719)
+   is a real brand colour, kept as-is.
+   ============================================ */
+
+.scrap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--space-xl);
+}
+
+.scrap-card {
+  padding: var(--space-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+}
+
+.scrap-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--link), var(--accent));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.scrap-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  border-color: rgba(218, 165, 32, 0.25);
+}
+
+.scrap-card:hover::before {
+  opacity: 1;
+}
+
+.scrap-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: var(--text-primary);
+}
+
+.scrap-blurb {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  flex: 1;
+}
+
+.scrap-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.scrap-link:hover {
+  opacity: 0.75;
+}
+
+.substack-card {
+  padding: var(--space-2xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.substack-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff6719, #ff9a5c);
+}
+
+.substack-icon {
+  font-size: 3rem;
+  flex-shrink: 0;
+}
+
+.substack-body h3 {
+  margin-bottom: var(--space-sm);
+}
+
+.substack-body p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--space-lg);
+}
+
+@media (max-width: 640px) {
+  .substack-card {
+    flex-direction: column;
+  }
+}

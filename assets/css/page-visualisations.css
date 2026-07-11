@@ -1,0 +1,147 @@
+/* ============================================
+   Visualisations page — local styles
+   Relocated from the spine head_extra inline <style> (B3). The page's generic
+   blue (#5cacee) and green (#60e0a0) are unified onto the identity's single
+   cool counterpoint (--link) and gold accent (N55). FORK: this remap goes one
+   step beyond the four named dead hues — flagged for the author in
+   corpus_friction/website.jsonl.
+   ============================================ */
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-xl);
+}
+
+.viz-card {
+  padding: var(--space-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.viz-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--link), var(--accent));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.viz-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  border-color: rgba(126, 184, 218, 0.25);
+}
+
+.viz-card:hover::before {
+  opacity: 1;
+}
+
+.viz-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.viz-title {
+  font-size: 1.0rem;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.viz-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  flex: 1;
+}
+
+.viz-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.viz-series {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+
+.viz-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--link);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.viz-open:hover {
+  opacity: 0.75;
+}
+
+.viz-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(126, 184, 218, 0.1);
+  color: var(--link);
+  border: 1px solid rgba(126, 184, 218, 0.2);
+}
+
+.series-intro {
+  padding: var(--space-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--link);
+  margin-bottom: var(--space-2xl);
+}
+
+.series-intro h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.series-intro p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.series-intro a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.series-intro a:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,52 @@
+[
+  {"url": "/", "kind": "page", "note": "index.html (home)"},
+  {"url": "/synthetics.html", "kind": "page"},
+  {"url": "/physics.html", "kind": "page"},
+  {"url": "/visualisations.html", "kind": "page"},
+  {"url": "/talks.html", "kind": "page"},
+  {"url": "/writing.html", "kind": "page"},
+  {"url": "/music.html", "kind": "page"},
+
+  {"url": "/essays/an-ecumenical-matter.html", "kind": "page"},
+  {"url": "/essays/eppur-si-muove.html", "kind": "page"},
+  {"url": "/essays/second-attempt.html", "kind": "page"},
+  {"url": "/essays/the-line.html", "kind": "page"},
+  {"url": "/essays/two-hundred-and-sixty.html", "kind": "page"},
+
+  {"url": "/viz/why-algebra/carleman-lifting.html", "kind": "page"},
+  {"url": "/viz/why-algebra/complexity-trade.html", "kind": "page"},
+  {"url": "/viz/why-algebra/constraint-structure.html", "kind": "page"},
+  {"url": "/viz/why-algebra/koopman-split.html", "kind": "page"},
+  {"url": "/viz/why-algebra/phase-portrait.html", "kind": "page"},
+
+  {"url": "/talks/laws-of-learning-v3/", "kind": "page", "note": "canonical Laws-of-Learning deck"},
+  {"url": "/talks/spanspermia/", "kind": "page"},
+  {"url": "/talks/dynamics-as-computation/", "kind": "page"},
+  {"url": "/talks/laws-of-learning/", "kind": "redirect", "note": "v1 -> laws-of-learning-v3 (payload pruned B3; meta-refresh stub)"},
+  {"url": "/talks/laws-of-learning-v2/", "kind": "redirect", "note": "v2 -> laws-of-learning-v3 (payload pruned B3; meta-refresh stub)"},
+
+  {"url": "/assets/docs/CV_McCaul.pdf", "kind": "asset"},
+  {"url": "/assets/docs/EigenEngine.pdf", "kind": "asset"},
+  {"url": "/assets/docs/eigenengine-talk.pdf", "kind": "asset"},
+  {"url": "/assets/docs/the-phases-of-hierarchy.pdf", "kind": "asset"},
+  {"url": "/assets/docs/the-law-of-laws.pdf", "kind": "asset"},
+  {"url": "/assets/docs/self-consistent-loss-geometries.pdf", "kind": "asset"},
+  {"url": "/assets/docs/HMF_AI.pdf", "kind": "asset"},
+  {"url": "/assets/docs/the-cost-of-complexity.pdf", "kind": "asset"},
+
+  {"url": "/assets/img/me.jpg", "kind": "asset", "note": "og:image + JSON-LD Person image"},
+  {"url": "/assets/css/style.css", "kind": "asset"},
+  {"url": "/assets/css/talks.css", "kind": "asset"},
+  {"url": "/assets/talks/laws-of-learning/poster.png", "kind": "asset", "note": "v1-origin poster kept alive standalone; talks og:image + featured preview (v3 has no poster of its own)"},
+  {"url": "/favicon.svg", "kind": "asset"},
+  {"url": "/manifest.json", "kind": "asset"},
+
+  {"url": "/CNAME", "kind": "special", "note": "custom domain gmccaul.co.uk; must survive byte-identical"},
+  {"url": "/google228ffc899881d25c.html", "kind": "special", "note": "Google Search Console verification"},
+  {"url": "/robots.txt", "kind": "special", "note": "semantics: /unlisted/ disallowed"},
+  {"url": "/sitemap.xml", "kind": "special"},
+  {"url": "/.nojekyll", "kind": "special", "note": "Pages serves raw files (no Jekyll build)"},
+  {"url": "/404.html", "kind": "special", "note": "GitHub Pages error page"},
+  {"url": "/memories/", "kind": "special", "note": "Elizabeth McCaul memorial; UNTOUCHABLE, own visual identity"},
+  {"url": "/review/ssc/", "kind": "special", "note": "deployed remote-review app; standing token-revocation open"}
+]

@@ -5,29 +5,12 @@
 
 /* ---------- CSS Custom Properties ---------- */
 :root {
-  /* Palette */
-  --bg-primary: #0a0e1a;
-  --bg-secondary: #111827;
-  --bg-card: rgba(255, 255, 255, 0.04);
-  --bg-card-hover: rgba(255, 255, 255, 0.07);
-  --bg-glass: rgba(255, 255, 255, 0.06);
-  --border-glass: rgba(255, 255, 255, 0.08);
-
-  --text-primary: #e8e6e3;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
-
-  --accent: #c9a96e;
-  --accent-light: #dfc599;
-  --accent-dim: rgba(201, 169, 110, 0.15);
-
-  --link: #7eb8da;
-  --link-hover: #a8d4f0;
-
-  --highlight-blue: #3b82f6;
-  --highlight-green: #10b981;
-  --highlight-purple: #8b5cf6;
-  --highlight-rose: #f43f5e;
+  /* Palette --- PROJECTED, not defined here. The colour custom properties
+     (--bg-*, --text-*, --accent*, --link*, --refused*, --evidence) are emitted
+     into every page head as <style id="identity-tokens"> by laplace.site_backend
+     from the ONE token source templates/identity/palette.json (screen-dark mode).
+     Do not redefine colours here -- edit palette.json and re-render. This :root
+     owns only the non-colour tokens below (type, spacing, layout, motion). */
 
   /* Typography */
   --font-body: 'Lora', 'Merriweather', Georgia, serif;
@@ -187,6 +170,29 @@ h1, h2, h3, h4, h5, h6 {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Mono-as-evidence (N55 anti-generative grammar): ids, dates, paths, hashes and
+   node counts are set in JetBrains Mono in the reserved 'evidence' tone, so an
+   address reads as an address -- specificity is the aesthetic, genericity the
+   stink. Use .evidence for a run of address text, .evidence-strip for a row. */
+.evidence {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  letter-spacing: -0.01em;
+  color: var(--evidence);
+}
+
+.evidence-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: -0.01em;
+  color: var(--evidence);
+}
+
+.evidence-strip .num { color: var(--accent); }
 
 /* ---------- Navigation ---------- */
 .nav {
@@ -435,10 +441,12 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 1.25rem;
 }
 
-.highlight-icon.blue { background: rgba(59, 130, 246, 0.12); color: var(--highlight-blue); }
-.highlight-icon.green { background: rgba(16, 185, 129, 0.12); color: var(--highlight-green); }
-.highlight-icon.purple { background: rgba(139, 92, 246, 0.12); color: var(--highlight-purple); }
-.highlight-icon.rose { background: rgba(244, 63, 94, 0.12); color: var(--highlight-rose); }
+/* Category icons: the four generic hues die (N55 sophistication pass). Two-tone
+   discipline -- cool counterpoint + gold -- keeps the index in the identity. */
+.highlight-icon.blue { background: rgba(126, 184, 218, 0.12); color: var(--link); }
+.highlight-icon.green { background: rgba(126, 184, 218, 0.12); color: var(--link); }
+.highlight-icon.purple { background: var(--accent-dim); color: var(--accent); }
+.highlight-icon.rose { background: var(--accent-dim); color: var(--accent); }
 .highlight-icon.gold { background: var(--accent-dim); color: var(--accent); }
 
 .highlight-card h3 {
@@ -607,8 +615,8 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.04em;
   padding: 0.15rem 0.5rem;
   border-radius: 100px;
-  background: rgba(244, 63, 94, 0.12);
-  color: var(--highlight-rose);
+  background: var(--accent-dim);
+  color: var(--accent);
   margin-left: var(--space-sm);
 }
 
@@ -729,7 +737,7 @@ h1, h2, h3, h4, h5, h6 {
   gap: 4px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--highlight-rose);
+  color: var(--accent);
   margin-top: var(--space-xs);
 }
 
@@ -751,7 +759,7 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--highlight-purple) 100%);
+  background: linear-gradient(90deg, var(--accent) 0%, var(--link) 100%);
 }
 
 .essay-card .award-badge {
@@ -784,6 +792,59 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.925rem;
   color: var(--text-secondary);
   line-height: 1.75;
+}
+
+/* ---------- Engine exhibit (index D-C, N55) ---------- */
+/* One restrained panel, not a card grid: the anti-generative move is to SHOW
+   the machine with addresses, asymmetrically (a left accent rule), rather than
+   describe it in three symmetric cards. */
+.engine-panel {
+  border: 1px solid var(--border-glass);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  padding: var(--space-2xl);
+}
+
+.engine-lede {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  max-width: 64ch;
+  margin-bottom: var(--space-lg);
+}
+
+.engine-panel .evidence-strip {
+  margin-bottom: var(--space-lg);
+}
+
+.engine-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg) var(--space-2xl);
+  align-items: baseline;
+}
+
+.engine-link {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.engine-link.secondary {
+  color: var(--link);
+}
+
+.engine-link:hover {
+  opacity: 0.78;
+}
+
+.engine-note {
+  display: block;
+  margin-top: var(--space-lg);
 }
 
 /* ---------- Footer ---------- */

@@ -1,7 +1,0 @@
-node_modules/
-dist/
-dist-anf/
-.slidev/
-.shoot/
-tools_dev*.txt
-*.log
