@@ -1,0 +1,57 @@
+[
+  {
+    "text": "Built by algebra.",
+    "source": "deslop.footer.built_by_algebra",
+    "note": "footer_text (spine.json site.footer_text), every page. Aphoristic tagline flagged by B3; his call whether it stays."
+  },
+  {
+    "text": "rigorously backed",
+    "source": "deslop.synthetics.rigorously_backed",
+    "note": "synthetics.html Working Drafts subtitle. Self-descriptive virtue claim about our own artifact; his call."
+  },
+  {
+    "text": "The universe is constrained, and friction is the mathematical mandate of survival.",
+    "source": "deslop.synthetics.friction_mandate",
+    "note": "synthetics.html premise close. Aphoristic epigram flagged by B3; his call."
+  },
+  {
+    "text": "memory becomes reconstruction rather than storage and generation becomes projection rather than search",
+    "source": "deslop.synthetics.balanced_epigram",
+    "note": "synthetics.html EigenEngine blurb. Balanced 'X rather than Y' epigram tic flagged by B3; substantive but sloganic in shape; his call."
+  },
+  {
+    "text": "Loose Canon",
+    "source": "deslop.index.author_voice_taglines",
+    "note": "index.html hero role. Low-confidence author-voice tagline flagged by B3 (likely deliberate voice); his call."
+  },
+  {
+    "text": "Bad in a way only the autodidactic can be.",
+    "source": "deslop.index.author_voice_taglines",
+    "note": "index.html music card. Low-confidence author-voice tagline flagged by B3 (likely deliberate voice); his call."
+  },
+  {
+    "text": "Entirely honest about that trade-off in the abstract",
+    "source": "deslop.physics.b5_mechanical_find",
+    "note": "physics.html pub-blurb (rank-truncation paper). Not one of B3's flags -- caught by the B5 mechanical gate itself; his call."
+  },
+  {
+    "text": "A rigorous treatment of driven spin-boson dynamics",
+    "source": "deslop.physics.b5_mechanical_find",
+    "note": "physics.html pub-blurb (spin-boson paper). Not one of B3's flags -- caught by the B5 mechanical gate itself; his call."
+  },
+  {
+    "text": "Generative AI that runs on generators, not constraints",
+    "source": "deslop.synthetics.b5_mechanical_find",
+    "note": "synthetics.html pub-title. Balanced-epigram shape; not one of B3's flags -- caught by the B5 mechanical gate itself; his call."
+  },
+  {
+    "text": "grounds these phenomena in a rigorous physical formalism",
+    "source": "deslop.synthetics.b5_mechanical_find",
+    "note": "synthetics.html pub-blurb (Transformer/renormalisation draft). Not one of B3's flags -- caught by the B5 mechanical gate itself; his call."
+  },
+  {
+    "text": "It provides a rigorous account of a reduced physical description",
+    "source": "deslop.synthetics.b5_mechanical_find",
+    "note": "synthetics.html pub-blurb (HMF_AI draft). Not one of B3's flags -- caught by the B5 mechanical gate itself; his call."
+  }
+]

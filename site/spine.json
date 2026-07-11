@@ -1,0 +1,235 @@
+{
+  "site": {
+    "base_url": "https://gmccaul.co.uk",
+    "author": "Gerard McCaul",
+    "theme_color": "#0a0e1a",
+    "brand_html": "G<span>.</span>M<sup>c</sup>Caul",
+    "nav": [
+      {
+        "key": "home",
+        "label": "Home",
+        "href": "/"
+      },
+      {
+        "key": "synthetics",
+        "label": "Synthetics",
+        "href": "/synthetics.html"
+      },
+      {
+        "key": "physics",
+        "label": "Physics",
+        "href": "/physics.html"
+      },
+      {
+        "key": "visualisations",
+        "label": "Visualisations",
+        "href": "/visualisations.html"
+      },
+      {
+        "key": "talks",
+        "label": "Talks",
+        "href": "/talks.html"
+      },
+      {
+        "key": "writing",
+        "label": "Writing",
+        "href": "/writing.html"
+      },
+      {
+        "key": "music",
+        "label": "Music",
+        "href": "/music.html"
+      }
+    ],
+    "footer_text": "© 2026 Gerard McCaul. Built by algebra.",
+    "footer_links": [
+      {
+        "label": "Email",
+        "href": "mailto:gerard.mccaul@gmail.com"
+      },
+      {
+        "label": "Substack",
+        "href": "https://littlelearningmachine.substack.com/"
+      },
+      {
+        "label": "Scholar",
+        "href": "https://scholar.google.com/citations?user=GMHiq1IAAAAJ&hl=en"
+      },
+      {
+        "label": "ORCID",
+        "href": "https://orcid.org/0000-0001-7972-456X"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/phujck"
+      }
+    ],
+    "rel_me": [
+      "https://orcid.org/0000-0001-7972-456X",
+      "https://github.com/phujck",
+      "https://scholar.google.com/citations?user=GMHiq1IAAAAJ&hl=en",
+      "https://littlelearningmachine.substack.com/"
+    ],
+    "google_site_verification": "QB9iAVhEjCSB7mIYgx-mREYE9SKkyeGlocaMzZiBGMA",
+    "font_url": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@600;700;800&display=swap",
+    "og_site_name": "Gerard McCaul",
+    "og_locale": "en_GB",
+    "jsonld_person": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"Person\",\n    \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n    \"name\": \"Gerard McCaul\",\n    \"honorificPrefix\": \"Dr.\",\n    \"url\": \"https://gmccaul.co.uk/\",\n    \"image\": \"https://gmccaul.co.uk/assets/img/me.jpg\",\n    \"jobTitle\": \"Research Associate\",\n    \"sameAs\": [\n      \"https://scholar.google.com/citations?user=GMHiq1IAAAAJ&hl=en\",\n      \"https://orcid.org/0000-0001-7972-456X\",\n      \"https://github.com/phujck\",\n      \"https://littlelearningmachine.substack.com/\"\n    ]\n  }"
+  },
+  "pages": [
+    {
+      "path": "index.html",
+      "layout": "full",
+      "nav_active": "home",
+      "title": "Gerard McCaul — Theoretical Physicist",
+      "description": "Personal website of Dr. Gerard McCaul, theoretical physicist. Research in quantum control, open quantum systems, reservoir computing, and superoscillations.",
+      "canonical": "https://gmccaul.co.uk/",
+      "og_type": "profile",
+      "og_title": "Gerard McCaul — Theoretical Physicist",
+      "og_description": "Theoretical physicist. Research in quantum control, open quantum systems, reservoir computing, and superoscillations. 25+ publications including PRL.",
+      "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "twitter_card": "summary_large_image",
+      "twitter_title": "Gerard McCaul — Theoretical Physicist",
+      "twitter_description": "Theoretical physicist. Quantum control, open quantum systems, reservoir computing, superoscillations.",
+      "twitter_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "extra_css": [],
+      "og_image_width": "1200",
+      "og_image_height": "630",
+      "head_extra": "  <link rel=\"preload\" href=\"/assets/css/style.css\" as=\"style\">\n  <link rel=\"preload\" href=\"/assets/img/me.jpg\" as=\"image\">",
+      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@graph\": [\n      {\n        \"@type\": \"Person\",\n        \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n        \"name\": \"Gerard McCaul\",\n        \"honorificPrefix\": \"Dr.\",\n        \"url\": \"https://gmccaul.co.uk/\",\n        \"image\": \"https://gmccaul.co.uk/assets/img/me.jpg\",\n        \"jobTitle\": \"Research Associate\",\n        \"description\": \"Theoretical physicist working in quantum control, open quantum systems, reservoir computing, and superoscillations.\",\n        \"alumniOf\": [\n          { \"@type\": \"CollegeOrUniversity\", \"name\": \"King's College London\", \"url\": \"https://www.kcl.ac.uk/\" },\n          { \"@type\": \"CollegeOrUniversity\", \"name\": \"Tulane University\", \"url\": \"https://tulane.edu/\" }\n        ],\n        \"sameAs\": [\n          \"https://scholar.google.com/citations?user=GMHiq1IAAAAJ&hl=en\",\n          \"https://orcid.org/0000-0001-7972-456X\",\n          \"https://www.researchgate.net/profile/Gerard-Mccaul\",\n          \"https://github.com/phujck\",\n          \"https://littlelearningmachine.substack.com/\"\n        ],\n        \"email\": \"gerard.mccaul@gmail.com\",\n        \"knowsAbout\": [\n          \"Quantum Control\",\n          \"Open Quantum Systems\",\n          \"Quantum Reservoir Computing\",\n          \"Superoscillations\",\n          \"Koopman Mechanics\",\n          \"Non-Linear Optics\",\n          \"Quantum Thermodynamics\",\n          \"Influence Functionals\",\n          \"High Harmonic Generation\"\n        ]\n      },\n      {\n        \"@type\": \"WebSite\",\n        \"@id\": \"https://gmccaul.co.uk/#website\",\n        \"url\": \"https://gmccaul.co.uk/\",\n        \"name\": \"Gerard McCaul\",\n        \"description\": \"Personal website of Dr. Gerard McCaul, theoretical physicist.\",\n        \"author\": { \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\" }\n      },\n      {\n        \"@type\": \"ScholarlyArticle\",\n        \"name\": \"Driven Imposters: Controlling Expectations in Many-Body Systems\",\n        \"author\": { \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\" },\n        \"datePublished\": \"2020\",\n        \"isPartOf\": { \"@type\": \"Periodical\", \"name\": \"Physical Review Letters\" },\n        \"url\": \"https://doi.org/10.1103/PhysRevLett.124.183201\"\n      },\n      {\n        \"@type\": \"ScholarlyArticle\",\n        \"name\": \"Superoscillations Deliver Superspectroscopy\",\n        \"author\": { \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\" },\n        \"datePublished\": \"2023\",\n        \"isPartOf\": { \"@type\": \"Periodical\", \"name\": \"Physical Review Letters\" },\n        \"url\": \"https://doi.org/10.1103/PhysRevLett.131.153803\"\n      },\n      {\n        \"@type\": \"ScholarlyArticle\",\n        \"name\": \"Optical Indistinguishability via Twinning Fields\",\n        \"author\": { \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\" },\n        \"datePublished\": \"2021\",\n        \"isPartOf\": { \"@type\": \"Periodical\", \"name\": \"Physical Review Letters\" },\n        \"url\": \"https://doi.org/10.1103/PhysRevLett.127.113201\"\n      }\n    ]\n  }",
+      "body_scripts": "  <script>\n    fetch('https://littlelearningmachine.substack.com/api/v1/posts/?limit=1')\n      .then(function (r) { return r.json(); })\n      .then(function (posts) {\n        if (!posts || !posts.length) return;\n        var p = posts[0];\n        document.getElementById('home-latest-link').href = p.canonical_url;\n        document.getElementById('home-latest-title').textContent = p.title;\n        document.getElementById('home-latest-post').style.display = '';\n      })\n      .catch(function () { });\n  </script>"
+    },
+    {
+      "path": "physics.html",
+      "layout": "full",
+      "nav_active": "physics",
+      "title": "Physics — Gerard McCaul",
+      "description": "Research, publications, and talks by Dr. Gerard McCaul. 25+ papers spanning quantum control, open quantum systems, superoscillations, reservoir computing, and Koopman mechanics.",
+      "canonical": "https://gmccaul.co.uk/physics.html",
+      "og_type": "website",
+      "og_title": "Physics — Gerard McCaul",
+      "og_description": "25+ publications in PRL, PRB, PRA, Quantum and more. Research spanning quantum control, open quantum systems, superoscillations, and reservoir computing.",
+      "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "twitter_card": "summary",
+      "twitter_title": "Physics — Gerard McCaul",
+      "twitter_description": "25+ publications in PRL, PRB, PRA, Quantum. Quantum control, superoscillations, reservoir computing.",
+      "twitter_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "extra_css": [],
+      "og_image_width": "1200",
+      "og_image_height": "630",
+      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"CollectionPage\",\n    \"name\": \"Physics  -  Gerard McCaul\",\n    \"description\": \"Research areas, publications, and talks by Dr. Gerard McCaul.\",\n    \"url\": \"https://gmccaul.co.uk/physics.html\",\n    \"author\": {\n      \"@type\": \"Person\",\n      \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n      \"name\": \"Gerard McCaul\"\n    }\n  }"
+    },
+    {
+      "path": "talks.html",
+      "layout": "full",
+      "nav_active": "talks",
+      "title": "Talks — Gerard McCaul",
+      "description": "Talks and presentations by Gerard McCaul, including seminars on dynamics, computation, and quantum structure.",
+      "canonical": "https://gmccaul.co.uk/talks.html",
+      "og_type": "website",
+      "og_title": "Talks — Gerard McCaul",
+      "og_description": "Talks and presentations by Gerard McCaul, including seminars on dynamics, computation, and quantum structure.",
+      "og_image": "https://gmccaul.co.uk/assets/talks/laws-of-learning/poster.png",
+      "twitter_card": "summary_large_image",
+      "twitter_title": "Talks — Gerard McCaul",
+      "twitter_description": "Talks on dynamics, computation, quantum structure, and related physics.",
+      "twitter_image": "https://gmccaul.co.uk/assets/talks/laws-of-learning/poster.png",
+      "extra_css": [
+        "/assets/css/talks.css"
+      ],
+      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"CollectionPage\",\n    \"name\": \"Talks - Gerard McCaul\",\n    \"description\": \"Talks and selected presentations by Gerard McCaul.\",\n    \"url\": \"https://gmccaul.co.uk/talks.html\",\n    \"author\": {\n      \"@type\": \"Person\",\n      \"name\": \"Gerard McCaul\"\n    }\n  }"
+    },
+    {
+      "path": "music.html",
+      "layout": "full",
+      "nav_active": "music",
+      "title": "Music — Gerard McCaul",
+      "description": "Original music by Gerard McCaul  -  songs written and recorded including New Devotion, Goodbye to New Orleans, and Somewhere Unknown.",
+      "canonical": "https://gmccaul.co.uk/music.html",
+      "og_type": "website",
+      "og_title": "Music — Gerard McCaul",
+      "og_description": "Original songs written and recorded by theoretical physicist Gerard McCaul.",
+      "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "twitter_card": "summary",
+      "twitter_title": "Music — Gerard McCaul",
+      "twitter_description": "Original songs by Gerard McCaul  -  New Devotion, Goodbye to New Orleans, Somewhere Unknown.",
+      "twitter_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "extra_css": [
+        "/assets/css/page-music.css"
+      ],
+      "og_image_width": "1200",
+      "og_image_height": "630",
+      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"Person\",\n    \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n    \"name\": \"Gerard McCaul\",\n    \"honorificPrefix\": \"Dr.\",\n    \"url\": \"https://gmccaul.co.uk/\",\n    \"image\": \"https://gmccaul.co.uk/assets/img/me.jpg\",\n    \"jobTitle\": \"Research Associate\",\n    \"sameAs\": [\n      \"https://scholar.google.com/citations?user=GMHiq1IAAAAJ&hl=en\",\n      \"https://orcid.org/0000-0001-7972-456X\",\n      \"https://github.com/phujck\",\n      \"https://littlelearningmachine.substack.com/\"\n    ]\n  }"
+    },
+    {
+      "path": "writing.html",
+      "layout": "full",
+      "nav_active": "writing",
+      "title": "Writing — Gerard McCaul",
+      "description": "Essays, prize-winning fiction, and creative writing by Dr. Gerard McCaul. FQxI 2nd place essay, Quantum-Steampunk runner-up, gonzo memoir, and a Substack on physics and fatherhood.",
+      "canonical": "https://gmccaul.co.uk/writing.html",
+      "og_type": "website",
+      "og_title": "Writing — Gerard McCaul",
+      "og_description": "Prize-winning essays, gonzo memoir, and a Substack on physics and fatherhood by theoretical physicist Gerard McCaul.",
+      "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "twitter_card": "summary",
+      "twitter_title": "Writing — Gerard McCaul",
+      "twitter_description": "FQxI 2nd place essay, Quantum-Steampunk runner-up, and scraps from a physicist with authorial delusions.",
+      "twitter_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "extra_css": [
+        "/assets/css/page-writing.css"
+      ],
+      "og_image_width": "1200",
+      "og_image_height": "630",
+      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"CollectionPage\",\n    \"name\": \"Writing  -  Gerard McCaul\",\n    \"description\": \"Essays, prize-winning fiction, and creative writing by Dr. Gerard McCaul.\",\n    \"url\": \"https://gmccaul.co.uk/writing.html\",\n    \"author\": {\n      \"@type\": \"Person\",\n      \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n      \"name\": \"Gerard McCaul\"\n    }\n  }",
+      "body_scripts": "  <script>\n    fetch('https://littlelearningmachine.substack.com/api/v1/posts/?limit=1')\n      .then(function (r) { return r.json(); })\n      .then(function (posts) {\n        if (!posts || !posts.length) return;\n        var p = posts[0];\n        document.getElementById('substack-latest-link').href = p.canonical_url;\n        document.getElementById('substack-latest-title').textContent = p.title;\n        if (p.subtitle) document.getElementById('substack-latest-subtitle').textContent = p.subtitle;\n        var date = new Date(p.post_date).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });\n        document.getElementById('substack-latest-date').textContent = date;\n        document.getElementById('substack-latest').style.display = '';\n      })\n      .catch(function () { });\n  </script>"
+    },
+    {
+      "path": "visualisations.html",
+      "layout": "full",
+      "nav_active": "visualisations",
+      "title": "Visualisations — Gerard McCaul",
+      "description": "Interactive mathematical visualisations by Dr. Gerard McCaul  -  dynamical systems, Koopman operators, phase portraits, and Carleman lifting.",
+      "canonical": "https://gmccaul.co.uk/visualisations.html",
+      "og_type": "website",
+      "og_title": "Visualisations — Gerard McCaul",
+      "og_description": "Interactive mathematical visualisations: phase portraits, Koopman operators, Carleman lifting, and the dimensionality-nonlinearity trade.",
+      "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "twitter_card": "summary",
+      "twitter_title": "Visualisations — Gerard McCaul",
+      "twitter_description": "Interactive mathematical visualisations: dynamical systems, Koopman operators, Carleman lifting.",
+      "twitter_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "extra_css": [
+        "/assets/css/page-visualisations.css"
+      ],
+      "og_image_width": "1200",
+      "og_image_height": "630",
+      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"CollectionPage\",\n    \"name\": \"Visualisations  -  Gerard McCaul\",\n    \"description\": \"Interactive mathematical visualisations by Dr. Gerard McCaul.\",\n    \"url\": \"https://gmccaul.co.uk/visualisations.html\",\n    \"author\": {\n      \"@type\": \"Person\",\n      \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n      \"name\": \"Gerard McCaul\"\n    }\n  }"
+    },
+    {
+      "path": "synthetics.html",
+      "layout": "full",
+      "nav_active": "synthetics",
+      "title": "Synthetics — Gerard McCaul",
+      "description": "Synthetics: Statistical Lawhood Under Finite Description. A master guide and living experiment in agentic orchestration.",
+      "canonical": "https://gmccaul.co.uk/synthetics.html",
+      "og_type": "website",
+      "og_title": "Synthetics — Gerard McCaul",
+      "og_description": "Synthetics: Statistical Lawhood Under Finite Description. A master guide and living experiment in agentic orchestration.",
+      "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "twitter_card": "summary",
+      "twitter_title": "Synthetics — Gerard McCaul",
+      "twitter_description": "Synthetics: Statistical Lawhood Under Finite Description. A master guide and living experiment in agentic orchestration.",
+      "twitter_image": "https://gmccaul.co.uk/assets/img/me.jpg",
+      "extra_css": [],
+      "og_image_width": "1200",
+      "og_image_height": "630",
+      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"Person\",\n    \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n    \"name\": \"Gerard McCaul\",\n    \"honorificPrefix\": \"Dr.\",\n    \"url\": \"https://gmccaul.co.uk/\",\n    \"image\": \"https://gmccaul.co.uk/assets/img/me.jpg\",\n    \"jobTitle\": \"Research Associate\",\n    \"sameAs\": [\n      \"https://scholar.google.com/citations?user=GMHiq1IAAAAJ&hl=en\",\n      \"https://orcid.org/0000-0001-7972-456X\",\n      \"https://github.com/phujck\",\n      \"https://littlelearningmachine.substack.com/\"\n    ]\n  }"
+    },
+    {
+      "path": "404.html",
+      "layout": "bare",
+      "title": "404 — Page Not Found"
+    }
+  ]
+}

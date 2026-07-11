@@ -1,0 +1,103 @@
+  <!-- Page Header -->
+  <header class="page-hero">
+    <div class="page-hero-bg" style="background: radial-gradient(ellipse at 30% 60%, rgba(92,172,238,0.08) 0%, transparent 70%);"></div>
+    <div class="container" style="position: relative;">
+      <h1 class="page-hero-title fade-in">Visualisations</h1>
+      <p class="page-hero-subtitle fade-in fade-in-delay-1">Interactive companions to the mathematics.</p>
+    </div>
+  </header>
+
+  <!-- Why Algebra series -->
+  <section class="section" id="why-algebra">
+    <div class="container">
+      <span class="section-label fade-in">Series</span>
+      <h2 class="section-title fade-in">Why Algebra</h2>
+
+      <div class="series-intro fade-in">
+        <h3>Little Learning Machine  -  Post 1</h3>
+        <p>
+          These five pieces accompany the first post in the
+          <a href="https://littlelearningmachine.substack.com/" target="_blank" rel="noopener">Little Learning Machine</a>
+          series. The post argues that algebra is the correct language for any genuinely invariant description of
+          dynamics, and that the dimensionality-nonlinearity trade-off is the central cost of realising intelligence
+          in matter. Each visualisation makes one step of that argument interactive.
+        </p>
+      </div>
+
+      <div class="viz-grid stagger-children">
+
+        <a href="/viz/why-algebra/phase-portrait.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">🌀</div>
+          <div class="viz-title">Phase Portrait  -  Damped Pendulum</div>
+          <div class="viz-desc">
+            Explore the phase space of a damped pendulum. Click anywhere to seed a trajectory and watch
+            the system evolve  -  stable fixed points, unstable saddles, and the basins that separate them.
+            The geometry of state space made interactive.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">State Space</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+        <a href="/viz/why-algebra/koopman-split.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">⚡</div>
+          <div class="viz-title">The Koopman Operator  -  Same Dynamics, Two Representations</div>
+          <div class="viz-desc">
+            The same nonlinear trajectory rendered side by side: state space on the left, observable space on
+            the right. The Koopman operator is linear on observables regardless of the nonlinearity of the
+            underlying flow  -  both panels show identical physics.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">Koopman</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+        <a href="/viz/why-algebra/complexity-trade.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">⚖️</div>
+          <div class="viz-title">The Dimensionality–Nonlinearity Trade</div>
+          <div class="viz-desc">
+            A dynamical system's complexity budget is fixed. Slide between high-dimensional linear
+            representations and low-dimensional nonlinear ones  -  and watch what each choice costs.
+            The total complexity is invariant; only the allocation changes.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">EDMD</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+        <a href="/viz/why-algebra/constraint-structure.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">🔲</div>
+          <div class="viz-title">Constraint Carves Structure from Noise</div>
+          <div class="viz-desc">
+            A system without constraints is indistinguishable from noise. Add structure one constraint at a
+            time and watch coherent patterns crystallise from an otherwise featureless background. Constraint
+            is what it means to be a system rather than a collection of uncorrelated events.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">Universality</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+        <a href="/viz/why-algebra/carleman-lifting.html" target="_blank" rel="noopener" class="viz-card fade-in">
+          <div class="viz-icon">📐</div>
+          <div class="viz-title">Iterative Lifting  -  Carleman Linearisation</div>
+          <div class="viz-desc">
+            Advance the dictionary order D from 1 to 4. At each step a new observable axis is added and
+            a new time-series panel appears. The y-residual collapses to zero the moment x² enters the
+            dictionary  -  the nonlinear transient was always a linear combination in disguise.
+          </div>
+          <div class="viz-footer">
+            <span class="viz-tag">Carleman</span>
+            <span class="viz-open">Open →</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  

@@ -4,5 +4,6 @@ Disallow: /assets/unlisted/
 Disallow: /unlisted/
 Disallow: /review/
 Disallow: /memories/
+Disallow: /demo/
 
 Sitemap: https://gmccaul.co.uk/sitemap.xml
