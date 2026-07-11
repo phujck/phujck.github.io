@@ -1,17 +1,20 @@
-/* eigenengine.js — the interactive exhibits on the EigenEngine page.
-   (1) a force-directed render of the real falqon conceptric (window.EIGEN_GRAPH),
+/* eigenengine.js — the two exhibits on the EigenEngine page.
+   (1) a STATIC render of the real falqon conceptric (window.EIGEN_GRAPH), drawn once
+       from baked coordinates: no physics, no animation, no per-load jitter. It carries
+       its information at rest — clusters are labelled, nodes are sized by degree, the
+       six def-orphans ring red. Hover/tap ADDS precision (a node's full label, id,
+       edges); it never reveals the basics.
    (2) the pipeline diagram's per-stage readout.
-   Self-contained, no dependencies. Desktop: hover + drag + pan. Touch: tap-select
-   (never preventDefaults background moves, so the page always scrolls). */
+   Self-contained, no dependencies. Desktop: hover to read a node. Touch: tap to read;
+   the page always scrolls (no gesture is trapped). */
 (function () {
   'use strict';
-  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ------------------------------------------------------------------ graph */
   function initGraph() {
     var G = window.EIGEN_GRAPH;
     var canvas = document.getElementById('ee-graph');
-    if (!G || !canvas || !canvas.getContext) return;
+    if (!G || !canvas || !canvas.getContext || !G.layout) return;
     var fallback = document.querySelector('.ee-canvas-fallback');
     if (fallback) fallback.style.display = 'none';
 
@@ -22,10 +25,10 @@
     };
     var ORPHAN = '#c0392b';
 
-    // build node + edge model
+    // build node + edge model from baked coordinates (world space = layout viewBox)
     var nodes = G.nodes.map(function (n) {
       return { id: n.id, kind: n.kind, label: n.label, short: n.short, orphan: n.orphan,
-               x: 0, y: 0, vx: 0, vy: 0, deg: 0, fixed: false };
+               wx: n.x, wy: n.y, deg: 0 };
     });
     var index = {};
     nodes.forEach(function (n, i) { index[n.id] = i; });
@@ -39,18 +42,12 @@
       (adj[a] = adj[a] || {})[b] = e.rel;
       (adj[b] = adj[b] || {})[a] = e.rel;
     });
-    // seed positions on a jittered ring, coarse kinds pulled inward
-    nodes.forEach(function (n, i) {
-      var coarse = (n.kind === 'domain' || n.kind === 'cluster');
-      var r = coarse ? 40 : 150 + (i % 7) * 22;
-      var a = (i / nodes.length) * Math.PI * 2 + (i * 2.399);
-      n.x = Math.cos(a) * r + (Math.random() - 0.5) * 30;
-      n.y = Math.sin(a) * r + (Math.random() - 0.5) * 30;
-    });
+    var labels = G.layout.labels || [];
+    var VB_W = G.layout.vbW, VB_H = G.layout.vbH;
 
-    var view = { scale: 1, panx: 0, pany: 0, w: 0, h: 0, dpr: 1 };
+    // fit: baked viewBox -> canvas, contained, deterministic (no pan, no zoom)
+    var view = { s: 1, ox: 0, oy: 0, w: 0, h: 0, dpr: 1 };
     var hoverId = null, selId = null, filterKind = null;
-    var alpha = 1;
 
     function radiusOf(n) { return 4 + Math.min(9, Math.sqrt(n.deg) * 2.1); }
     function colorOf(n) { return n.orphan ? ORPHAN : (KIND_COLOR[n.kind] || '#9ca3af'); }
@@ -61,48 +58,17 @@
       view.w = rect.width; view.h = rect.height;
       canvas.width = Math.round(rect.width * view.dpr);
       canvas.height = Math.round(rect.height * view.dpr);
+      // contain the baked box in the canvas with a small margin
+      var pad = 14;
+      var s = Math.min((view.w - 2 * pad) / VB_W, (view.h - 2 * pad) / VB_H);
+      view.s = s;
+      view.ox = (view.w - VB_W * s) / 2;
+      view.oy = (view.h - VB_H * s) / 2;
       draw();
     }
 
-    // one physics tick (Fruchterman-Reingold-ish)
-    function tick() {
-      var i, j, n, m, dx, dy, d2, d, f;
-      var REP = 5200, SPRING = 0.010, LEN = 62, GRAV = 0.020;
-      for (i = 0; i < nodes.length; i++) {
-        n = nodes[i]; if (n.fixed) continue;
-        for (j = i + 1; j < nodes.length; j++) {
-          m = nodes[j];
-          dx = n.x - m.x; dy = n.y - m.y;
-          d2 = dx * dx + dy * dy; if (d2 < 0.01) { dx = Math.random(); dy = Math.random(); d2 = 1; }
-          d = Math.sqrt(d2);
-          f = REP / d2;
-          var ux = dx / d, uy = dy / d;
-          n.vx += ux * f; n.vy += uy * f;
-          if (!m.fixed) { m.vx -= ux * f; m.vy -= uy * f; }
-        }
-      }
-      for (i = 0; i < edges.length; i++) {
-        var e = edges[i]; n = nodes[e.a]; m = nodes[e.b];
-        dx = m.x - n.x; dy = m.y - n.y; d = Math.sqrt(dx * dx + dy * dy) || 1;
-        f = SPRING * (d - LEN);
-        var ex = (dx / d) * f, ey = (dy / d) * f;
-        if (!n.fixed) { n.vx += ex; n.vy += ey; }
-        if (!m.fixed) { m.vx -= ex; m.vy -= ey; }
-      }
-      for (i = 0; i < nodes.length; i++) {
-        n = nodes[i]; if (n.fixed) continue;
-        n.vx -= n.x * GRAV; n.vy -= n.y * GRAV;
-        n.vx *= 0.82; n.vy *= 0.82;
-        n.x += n.vx * alpha * 1.4; n.y += n.vy * alpha * 1.4;
-      }
-    }
-
-    function toScreen(n) {
-      return {
-        x: view.w / 2 + view.panx + n.x * view.scale,
-        y: view.h / 2 + view.pany + n.y * view.scale
-      };
-    }
+    function sx(wx) { return view.ox + wx * view.s; }
+    function sy(wy) { return view.oy + wy * view.s; }
 
     function draw() {
       ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
@@ -113,47 +79,70 @@
       for (var i = 0; i < edges.length; i++) {
         var e = edges[i], na = nodes[e.a], nb = nodes[e.b];
         if (filterKind && na.kind !== filterKind && nb.kind !== filterKind) continue;
-        var pa = toScreen(na), pb = toScreen(nb);
         var touch = active != null && (e.a === active || e.b === active);
         ctx.beginPath();
-        ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y);
-        ctx.strokeStyle = touch ? 'rgba(201,169,110,0.55)' : 'rgba(255,255,255,0.06)';
-        ctx.lineWidth = touch ? 1.4 : 0.8;
+        ctx.moveTo(sx(na.wx), sy(na.wy)); ctx.lineTo(sx(nb.wx), sy(nb.wy));
+        ctx.strokeStyle = touch ? 'rgba(201,169,110,0.60)' : 'rgba(255,255,255,0.07)';
+        ctx.lineWidth = touch ? 1.4 : 0.7;
         ctx.stroke();
       }
       // nodes
       for (var k = 0; k < nodes.length; k++) {
-        var n = nodes[k], p = toScreen(n), r = radiusOf(n) * Math.min(1.4, view.scale);
+        var n = nodes[k], px = sx(n.wx), py = sy(n.wy), r = radiusOf(n);
         var dim = filterKind && n.kind !== filterKind;
         var isActive = (n.id === active);
         var isNbr = nbr && nbr[k] != null;
-        ctx.globalAlpha = dim ? 0.12 : (active != null && !isActive && !isNbr ? 0.35 : 1);
+        ctx.globalAlpha = dim ? 0.12 : (active != null && !isActive && !isNbr ? 0.30 : 1);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, isActive ? r + 2.5 : r, 0, Math.PI * 2);
+        ctx.arc(px, py, isActive ? r + 2.5 : r, 0, Math.PI * 2);
         ctx.fillStyle = colorOf(n);
         ctx.fill();
         if (isActive) {
           ctx.lineWidth = 2; ctx.strokeStyle = '#e8e6e3'; ctx.stroke();
         } else if (n.orphan) {
-          ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(232,230,227,0.4)'; ctx.stroke();
+          ctx.lineWidth = 1.6; ctx.strokeStyle = ORPHAN; ctx.stroke();
         }
         ctx.globalAlpha = 1;
       }
-      // label the active node
+      // static cluster labels drawn on top, so they read as clean pins (the map at rest)
+      if (!filterKind && active == null) drawLabels();
+      // active-node label chip (precision added on hover/tap)
       if (active != null) {
         var an = nodes[index[active]]; if (an) {
-          var ap = toScreen(an);
+          var ap = { x: sx(an.wx), y: sy(an.wy) };
           var txt = an.short || an.id;
           ctx.font = '12px ui-monospace, "JetBrains Mono", monospace';
           var tw = ctx.measureText(txt).width;
           var bx = Math.min(Math.max(ap.x + 10, 4), view.w - tw - 12);
           var by = ap.y - 10;
-          ctx.fillStyle = 'rgba(10,14,26,0.85)';
+          ctx.fillStyle = 'rgba(10,14,26,0.88)';
           ctx.fillRect(bx - 4, by - 12, tw + 8, 18);
           ctx.fillStyle = '#e8e6e3';
           ctx.fillText(txt, bx, by + 1);
         }
       }
+    }
+
+    function drawLabels() {
+      ctx.font = '600 11px "JetBrains Mono", ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      for (var i = 0; i < labels.length; i++) {
+        var l = labels[i], tw = ctx.measureText(l.text).width;
+        // offset upward in SCREEN px by the anchor node's radius so it always clears it;
+        // clamp x so the chip never spills past the canvas edge (matters on narrow screens)
+        var lx = Math.min(Math.max(sx(l.x), tw / 2 + 8), view.w - tw / 2 - 8);
+        var ly = sy(l.y) - ((l.r || 8) + 16);
+        var col = l.kind === 'section' ? 'rgba(156,163,175,0.95)' : 'rgba(223,197,153,0.98)';
+        // solid chip so the label reads as a deliberate pin over nodes/edges
+        ctx.fillStyle = 'rgba(12,16,28,0.94)';
+        ctx.fillRect(lx - tw / 2 - 6, ly - 11, tw + 12, 16);
+        ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(lx - tw / 2 - 6, ly - 11, tw + 12, 16);
+        ctx.fillStyle = col;
+        ctx.fillText(l.text, lx, ly);
+      }
+      ctx.textAlign = 'left';
     }
 
     // readout DOM
@@ -162,8 +151,8 @@
     var elId = document.getElementById('ee-r-id');
     var elEdges = document.getElementById('ee-r-edges');
     var elHint = document.getElementById('ee-r-hint');
-    function relSummary(idx) {
-      var a = adj[idx]; if (!a) return '';
+    function relSummary(ix) {
+      var a = adj[ix]; if (!a) return '';
       var counts = {};
       for (var k in a) counts[a[k]] = (counts[a[k]] || 0) + 1;
       return Object.keys(counts).map(function (r) { return r + ' ×' + counts[r]; }).join(' · ');
@@ -176,15 +165,18 @@
       if (elId) { elId.style.display = ''; elId.textContent = n.id; }
       if (elEdges) { elEdges.style.display = ''; elEdges.innerHTML = '<span class="num">' + n.deg + '</span> edges — ' + relSummary(index[id]); }
     }
+    function clearReadout() {
+      if (elHint) elHint.style.display = '';
+      [elKind, elLabel, elId, elEdges].forEach(function (el) { if (el) el.style.display = 'none'; });
+    }
 
-    // hit-testing
-    function pick(sx, sy) {
-      var best = null, bestD = 18 * 18;
+    // hit-testing (screen space)
+    function pick(px, py) {
+      var best = null, bestD = 1e9;
       for (var i = 0; i < nodes.length; i++) {
         if (filterKind && nodes[i].kind !== filterKind) continue;
-        var p = toScreen(nodes[i]);
-        var dx = p.x - sx, dy = p.y - sy, d2 = dx * dx + dy * dy;
-        var rr = radiusOf(nodes[i]) + 8; rr = rr * rr;
+        var dx = sx(nodes[i].wx) - px, dy = sy(nodes[i].wy) - py, d2 = dx * dx + dy * dy;
+        var rr = radiusOf(nodes[i]) + 7; rr = rr * rr;
         if (d2 < rr && d2 < bestD) { bestD = d2; best = nodes[i]; }
       }
       return best;
@@ -194,113 +186,54 @@
       return { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
     }
 
-    // interaction state
-    var dragNode = null, panning = false, last = null, moved = false;
-    canvas.addEventListener('pointerdown', function (ev) {
+    // interaction: hover (desktop) + tap (touch) to read. Nothing moves.
+    canvas.addEventListener('pointermove', function (ev) {
+      if (ev.pointerType === 'touch') return;
       var pt = localXY(ev);
       var hit = pick(pt.x, pt.y);
-      moved = false;
-      if (ev.pointerType === 'touch') {
-        // tap-select only: do not capture, do not preventDefault -> page scroll intact
-        if (hit) { selId = hit.id; showReadout(hit.id); draw(); }
+      var id = hit ? hit.id : null;
+      if (id !== hoverId) {
+        hoverId = id;
+        canvas.style.cursor = hit ? 'pointer' : 'default';
+        if (id) showReadout(id); else if (selId == null) clearReadout(); else showReadout(selId);
+        draw();
+      }
+    });
+    canvas.addEventListener('pointerleave', function () {
+      if (hoverId != null) { hoverId = null; if (selId != null) showReadout(selId); else clearReadout(); draw(); }
+    });
+    canvas.addEventListener('pointerdown', function (ev) {
+      // tap-select on touch; never preventDefault so the page keeps scrolling
+      if (ev.pointerType !== 'touch') {
+        var pt0 = localXY(ev), hit0 = pick(pt0.x, pt0.y);
+        selId = hit0 ? hit0.id : null;
+        if (hit0) showReadout(hit0.id); else clearReadout();
+        draw();
         return;
       }
-      canvas.setPointerCapture(ev.pointerId);
-      last = pt;
-      if (hit) {
-        dragNode = hit; hit.fixed = true; selId = hit.id; showReadout(hit.id);
-        canvas.classList.add('dragging');
-        if (REDUCED) alpha = 0; else if (alpha < 0.25) { alpha = 0.35; loop(); }
-      } else {
-        panning = true; canvas.classList.add('dragging');
-      }
-    });
-    canvas.addEventListener('pointermove', function (ev) {
-      var pt = localXY(ev);
-      if (dragNode) {
-        moved = true;
-        dragNode.x = (pt.x - view.w / 2 - view.panx) / view.scale;
-        dragNode.y = (pt.y - view.h / 2 - view.pany) / view.scale;
-        dragNode.vx = dragNode.vy = 0;
-        if (REDUCED) draw();
-      } else if (panning) {
-        moved = true;
-        view.panx += pt.x - last.x; view.pany += pt.y - last.y; last = pt; draw();
-      } else if (ev.pointerType !== 'touch') {
-        var hit = pick(pt.x, pt.y);
-        var id = hit ? hit.id : null;
-        if (id !== hoverId) {
-          hoverId = id;
-          canvas.style.cursor = hit ? 'pointer' : 'grab';
-          if (id) showReadout(id);
-          draw();
-        }
-      }
-    });
-    function endPointer(ev) {
-      if (dragNode) { dragNode.fixed = false; dragNode = null; }
-      panning = false; last = null;
-      canvas.classList.remove('dragging');
-    }
-    canvas.addEventListener('pointerup', endPointer);
-    canvas.addEventListener('pointercancel', endPointer);
-    canvas.addEventListener('pointerleave', function () {
-      if (!dragNode && !panning && hoverId != null) { hoverId = null; draw(); }
-    });
-    // desktop wheel zoom (only when pointer is over canvas; ctrl not required)
-    canvas.addEventListener('wheel', function (ev) {
-      if (ev.deltaY === 0) return;
-      ev.preventDefault();
-      var f = ev.deltaY < 0 ? 1.1 : 0.9;
-      view.scale = Math.max(0.4, Math.min(3, view.scale * f));
+      var pt = localXY(ev), hit = pick(pt.x, pt.y);
+      if (hit) { selId = hit.id; showReadout(hit.id); } else { selId = null; clearReadout(); }
       draw();
-    }, { passive: false });
+    });
 
-    // legend filter
+    // legend filter (state change, redrawn once — no animation)
     Array.prototype.forEach.call(document.querySelectorAll('.ee-legend-row'), function (row) {
       row.addEventListener('click', function () {
         var kind = row.getAttribute('data-kind');
         filterKind = (filterKind === kind) ? null : kind;
         Array.prototype.forEach.call(document.querySelectorAll('.ee-legend-row'), function (r) {
           r.classList.toggle('dimmed', filterKind && r.getAttribute('data-kind') !== filterKind);
+          r.setAttribute('aria-pressed', filterKind === r.getAttribute('data-kind') ? 'true' : 'false');
         });
         draw();
       });
     });
-    var reheat = document.getElementById('ee-reheat');
-    if (reheat) reheat.addEventListener('click', function () {
-      view.panx = view.pany = 0; view.scale = 1;
-      nodes.forEach(function (n) { n.fixed = false; });
-      if (REDUCED) { settle(220); } else { alpha = 1; loop(); }
-    });
-
-    // animation loop with cooling
-    var running = false;
-    function loop() {
-      if (running) return; running = true;
-      function step() {
-        tick();
-        alpha *= 0.985;
-        draw();
-        if (alpha > 0.02) { requestAnimationFrame(step); }
-        else { running = false; alpha = 0; }
-      }
-      requestAnimationFrame(step);
-    }
-    function settle(n) { for (var i = 0; i < n; i++) { alpha = Math.max(0.05, 1 - i / n); tick(); } alpha = 0; draw(); }
 
     window.addEventListener('resize', resize);
     resize();
-    if (REDUCED) { settle(260); } else {
-      // hold until in view, then run once
-      var started = false;
-      var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function (ents) {
-        ents.forEach(function (e) { if (e.isIntersecting && !started) { started = true; loop(); io.disconnect(); } });
-      }, { threshold: 0.15 }) : null;
-      if (io) io.observe(canvas); else { started = true; loop(); }
-    }
     // expose for tests
-    window.__eeGraph = { showReadout: showReadout, pick: pick, nodes: nodes, toScreen: toScreen, selectFirst: function () { selId = nodes[0].id; showReadout(nodes[0].id); draw(); } };
+    window.__eeGraph = { showReadout: showReadout, pick: pick, nodes: nodes,
+      selectFirst: function () { selId = nodes[0].id; showReadout(nodes[0].id); draw(); } };
   }
 
   /* --------------------------------------------------------------- pipeline */

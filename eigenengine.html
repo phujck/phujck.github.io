@@ -119,30 +119,37 @@
           <div class="ee-canvas-wrap">
             <canvas id="ee-graph" role="img"
               aria-label="Force-directed rendering of the falqon manuscript's concept graph: 91 nodes, 140 edges, coloured by node kind."></canvas>
-            <p class="ee-canvas-fallback">The falqon manuscript's concept graph — 91 nodes, 140 edges. The
-              interactive rendering needs JavaScript; the same object is walkable in the demo below.</p>
-            <div class="ee-graph-controls">
-              <button type="button" class="ee-btn" id="ee-reheat">re-run layout</button>
-            </div>
+            <p class="ee-canvas-fallback">The falqon manuscript's concept graph — 91 nodes, 140 edges, four
+              clusters. The rendering needs JavaScript; the same object is walkable in the demo below.</p>
           </div>
           <div class="ee-readout" aria-live="polite">
-            <div>
+            <div class="ee-readout-top">
               <div class="ee-readout-kind" id="ee-r-kind" style="display:none"></div>
               <div class="ee-readout-label" id="ee-r-label" style="display:none"></div>
               <div class="ee-readout-id ee-mono" id="ee-r-id" style="display:none"></div>
               <div class="ee-readout-edges" id="ee-r-edges" style="display:none"></div>
-              <p class="ee-readout-hint" id="ee-r-hint">Hover a node for its kind, label and edges. Drag to pull
-                it; scroll to zoom; drag the field to pan. On a phone, tap a node.</p>
+              <p class="ee-readout-hint" id="ee-r-hint">Four clusters, sized by how many edges each node carries;
+                the section spine runs down the left. Hover a node for its full label, id and edges — on a phone, tap.</p>
             </div>
-            <div class="ee-legend">
-              <button type="button" class="ee-legend-row" data-kind="claim"><span class="ee-legend-dot" style="background:#7eb8da"></span>claim <span class="num">22</span></button>
-              <button type="button" class="ee-legend-row" data-kind="def"><span class="ee-legend-dot" style="background:#a89a7a"></span>def <span class="num">26</span></button>
-              <button type="button" class="ee-legend-row" data-kind="limitation"><span class="ee-legend-dot" style="background:#b8894a"></span>limitation <span class="num">14</span></button>
-              <button type="button" class="ee-legend-row" data-kind="section"><span class="ee-legend-dot" style="background:#6b7280"></span>section <span class="num">13</span></button>
-              <button type="button" class="ee-legend-row" data-kind="result"><span class="ee-legend-dot" style="background:#e6cc92"></span>result <span class="num">11</span></button>
-              <button type="button" class="ee-legend-row" data-kind="cluster"><span class="ee-legend-dot" style="background:#c9a96e"></span>cluster <span class="num">4</span></button>
-              <p class="ee-orphan-note">Six def nodes ring in <span style="color:var(--refused)">red</span>: definitions
-                no claim consumed, caught by the connectivity gate and shipped as they are.</p>
+            <div class="ee-readout-foot">
+              <div class="ee-relmap">
+                <span class="ee-relmap-h">140 edges</span>
+                <span><span class="num">73</span> contains — a cluster holds its members</span>
+                <span><span class="num">40</span> draws — a section draws on a node</span>
+                <span><span class="num">14</span> shares — a link across clusters</span>
+                <span><span class="num">12</span> precedes — the section order</span>
+                <span><span class="num">1</span> project — the manuscript root</span>
+              </div>
+              <div class="ee-legend">
+                <button type="button" class="ee-legend-row" data-kind="claim" aria-pressed="false"><span class="ee-legend-dot" style="background:#7eb8da"></span>claim <span class="num">22</span></button>
+                <button type="button" class="ee-legend-row" data-kind="def" aria-pressed="false"><span class="ee-legend-dot" style="background:#a89a7a"></span>def <span class="num">26</span></button>
+                <button type="button" class="ee-legend-row" data-kind="limitation" aria-pressed="false"><span class="ee-legend-dot" style="background:#b8894a"></span>limitation <span class="num">14</span></button>
+                <button type="button" class="ee-legend-row" data-kind="section" aria-pressed="false"><span class="ee-legend-dot" style="background:#6b7280"></span>section <span class="num">13</span></button>
+                <button type="button" class="ee-legend-row" data-kind="result" aria-pressed="false"><span class="ee-legend-dot" style="background:#e6cc92"></span>result <span class="num">11</span></button>
+                <button type="button" class="ee-legend-row" data-kind="cluster" aria-pressed="false"><span class="ee-legend-dot" style="background:#c9a96e"></span>cluster <span class="num">4</span></button>
+                <p class="ee-orphan-note">Six def nodes ring in <span style="color:var(--refused)">red</span>: definitions
+                  no claim consumed, caught by the connectivity gate and shipped as they are.</p>
+              </div>
             </div>
           </div>
         </div>
