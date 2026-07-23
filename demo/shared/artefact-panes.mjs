@@ -3246,7 +3246,7 @@ function wireChrome() {
         ((DISMISS && DISMISS.counts && DISMISS.counts.dismissals) || 0) + (on ? " (showing)" : " (folded)"); return; }
     const ov = e.target.closest(".art-overrule"); if (ov) { e.stopPropagation(); await overrule(ov); return; }
     const gd = e.target.closest(".art-adoor"); if (gd) { e.preventDefault();
-      const to = gd.dataset.goto; if (to) window.location.href = to; return; }
+      const to = gd.dataset.goto; if (to) window.__demoNav(to); return; }
     // ACT 3 #4 — "comments must take me to them": a finding row's OWN body (not its
     // conceptric/storyboard door, handled above) lands the pdf pane on its section, in
     // every mode. (The companion source-pane jump rides the file-aware /projection/synctex

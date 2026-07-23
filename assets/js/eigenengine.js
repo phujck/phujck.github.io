@@ -23,22 +23,18 @@
   /* ── fill every data-ee slot from EE ── */
   var H = EE.hourglass, FC = H.artefact.findings_counts || {};
   var SLOTS = {
-    "g-nodes": H.conceptric.nodes, "g-nodes2": H.conceptric.nodes, "g-nodes3": H.conceptric.nodes,
-    "g-nodes4": H.conceptric.nodes,
-    "g-edges": H.conceptric.edges, "g-edges2": H.conceptric.edges, "g-edges3": H.conceptric.edges,
+    "g-nodes": H.conceptric.nodes, "g-nodes0": H.conceptric.nodes,
+    "g-nodes2": H.conceptric.nodes, "g-nodes3": H.conceptric.nodes,
+    "g-edges": H.conceptric.edges, "g-edges3": H.conceptric.edges,
     "g-kinds": Object.keys(EE.conceptric.kinds).length,
-    "sb-sections": H.storyboard.sections, "sb-sections2": H.storyboard.sections,
+    "sb-boards": (H.storyboard.sections || 0) + (H.storyboard.appendices || 0),
     "sb-sections3": H.storyboard.sections,
-    "sb-appendices": H.storyboard.appendices, "sb-appendices2": H.storyboard.appendices,
     "sb-appendices3": H.storyboard.appendices,
-    "cv-rounds": H.converge.rounds, "cv-rounds2": H.converge.rounds,
-    "cv-rounds3": H.converge.rounds,
-    "cv-open": H.converge.open_findings, "cv-open2": H.converge.open_findings,
+    "cv-rounds4": H.converge.rounds,
+    "cv-open": H.converge.open_findings, "cv-open4": H.converge.open_findings,
     "ar-version": H.artefact.version, "ar-version2": H.artefact.version,
     "ar-version3": H.artefact.version,
-    "ar-findings": H.artefact.findings, "ar-findings2": H.artefact.findings,
-    "ar-findings3": H.artefact.findings,
-    "ar-hard": FC.hard, "ar-soft": FC.soft, "ar-deferred": FC.deferred,
+    "ar-findings4": H.artefact.findings,
     "ar-versions": H.artefact.versions,
     "meta-commit": EE.meta.bake_commit, "meta-commit2": EE.meta.bake_commit,
     "meta-commit3": EE.meta.bake_commit,
@@ -55,7 +51,8 @@
   function openFold(name, scroll) {
     stages.forEach(function (b) {
       var mine = b.getAttribute("data-fold") === name;
-      b.setAttribute("aria-expanded", mine ? "true" : "false");
+      b.setAttribute("aria-selected", mine ? "true" : "false");
+      b.setAttribute("tabindex", mine || (!name && b === stages[0]) ? "0" : "-1");
     });
     ["corpus", "conceptric", "storyboard", "converge", "artefact"].forEach(function (f) {
       var el = document.getElementById("fold-" + f);
@@ -72,12 +69,20 @@
       if (el2) el2.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }
-  stages.forEach(function (b) {
+  stages.forEach(function (b, i) {
     b.addEventListener("click", function () {
       var name = b.getAttribute("data-fold");
-      var already = b.getAttribute("aria-expanded") === "true";
+      var already = b.getAttribute("aria-selected") === "true";
       openFold(already ? null : name, !already);
       if (history.replaceState) history.replaceState(null, "", already ? "#walk" : "#" + name);
+    });
+    b.addEventListener("keydown", function (ev) {
+      var d = ev.key === "ArrowRight" ? 1 : ev.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      ev.preventDefault();
+      var next = stages[(i + d + stages.length) % stages.length];
+      next.focus();
+      openFold(next.getAttribute("data-fold"), false);
     });
   });
   var initial = (location.hash || "").slice(1);
@@ -180,8 +185,8 @@
       }
       var e = deg[n.id] || 0;
       readout.innerHTML = "<b>" + esc(n.label) + "</b><br>" +
-        esc(n.kind) + " · " + e + " edge" + (e === 1 ? "" : "s") +
-        (orphans[n.id] ? " · <span style='color:" + REFUSED + "'>def-orphan (no claim consumes it)</span>" : "") +
+        esc(n.kind) + " · " + e + " link" + (e === 1 ? "" : "s") +
+        (orphans[n.id] ? " · <span style='color:" + REFUSED + "'>unclaimed — no claim uses this definition</span>" : "") +
         " · <span class='ee-dim'>" + esc(n.id) + "</span>";
     }
     canvas.addEventListener("mousemove", function (ev) {
@@ -210,7 +215,7 @@
       if (structN) rows.push("<span class='lg'><span class='dot' style='background:" + NEUTRAL +
         ";box-shadow:0 0 0 1.5px rgba(255,255,255,0.5)'></span>cluster/root <span class='num'>" +
         structN + "</span></span>");
-      rows.push("<span class='lg'><span class='rg'></span>def-orphan <span class='num'>" +
+      rows.push("<span class='lg'><span class='rg'></span>unclaimed def <span class='num'>" +
         (EE.conceptric.def_orphans || []).length + "</span></span>");
       legend.innerHTML = rows.join("");
     }
@@ -283,7 +288,7 @@
       Math.round(100 * unresN / total) + "%</span></div>";
 
     host.innerHTML = band + labels +
-      "<span class='ee-addr'>section weight = how much of the manuscript realises in it · " +
+      "<span class='ee-addr'>band width = how much of the manuscript that section carries · " +
       "lineage index, baked at " + esc(EE.meta.bake_commit) + " · hover a band for its section</span>";
 
     host.querySelectorAll(".seg").forEach(function (seg) {
@@ -298,7 +303,7 @@
 
     var tbl = document.getElementById("ee-lineage-table");
     if (tbl) {
-      tbl.innerHTML = "<table><tr><th>section</th><th>weight</th><th>concepts realised</th>" +
+      tbl.innerHTML = "<table><tr><th>section</th><th>weight</th><th>concepts placed</th>" +
         "<th>objects</th></tr>" + regions.map(function (r) {
           return "<tr><td>" + esc(r.title) + "</td><td>" + r.weight + "</td><td>" +
             r.realised + "</td><td>" + r.objects + "</td></tr>";

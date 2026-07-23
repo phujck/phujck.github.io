@@ -186,7 +186,7 @@ function switchProject(c){
   const u = new URL(location.href);
   u.searchParams.set("corpus", c);
   for(const k of ["node", "object", "view"]) u.searchParams.delete(k);
-  location.href = u.pathname + u.search;
+  window.__demoNav(u.pathname + u.search);
 }
 
 function briefEmpty(data){
