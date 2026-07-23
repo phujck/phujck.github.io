@@ -24,6 +24,7 @@
   var H = EE.hourglass, FC = H.artefact.findings_counts || {};
   var SLOTS = {
     "g-nodes": H.conceptric.nodes, "g-nodes2": H.conceptric.nodes, "g-nodes3": H.conceptric.nodes,
+    "g-nodes4": H.conceptric.nodes,
     "g-edges": H.conceptric.edges, "g-edges2": H.conceptric.edges, "g-edges3": H.conceptric.edges,
     "g-kinds": Object.keys(EE.conceptric.kinds).length,
     "sb-sections": H.storyboard.sections, "sb-sections2": H.storyboard.sections,
@@ -31,10 +32,12 @@
     "sb-appendices": H.storyboard.appendices, "sb-appendices2": H.storyboard.appendices,
     "sb-appendices3": H.storyboard.appendices,
     "cv-rounds": H.converge.rounds, "cv-rounds2": H.converge.rounds,
-    "cv-open": H.converge.open_findings,
+    "cv-rounds3": H.converge.rounds,
+    "cv-open": H.converge.open_findings, "cv-open2": H.converge.open_findings,
     "ar-version": H.artefact.version, "ar-version2": H.artefact.version,
     "ar-version3": H.artefact.version,
     "ar-findings": H.artefact.findings, "ar-findings2": H.artefact.findings,
+    "ar-findings3": H.artefact.findings,
     "ar-hard": FC.hard, "ar-soft": FC.soft, "ar-deferred": FC.deferred,
     "ar-versions": H.artefact.versions,
     "meta-commit": EE.meta.bake_commit, "meta-commit2": EE.meta.bake_commit,
@@ -231,10 +234,14 @@
     }).join("");
     var findings = "<tr class='g-findings'><td class='g-name'>open findings</td>" +
       G.rounds.map(function (r) { return "<td>" + r.open_findings + "</td>"; }).join("") + "</tr>";
+    var missing = (G.missing_rounds && G.missing_rounds.length)
+      ? " · " + G.missing_rounds.join("/") + " ran without a banked detector record and are not drawn"
+      : "";
     host.innerHTML = "<div class='ee-gates-scroll'><table class='ee-gates-table'>" +
       "<caption class='ee-addr' style='caption-side:top;text-align:left;padding:0 0 0.4rem'>" +
       "detector verdicts per convergence round — paper_falqon, rounds/harnessed/detect_*.json, " +
-      "baked at " + esc(EE.meta.bake_commit) + " · &#10003; clean · &#10007; failing</caption>" +
+      "baked at " + esc(EE.meta.bake_commit) + " · &#10003; clean · &#10007; failing" +
+      esc(missing) + "<span class='ee-scroll-hint'> · the table scrolls &#8594;</span></caption>" +
       head + body + findings + "</table></div>";
   }
 

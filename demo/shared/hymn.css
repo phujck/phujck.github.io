@@ -15,13 +15,13 @@
    Served by src/laplace/shared_ui.py at GET /shared/hymn.css.
    ═══════════════════════════════════════════════════════════════════════ */
 @font-face{font-family:"Lora";font-style:normal;font-weight:400 700;font-display:swap;
-  src:url(/shared/fonts/lora-var.woff2) format("woff2")}
+  src:url(fonts/lora-var.woff2) format("woff2")}
 @font-face{font-family:"Lora";font-style:italic;font-weight:400 700;font-display:swap;
-  src:url(/shared/fonts/lora-italic-var.woff2) format("woff2")}
+  src:url(fonts/lora-italic-var.woff2) format("woff2")}
 @font-face{font-family:"Outfit";font-style:normal;font-weight:600 800;font-display:swap;
-  src:url(/shared/fonts/outfit-var.woff2) format("woff2")}
+  src:url(fonts/outfit-var.woff2) format("woff2")}
 @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 500;font-display:swap;
-  src:url(/shared/fonts/jetbrains-mono-var.woff2) format("woff2")}
+  src:url(fonts/jetbrains-mono-var.woff2) format("woff2")}
 :root{
   --bg:#0a0e1a; --panel:#111827; --panel2:#18202f; --edge:#1f2734; --edge2:#2d3547;
   --ink:#e8e6e3; --ink2:#9ca3af; --dim:#6b7280;

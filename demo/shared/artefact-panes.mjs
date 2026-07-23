@@ -544,7 +544,7 @@ function _soloFocus(root, keep) {
 async function ensurePdfjs() {
   if (PDFLIB) return PDFLIB;
   const mod = await import("./pdfjs/pdf.min.mjs");
-  mod.GlobalWorkerOptions.workerSrc = "/shared/pdfjs/pdf.worker.min.mjs";
+  mod.GlobalWorkerOptions.workerSrc = new URL("shared/pdfjs/pdf.worker.min.mjs", document.baseURI).href;
   PDFLIB = mod;
   return mod;
 }

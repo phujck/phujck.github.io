@@ -5,38 +5,48 @@
     <div class="container">
       <h1 class="ee-title">EigenEngine
         <span class="ee-wordmark">Ê<sub>i</sub>|gen&#x27E9; &#x2297; Ê<sub>n</sub>|gen&#x27E9;</span></h1>
-      <p class="ee-def">An engine that compiles a working corpus into a typed concept graph,
-        and the graph into a planned, gated, evidence-linked manuscript.</p>
+      <p class="ee-def">A learning engine. It grows a graded concept structure — a memory —
+        out of a working research corpus, and everything it writes is a projection of that
+        structure. This page is one of its projections.</p>
 
       <div class="ee-answers">
         <div class="ee-answer">
           <h2>What it is</h2>
-          <p>A document engine. The corpus — notes, sources, numerics — is compiled into a
-            <em>conceptric</em>: a graded graph of typed nodes (claims, definitions, results,
-            limitations) and their relations. A manuscript is planned over that graph as a
-            storyboard, projected into LaTeX, and driven through rounds of mechanical review
-            before a version is minted.</p>
-          <span class="ee-addr">conceptric_v1.json · <span data-ee="g-nodes"></span> nodes /
-            <span data-ee="g-edges"></span> edges · <span data-ee="sb-sections"></span> sections
-            + <span data-ee="sb-appendices"></span> appendices planned</span>
+          <p>An end-to-end research environment built around a memory. The engine compiles
+            a research program's working material — notes, sources, numerics, drafts, its
+            author's rulings — into a <em>conceptric</em>: a graded graph of typed concepts
+            that persists and grows as the work moves. Findings, feedback and decisions
+            land back in its ledgers, so the structure accumulates; manuscripts, talks,
+            this page and the demo are reconstructed from the graph, and the graph — never
+            a draft — is what is stored.</p>
+          <span class="ee-addr">conceptric_v1.json · <span data-ee="g-nodes"></span> concepts /
+            <span data-ee="g-edges"></span> edges · growth queue + feedback ledgers live ·
+            <span data-ee="sb-sections"></span>+<span data-ee="sb-appendices"></span> sections
+            planned over it</span>
         </div>
         <div class="ee-answer">
           <h2>What distinguishes it</h2>
-          <p>The separation of writing and judging, enforced in code. Builders never score
-            their own output; review findings are typed records carrying evidence; a gap
-            stays open rather than being smoothed. The convergence loop refuses to mint
-            while any hard gate fails — the current falqon build is refused, and the
-            refusal is drawn in this page's converge stage below.</p>
+          <p>The whole loop is inside, and every step of it is inspectable. Planning is data
+            over the graph; writing is judged by separated mechanical review that refuses to
+            mint a failing build; every paragraph traces back through plan and graph to
+            source. And it is a theory made operational: the synthetics working drafts —
+            statistical lawhood under finite description — supply the mathematics, the
+            engine is that mathematics running, and early versions of the engine generated
+            the drafts that describe it.</p>
           <span class="ee-addr">rounds/harnessed · <span data-ee="cv-open"></span> open findings
-            at round <span data-ee="cv-rounds"></span> · hard gates failing</span>
+            at round <span data-ee="cv-rounds"></span>, build refused ·
+            synthetics.html — the theory, foundation-first</span>
         </div>
         <div class="ee-answer">
           <h2>Why that matters</h2>
-          <p>The output can be audited instead of trusted. Of the falqon manuscript's 148
-            rendered objects, 122 trace back to the concept they argue, and all 54 equations
-            resolve through their derivations; the 26 objects that do not yet resolve are
-            listed in an unresolved band with their reasons.</p>
-          <span class="ee-addr">lineage index · 91 concepts · 62 realised into the paper</span>
+          <p>A research partner that accumulates structure instead of chat history can be
+            audited instead of trusted. Of the falqon manuscript's 148 rendered objects,
+            122 trace back to the concept they argue, and all 54 equations resolve through
+            their derivations; the 26 that do not yet resolve are listed with reasons. The
+            aim it is built toward: a partner intelligence grown from one person's life and
+            work, running on hardware they own.</p>
+          <span class="ee-addr">lineage index · 91 concepts · 62 realised into the paper ·
+            corpus local, code private</span>
         </div>
       </div>
 
@@ -108,6 +118,9 @@
             <p>Dispatched workers also run at or below the orchestrator's own model tier,
               and an audit walks every workflow to check it, rather than trusting the author
               of the dispatch.</p>
+            <p>The loop closes here: review findings, the author's rulings and reader
+              feedback land back in the same ledgers this stage reads, so the next build
+              starts from more structure than the last one did.</p>
           </div>
           <div class="ee-fold-rail">
             <div class="ee-mech"><span class="m">reconstruct(node, goal), never read(file)</span>
@@ -122,8 +135,8 @@
       <div class="ee-fold" id="fold-conceptric" hidden>
         <div class="ee-fold-grid ee-fold-wide">
           <div>
-            <p class="prose">The compiler types every node and grades the graph, so coarse
-              structure sits above fine detail. This is the falqon manuscript's real graph.
+            <p class="prose">This graph is the falqon project's memory. The compiler types
+              every node and grades the graph, so coarse structure sits above fine detail.
               Hover a node for its label and edges — the six definitions no claim consumes
               are ringed <span class="ee-refused-word">red</span>: a connectivity gate caught
               them, and they shipped as they are.</p>
@@ -145,6 +158,9 @@
                 in the shipped graph</span></div>
             <a class="ee-doorlink" href="/demo/conceptric.html?corpus=paper_falqon">walk this
               graph in the demo &#8594;</a>
+            <span class="ee-addr">the demo's map also descends into the substrate grade
+              beneath these <span data-ee="g-nodes4"></span> concepts, so its grade bands
+              count more nodes than the concept graph here</span>
           </div>
         </div>
       </div>
@@ -203,8 +219,12 @@
               <span data-ee="ar-findings2"></span> findings on its ledger
               (<span data-ee="ar-hard"></span> hard · <span data-ee="ar-soft"></span> soft ·
               <span data-ee="ar-deferred"></span> deferred) and
-              <span data-ee="ar-versions"></span> banked revisions. Every paragraph joins
-              backward — paragraph &#8594; storyboard section &#8594; concept &#8594; corpus.
+              <span data-ee="ar-versions"></span> banked revisions. The ledger's
+              <span data-ee="ar-findings3"></span> is every finding the review rounds have
+              banked against this candidate; the converge stage's
+              <span data-ee="cv-open2"></span> counts those still open at round
+              <span data-ee="cv-rounds3"></span>. Every paragraph joins backward —
+              paragraph &#8594; storyboard section &#8594; concept &#8594; corpus.
               The band below weights each section of the paper by how much of the manuscript
               realises in it; the unresolved objects sit in their own band at the end.</p>
             <div id="ee-lineage"></div>
@@ -231,7 +251,8 @@
       <span class="section-label">Artifacts of record</span>
       <h2 class="section-title">What the engine has shipped</h2>
       <p class="section-subtitle">The engine's code is private; its outputs are public —
-        the papers, the talks, this page and the demo.</p>
+        the papers, the talks, this page and the demo. Contact:
+        <a href="mailto:eigen@gmccaul.co.uk">eigen@gmccaul.co.uk</a>.</p>
       <ul class="ee-artifacts">
         <li><div><b>The EigenEngine paper and talk</b> — one object, two projections: a
             manuscript and a slide deck, each generated by the engine and pointing at the
@@ -242,12 +263,14 @@
             <span class="ee-addr">EigenEngine.pdf · eigenengine-talk.pdf</span></div></li>
         <li><div><b>The falqon manuscript, worked in anger</b> — a physics paper built
             through the full pipeline; its graph, plan, candidate PDF and lineage are the
-            demo above.</div>
+            demo above. The byline on the candidate reads: The Laplace Engine (Eigen) and
+            Gerard McCaul.</div>
           <div class="ee-links"><a href="/demo/">the demo &#8594;</a>
             <span class="ee-addr">62-claim curation · numerics/*_readings.json ·
               <span data-ee="ar-version3"></span></span></div></li>
-        <li><div><b>The synthetics working drafts</b> — the theory the engine is built
-            from, five papers presented foundation-first.</div>
+        <li><div><b>The synthetics working drafts</b> — five papers presented
+            foundation-first: the theory the engine implements, generated with early
+            versions of the engine.</div>
           <div class="ee-links"><a href="/synthetics.html">the result ladder &#8594;</a>
             <span class="ee-addr">synthetics.html · /assets/docs</span></div></li>
         <li><div><b>Talks with their lineage kept</b> — the Laws of Learning deck banked as
