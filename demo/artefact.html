@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%23c9a96e'/%3E%3C/svg%3E">
+<script>
+
+(function(){
+  "use strict";
+  var META = {"bake_commit": "69bcf55", "bake_date": "2026-07-23", "bake_iso": "2026-07-23T18:21:43+00:00", "corpus": "paper_falqon", "read_only": true};
+  var STATIONS = [{"file": "conceptric.html", "title": "The conceptric", "sub": "a corpus becomes a graph", "body": "Every project starts as a corpus \u2014 source files, notes, numerics. The engine compiles it into a conceptric: a graph of typed nodes (claims, definitions, results, limitations) and their relations, graded so coarse structure sits above fine detail. This is the real concept graph of the falqon quantum-control manuscript, drawn by its links. Click a node to descend into its content and neighbourhood \u2014 the same /corpus reads the author's own surface makes against the live server. The growth cockpit, one door below, lists the graph's open tensions: each one a queued decision, kept visible rather than silently resolved."}, {"file": "storyboard.html", "title": "The storyboard", "sub": "the graph becomes a plan", "body": "A manuscript is not written from the graph directly. The storyboard is the narrative plan over it: a spine of sections, each drawing on named conceptric nodes, with coverage tracked \u2014 which claims are placed, which are not. This is the real plan behind the falqon manuscript. The drag and re-spine verbs are author writes: in this read-only slice the server-side door refuses them, and the refusal you see is the door's actual behaviour."}, {"file": "artefact.html", "title": "The artefact", "sub": "the plan becomes a paper", "body": "The plan is projected into LaTeX and compiled; convergence rounds of mechanical review drive the findings ledger toward zero before a version is minted. This reader shows paper-falqon-2026-07-21-r2 \u2014 the falqon manuscript's current candidate PDF \u2014 with its margin of review findings keyed to source. Compile and edit verbs are author writes and are refused here."}, {"file": "lineage.html", "title": "The lineage", "sub": "every paragraph traces back", "body": "Each paragraph of that PDF joins backward: artefact paragraph \u2192 storyboard section \u2192 conceptric nodes \u2192 corpus. The lineage surface walks those joins in both directions, with unresolved links shown as a first-class band rather than hidden. This is what makes the output auditable: generation is reconstruction from structure, and the trace is queryable."}];
+  var HERE = location.pathname.split("/").pop() || "index.html";
+
+  // ── the response table: fetched once; every intercepted call awaits it ──
+  var TABLE = null;
+  var READY = fetch(new URL("data.json", document.baseURI)).then(function(r){ return r.json(); })
+    .then(function(db){ TABLE = db.responses || {}; return TABLE; })
+    .catch(function(e){ TABLE = {}; toast("data.json failed to load — the slice cannot serve reads"); throw e; });
+
+  function canon(url){
+    var u = new URL(url, document.baseURI);
+    var pairs = []; u.searchParams.forEach(function(v,k){ pairs.push([k,v]); });
+    pairs.sort(function(a,b){ return a[0]<b[0]?-1:a[0]>b[0]?1:a[1]<b[1]?-1:a[1]>b[1]?1:0; });
+    var qs = pairs.map(function(p){ return encodeURIComponent(p[0])+"="+encodeURIComponent(p[1]); }).join("&");
+    return u.pathname + (qs ? "?"+qs : "");
+  }
+
+  var _fetch = window.fetch.bind(window);
+  window.fetch = function(input, init){
+    var url = (typeof input === "string") ? input : (input && input.url) || "";
+    var method = ((init && init.method) || (input && input.method) || "GET").toUpperCase();
+    var u = new URL(url, document.baseURI);
+    if (u.origin !== location.origin) {
+      return Promise.resolve(new Response(JSON.stringify({error:"offline bundle — no external hosts"}),
+        {status:403, headers:{"Content-Type":"application/json"}}));
+    }
+    // real bundle files carry an extension (shared assets, the baked pdf, data.json);
+    // API paths never do (/shared/journey, /corpus/co-cited) — those ride the table.
+    if (/\.[a-z0-9]+$/i.test(u.pathname)) {
+      return _fetch(input, init);
+    }
+    if (method !== "GET") {
+      return Promise.resolve(new Response(JSON.stringify(
+        {error:"read-only slice — author verbs run only in the local engine, behind its actor guard"}),
+        {status:403, headers:{"Content-Type":"application/json"}}));
+    }
+    return READY.then(function(T){
+      var row = T[canon(u.href)];
+      if (!row && !u.searchParams.has("corpus")) {
+        // a naked load (no ?corpus=) still lands on the slice's one subject
+        var u2 = new URL(u.href); u2.searchParams.set("corpus", META.corpus);
+        row = T[canon(u2.href)];
+      }
+      if (!row) {
+        return new Response(JSON.stringify({error:"not in this baked slice"}),
+          {status:404, headers:{"Content-Type":"application/json"}});
+      }
+      var body, ctype;
+      if ("json" in row) {
+        var obj = row.json;
+        if (canon(u.href).indexOf("/artefact/context") === 0 && obj && obj.pdf_endpoint) {
+          obj = JSON.parse(JSON.stringify(obj));
+          obj.pdf_endpoint = new URL(obj.pdf_endpoint, document.baseURI).href;
+        }
+        body = JSON.stringify(obj); ctype = "application/json";
+      } else {
+        body = row.text; ctype = "text/plain; charset=utf-8";
+      }
+      return new Response(body, {status: row.status || 200, headers: {"Content-Type": ctype}});
+    });
+  };
+
+  // ── nav lock: station routes go to station files; anything else gets an honest note ──
+  var ROUTES = {"/": "index.html", "/conceptric": "conceptric.html",
+                "/conceptric/cockpit": "conceptric-cockpit.html",
+                "/conceptric/map": "conceptric.html",
+                "/storyboard": "storyboard.html", "/artefact": "artefact.html",
+                "/lineage": "lineage.html"};
+  document.addEventListener("click", function(ev){
+    var a = ev.target && ev.target.closest && ev.target.closest("a[href]");
+    if (!a) return;
+    var href = a.getAttribute("href") || "";
+    if (!href.startsWith("/")) return;                       // relative links are bundle-local
+    var path = href.split("?")[0];
+    ev.preventDefault();
+    if (ROUTES[path]) {
+      var q = href.indexOf("?") >= 0 ? href.slice(href.indexOf("?")) : "";
+      location.href = ROUTES[path] + q;
+    } else {
+      toast("that surface is not in this baked slice — it runs in the local engine");
+    }
+  }, true);
+
+  function toast(msg){
+    var t = document.getElementById("tour-toast");
+    if (!t) return;
+    t.textContent = msg; t.style.display = "block";
+    clearTimeout(toast._h); toast._h = setTimeout(function(){ t.style.display = "none"; }, 3200);
+  }
+
+  // ── banner + tour bar ──
+  function mount(){
+    var css = document.createElement("style"); css.textContent = "\n#tour-bar{position:fixed;right:14px;bottom:14px;z-index:9999;max-width:380px;\n  background:var(--bg-card,#141a23);border:1px solid var(--border,#2d3744);border-radius:10px;\n  box-shadow:0 8px 30px rgba(0,0,0,.5);font:12.5px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;\n  color:var(--text,#d7dee8)}\n#tour-bar .t-head{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer}\n#tour-bar .t-step{color:var(--accent,#c9a96e);font-weight:600;white-space:nowrap}\n#tour-bar .t-title{font-weight:600}\n#tour-bar .t-sub{color:var(--text-muted,#8b93a3);margin-left:auto;white-space:nowrap}\n#tour-bar .t-body{display:none;padding:0 12px 10px;color:var(--text-2,#aeb6c2)}\n#tour-bar[data-open=\"1\"] .t-body{display:block}\n#tour-bar .t-nav{display:flex;gap:8px;padding:0 12px 10px}\n#tour-bar .t-nav a{color:var(--accent,#c9a96e);text-decoration:none;border:1px solid var(--border,#2d3744);\n  border-radius:6px;padding:4px 10px}\n#tour-bar .t-nav a.t-next{background:var(--accent,#c9a96e);color:#10141c;font-weight:600}\n#tour-toast{position:fixed;left:50%;bottom:64px;transform:translateX(-50%);z-index:9999;display:none;\n  background:#141a23;border:1px solid #2d3744;border-radius:8px;padding:8px 14px;font:12px/1.4 sans-serif;\n  color:#d7dee8;max-width:80vw}\n#tour-banner{position:sticky;top:0;z-index:9998;background:#10141c;border-bottom:1px solid #2d3744;\n  color:#8b93a3;font:11.5px/1.5 ui-monospace,monospace;padding:4px 12px;display:flex;gap:14px;flex-wrap:wrap}\n#tour-banner b{color:#c9a96e;font-weight:600}\n#tour-banner a{color:#7eb8da;text-decoration:none}\n@media (max-width:480px){#tour-bar{left:10px;right:10px;max-width:none}}\n";
+    document.head.appendChild(css);
+
+    var banner = document.createElement("div"); banner.id = "tour-banner";
+    banner.innerHTML = "<span><b>EigenEngine</b> — read-only slice of the live interface</span>" +
+      "<span>corpus: " + META.corpus + "</span>" +
+      "<span>baked at commit " + META.bake_commit + " · " + META.bake_date + "</span>" +
+      "<span><a href='/eigenengine.html'>about the engine</a></span>";
+    document.body.prepend(banner);
+
+    var t = document.createElement("div"); t.id = "tour-toast"; document.body.appendChild(t);
+
+    var idx = -1;
+    for (var i = 0; i < STATIONS.length; i++) if (STATIONS[i].file === HERE) idx = i;
+    if (idx < 0) {
+      // a door off the main path (e.g. the growth cockpit): keep the way back visible
+      var d = document.createElement("div"); d.id = "tour-bar"; d.setAttribute("data-open","0");
+      d.innerHTML = "<div class='t-nav' style='padding:10px 12px'>" +
+        "<a href='conceptric.html'>&#8592; back to the tour</a></div>";
+      document.body.appendChild(d);
+      return;
+    }
+    var s = STATIONS[idx];
+    var bar = document.createElement("div"); bar.id = "tour-bar";
+    var open = (sessionStorage.getItem("__tour_open") || "1") === "1";
+    bar.setAttribute("data-open", open ? "1" : "0");
+    var q = "?corpus=" + encodeURIComponent(META.corpus);
+    var prev = (idx > 0 ? STATIONS[idx-1].file + q : "index.html");
+    var next = idx < STATIONS.length - 1 ? STATIONS[idx+1].file + q : null;
+    bar.innerHTML =
+      "<div class='t-head'><span class='t-step'>" + (idx+1) + "/" + STATIONS.length + "</span>" +
+      "<span class='t-title'>" + s.title + "</span><span class='t-sub'>" + s.sub + "</span></div>" +
+      "<div class='t-body'>" + s.body + "</div>" +
+      "<div class='t-nav'><a href='" + prev + "'>&#8592; back</a>" +
+      (next ? "<a class='t-next' href='" + next + "'>continue the tour &#8594;</a>"
+            : "<a class='t-next' href='index.html'>finish &#8594;</a>") + "</div>";
+
+    bar.querySelector(".t-head").addEventListener("click", function(){
+      var v = bar.getAttribute("data-open") === "1" ? "0" : "1";
+      bar.setAttribute("data-open", v); sessionStorage.setItem("__tour_open", v);
+    });
+    document.body.appendChild(bar);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
+  else mount();
+})();
+
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>read · judge · the eigen engine</title>
+<!-- THE ONE PALETTE (visual §6.1 · L5): hymn.css is the sole color/type source; this
+     surface declares NO color literal — every band/chip/door/rail rides a hymn var/class. -->
+<link rel="stylesheet" href="shared/hymn.css">
+<style>
+/* LAYOUT ONLY (visual §6.2, ≤4KB, zero color literals) — the editor's skeleton.
+   THE COMPOSITION (2026-07-22, his correction: Overleaf-class means THE SPLIT IS THE
+   POSTURE): three columns at working width — SOURCE | PAPER | MARGIN. The tex rides a
+   persistent, capable pane beside the compiled paper (CM6, save + recompile, the
+   clickable log, synctex both ways, continuously); READING is the fold of the source
+   pane — one remembered act, not a separate world. The margin is the judge's notebook
+   (judgment open over the history) and folds the same way. The rendered pages are
+   toned into the room (.hy-render — the rendered-artifact law). Component atoms live
+   in artefact-panes.mjs COMPONENT_CSS (the §6.2 relocation). */
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font:13px/1.5 -apple-system,"Segoe UI",Roboto,sans-serif}
+/* the editor room runs FULL-BLEED (his 2026-07-23 ruling RW-20260723-120306-821693:
+   the paper uses the whole screen; the folds are edge RAILS, not header buttons) */
+#art{margin:0 auto;padding:14px 18px 10px}
+.art-head{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;margin-bottom:4px}
+.art-head-name{display:flex;align-items:baseline;gap:9px;min-width:0}
+#art-rev{font:650 14px/1.4 -apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);
+  letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:52vw}
+#art-reader-info{color:var(--dim)}
+.art-head-doors{display:flex;gap:8px;align-items:center;margin-left:auto}
+.art-hint{font:10.5px var(--mono);color:var(--dim);margin:0 0 10px}
+.art-hint b{color:var(--ink2)}
+.art-hint.done{opacity:0;transition:opacity .9s ease .5s;pointer-events:none}
+.art-main{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,24vw,430px) auto;gap:14px;align-items:start}
+.art-main.margin-folded{grid-template-columns:minmax(0,1fr) auto}
+.art-main.margin-folded .art-margin{display:none}
+/* the edge rails: the collapsed pane IS the affordance — a slim vertical strip at the
+   screen edge; clicking it folds/opens its pane in place (ids keep the panes' wiring) */
+.art-edge-rail{writing-mode:vertical-rl;flex:none;align-self:stretch;display:flex;
+  align-items:center;justify-content:center;padding:14px 5px;min-height:130px;
+  font:600 10.5px var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--dim);background:var(--panel);border:1px solid var(--edge2);border-radius:8px;
+  cursor:pointer}
+.art-edge-rail:hover{color:var(--ink2);border-color:var(--accent)}
+#art-edit-toggle{margin-right:10px}
+.art-reader-col{min-width:0;position:relative}
+.art-split{display:flex;min-width:0}
+.art-pdf-pane{flex:1;min-width:0;position:relative}
+#art-reader{overflow:auto;max-height:calc(100vh - var(--hy-shell-real,86px) - 96px);
+  background:var(--panel2);border:1px solid var(--edge);border-radius:10px;padding:6px;
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+.art-page{position:relative;max-width:100%;border:1px solid var(--edge2);border-radius:2px;
+  box-shadow:0 3px 18px -6px color-mix(in srgb,black 65%,transparent)}
+.art-page canvas.pgcv{display:block;max-width:100%}
+.pgtext{position:absolute;inset:0;overflow:hidden;line-height:1;z-index:2}
+.pgtext span{position:absolute;color:transparent;white-space:pre}
+.art-msg{padding:16px;color:var(--dim);font:11px var(--mono)}
+/* the comment thread is a MARGIN panel (styling in artefact-panes COMPONENT_CSS) */
+.art-anchor{display:none}
+.art-anchor.on{display:block}
+/* THE MARGIN — the judge's notebook: judgment first, the history beneath it */
+.art-margin{min-width:0;display:flex;flex-direction:column;gap:14px}
+.art-mg-h{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--dim);font-weight:700;display:flex;align-items:center;gap:8px}
+.art-rail-col{min-width:0}
+.art-tray{border:1px solid var(--edge2);border-radius:12px;background:var(--panel);padding:11px 13px}
+.art-tray-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer}
+.art-tray-bar:hover .art-tray-title{color:var(--ink)}
+.art-tray-title{font-weight:700;color:var(--ink2);font-size:12px}
+.art-tray-sum{color:var(--dim);font:10.5px var(--mono)}
+.art-tray-body{display:none;padding-top:6px}
+.art-tray.open .art-tray-body{display:block}
+@media (max-width:1000px){ .art-main{grid-template-columns:1fr}
+  .art-split{flex-direction:column}
+  .art-edge-rail{writing-mode:horizontal-tb;min-height:0;align-self:auto;padding:6px 12px}
+  #art-edit-toggle{margin-right:0;margin-bottom:8px}
+  .art-anchor{position:static;width:auto;right:auto;margin-top:10px} }
+@media (max-width:375px){ #art{padding:10px 10px 8px} #art-reader{max-height:none} }
+</style>
+</head>
+<body>
+<!-- THE EDITOR (Overleaf-class): source | paper | margin. The split is the resting
+     posture; reading is the fold of the source pane, remembered per session. The anchor
+     overlay answers a paragraph click in place; judgment stands open in the margin. -->
+<main id="art">
+  <!-- the altitude thread: the return breadcrumb when arrived from the cockpit tension
+       decision (filled by artefact-panes.mjs when ?via=cockpit-tension). -->
+  <div class="art-thread" id="art-thread" hidden></div>
+  <header class="art-head">
+    <div class="art-head-name">
+      <span id="art-rev"></span><span id="art-reader-info"></span>
+    </div>
+  </header>
+
+  <div class="art-hint" id="art-hint">
+    hover a paragraph for its <b>¶ anchor</b> · click it for its <b>nodes + beat</b>, and to annotate
+  </div>
+
+  <div class="art-main" id="art-main" data-mode="edit">
+    <div class="art-reader-col">
+      <!-- the source split: CM6 LEFT ⇄ the SAME pdf pane RIGHT, a draggable divider
+           between. Present only while the source is open ([data-mode="edit"]). -->
+      <div class="art-split" id="art-split">
+        <button type="button" class="art-edge-rail" id="art-edit-toggle"
+          title="fold or open the tex source beside the paper — the synctex-coupled pane; save + recompile is the live loop">fold the source</button>
+        <div class="art-source-pane" id="art-source-pane">
+          <div class="art-source-bar" id="art-source-bar">
+            <code id="art-edit-file"></code>
+            <span id="art-follow-status"></span>
+            <!-- the source-pane object affordance: when the cursor lands on a \label{...}
+                 line, this offers "where this came from" into the provenance pane -->
+            <span id="art-label-prov"></span>
+            <!-- the his-hand toggle: highlights the passages the author edited himself
+                 (his saves vs the machine baseline, off the version rail's attribution) -->
+            <span id="art-hishand"></span>
+            <div class="art-edit-doors">
+              <button type="button" class="hy-door is-primary" id="art-edit-save"
+                title="POST /projection/tex (bank=editor) → POST /projection/recompile — the live loop">save + recompile</button>
+              <button type="button" class="hy-door" id="art-edit-recompile"
+                title="POST /projection/recompile without re-saving — retry a compile">recompile</button>
+              <span id="art-edit-msg"></span>
+            </div>
+          </div>
+          <div id="art-cm"></div>
+          <div id="art-compile-log"></div>
+        </div>
+        <div class="art-divider" id="art-divider" title="drag to resize"></div>
+        <div class="art-pdf-pane" id="art-pdf-pane">
+          <div id="art-reader" class="hy-render"><div class="art-msg">resolving the current artefact…</div></div>
+          <!-- THE MINIMAP mount (his 2026-07-23 pick): the whole-document density chart + live
+               viewport window, drawn by artefact-panes.mjs (renderMinimap). A static mount is
+               cleaner than injection; it rides the pdf pane's right edge beside #art-reader. -->
+          <div id="art-minimap" class="art-minimap" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THE MARGIN — judgment standing open over the history -->
+    <aside class="art-margin">
+      <!-- the inspection area: an opened finding reallocates the margin (the tray/rail/prov
+           recede); the PAPER is never crushed (his ruling). Exact restore on close. -->
+      <div class="art-inspect" id="art-inspect"></div>
+      <!-- the COMMENT THREAD — a line of the paper takes a comment here: it materialises in
+           the margin (never crushes the paper), anchored to the synctex source line, with a
+           marker at the line. Collapsed section context in folds; comments from server truth. -->
+      <div class="art-anchor" id="art-anchor"></div>
+      <!-- THE PROVENANCE PANE — materialised in the margin when the reader opens an
+           equation/figure (its object affordance), a source \label line, or a ?object=
+           deep link: the served glance + the chain worded as stations, the feedback
+           verbs at the object, a named return door back to the tray. Empty at rest. -->
+      <div class="art-prov" id="art-prov"></div>
+      <!-- THE FINDINGS LENS (his 2026-07-23 pick): the tray is no longer primary navigation —
+           the minimap is where judgment's location is read. This survives as a filterable lens,
+           collapsed by default (its fold remembered per session); nothing it could do is lost. -->
+      <section class="art-tray" id="art-tray-sec">
+        <div class="art-tray-bar" id="art-tray-bar" title="the findings lens — filter &amp; list; the minimap beside the paper is where their location is read">
+          <span class="art-tray-ind">▸</span>
+          <span class="art-tray-title">findings — filter &amp; list</span>
+          <span class="art-tray-sum" id="art-tray-sum">reading the review board…</span>
+        </div>
+        <div class="art-tray-body" id="art-tray-body"></div>
+      </section>
+      <section class="art-rail-col">
+        <div id="art-rail">
+          <div class="art-rail-head" id="art-rail-strip"></div>
+          <div id="art-diffbar"></div>
+          <div class="hy-rail-body" id="art-rail-body"></div>
+          <div id="art-diffpane"></div>
+        </div>
+      </section>
+    </aside>
+    <button type="button" class="art-edge-rail" id="art-margin-toggle"
+      title="fold or open the margin — judgment and the version history">fold the margin</button>
+  </div>
+</main>
+<script defer src="shared/shell.js"></script>
+<script type="module">
+// the ONLY inline script: bootstrap the shared pane module (all network rides store.fetchJSON
+// inside it — no raw fetch escapes the model on this surface).
+import { initArtefact } from "./shared/artefact-panes.mjs";
+initArtefact();
+</script>
+</body>
+</html>
