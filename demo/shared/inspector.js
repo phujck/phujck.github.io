@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════
    inspector.js — the ONE node inspector, shared across the applets.
 
-   The node is the atomic unit; wherever one renders (conceptric2 right
-   pane, projection-viewer node cards) it renders STRUCTURED, through this
+   The node is the atomic unit; wherever one renders (a conceptric node
+   card, projection-viewer node cards) it renders STRUCTURED, through this
    module: kind badge + canonical TERM as the title (id secondary), the
    essence (in-place editable → POST /corpus/rewire edit-essence), edges
    in/out as clickable chips, the emit-time slots (latex_label, retired +
@@ -111,13 +111,13 @@
     return null;
   }
 
-  // ── cross-links (open in conceptric2 / show in projection) ─────────────
+  // ── cross-links (open in conceptric / show in projection) ─────────────
   async function crossLinks(corpus, id, opts){
     opts = opts || {};
     const links = [];
     if(!opts.hideConceptric)
-      links.push({label: "open in conceptric2 ↗",
-                  href: "/conceptric2?corpus="+ec(corpus)+"&node="+ec(id)});
+      links.push({label: "open in conceptric ↗",
+                  href: "conceptric.html?corpus="+ec(corpus)+"&node="+ec(id)});
     const plan = await getPlan(corpus);
     if(plan && plan.target_dir){
       const hit = (plan.node_index || {})[id];
@@ -304,7 +304,7 @@
         if(!v){ msg.textContent = "empty comment"; msg.className = "hy-fb-msg hy-ess-msg bad"; return; }
         msg.textContent = "banking…"; msg.className = "hy-fb-msg hy-ess-msg";
         const out = await jpost("/corpus/feedback", {corpus: m.corpus, node_id: m.id,
-          kind: box.querySelector(".hy-fb-kind").value, comment: v, by: "visitor:"+((window.__VISITOR)||"anon")});
+          kind: box.querySelector(".hy-fb-kind").value, comment: v, by: "author"});
         if(out && out.error){ msg.textContent = out.error; msg.className = "hy-fb-msg hy-ess-msg bad"; return; }
         ta.value = ""; msg.textContent = ""; box.style.display = "none";
         await fill();
@@ -324,7 +324,7 @@
       if(v === (c.essence || "")){ edBox.classList.remove("on"); return; }
       edMsg.textContent = "saving…"; edMsg.className = "hy-ess-msg";
       const out = await jpost("/corpus/rewire",
-        {corpus: m.corpus, kind: "edit-essence", node: m.id, value: v, by: "visitor:"+((window.__VISITOR)||"anon")});
+        {corpus: m.corpus, kind: "edit-essence", node: m.id, value: v, by: "author"});
       if(out && out.error){ edMsg.textContent = out.error; edMsg.className = "hy-ess-msg bad"; return; }
       NB_CACHE[m.corpus+"::"+m.id] = null; delete NB_CACHE[m.corpus+"::"+m.id];
       if(m.onSaved) m.onSaved(v);

@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0a0e1a">
 
   <title>EigenEngine — Gerard McCaul</title>
-  <meta name="description" content="EigenEngine: the synthetics built into a machine. A corpus compiled into a graded structure, documents generated from it by reconstruction — with the engine's own process records as evidence.">
+  <meta name="description" content="EigenEngine: an engine that compiles a working corpus into a typed concept graph and generates planned, gated, evidence-linked manuscripts. With a public read-only demo of its working surfaces.">
   <meta name="author" content="Gerard McCaul">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://gmccaul.co.uk/eigenengine.html">
@@ -30,7 +30,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://gmccaul.co.uk/eigenengine.html">
   <meta property="og:title" content="EigenEngine — Gerard McCaul">
-  <meta property="og:description" content="The synthetics built into a machine: memory as reconstruction, generation as projection, evidence from the engine's own process records.">
+  <meta property="og:description" content="An engine that compiles a working corpus into a typed concept graph and generates planned, gated, evidence-linked manuscripts. Public read-only demo included.">
   <meta property="og:image" content="https://gmccaul.co.uk/assets/img/me.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -40,7 +40,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="EigenEngine — Gerard McCaul">
-  <meta name="twitter:description" content="The synthetics built into a machine: memory as reconstruction, generation as projection.">
+  <meta name="twitter:description" content="An engine that compiles a working corpus into a typed concept graph and generates planned, gated, evidence-linked manuscripts. Public read-only demo included.">
   <meta name="twitter:image" content="https://gmccaul.co.uk/assets/img/me.jpg">
 
   <!-- JSON-LD -->
@@ -49,7 +49,7 @@
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "EigenEngine - Gerard McCaul",
-    "description": "EigenEngine: the synthetics built into a machine.",
+    "description": "EigenEngine: an engine that compiles a corpus into a typed concept graph and generates evidence-linked manuscripts.",
     "url": "https://gmccaul.co.uk/eigenengine.html",
     "author": {
       "@type": "Person",
@@ -88,371 +88,293 @@
 
   <link rel="stylesheet" href="/assets/css/page-eigenengine.css">
 
-  <!-- Page Header -->
-  <header class="page-hero">
+  <!-- ═══ First screen: the three answers + the demo door ═══ -->
+  <header class="ee-hero">
     <div class="container">
-      <h1 class="page-hero-title fade-in">EigenEngine</h1>
-      <p class="fade-in"
-        style="font-family: 'Lora', serif; color: var(--text-secondary); font-style: italic; opacity: 0.85; margin-top: 0.25rem; letter-spacing: 0.03em;">
-        Ê<sub>i</sub>|gen&#x27E9; &#x2297; Ê<sub>n</sub>|gen&#x27E9;</p>
-      <p class="page-hero-subtitle fade-in fade-in-delay-1">An operator that turns a corpus into a converged,
-        evidenced artifact with an auditable trace. This page is one of its artifacts.</p>
+      <h1 class="ee-title">EigenEngine
+        <span class="ee-wordmark">Ê<sub>i</sub>|gen&#x27E9; &#x2297; Ê<sub>n</sub>|gen&#x27E9;</span></h1>
+      <p class="ee-def">An engine that compiles a working corpus into a typed concept graph,
+        and the graph into a planned, gated, evidence-linked manuscript.</p>
+
+      <div class="ee-answers">
+        <div class="ee-answer">
+          <h2>What it is</h2>
+          <p>A document engine. The corpus — notes, sources, numerics — is compiled into a
+            <em>conceptric</em>: a graded graph of typed nodes (claims, definitions, results,
+            limitations) and their relations. A manuscript is planned over that graph as a
+            storyboard, projected into LaTeX, and driven through rounds of mechanical review
+            before a version is minted.</p>
+          <span class="ee-addr">conceptric_v1.json · <span data-ee="g-nodes"></span> nodes /
+            <span data-ee="g-edges"></span> edges · <span data-ee="sb-sections"></span> sections
+            + <span data-ee="sb-appendices"></span> appendices planned</span>
+        </div>
+        <div class="ee-answer">
+          <h2>What distinguishes it</h2>
+          <p>The separation of writing and judging, enforced in code. Builders never score
+            their own output; review findings are typed records carrying evidence; a gap
+            stays open rather than being smoothed. The convergence loop refuses to mint
+            while any hard gate fails — the current falqon build is refused, and the
+            refusal is drawn in this page's converge stage below.</p>
+          <span class="ee-addr">rounds/harnessed · <span data-ee="cv-open"></span> open findings
+            at round <span data-ee="cv-rounds"></span> · hard gates failing</span>
+        </div>
+        <div class="ee-answer">
+          <h2>Why that matters</h2>
+          <p>The output can be audited instead of trusted. Of the falqon manuscript's 148
+            rendered objects, 122 trace back to the concept they argue, and all 54 equations
+            resolve through their derivations; the 26 objects that do not yet resolve are
+            listed in an unresolved band with their reasons.</p>
+          <span class="ee-addr">lineage index · 91 concepts · 62 realised into the paper</span>
+        </div>
+      </div>
+
+      <!-- the demo door -->
+      <div class="ee-door" id="demo">
+        <div class="ee-door-head">
+          <h2>Walk the interface</h2>
+          <a class="ee-door-enter" href="/demo/">Enter the demo &#8594;</a>
+        </div>
+        <p class="ee-door-lede">Four of the engine's real working surfaces, baked with the
+          falqon manuscript's real data and served as static files — the same HTML and
+          modules the local instrument runs. A tour bar carries you through in production
+          order; click around freely at every station.</p>
+        <ol class="ee-door-stations">
+          <li><b>The conceptric</b> — the concept graph, drawn by its links; descend into any
+            node's content and neighbourhood.</li>
+          <li><b>The storyboard</b> — the narrative plan over the graph, with coverage:
+            which claims are placed, which are not.</li>
+          <li><b>The artefact</b> — the compiled candidate PDF with its margin of
+            <span data-ee="ar-findings"></span> review findings keyed to source.</li>
+          <li><b>The lineage</b> — the joins: paragraph &#8594; section &#8594; concept
+            &#8594; corpus, unresolved links shown as their own band.</li>
+        </ol>
+        <span class="ee-addr">read-only — author verbs are refused at the door · no account,
+          nothing recorded · baked at commit <span data-ee="meta-commit"></span>
+          (<span data-ee="meta-date"></span>)</span>
+      </div>
     </div>
   </header>
 
-  <!-- Exhibit: one object, many projections (the real conceptric, live) -->
-  <section class="section ee-exhibit" id="exhibit">
+  <!-- ═══ The engine, stage by stage: the band is the navigation ═══ -->
+  <section class="section ee-walk" id="walk">
     <div class="container">
-      <div class="ee-exhibit-frame fade-in">
-        <div class="ee-exhibit-head">
+      <span class="section-label">The machine</span>
+      <h2 class="section-title">One pipeline, five stages</h2>
+      <p class="section-subtitle">Select a stage — it opens in place. Every count on this
+        band is the falqon manuscript's, generated from the engine tree at commit
+        <span class="evidence" data-ee="meta-commit2"></span>.</p>
+
+      <div class="ee-band" role="tablist" aria-label="Pipeline stages">
+        <button class="ee-stage" data-fold="corpus" role="tab" aria-expanded="false">
+          <span class="k">corpus</span><span class="v">sources · ledgers</span></button>
+        <span class="ee-band-link" aria-hidden="true"></span>
+        <button class="ee-stage" data-fold="conceptric" role="tab" aria-expanded="false">
+          <span class="k">conceptric</span><span class="v"><span data-ee="g-nodes2"></span>n /
+            <span data-ee="g-edges2"></span>e</span></button>
+        <span class="ee-band-link" aria-hidden="true"></span>
+        <button class="ee-stage" data-fold="storyboard" role="tab" aria-expanded="false">
+          <span class="k">storyboard</span><span class="v"><span data-ee="sb-sections2"></span>
+            + <span data-ee="sb-appendices2"></span> boards</span></button>
+        <span class="ee-band-link" aria-hidden="true"></span>
+        <button class="ee-stage" data-fold="converge" role="tab" aria-expanded="false">
+          <span class="k">converge</span><span class="v"><span data-ee="cv-rounds2"></span> rounds ·
+            refused</span></button>
+        <span class="ee-band-link" aria-hidden="true"></span>
+        <button class="ee-stage" data-fold="artefact" role="tab" aria-expanded="false">
+          <span class="k">artefact</span><span class="v" data-ee="ar-version"></span></button>
+      </div>
+
+      <!-- ── fold: corpus ── -->
+      <div class="ee-fold" id="fold-corpus" hidden>
+        <div class="ee-fold-grid">
+          <div class="prose">
+            <p>Everything begins as ordinary files: manuscript sources, numerics with their
+              readings files, feedback ledgers, prior drafts. No worker reads the pile flat —
+              a dispatched agent is pointed at one node of the structure and a goal, and
+              reconstructs the context it needs from there. The dispatch layer enforces
+              the rule on every dispatched prompt.</p>
+            <p>Dispatched workers also run at or below the orchestrator's own model tier,
+              and an audit walks every workflow to check it, rather than trusting the author
+              of the dispatch.</p>
+          </div>
+          <div class="ee-fold-rail">
+            <div class="ee-mech"><span class="m">reconstruct(node, goal), never read(file)</span>
+              <span class="ee-addr">compile_dispatch · the dispatch kernel</span></div>
+            <div class="ee-mech"><span class="m">the model ceiling, audited</span>
+              <span class="ee-addr">audit_dispatch_models.py</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── fold: conceptric ── -->
+      <div class="ee-fold" id="fold-conceptric" hidden>
+        <div class="ee-fold-grid ee-fold-wide">
           <div>
-            <span class="ee-overline">the conceptric · one object</span>
-            <h2>There is <em>one thing</em>, in many representations</h2>
-          </div>
-          <div class="ee-bakeline">
-            falqon manuscript concept graph<br>
-            the same object the demo edits · <span class="num">91n / 140e</span><br>
-            baked 2026-07-11
-          </div>
-        </div>
-        <div class="ee-graph-grid">
-          <div class="ee-canvas-wrap">
-            <canvas id="ee-graph" role="img"
-              aria-label="Force-directed rendering of the falqon manuscript's concept graph: 91 nodes, 140 edges, coloured by node kind."></canvas>
-            <p class="ee-canvas-fallback">The falqon manuscript's concept graph — 91 nodes, 140 edges, four
-              clusters. The rendering needs JavaScript; the same object is walkable in the demo below.</p>
-          </div>
-          <div class="ee-readout" aria-live="polite">
-            <div class="ee-readout-top">
-              <div class="ee-readout-kind" id="ee-r-kind" style="display:none"></div>
-              <div class="ee-readout-label" id="ee-r-label" style="display:none"></div>
-              <div class="ee-readout-id ee-mono" id="ee-r-id" style="display:none"></div>
-              <div class="ee-readout-edges" id="ee-r-edges" style="display:none"></div>
-              <p class="ee-readout-hint" id="ee-r-hint">Four clusters, sized by how many edges each node carries;
-                the section spine runs down the left. Hover a node for its full label, id and edges — on a phone, tap.</p>
+            <p class="prose">The compiler types every node and grades the graph, so coarse
+              structure sits above fine detail. This is the falqon manuscript's real graph.
+              Hover a node for its label and edges — the six definitions no claim consumes
+              are ringed <span class="ee-refused-word">red</span>: a connectivity gate caught
+              them, and they shipped as they are.</p>
+            <div class="ee-graph-wrap">
+              <canvas id="ee-graph" role="img"
+                aria-label="The falqon manuscript's concept graph, drawn from generated coordinates; node colours encode kind."></canvas>
+              <div class="ee-graph-readout" id="ee-graph-readout" aria-live="polite">
+                <span class="ee-dim">hover a node — tap on a phone</span></div>
             </div>
-            <div class="ee-readout-foot">
-              <div class="ee-relmap">
-                <span class="ee-relmap-h">140 edges</span>
-                <span><span class="num">73</span> contains — a cluster holds its members</span>
-                <span><span class="num">40</span> draws — a section draws on a node</span>
-                <span><span class="num">14</span> shares — a link across clusters</span>
-                <span><span class="num">12</span> precedes — the section order</span>
-                <span><span class="num">1</span> project — the manuscript root</span>
-              </div>
-              <div class="ee-legend">
-                <button type="button" class="ee-legend-row" data-kind="claim" aria-pressed="false"><span class="ee-legend-dot" style="background:#7eb8da"></span>claim <span class="num">22</span></button>
-                <button type="button" class="ee-legend-row" data-kind="def" aria-pressed="false"><span class="ee-legend-dot" style="background:#a89a7a"></span>def <span class="num">26</span></button>
-                <button type="button" class="ee-legend-row" data-kind="limitation" aria-pressed="false"><span class="ee-legend-dot" style="background:#b8894a"></span>limitation <span class="num">14</span></button>
-                <button type="button" class="ee-legend-row" data-kind="section" aria-pressed="false"><span class="ee-legend-dot" style="background:#6b7280"></span>section <span class="num">13</span></button>
-                <button type="button" class="ee-legend-row" data-kind="result" aria-pressed="false"><span class="ee-legend-dot" style="background:#e6cc92"></span>result <span class="num">11</span></button>
-                <button type="button" class="ee-legend-row" data-kind="cluster" aria-pressed="false"><span class="ee-legend-dot" style="background:#c9a96e"></span>cluster <span class="num">4</span></button>
-                <p class="ee-orphan-note">Six def nodes ring in <span style="color:var(--refused)">red</span>: definitions
-                  no claim consumed, caught by the connectivity gate and shipped as they are.</p>
-              </div>
-            </div>
+            <div class="ee-legend" id="ee-legend"></div>
+          </div>
+          <div class="ee-fold-rail">
+            <div class="ee-mech"><span class="m">typed nodes, graded descent</span>
+              <span class="ee-addr"><span data-ee="g-nodes3"></span> nodes ·
+                <span data-ee="g-edges3"></span> edges · kinds:
+                <span data-ee="g-kinds"></span></span></div>
+            <div class="ee-mech ee-refusal"><span class="m">shown refusal: six def-orphans kept</span>
+              <span class="ee-addr">connectivity gate · def_orphans · all six still
+                in the shipped graph</span></div>
+            <a class="ee-doorlink" href="/demo/conceptric.html?corpus=paper_falqon">walk this
+              graph in the demo &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── fold: storyboard ── -->
+      <div class="ee-fold" id="fold-storyboard" hidden>
+        <div class="ee-fold-grid">
+          <div class="prose">
+            <p>The plan is itself a data object: <span data-ee="sb-sections3"></span> sections
+              and <span data-ee="sb-appendices3"></span> appendices, each drawing on named
+              graph nodes, with coverage tracked — which claims are placed, which are still
+              homeless. Re-planning verbs (retitle a section, move a beat, re-spine the
+              order) are writes through an actor-guarded door: a record arriving without an
+              actor, or dressed as someone it is not, is refused and kept for inspection.</p>
+          </div>
+          <div class="ee-fold-rail">
+            <div class="ee-mech"><span class="m">the plan over the graph</span>
+              <span class="ee-addr">projection_plan.json · coverage per section</span></div>
+            <div class="ee-mech ee-refusal"><span class="m">shown refusal: forged actors bounce</span>
+              <span class="ee-addr">the actor guard · refused, kept for inspection</span></div>
+            <a class="ee-doorlink" href="/demo/storyboard.html?corpus=paper_falqon">open the
+              real board in the demo &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── fold: converge ── -->
+      <div class="ee-fold" id="fold-converge" hidden>
+        <div class="ee-fold-grid ee-fold-wide">
+          <div>
+            <p class="prose">Every compiled build is read by a panel of detector classes —
+              meta-leak, captions, apparatus, claims, house style, visuals, template,
+              promises. Findings are typed records; the drain that consumes them validates
+              evidence before counting anything closed, and has refused the orchestrator's
+              own claimed closures. The loop refuses to lock while any hard gate fails.</p>
+            <div id="ee-gates"></div>
+            <p class="ee-gates-note">Findings <em>rise</em> across these rounds because the
+              detector suite widens as it learns the manuscript. The falqon build is still
+              refused: the loop will not mint a release from it in this state.</p>
+          </div>
+          <div class="ee-fold-rail">
+            <div class="ee-mech"><span class="m">builder and judge, separated</span>
+              <span class="ee-addr">blinded review passes · typed findings</span></div>
+            <div class="ee-mech ee-refusal"><span class="m">shown refusal: unevidenced closures
+              bounced</span><span class="ee-addr">the friction drain · evidence-or-open</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── fold: artefact ── -->
+      <div class="ee-fold" id="fold-artefact" hidden>
+        <div class="ee-fold-grid ee-fold-wide">
+          <div>
+            <p class="prose">A minted candidate is an addressed object:
+              <span class="evidence" data-ee="ar-version2"></span>, carrying
+              <span data-ee="ar-findings2"></span> findings on its ledger
+              (<span data-ee="ar-hard"></span> hard · <span data-ee="ar-soft"></span> soft ·
+              <span data-ee="ar-deferred"></span> deferred) and
+              <span data-ee="ar-versions"></span> banked revisions. Every paragraph joins
+              backward — paragraph &#8594; storyboard section &#8594; concept &#8594; corpus.
+              The band below weights each section of the paper by how much of the manuscript
+              realises in it; the unresolved objects sit in their own band at the end.</p>
+            <div id="ee-lineage"></div>
+            <details class="ee-table-fold"><summary>the same band as a table</summary>
+              <div id="ee-lineage-table"></div></details>
+          </div>
+          <div class="ee-fold-rail">
+            <div class="ee-mech"><span class="m">the joins, queryable</span>
+              <span class="ee-addr">148 objects · 122 trace their origin · 54/54 equations
+                resolve · 26 unresolved, listed</span></div>
+            <a class="ee-doorlink" href="/demo/artefact.html?corpus=paper_falqon">read the
+              candidate PDF in the demo &#8594;</a>
+            <a class="ee-doorlink" href="/demo/lineage.html?corpus=paper_falqon">walk the
+              joins in the demo &#8594;</a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- The claim -->
-  <section class="section" id="claim">
+  <!-- ═══ Artifacts of record ═══ -->
+  <section class="section ee-record" id="artifacts">
     <div class="container">
-      <span class="section-label fade-in">The Claim</span>
-      <h2 class="section-title fade-in">Generative AI that runs on generators, not constraints</h2>
-      <div class="ee-claim-grid fade-in">
-        <div class="pub-blurb prose">
-          <p>Today's models forget you between sessions, and left to themselves write from the mean of
-            everything they have read. These are the same failure. The machine runs on one enormous forward
-            map, steered after the fact by prompts and rewards - a wall you lean on, never a generator that
-            makes. EigenEngine runs the arrow the other way: it builds a person's knowledge into an explicit
-            graded structure, the <em>conceptric</em>, so that memory becomes reconstruction rather than
-            storage and generation becomes projection rather than search. A small, local model routes a
-            question down that structure and spends a large model only on a brief that already half-knows the
-            answer - the corpus never leaving your own hardware.</p>
-          <p style="margin-top: 1rem;">It is a ladder of loops, each one useless until it is bootstrapped
-            shut. The architecture is not an analogy borrowed from physics: it is the graded decomposition of
-            the <a href="/synthetics.html">synthetic preprints</a>, made into something you can switch on.
-            The end of the climb is plain - a way for anyone to grow a partner intelligence out of their own
-            life and work, a mind that is theirs, local, that learns them, and answers as a colleague rather
-            than a service.</p>
-          <p style="margin-top: 1rem;">The code stays private. It holds a corpus you could reconstruct, and the
-            mathematics that built it is the other half of the preprints. What is public is the output and
-            the demonstration - and this introduction was written, start to finish, by the engine it
-            describes.</p>
-        </div>
-        <aside class="ee-claim-rail">
-          <div class="ee-stat"><span class="v">91n / 140e</span><span class="l">nodes and edges in the graph above</span></div>
-          <div class="ee-stat"><span class="v">1 → 4</span><span class="l">one object, projected to paper, talk, page, demo</span></div>
-          <div class="ee-stat"><span class="v">6</span><span class="l">def nodes no claim consumed, kept in the graph</span></div>
-          <div class="ee-stat"><span class="v">0</span><span class="l">bytes of the corpus that leave your hardware</span></div>
-        </aside>
-      </div>
+      <span class="section-label">Artifacts of record</span>
+      <h2 class="section-title">What the engine has shipped</h2>
+      <p class="section-subtitle">The engine's code is private; its outputs are public —
+        the papers, the talks, this page and the demo.</p>
+      <ul class="ee-artifacts">
+        <li><div><b>The EigenEngine paper and talk</b> — one object, two projections: a
+            manuscript and a slide deck, each generated by the engine and pointing at the
+            other.</div>
+          <div class="ee-links"><a href="/assets/docs/EigenEngine.pdf" target="_blank"
+            rel="noopener">paper &#8594;</a> <a href="/assets/docs/eigenengine-talk.pdf"
+            target="_blank" rel="noopener">talk &#8594;</a>
+            <span class="ee-addr">EigenEngine.pdf · eigenengine-talk.pdf</span></div></li>
+        <li><div><b>The falqon manuscript, worked in anger</b> — a physics paper built
+            through the full pipeline; its graph, plan, candidate PDF and lineage are the
+            demo above.</div>
+          <div class="ee-links"><a href="/demo/">the demo &#8594;</a>
+            <span class="ee-addr">62-claim curation · numerics/*_readings.json ·
+              <span data-ee="ar-version3"></span></span></div></li>
+        <li><div><b>The synthetics working drafts</b> — the theory the engine is built
+            from, five papers presented foundation-first.</div>
+          <div class="ee-links"><a href="/synthetics.html">the result ladder &#8594;</a>
+            <span class="ee-addr">synthetics.html · /assets/docs</span></div></li>
+        <li><div><b>Talks with their lineage kept</b> — the Laws of Learning deck banked as
+            v1 (agent draft) &#8594; v2 (hand-tuned) &#8594; v3 (author-tuned); Spanspermia
+            generated from a spoken opening.</div>
+          <div class="ee-links"><a href="/talks.html">the talks &#8594;</a>
+            <span class="ee-addr">laws-of-learning v1&#8594;v3 · spanspermia</span></div></li>
+      </ul>
     </div>
   </section>
 
-  <!-- Pipeline as diagram -->
-  <section class="section" id="pipeline">
+  <!-- ═══ Provenance ═══ -->
+  <section class="section ee-prov" id="provenance">
     <div class="container">
-      <span class="section-label fade-in">The Pipeline</span>
-      <h2 class="section-title fade-in">Corpus, conceptric, gates, projection</h2>
-      <p class="section-subtitle fade-in">One staged operator, drawn as the stages it has. Hover a stage for
-        what it does; the projections fan from the same converged object.</p>
-      <div class="ee-pipeline-frame fade-in">
-        <div class="ee-pipeline-svg-wrap">
-          <svg id="ee-pipeline" viewBox="0 0 720 292" role="group" aria-label="Pipeline diagram: corpus to conceptric to gates, fanning out to four projections.">
-            <!-- edges -->
-            <path class="ee-pipe-edge" data-from="corpus" d="M120,146 L206,146"></path>
-            <path class="ee-pipe-edge" data-from="conceptric" d="M294,146 L372,146"></path>
-            <path class="ee-pipe-edge" data-to="proj" data-stage="paper"  d="M476,146 Q524,146 558,43"></path>
-            <path class="ee-pipe-edge" data-to="proj" data-stage="talk"  d="M476,146 Q524,146 558,105"></path>
-            <path class="ee-pipe-edge" data-to="proj" data-stage="page"  d="M476,146 Q524,146 558,167"></path>
-            <path class="ee-pipe-edge" data-to="proj" data-stage="demo"  d="M476,146 Q524,146 558,229"></path>
-            <!-- corpus -->
-            <g class="ee-stage" data-stage="corpus" tabindex="0" role="button" aria-label="Stage: corpus">
-              <rect class="ee-stage-shape" x="24" y="120" width="96" height="52" rx="8" fill="rgba(255,255,255,0.04)" stroke="var(--border-glass)"></rect>
-              <text x="72" y="143" text-anchor="middle" font-size="13" fill="var(--text-primary)">corpus</text>
-              <text x="72" y="159" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="ui-monospace,monospace">local sources</text>
-            </g>
-            <!-- conceptric -->
-            <g class="ee-stage" data-stage="conceptric" tabindex="0" role="button" aria-label="Stage: conceptric">
-              <polygon class="ee-stage-shape" points="250,104 292,125 292,167 250,188 208,167 208,125"
-                fill="var(--accent-dim)" stroke="var(--accent)"></polygon>
-              <text x="250" y="143" text-anchor="middle" font-size="13" fill="var(--accent-light)">conceptric</text>
-              <text x="250" y="159" text-anchor="middle" font-size="9" fill="var(--evidence)" font-family="ui-monospace,monospace">91n / 140e</text>
-            </g>
-            <!-- gates -->
-            <g class="ee-stage" data-stage="gates" tabindex="0" role="button" aria-label="Stage: gates">
-              <rect class="ee-stage-shape" x="372" y="118" width="104" height="56" rx="8" fill="rgba(255,255,255,0.04)" stroke="var(--border-glass)"></rect>
-              <text x="424" y="143" text-anchor="middle" font-size="13" fill="var(--text-primary)">gates</text>
-              <text x="424" y="159" text-anchor="middle" font-size="9" fill="var(--text-muted)" font-family="ui-monospace,monospace">converge or open</text>
-            </g>
-            <!-- projections -->
-            <g class="ee-stage" data-stage="paper" tabindex="0" role="button" aria-label="Projection: paper">
-              <rect class="ee-stage-shape" x="558" y="22" width="140" height="42" rx="7" fill="rgba(126,184,218,0.08)" stroke="var(--border-glass)"></rect>
-              <text x="574" y="40" font-size="12" fill="var(--text-primary)">paper</text>
-              <text x="574" y="55" font-size="9" fill="var(--text-muted)" font-family="ui-monospace,monospace">EigenEngine.pdf</text>
-            </g>
-            <g class="ee-stage" data-stage="talk" tabindex="0" role="button" aria-label="Projection: talk">
-              <rect class="ee-stage-shape" x="558" y="84" width="140" height="42" rx="7" fill="rgba(126,184,218,0.08)" stroke="var(--border-glass)"></rect>
-              <text x="574" y="102" font-size="12" fill="var(--text-primary)">talk</text>
-              <text x="574" y="117" font-size="9" fill="var(--text-muted)" font-family="ui-monospace,monospace">slides kind</text>
-            </g>
-            <g class="ee-stage" data-stage="page" tabindex="0" role="button" aria-label="Projection: this page">
-              <rect class="ee-stage-shape" x="558" y="146" width="140" height="42" rx="7" fill="var(--accent-dim)" stroke="var(--accent)"></rect>
-              <text x="574" y="164" font-size="12" fill="var(--accent-light)">this page</text>
-              <text x="574" y="179" font-size="9" fill="var(--evidence)" font-family="ui-monospace,monospace">site_backend</text>
-            </g>
-            <g class="ee-stage" data-stage="demo" tabindex="0" role="button" aria-label="Projection: demo">
-              <rect class="ee-stage-shape" x="558" y="208" width="140" height="42" rx="7" fill="rgba(126,184,218,0.08)" stroke="var(--border-glass)"></rect>
-              <text x="574" y="226" font-size="12" fill="var(--text-primary)">demo</text>
-              <text x="574" y="241" font-size="9" fill="var(--text-muted)" font-family="ui-monospace,monospace">/demo/</text>
-            </g>
-          </svg>
-        </div>
-        <div class="ee-pipeline-card" id="ee-pipeline-card">
-          <span class="k">conceptric</span>
-          <p>The sources are decomposed into a graded graph of typed nodes and relations — 91 nodes, 140 edges in the falqon build shown above.</p>
-          <span class="ee-addr">conceptric_v1.json · 91n/140e</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Artifacts of record -->
-  <section class="section" id="artifacts">
-    <div class="container">
-      <span class="section-label fade-in">Artifacts of Record</span>
-      <h2 class="section-title fade-in">What the engine has shipped</h2>
-      <div class="ee-artifacts fade-in">
-
-        <div class="ee-artifact">
-          <span class="src">whitepaper + talk</span>
-          <h3><a href="/assets/docs/EigenEngine.pdf" target="_blank" rel="noopener">One content, two projections</a></h3>
-          <p>The paper and the talk are the same material projected into two forms, a manuscript and a set of
-            slides, each generated by the engine and each pointing to the other.</p>
-          <div class="ee-artifact-links">
-            <a href="/assets/docs/EigenEngine.pdf" target="_blank" rel="noopener">Paper &#8594;</a>
-            <a href="/assets/docs/eigenengine-talk.pdf" target="_blank" rel="noopener">Talk &#8594;</a>
-            <span class="ee-addr">EigenEngine.pdf · eigenengine-talk.pdf</span>
-          </div>
-        </div>
-
-        <div class="ee-artifact">
-          <span class="src">falqon · in anger</span>
-          <h3><a href="/demo/">A manuscript, worked in anger</a></h3>
-          <p>A physics manuscript built through the full pipeline: claims curated with every number keyed to
-            its numerics readings file, the concept graph converged under gates, the residue tracked instead of
-            smoothed. The demo is the engine's own editor over that manuscript's real conceptric — the object
-            rendered at the top of this page.</p>
-          <div class="ee-artifact-links">
-            <a href="/demo/">Open the demo &#8594;</a>
-            <span class="ee-addr">62-claim curation · numerics/*_readings.json · 91n/140e</span>
-          </div>
-        </div>
-
-        <div class="ee-artifact">
-          <span class="src">talks · another altitude</span>
-          <h3><a href="/talks.html">The same operator, spoken</a></h3>
-          <p>The Spanspermia deck was generated by the engine from the spoken opening of an FQXi discussion. The
-            Laws of Learning ran the other experiment: v1 the first agent-drafted cut, v2 the hand-tuned pass,
-            v3 the author-fine-tuned deck that survived — the lineage is kept, not hidden.</p>
-          <div class="ee-artifact-links">
-            <a href="/talks.html">The talks &#8594;</a>
-            <span class="ee-addr">spanspermia · laws-of-learning v1 &#8594; v3</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Principles -->
-  <section class="section" id="principles">
-    <div class="container">
-      <span class="section-label fade-in">The Principles</span>
-      <h2 class="section-title fade-in">Principle, mechanism, check</h2>
-      <p class="section-subtitle fade-in">Each one is enforced by code, not policy. The mono line names where.</p>
-      <div class="ee-principles-grid fade-in">
-
-        <div class="ee-principle" data-n="01">
-          <h3>The builder is never the judge</h3>
-          <p>Whatever writes an artifact does not get to score it. Manuscript claims are judged by separate,
-            blinded passes; the drain that consumes findings validates evidence before it counts anything
-            closed.</p>
-          <span class="ee-addr">dispatch/judge separation · blind panel protocol</span>
-        </div>
-
-        <div class="ee-principle" data-n="02">
-          <h3>Entry by reconstruction</h3>
-          <p>No worker is handed a pile of files. Every dispatched agent is pointed at the structure and told
-            what to reconstruct and for what goal; it builds its own minimal frame and reports back up. Flat
-            reads are the failure mode the architecture exists to remove.</p>
-          <span class="ee-addr">compile_dispatch · reconstruct(node, goal)</span>
-        </div>
-
-        <div class="ee-principle" data-n="03">
-          <h3>Evidence or open</h3>
-          <p>Nothing counts as resolved without an evidence-carrying record — including the orchestrator's own
-            claims. A gap is named and stays open rather than being smoothed.</p>
-          <span class="ee-addr">friction ledger · drain validator</span>
-        </div>
-
-        <div class="ee-principle" data-n="04">
-          <h3>The model ceiling</h3>
-          <p>Dispatched workers run at or below the orchestrator's own model tier, chosen by the grade of the
-            work; an audit enforces the rule over every workflow rather than trusting the author of the
-            dispatch.</p>
-          <span class="ee-addr">audit_dispatch_models.py</span>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Shown refusals -->
-  <section class="section" id="refusals">
-    <div class="container">
-      <span class="section-label fade-in" style="color: var(--refused);">Shown Refusals</span>
-      <h2 class="section-title fade-in">Where the gates said no</h2>
-      <p class="section-subtitle fade-in">A system that only exhibits successes is advertising. These are real
-        refusals from the engine's own record, kept because they are what the gates are for.</p>
-      <div class="ee-refusals fade-in">
-
-        <div class="ee-refusal">
-          <h3>The seal scan refused its own first build</h3>
-          <p>The first bake of this site's demo bundle was rejected by the engine's own leak scan — an
-            author-identifying literal had ridden into a shared asset. The build shipped only after the patch
-            that stripped it.</p>
-          <span class="ee-addr">site_seal scan · 2026-07-11</span>
-        </div>
-
-        <div class="ee-refusal">
-          <h3>The drain refused the orchestrator's closures</h3>
-          <p>Three findings were claimed closed in a commit message; the consumer refused to count them consumed
-            until evidence-carrying resolutions were banked. The machinery does not take its own operator's
-            word.</p>
-          <span class="ee-addr">friction drain · evidence-or-open</span>
-        </div>
-
-        <div class="ee-refusal">
-          <h3>Six definition-orphans, shipped and named</h3>
-          <p>A connectivity gate on a manuscript's concept graph caught definitions no claim consumed. The
-            state shipped as it was — the six red-ringed nodes above — rather than being wired over.</p>
-          <span class="ee-addr">connectivity gate · def-orphans</span>
-        </div>
-
-        <div class="ee-refusal">
-          <h3>Forged actors bounce at the door</h3>
-          <p>Feedback arriving from the public demo is minted to the visitor who wrote it. Records that arrive
-            actorless, or dressed as someone they are not, are refused and kept for inspection instead of being
-            ingested.</p>
-          <span class="ee-addr">remote-channel actor guard</span>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- How this page was made -->
-  <section class="section" id="provenance">
-    <div class="container">
-      <span class="section-label fade-in">Provenance</span>
-      <h2 class="section-title fade-in">How this page was made</h2>
-      <details class="fade-in" style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 8px; padding: 1rem 1.25rem;">
-        <summary style="cursor: pointer; color: var(--accent); font-weight: 500;">The build record</summary>
-        <div class="pub-blurb" style="margin-top: 1rem;">
-          <p>This is a static page on a static host, so every claim of liveness is bounded the same way: baked
-            at commit. The shell around this text — head, navigation, footer, identity tokens — is generated by
-            the engine's site backend from a spine file; the content region is authored innards; a drift gate
-            fails the build if the generated shell and its sources disagree. The graph at the top is the falqon
-            manuscript's real conceptric, extracted from <span class="evidence">conceptric_v1.json</span> at
-            the engine tree on 2026-07-11 and drawn client-side — no data leaves the browser.</p>
-          <p style="margin-top: 1rem;">The content was written by the engine's own orchestrating self during
-            the session of 2026-07-11, from the engine's banked process records — session handoffs, friction
-            ledgers, gate verdicts. The trace shown on this page is curated for reading; the underlying records
-            are the engine's working files, and every exhibit above names its source in the mono line it
-            carries. Where the engine's next milestone lands, this page's content region is scheduled to be
-            compiled from the engine's own concept graph through the same pipeline as its manuscripts — at
-            which point this fold will say so, with the run's own record.</p>
-          <p style="margin-top: 1rem;"><span class="evidence">shell: site_backend · spine: site/spine.json ·
-            innards: site/content/eigenengine.html · graph: assets/js/eigenengine-graph-data.js · gates: drift ·
-            links · survival · meta · deslop · visual(375px)</span></p>
+      <span class="section-label">Provenance</span>
+      <h2 class="section-title">How this page was made</h2>
+      <details class="ee-prov-fold">
+        <summary>the build record</summary>
+        <div class="prose">
+          <p>This is a static page on a static host, so every liveness claim is bounded the
+            same way: baked at a commit. The shell — head, navigation, footer, identity
+            tokens — is generated by the engine's site backend from a spine file; this
+            content region is authored; every number and both drawn exhibits come from one
+            generated data file, emitted from the engine tree at commit
+            <span class="evidence" data-ee="meta-commit3"></span>
+            (<span data-ee="meta-date2"></span>). A drift gate fails the build when the
+            generated shell and its sources disagree; link, meta, de-slop and 375px visual
+            gates run before every push. The demo bundle states its own bake commit in its
+            banner.</p>
+          <p><span class="evidence">shell: site_backend · spine: site/spine.json · innards:
+            site/content/eigenengine.html · data: assets/js/eigenengine-page-data.js
+            (scripts/site_assets/build_eigenengine_page_data.py) · demo:
+            scripts/export_demo.py</span></p>
         </div>
       </details>
     </div>
   </section>
 
-  <!-- The demo — the closing move -->
-  <section class="section engine-exhibit" id="demo">
-    <div class="container">
-      <div class="section-label fade-in">The Demonstration</div>
-      <h2 class="section-title fade-in">Use the thing itself</h2>
-      <div class="engine-panel fade-in">
-        <p class="engine-lede">
-          The demo is the engine's conceptric editor over a real manuscript corpus, running entirely in your
-          browser. Walk the graph, open a node's essence, follow an edge to its evidence. If you leave a
-          comment, it becomes a typed record and lands in the engine's intake through the same gates as
-          everything else on this page.
-        </p>
-        <div class="evidence-strip">
-          <span><span class="num">91</span> nodes</span>
-          <span><span class="num">140</span> edges</span>
-          <span>client-side, baked at commit</span>
-          <span>guided tour inside</span>
-        </div>
-        <div class="engine-actions">
-          <a class="engine-link" href="/demo/">Open the demo →</a>
-          <a class="engine-link secondary" href="/synthetics.html">The theory →</a>
-        </div>
-        <span class="engine-note evidence">Passphrase required — the gate, not a fortress. Comments are minted to the visitor who wrote them.</span>
-      </div>
-    </div>
-  </section>
-
-  <script src="/assets/js/eigenengine-graph-data.js"></script>
+  <script src="/assets/js/eigenengine-page-data.js"></script>
   <script src="/assets/js/eigenengine.js"></script>
 
   <footer class="footer">

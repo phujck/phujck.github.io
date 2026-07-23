@@ -209,19 +209,19 @@
       "layout": "full",
       "nav_active": "eigenengine",
       "title": "EigenEngine — Gerard McCaul",
-      "description": "EigenEngine: the synthetics built into a machine. A corpus compiled into a graded structure, documents generated from it by reconstruction — with the engine's own process records as evidence.",
+      "description": "EigenEngine: an engine that compiles a working corpus into a typed concept graph and generates planned, gated, evidence-linked manuscripts. With a public read-only demo of its working surfaces.",
       "canonical": "https://gmccaul.co.uk/eigenengine.html",
       "og_type": "website",
       "og_title": "EigenEngine — Gerard McCaul",
-      "og_description": "The synthetics built into a machine: memory as reconstruction, generation as projection, evidence from the engine's own process records.",
+      "og_description": "An engine that compiles a working corpus into a typed concept graph and generates planned, gated, evidence-linked manuscripts. Public read-only demo included.",
       "og_image": "https://gmccaul.co.uk/assets/img/me.jpg",
       "twitter_card": "summary",
       "twitter_title": "EigenEngine — Gerard McCaul",
-      "twitter_description": "The synthetics built into a machine: memory as reconstruction, generation as projection.",
+      "twitter_description": "An engine that compiles a working corpus into a typed concept graph and generates planned, gated, evidence-linked manuscripts. Public read-only demo included.",
       "extra_css": [],
       "og_image_width": "1200",
       "og_image_height": "630",
-      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"WebPage\",\n    \"name\": \"EigenEngine - Gerard McCaul\",\n    \"description\": \"EigenEngine: the synthetics built into a machine.\",\n    \"url\": \"https://gmccaul.co.uk/eigenengine.html\",\n    \"author\": {\n      \"@type\": \"Person\",\n      \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n      \"name\": \"Gerard McCaul\"\n    }\n  }"
+      "jsonld": "  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"WebPage\",\n    \"name\": \"EigenEngine - Gerard McCaul\",\n    \"description\": \"EigenEngine: an engine that compiles a corpus into a typed concept graph and generates evidence-linked manuscripts.\",\n    \"url\": \"https://gmccaul.co.uk/eigenengine.html\",\n    \"author\": {\n      \"@type\": \"Person\",\n      \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n      \"name\": \"Gerard McCaul\"\n    }\n  }"
     },
     {
       "path": "404.html",
