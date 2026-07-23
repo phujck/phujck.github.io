@@ -1,14 +1,46 @@
   <link rel="stylesheet" href="/assets/css/page-eigenengine.css">
 
-  <!-- ═══ First screen: the three answers + the demo door ═══ -->
+  <!-- ═══ Opening: name, mark, one definition ═══ -->
   <header class="ee-hero">
     <div class="container">
       <h1 class="ee-title">EigenEngine
-        <span class="ee-wordmark">Ê<sub>i</sub>|gen&#x27E9; &#x2297; Ê<sub>n</sub>|gen&#x27E9;</span></h1>
+        <span class="ee-wordmark" role="img" aria-label="the EigenEngine mark">Ê<sub>i</sub>|gen&#x27E9; &#x2297; Ê<sub>n</sub>|gen&#x27E9;</span></h1>
       <p class="ee-def">A learning engine built around one persistent loop: work deposits
         into a graded concept memory that survives across sessions, and new work is
         reconstructed from that memory. Everything it publishes — including this page —
         is a projection of the structure it has learned.</p>
+    </div>
+  </header>
+
+  <main>
+  <!-- ═══ The demo door — the machine itself, one click in ═══ -->
+  <section class="ee-top">
+    <div class="container">
+      <div class="ee-door" id="demo">
+        <div class="ee-door-head">
+          <h2>Walk the interface</h2>
+          <a class="ee-door-enter" href="/demo/">Enter the demo &#8594;</a>
+        </div>
+        <p class="ee-door-lede">Four of the engine's real working surfaces with one real
+          project baked in — a quantum-control manuscript mid-review. Inside right now:
+          its <span data-ee="g-nodes0"></span>-concept graph, its section plan, its
+          candidate PDF with the review margin, and a build the engine is currently
+          refusing to pass. A tour bar walks you through in production order; click
+          around freely at every station.</p>
+        <ol class="ee-door-stations">
+          <li><b>The conceptric</b> — the concept graph, drawn by its links; open any
+            node's content and neighbourhood.</li>
+          <li><b>The storyboard</b> — the section plan over the graph: which claims are
+            placed, which are not.</li>
+          <li><b>The artefact</b> — the compiled candidate PDF with its margin of review
+            findings keyed to source.</li>
+          <li><b>The lineage</b> — the joins: paragraph &#8594; section &#8594; concept
+            &#8594; corpus, with unmatched items shown as their own band.</li>
+        </ol>
+        <span class="ee-addr">read-only — editing is disabled in this copy · no account,
+          nothing recorded · baked at commit <span data-ee="meta-commit"></span>
+          (<span data-ee="meta-date"></span>)</span>
+      </div>
 
       <div class="ee-answers">
         <div class="ee-answer">
@@ -16,101 +48,75 @@
           <p>An end-to-end research environment built around a memory. The engine compiles
             a research program's working material — notes, sources, numerics, drafts, its
             author's rulings — into a <em>conceptric</em>: a graded graph of typed concepts
-            that persists and re-grades as the work moves. The loop runs persistently:
-            a session reconstructs its working context from the graph, does its work, and
-            deposits the results — findings, feedback, the author's rulings — back into
-            the structure before it closes. Manuscripts, talks, this page and the demo are
-            reconstructed from the graph, and the graph — never a draft — is what is
-            stored.</p>
-          <span class="ee-addr">conceptric_v1.json · <span data-ee="g-nodes"></span> concepts /
-            <span data-ee="g-edges"></span> edges · growth queue + feedback ledgers live ·
-            <span data-ee="sb-sections"></span>+<span data-ee="sb-appendices"></span> sections
-            planned over it</span>
+            that persists as the work moves. The loop runs continuously: a session
+            reconstructs its working context from the graph, does its work, and deposits
+            the results — findings, feedback, decisions — back into the structure before
+            it closes. Papers, talks, this page and the demo are all generated from the
+            graph; the graph, never a draft, is what is stored.</p>
+          <span class="ee-addr">the falqon graph: <span data-ee="g-nodes"></span> concepts,
+            <span data-ee="g-edges"></span> links · conceptric_v1.json</span>
         </div>
         <div class="ee-answer">
           <h2>What distinguishes it</h2>
-          <p>The whole loop is inside, and every step of it is inspectable. Planning is data
-            over the graph; writing is judged by separated mechanical review that refuses to
-            mint a failing build; every paragraph traces back through plan and graph to
-            source. And it is a theory made operational: the synthetics working drafts —
-            statistical lawhood under finite description — supply the mathematics, the
-            engine is that mathematics running, and early versions of the engine generated
-            the drafts that describe it.</p>
-          <span class="ee-addr">rounds/harnessed · <span data-ee="cv-open"></span> open findings
-            at round <span data-ee="cv-rounds"></span>, build refused ·
-            synthetics.html — the theory, foundation-first</span>
+          <p>The whole loop is inside, and every step of it is inspectable. Planning is
+            data over the graph; writing is judged by separate mechanical review that
+            refuses to release a failing build; every paragraph traces back through plan
+            and graph to source. And it is a theory made operational: the synthetics
+            working drafts — statistical lawhood under finite description — supply the
+            mathematics, the engine is that mathematics running, and early versions of the
+            engine generated the drafts that describe it.</p>
+          <span class="ee-addr">the current build: refused, <span data-ee="cv-open"></span>
+            findings open · the theory: synthetics.html</span>
         </div>
         <div class="ee-answer">
           <h2>Why that matters</h2>
           <p>A research partner that accumulates structure instead of chat history can be
-            audited instead of trusted. Of the falqon manuscript's 148 rendered objects,
-            122 trace back to the concept they argue, and all 54 equations resolve through
-            their derivations; the 26 that do not yet resolve are listed with reasons. The
-            aim it is built toward: a partner intelligence grown from one person's life and
-            work, running on hardware they own.</p>
-          <span class="ee-addr">lineage index · 91 concepts · 62 realised into the paper ·
-            corpus local, code private</span>
+            audited instead of trusted. Of the 148 objects rendered into the falqon
+            manuscript — paragraphs, equations, figures — all but 26 trace back to the
+            concept they argue, and the 26 that do not are listed with reasons rather
+            than hidden.</p>
+          <span class="ee-addr">the lineage index: 148 rendered objects, 26 unresolved,
+            listed</span>
         </div>
-      </div>
-
-      <!-- the demo door -->
-      <div class="ee-door" id="demo">
-        <div class="ee-door-head">
-          <h2>Walk the interface</h2>
-          <a class="ee-door-enter" href="/demo/">Enter the demo &#8594;</a>
-        </div>
-        <p class="ee-door-lede">Four of the engine's real working surfaces, baked with the
-          falqon manuscript's real data and served as static files — the same HTML and
-          modules the local instrument runs. A tour bar carries you through in production
-          order; click around freely at every station.</p>
-        <ol class="ee-door-stations">
-          <li><b>The conceptric</b> — the concept graph, drawn by its links; descend into any
-            node's content and neighbourhood.</li>
-          <li><b>The storyboard</b> — the narrative plan over the graph, with coverage:
-            which claims are placed, which are not.</li>
-          <li><b>The artefact</b> — the compiled candidate PDF with its margin of
-            <span data-ee="ar-findings"></span> review findings keyed to source.</li>
-          <li><b>The lineage</b> — the joins: paragraph &#8594; section &#8594; concept
-            &#8594; corpus, unresolved links shown as their own band.</li>
-        </ol>
-        <span class="ee-addr">read-only — author verbs are refused at the door · no account,
-          nothing recorded · baked at commit <span data-ee="meta-commit"></span>
-          (<span data-ee="meta-date"></span>)</span>
       </div>
     </div>
-  </header>
+  </section>
 
   <!-- ═══ The engine, stage by stage: the band is the navigation ═══ -->
   <section class="section ee-walk" id="walk">
     <div class="container">
       <span class="section-label">The machine</span>
       <h2 class="section-title">One pipeline, five stages</h2>
-      <p class="section-subtitle">Select a stage — it opens in place. Every count on this
-        band is the falqon manuscript's, generated from the engine tree at commit
+      <p class="section-subtitle">Select a stage — it opens in place. Every count is the
+        falqon manuscript's, generated from the engine tree at commit
         <span class="evidence" data-ee="meta-commit2"></span>.</p>
 
       <div class="ee-band" role="tablist" aria-label="Pipeline stages">
-        <button class="ee-stage" data-fold="corpus" role="tab" aria-expanded="false">
+        <button class="ee-stage" id="tab-corpus" data-fold="corpus" role="tab"
+          aria-selected="false" aria-controls="fold-corpus">
           <span class="k">corpus</span><span class="v">sources · ledgers</span></button>
         <span class="ee-band-link" aria-hidden="true"></span>
-        <button class="ee-stage" data-fold="conceptric" role="tab" aria-expanded="false">
-          <span class="k">conceptric</span><span class="v"><span data-ee="g-nodes2"></span>n /
-            <span data-ee="g-edges2"></span>e</span></button>
+        <button class="ee-stage" id="tab-conceptric" data-fold="conceptric" role="tab"
+          aria-selected="false" aria-controls="fold-conceptric">
+          <span class="k">conceptric</span><span class="v"><span data-ee="g-nodes2"></span>
+            concepts</span></button>
         <span class="ee-band-link" aria-hidden="true"></span>
-        <button class="ee-stage" data-fold="storyboard" role="tab" aria-expanded="false">
-          <span class="k">storyboard</span><span class="v"><span data-ee="sb-sections2"></span>
-            + <span data-ee="sb-appendices2"></span> boards</span></button>
+        <button class="ee-stage" id="tab-storyboard" data-fold="storyboard" role="tab"
+          aria-selected="false" aria-controls="fold-storyboard">
+          <span class="k">storyboard</span><span class="v"><span data-ee="sb-boards"></span>
+            boards</span></button>
         <span class="ee-band-link" aria-hidden="true"></span>
-        <button class="ee-stage" data-fold="converge" role="tab" aria-expanded="false">
-          <span class="k">converge</span><span class="v"><span data-ee="cv-rounds2"></span> rounds ·
-            refused</span></button>
+        <button class="ee-stage" id="tab-converge" data-fold="converge" role="tab"
+          aria-selected="false" aria-controls="fold-converge">
+          <span class="k">review</span><span class="v">build refused</span></button>
         <span class="ee-band-link" aria-hidden="true"></span>
-        <button class="ee-stage" data-fold="artefact" role="tab" aria-expanded="false">
+        <button class="ee-stage" id="tab-artefact" data-fold="artefact" role="tab"
+          aria-selected="false" aria-controls="fold-artefact">
           <span class="k">artefact</span><span class="v" data-ee="ar-version"></span></button>
       </div>
 
       <!-- ── fold: corpus ── -->
-      <div class="ee-fold" id="fold-corpus" hidden>
+      <div class="ee-fold" id="fold-corpus" role="tabpanel" aria-labelledby="tab-corpus" hidden>
         <div class="ee-fold-grid">
           <div class="prose">
             <p>Everything begins as ordinary files: manuscript sources, numerics with their
@@ -118,7 +124,7 @@
               a dispatched agent is pointed at one node of the structure and a goal, and
               reconstructs the context it needs from there. The dispatch layer enforces
               the rule on every dispatched prompt.</p>
-            <p>Dispatched workers also run at or below the orchestrator's own model tier,
+            <p>Dispatched workers also run at or below the orchestrating model's own tier,
               and an audit walks every workflow to check it, rather than trusting the author
               of the dispatch.</p>
             <p>The loop closes here: review findings, the author's rulings and reader
@@ -127,7 +133,7 @@
           </div>
           <div class="ee-fold-rail">
             <div class="ee-mech"><span class="m">reconstruct(node, goal), never read(file)</span>
-              <span class="ee-addr">compile_dispatch · the dispatch kernel</span></div>
+              <span class="ee-addr">the dispatch rule, machine-enforced</span></div>
             <div class="ee-mech"><span class="m">the model ceiling, audited</span>
               <span class="ee-addr">audit_dispatch_models.py</span></div>
           </div>
@@ -135,14 +141,15 @@
       </div>
 
       <!-- ── fold: conceptric ── -->
-      <div class="ee-fold" id="fold-conceptric" hidden>
+      <div class="ee-fold" id="fold-conceptric" role="tabpanel" aria-labelledby="tab-conceptric" hidden>
         <div class="ee-fold-grid ee-fold-wide">
           <div>
             <p class="prose">This graph is the falqon project's memory. The compiler types
-              every node and grades the graph, so coarse structure sits above fine detail.
-              Hover a node for its label and edges — the six definitions no claim consumes
-              are ringed <span class="ee-refused-word">red</span>: a connectivity gate caught
-              them, and they shipped as they are.</p>
+              every node — claims, definitions, results, limitations — and grades the graph
+              so coarse structure sits above fine detail. Hover a node for its label and
+              links. The six definitions no claim uses are ringed
+              <span class="ee-refused-word">red</span>: a connectivity gate caught them,
+              and they shipped as they are rather than being quietly wired over.</p>
             <div class="ee-graph-wrap">
               <canvas id="ee-graph" role="img"
                 aria-label="The falqon manuscript's concept graph, drawn from generated coordinates; node colours encode kind."></canvas>
@@ -152,37 +159,39 @@
             <div class="ee-legend" id="ee-legend"></div>
           </div>
           <div class="ee-fold-rail">
-            <div class="ee-mech"><span class="m">typed nodes, graded descent</span>
-              <span class="ee-addr"><span data-ee="g-nodes3"></span> nodes ·
-                <span data-ee="g-edges3"></span> edges · kinds:
-                <span data-ee="g-kinds"></span></span></div>
-            <div class="ee-mech ee-refusal"><span class="m">shown refusal: six def-orphans kept</span>
-              <span class="ee-addr">connectivity gate · def_orphans · all six still
-                in the shipped graph</span></div>
+            <div class="ee-mech"><span class="m">typed nodes, coarse-to-fine grades</span>
+              <span class="ee-addr"><span data-ee="g-nodes3"></span> concepts ·
+                <span data-ee="g-edges3"></span> links ·
+                <span data-ee="g-kinds"></span> node types</span></div>
+            <div class="ee-mech ee-refusal"><span class="m">shown refusal: six unclaimed
+              definitions kept</span>
+              <span class="ee-addr">connectivity gate · all six still in the shipped
+                graph</span></div>
             <a class="ee-doorlink" href="/demo/conceptric.html?corpus=paper_falqon">walk this
               graph in the demo &#8594;</a>
-            <span class="ee-addr">the demo's map also descends into the substrate grade
-              beneath these <span data-ee="g-nodes4"></span> concepts, so its grade bands
-              count more nodes than the concept graph here</span>
+            <span class="ee-addr">the demo's map also opens the source layer beneath these
+              concepts, so its bands count more nodes than the concept graph here</span>
           </div>
         </div>
       </div>
 
       <!-- ── fold: storyboard ── -->
-      <div class="ee-fold" id="fold-storyboard" hidden>
+      <div class="ee-fold" id="fold-storyboard" role="tabpanel" aria-labelledby="tab-storyboard" hidden>
         <div class="ee-fold-grid">
           <div class="prose">
             <p>The plan is itself a data object: <span data-ee="sb-sections3"></span> sections
               and <span data-ee="sb-appendices3"></span> appendices, each drawing on named
               graph nodes, with coverage tracked — which claims are placed, which are still
-              homeless. Re-planning verbs (retitle a section, move a beat, re-spine the
-              order) are writes through an actor-guarded door: a record arriving without an
-              actor, or dressed as someone it is not, is refused and kept for inspection.</p>
+              homeless. Re-planning actions (retitle a section, move a beat, reorder the
+              spine) are author edits through a guarded door: a record arriving without a
+              named author, or signed as someone it is not, is refused and kept for
+              inspection.</p>
           </div>
           <div class="ee-fold-rail">
             <div class="ee-mech"><span class="m">the plan over the graph</span>
               <span class="ee-addr">projection_plan.json · coverage per section</span></div>
-            <div class="ee-mech ee-refusal"><span class="m">shown refusal: forged actors bounce</span>
+            <div class="ee-mech ee-refusal"><span class="m">shown refusal: forged authorship
+              bounces</span>
               <span class="ee-addr">the actor guard · refused, kept for inspection</span></div>
             <a class="ee-doorlink" href="/demo/storyboard.html?corpus=paper_falqon">open the
               real board in the demo &#8594;</a>
@@ -190,54 +199,53 @@
         </div>
       </div>
 
-      <!-- ── fold: converge ── -->
-      <div class="ee-fold" id="fold-converge" hidden>
+      <!-- ── fold: review ── -->
+      <div class="ee-fold" id="fold-converge" role="tabpanel" aria-labelledby="tab-converge" hidden>
         <div class="ee-fold-grid ee-fold-wide">
           <div>
             <p class="prose">Every compiled build is read by a panel of detector classes —
-              meta-leak, captions, apparatus, claims, house style, visuals, template,
-              promises. Findings are typed records; the drain that consumes them validates
-              evidence before counting anything closed, and has refused the orchestrator's
-              own claimed closures. The loop refuses to lock while any hard gate fails.</p>
+              leaked planning language, captions, apparatus, claims, house style, visuals,
+              template, promises. Findings are typed records carrying evidence; nothing
+              counts as closed without it, and the machinery has refused its own operator's
+              claimed closures on exactly that ground. The loop refuses to release a build
+              while any hard gate fails.</p>
             <div id="ee-gates"></div>
-            <p class="ee-gates-note">Findings <em>rise</em> across these rounds because the
-              detector suite widens as it learns the manuscript. The falqon build is still
-              refused: the loop will not mint a release from it in this state.</p>
+            <p class="ee-gates-note">Two counters describe this build and they move
+              differently: the review ledger has banked
+              <span data-ee="ar-findings4"></span> findings against the candidate in total,
+              while the detector pass above counts <span data-ee="cv-open4"></span> still
+              open at round <span data-ee="cv-rounds4"></span> — the count <em>rises</em>
+              across rounds because the detector suite widens as it learns the manuscript.
+              The build is still refused: the engine will not release it in this state.</p>
           </div>
           <div class="ee-fold-rail">
             <div class="ee-mech"><span class="m">builder and judge, separated</span>
               <span class="ee-addr">blinded review passes · typed findings</span></div>
             <div class="ee-mech ee-refusal"><span class="m">shown refusal: unevidenced closures
-              bounced</span><span class="ee-addr">the friction drain · evidence-or-open</span></div>
+              bounced</span><span class="ee-addr">evidence-or-open, machine-enforced</span></div>
           </div>
         </div>
       </div>
 
       <!-- ── fold: artefact ── -->
-      <div class="ee-fold" id="fold-artefact" hidden>
+      <div class="ee-fold" id="fold-artefact" role="tabpanel" aria-labelledby="tab-artefact" hidden>
         <div class="ee-fold-grid ee-fold-wide">
           <div>
-            <p class="prose">A minted candidate is an addressed object:
-              <span class="evidence" data-ee="ar-version2"></span>, carrying
-              <span data-ee="ar-findings2"></span> findings on its ledger
-              (<span data-ee="ar-hard"></span> hard · <span data-ee="ar-soft"></span> soft ·
-              <span data-ee="ar-deferred"></span> deferred) and
-              <span data-ee="ar-versions"></span> banked revisions. The ledger's
-              <span data-ee="ar-findings3"></span> is every finding the review rounds have
-              banked against this candidate; the converge stage's
-              <span data-ee="cv-open2"></span> counts those still open at round
-              <span data-ee="cv-rounds3"></span>. Every paragraph joins backward —
-              paragraph &#8594; storyboard section &#8594; concept &#8594; corpus.
-              The band below weights each section of the paper by how much of the manuscript
-              realises in it; the unresolved objects sit in their own band at the end.</p>
+            <p class="prose">A candidate build is an addressed object:
+              <span class="evidence" data-ee="ar-version2"></span>, carrying its full
+              review ledger and <span data-ee="ar-versions"></span> banked revisions.
+              Every paragraph joins backward — paragraph &#8594; plan section &#8594;
+              concept &#8594; corpus. The band below shows how much of the manuscript each
+              section of the paper carries; the objects the graph cannot yet claim sit in
+              their own band at the end.</p>
             <div id="ee-lineage"></div>
             <details class="ee-table-fold"><summary>the same band as a table</summary>
               <div id="ee-lineage-table"></div></details>
           </div>
           <div class="ee-fold-rail">
             <div class="ee-mech"><span class="m">the joins, queryable</span>
-              <span class="ee-addr">148 objects · 122 trace their origin · 54/54 equations
-                resolve · 26 unresolved, listed</span></div>
+              <span class="ee-addr">148 rendered objects · 26 unresolved, listed with
+                reasons</span></div>
             <a class="ee-doorlink" href="/demo/artefact.html?corpus=paper_falqon">read the
               candidate PDF in the demo &#8594;</a>
             <a class="ee-doorlink" href="/demo/lineage.html?corpus=paper_falqon">walk the
@@ -269,7 +277,7 @@
             demo above. The byline on the candidate reads: The Laplace Engine (Eigen) and
             Gerard McCaul.</div>
           <div class="ee-links"><a href="/demo/">the demo &#8594;</a>
-            <span class="ee-addr">62-claim curation · numerics/*_readings.json ·
+            <span class="ee-addr">every number keyed to its readings file ·
               <span data-ee="ar-version3"></span></span></div></li>
         <li><div><b>The synthetics working drafts</b> — five papers presented
             foundation-first: the theory the engine implements, generated with early
@@ -282,6 +290,27 @@
           <div class="ee-links"><a href="/talks.html">the talks &#8594;</a>
             <span class="ee-addr">laws-of-learning v1&#8594;v3 · spanspermia</span></div></li>
       </ul>
+    </div>
+  </section>
+
+  <!-- ═══ The aim — the closing movement ═══ -->
+  <section class="section ee-vision" id="aim">
+    <div class="container">
+      <span class="section-label">The aim</span>
+      <h2 class="section-title">Where this goes</h2>
+      <div class="ee-vision-body prose">
+        <p>The falqon manuscript is the first object worked end to end inside the engine;
+          the engine's own paper is queued behind it. The destination is further out: a
+          partner intelligence grown from one person's life and work — a memory of a whole
+          research life, structured, auditable, and running on hardware its author owns.
+          What is on this page is that destination's working prototype: the loop already
+          runs, the memory already persists, and everything it produces already shows
+          its evidence.</p>
+        <div class="ee-vision-doors">
+          <a class="ee-doorlink" href="/demo/">walk the interface &#8594;</a>
+          <a class="ee-doorlink" href="/synthetics.html">read the theory &#8594;</a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -311,6 +340,7 @@
       </details>
     </div>
   </section>
+  </main>
 
   <script src="/assets/js/eigenengine-page-data.js"></script>
   <script src="/assets/js/eigenengine.js"></script>

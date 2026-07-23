@@ -3,8 +3,13 @@
    live in eigenengine.js (the graph-mode GROUP_COLOR family, validated as a
    categorical set against the dark surface). */
 
-/* ── hero: the three answers + the demo door ── */
-.ee-hero { padding: 5.5rem 0 2.5rem; }
+/* ── opening + the door-first top ── */
+.ee-hero { padding: 5rem 0 0.6rem; }
+.ee-top { padding: 1.2rem 0 2.2rem; }
+.ee-top .ee-answers { margin-top: 1.4rem; }
+.ee-vision-body p { font-size: 1.02rem; line-height: 1.7; color: var(--text-primary);
+  max-width: 52rem; margin: 1.2rem 0; }
+.ee-vision-doors { display: flex; gap: 0.8rem; flex-wrap: wrap; }
 .ee-title { font-size: clamp(2rem, 5vw, 2.9rem); letter-spacing: -0.01em; }
 .ee-wordmark { display: inline-block; margin-left: 0.75rem; font-family: 'Lora', serif;
   font-style: italic; font-size: 0.45em; color: var(--text-secondary); opacity: 0.85;
@@ -53,10 +58,10 @@
   cursor: pointer; text-align: left; color: inherit; font: inherit;
   display: flex; flex-direction: column; gap: 0.15rem; }
 .ee-stage:hover { background: var(--bg-card-hover); border-color: var(--accent); }
-.ee-stage[aria-expanded="true"] { border-color: var(--accent);
+.ee-stage[aria-selected="true"] { border-color: var(--accent);
   background: var(--accent-dim); }
 .ee-stage .k { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); }
-.ee-stage[aria-expanded="true"] .k { color: var(--accent-light); }
+.ee-stage[aria-selected="true"] .k { color: var(--accent-light); }
 .ee-stage .v { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
   color: var(--text-muted); white-space: nowrap; overflow: hidden;
   text-overflow: ellipsis; }

@@ -356,7 +356,7 @@
       a.addEventListener("click", e => {
         e.preventDefault();
         const cur = new URLSearchParams(location.search).get("corpus") || corpus;
-        location.href = a.dataset.path + (cur ? "?corpus="+ec(cur) : "");
+        window.__demoNav(a.dataset.path + (cur ? "?corpus="+ec(cur) : ""));
       });
     });
 
@@ -384,7 +384,7 @@
     a.addEventListener("click", e => {
       e.preventDefault();
       const cur = new URLSearchParams(location.search).get("corpus") || corpus;
-      location.href = "/" + (cur ? "?corpus="+ec(cur) : "");
+      window.__demoNav("/" + (cur ? "?corpus="+ec(cur) : ""));
     });
   }
 
@@ -536,7 +536,7 @@
     u.searchParams.set("corpus", c);
     for(const k of ["node","asset","version","section","beat","round","anchor"])
       u.searchParams.delete(k);
-    location.href = u.pathname + u.search;
+    window.__demoNav(u.pathname + u.search);
   }
 
   // per-project PLACE (J5): the surface last seen for a project, server-persisted in
