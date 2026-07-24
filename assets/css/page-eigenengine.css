@@ -39,6 +39,21 @@
   font-weight: 700; border-radius: 8px; padding: 0.65rem 1.3rem; text-decoration: none;
   white-space: nowrap; }
 .ee-door-enter:hover { background: var(--accent-light); }
+.ee-door-routes { display: flex; flex-wrap: wrap; gap: 0.7rem 1.35rem; margin: -0.25rem 0 1.35rem; }
+.ee-entry-orient { max-width: 850px; margin: 0 0 2rem; }
+.ee-entry-orient h2 { margin: 0.35rem 0 0.75rem; font-size: clamp(1.8rem, 4vw, 2.55rem);
+  letter-spacing: -0.025em; }
+.ee-entry-orient p { margin: 0; color: var(--text-secondary); font-size: 1.02rem; line-height: 1.72; }
+.ee-live-door { display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+  margin-bottom: 1.2rem; padding: 1.35rem 1.5rem; border: 1px solid var(--border);
+  border-radius: var(--radius-lg); background: var(--bg-secondary); }
+.ee-live-door h2 { margin: 0.25rem 0 0.35rem; font-size: 1.45rem; }
+.ee-live-door p { max-width: 720px; margin: 0; color: var(--text-secondary); font-size: 0.92rem; }
+.ee-live-kicker { color: var(--accent); font-family: var(--font-mono); font-size: 0.68rem;
+  font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+@media (max-width: 720px) {
+  .ee-live-door { align-items: flex-start; flex-direction: column; }
+}
 .ee-door-lede { margin: 0.7rem 0 0.9rem; max-width: 56rem; color: var(--text-primary);
   font-size: 0.97rem; line-height: 1.6; }
 .ee-door-stations { margin: 0 0 1rem; padding: 0; list-style: none;
