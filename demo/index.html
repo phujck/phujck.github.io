@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0a0e1a">
-  <title>Nonlinear Computing with Optical Twinning Trees — an EigenEngine generation</title>
+  <title>Nonlinear Computing with Optical Twinning Trees | EigenEngine</title>
   <meta name="description" content="A front-to-back EigenEngine generation: Denys Bondar's twinning-field prompt becomes a numerical optics paper, a visual talk, and a public working record.">
   <link rel="canonical" href="https://gmccaul.co.uk/demo/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -48,6 +48,24 @@
     .result{padding:1.15rem;background:#0a0e1a}
     .result b{display:block;color:#dfc599;font:600 1.3rem/1.2 Outfit,sans-serif}
     .result span{display:block;margin-top:.35rem;color:#8f96a3;font:.72rem/1.5 "JetBrains Mono",monospace}
+    .revision-flow{display:grid;grid-template-columns:1fr auto 1.25fr auto 1fr;gap:1rem;
+      align-items:stretch;margin-top:2rem}
+    .revision-step{padding:1.45rem;border:1px solid rgba(255,255,255,.09);border-radius:12px;
+      background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.015))}
+    .revision-step.current{border-color:rgba(201,169,110,.38);
+      background:linear-gradient(145deg,rgba(201,169,110,.11),rgba(255,255,255,.02))}
+    .revision-step .n{color:#7eb8da;font:600 .67rem/1.4 "JetBrains Mono",monospace;
+      letter-spacing:.08em;text-transform:uppercase}
+    .revision-step h3{margin:.6rem 0 .65rem;font-size:1.2rem}
+    .revision-step p{margin:0;color:#9ca3af;font-size:.9rem;line-height:1.65}
+    .revision-step a{display:inline-block;margin-top:1rem;color:#dfc599;
+      font:.74rem/1.4 "JetBrains Mono",monospace}
+    .revision-arrow{align-self:center;color:#49586b;font-size:1.8rem}
+    .review-findings{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-top:1rem}
+    .finding{display:grid;grid-template-columns:auto 1fr;gap:.8rem;padding:1rem;
+      border-top:1px solid rgba(255,255,255,.08)}
+    .finding b{color:#c9a96e;font:600 .72rem/1.5 "JetBrains Mono",monospace}
+    .finding span{color:#9ca3af;font-size:.86rem;line-height:1.58}
     .section{margin-top:5rem}
     .section-label{display:block;color:#c9a96e;font:600 .72rem/1.4 "JetBrains Mono",monospace;
       letter-spacing:.11em;text-transform:uppercase}
@@ -78,13 +96,14 @@
     .earlier a{color:#7eb8da}
     @media(max-width:900px){
       .hero,.explainer{grid-template-columns:1fr}.hero-media{order:-1}.walk{grid-template-columns:1fr}
+      .revision-flow{grid-template-columns:1fr}.revision-arrow{transform:rotate(90deg);justify-self:center}
       .stage{padding-left:1.4rem}.stage:not(:last-child)::after{display:none}
       .result-strip{grid-template-columns:1fr 1fr}.record{grid-template-columns:1fr}
     }
     @media(max-width:520px){
       .demo-wrap{padding-top:1.8rem}.demo-nav{align-items:flex-start}.demo-nav div{gap:.65rem}
       h1{font-size:2.35rem;overflow-wrap:break-word}
-      .result-strip{grid-template-columns:1fr}.evidence-grid{grid-template-columns:1fr}
+      .result-strip{grid-template-columns:1fr}.evidence-grid,.review-findings{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -97,14 +116,15 @@
 
     <header class="hero">
       <div>
-        <span class="kicker">Featured generation · 24 July 2026</span>
+        <span class="kicker">Featured generation · 24–25 July 2026</span>
         <h1>Nonlinear Computing with Optical Twinning Trees</h1>
         <p class="lede">A prompt about experimentally realising twinning fields became
-          a numerical optics paper about a feedback loop that finds zeros—and a
+          a numerical optics paper about a feedback loop that finds zeros, and a
           composition rule that factors higher-order equations into matter.</p>
         <p class="byline">Denys I. Bondar · Gerard McCaul, EigenEngine · with Eigen</p>
         <div class="actions">
-          <a class="action primary" href="/assets/docs/nonlinear-computing-with-optical-twinning-trees.pdf">Read the paper</a>
+          <a class="action primary" href="/assets/docs/nonlinear-computing-with-optical-twinning-trees.pdf">Read the current paper</a>
+          <a class="action" href="#revision">Compare versions</a>
           <a class="action" href="/talks/optical-twinning-trees/">Open the talk</a>
           <a class="action" href="/demo/generation.html">Read the conversation</a>
         </div>
@@ -132,8 +152,8 @@
           the field held by the loop is its root.</p>
         <p>The construction then becomes programmable. A Kerr cavity and a distinct
           linear cavity can be chosen so that their equality condition has the roots of
-          a supplied quadratic. Two such Kerr leaves can share one linear reference;
-          multiplying their measured residuals makes the combined signal vanish at the
+          a supplied quadratic. Two such Kerr leaves can share one linear reference.
+          Multiplying their measured residuals makes the combined signal vanish at the
           roots of either factor. That shared-reference composition is the
           <em>optical twinning tree</em> demonstrated numerically here.</p>
       </div>
@@ -228,7 +248,7 @@
             <text x="658" y="454" text-anchor="middle" fill="#e56aa6">4</text>
           </g>
         </svg>
-        <figcaption>The experiment evaluates the residual; the field carries the
+        <figcaption>The experiment evaluates the residual. The field carries the
           iteration and remains as the returned root.</figcaption>
       </figure>
     </section>
@@ -236,9 +256,51 @@
     <div class="result-strip" aria-label="The paper's argument in four steps">
       <div class="result"><b>1 · Twin</b><span>One field drives two distinct materials to the same chosen response.</span></div>
       <div class="result"><b>2 · Zero</b><span>The measured response difference becomes the residual a feedback loop drives to zero.</span></div>
-      <div class="result"><b>3 · Encode</b><span>A Kerr–linear cavity pair makes that equality occur at the roots of a supplied quadratic.</span></div>
-      <div class="result"><b>4 · Compose</b><span>Two quadratic residuals share a reference and multiply into one four-root condition.</span></div>
+      <div class="result"><b>3 · Encode</b><span>A Kerr-linear cavity pair makes that equality occur at the roots of a supplied quadratic.</span></div>
+      <div class="result"><b>4 · Compose</b><span>Several quadratic residuals share a reference. Three leaves recover six supplied roots.</span></div>
     </div>
+
+    <section class="section" id="revision" aria-labelledby="revision-title">
+      <span class="section-label">Review and revision</span>
+      <h2 id="revision-title">The first paper made the object. The second tested its weak joints.</h2>
+      <p class="intro">Version 1 established the feedback root finder and the first
+        factorised twinning tree. A staged, paper-only review then asked where the
+        argument relied on an approximation, where a numerical example carried too much
+        weight, and where an optical lock could be mistaken for the intended answer.
+        Version 2 grew new results before the manuscript was rewritten.</p>
+      <div class="revision-flow" aria-label="Version one, review, and version two">
+        <article class="revision-step">
+          <span class="n">01 · version 1</span>
+          <h3>Construct the root finder</h3>
+          <p>Close the twinning-field loop, encode a quadratic in two cavity responses,
+            and combine two factors into a four-root condition.</p>
+          <a href="/assets/docs/nonlinear-computing-with-optical-twinning-trees-v1.pdf">Read the preserved first version →</a>
+        </article>
+        <span class="revision-arrow" aria-hidden="true">→</span>
+        <article class="revision-step">
+          <span class="n">02 · staged review</span>
+          <h3>Separate what was shown from what was assumed</h3>
+          <p>The review isolated four specific breaks in the chain of evidence. Each
+            became a derivation, simulation, or explicit
+            limit in the next projection.</p>
+          <div class="review-findings">
+            <div class="finding"><b>A</b><span>A response slope is not the stability test for the full cavity-controller system.</span></div>
+            <div class="finding"><b>B</b><span>A moving twinning field cannot be followed exactly by pure integral feedback.</span></div>
+            <div class="finding"><b>C</b><span>Finding several roots requires several runs. One trajectory returns only one.</span></div>
+            <div class="finding"><b>D</b><span>A stable optical equality may cease to represent the intended polynomial after miscalibration.</span></div>
+          </div>
+        </article>
+        <span class="revision-arrow" aria-hidden="true">→</span>
+        <article class="revision-step current">
+          <span class="n">03 · version 2</span>
+          <h3>Rebuild around the answers</h3>
+          <p>The revised paper adds the full loop Jacobian, the moving-root tracking law,
+            exact four-site Hubbard dynamics, a three-factor six-root tree, and a
+            robustness map that distinguishes locking from solving.</p>
+          <a href="/assets/docs/nonlinear-computing-with-optical-twinning-trees-v2.pdf">Read the revised paper →</a>
+        </article>
+      </div>
+    </section>
 
     <section class="section" id="walk">
       <span class="section-label">The pipeline walk</span>
@@ -262,55 +324,55 @@
         <article class="stage">
           <span class="n">03 · test</span>
           <h3>Small systems, retained data</h3>
-          <p>A delay model, a four-site Hubbard pair, and Kerr cavities test existence,
-            stability, acquisition, and conditioning.</p>
+          <p>Full loop dynamics, two exact four-site Hubbard rings, and Kerr cavities
+            test stability, tracking, acquisition, calibration, and conditioning.</p>
         </article>
         <article class="stage">
           <span class="n">04 · compose</span>
           <h3>The twinning tree</h3>
-          <p>Multiplying two local twinning residuals makes a factorised quartic. Three
-            cavities and one controller acquire all four roots.</p>
+          <p>Two quadratic residuals make a factorised quartic. A third extends the same
+            construction to six supplied roots without claiming favourable scaling.</p>
         </article>
         <article class="stage">
           <span class="n">05 · project</span>
           <h3>Paper, then talk</h3>
-          <p>The same substrate yields a 12-page paper and a 15-slide visual argument.
+          <p>The same substrate yields a 14-page paper and a 15-slide visual argument.
             <a href="/demo/generation.html">The authoring conversation stays attached.</a></p>
         </article>
       </div>
     </section>
 
     <section class="section">
-      <span class="section-label">The numerical test</span>
-      <h2>Four questions the calculations answer</h2>
+      <span class="section-label">The numerical tests</span>
+      <h2>Four places where the physical picture could have failed</h2>
       <div class="evidence-grid">
         <article class="evidence-card">
-          <h3>Will latency break the lock?</h3>
-          <p>Yes, and the threshold is predictable. The scalar loop changes stability at
-            <code>κτ = 1.5675</code>, within <code>0.0033</code> of the analytic
-            boundary <code>π/2</code>. A practical finite-time lock requires the
-            slightly smaller value <code>κτ ≤ 1.53</code>.</p>
+          <h3>Is the response slope enough to predict stability?</h3>
+          <p>No. It works only when the cavities settle much faster than the controller.
+            The revised calculation keeps the cavity amplitudes inside the feedback
+            dynamics and exposes the oscillatory instability that the reduced model
+            misses.</p>
         </article>
         <article class="evidence-card">
-          <h3>Does it survive interacting matter?</h3>
-          <p>In the small exact test, yes. Two four-site Hubbard rings with different
-            interaction strengths acquire one shared field. Their tail RMS current
-            difference falls to <code>0.01194</code> at a gain–delay value just below
-            the scalar boundary.</p>
+          <h3>What does the many-body loop actually follow?</h3>
+          <p>The target moves because the material states move. Exact propagation of two
+            four-site Hubbard rings confirms that integral feedback follows with a
+            finite lag, while a state-informed feed-forward comparison shows what extra
+            knowledge would be needed to remove it.</p>
         </article>
         <article class="evidence-card">
-          <h3>Can response equality encode an equation?</h3>
-          <p>A Kerr–linear cavity pair is chosen so that matching intensities is
-            equivalent to <code>n² − 4n + 3 = 0</code>. Fifteen of twenty-two tested
-            initial conditions acquire one of its roots; the others reach the imposed
-            optical power limit rather than a false solution.</p>
+          <h3>Does another branch simply give more roots?</h3>
+          <p>Algebraically, yes. Dynamically, no. Three quadratic leaves recover six
+            supplied roots across separate runs, but the slowest and fastest local
+            convergence rates differ by more than two orders of magnitude. Depth has a
+            conditioning cost.</p>
         </article>
         <article class="evidence-card">
-          <h3>Can two root conditions compose?</h3>
-          <p>The three-cavity tree represents
-            <code>(s−1)(s−2)(s−3)(s−4) = 0</code>. It acquires all four roots:
-            thirty-three of forty-two runs reach a root, while the remaining nine end at
-            declared power limits. None wander to an unclassified state.</p>
+          <h3>Does a good lock guarantee the right answer?</h3>
+          <p>No. Noise and delay can destroy acquisition, while cavity-parameter error
+            poses a subtler danger: the loop may still reach equal intensities after the
+            encoded polynomial has shifted. The revised robustness map reports optical
+            locking and intended-root recovery separately.</p>
         </article>
       </div>
     </section>
@@ -321,8 +383,8 @@
       <div class="record">
         <a href="/assets/docs/nonlinear-computing-with-optical-twinning-trees.pdf">
           <b>The paper</b>
-          <span>12 pages · 7 figures · 29 references · analytic and numerical
-            evidence boundaries stated separately.</span>
+          <span>Version 2 · 14 pages · 8 figures · 29 references · full-loop stability,
+            moving-root tracking, depth, and calibration treated explicitly.</span>
           <em>PDF →</em>
         </a>
         <a href="/talks/optical-twinning-trees/">
