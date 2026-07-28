@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0e1a">
+<title>Grade Zero</title>
+<meta name="description" content="What it costs this engine to know where it is — an orientation benchmark run on the live system, including the correction of its own headline claim.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<style id="identity-tokens">:root{--bg-primary:#0a0e1a;--bg-secondary:#111827;--bg-card:rgba(255, 255, 255, 0.04);--bg-glass:rgba(255, 255, 255, 0.06);--border-glass:rgba(255, 255, 255, 0.08);--text-primary:#e8e6e3;--text-secondary:#9ca3af;--text-muted:#6b7280;--accent:#c9a96e;--accent-light:#dfc599;--accent-dim:rgba(201, 169, 110, 0.15);--link:#7eb8da;--link-hover:#a8d4f0;--evidence:#a89a7a;--s-gold:#bd8a2a;--s-blue:#3f8fc9;--s-violet:#8f7bd0;--s-teal:#2f9c8a;--s-slate:#3d4a63;}</style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg-primary)}
+body{font-family:'Lora',Georgia,serif;background:var(--bg-primary);color:var(--text-primary);
+  font-size:1.02rem;line-height:1.72;max-width:760px;margin:0 auto;padding:3.2rem 1.2rem 4rem}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:radial-gradient(1100px 500px at 70% -10%, rgba(201,169,110,.055), transparent 60%)}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.16em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:.5rem}
+h1{font-family:'Outfit',sans-serif;font-weight:700;font-size:2.3rem;line-height:1.1;margin-bottom:.5rem}
+.sub{color:var(--text-secondary);font-size:1.06rem;font-style:italic;margin-bottom:2.2rem}
+h2{font-family:'Outfit',sans-serif;font-weight:600;font-size:1.32rem;letter-spacing:-.01em;
+  margin:2.6rem 0 .8rem}
+p{margin-bottom:1.05rem}
+strong{font-weight:600;color:var(--accent-light)}
+code,.mono{font-family:'JetBrains Mono',monospace;font-size:.86em;color:var(--evidence)}
+ul{margin:0 0 1.05rem 1.2rem}
+li{margin-bottom:.45rem}
+.lede{border-left:2px solid var(--accent);border-radius:6px;padding:.85rem 1.05rem;
+  margin-bottom:2.2rem;background:var(--bg-glass);font-size:1.06rem}
+.figobj{background:var(--bg-secondary);border:1px solid var(--border-glass);border-radius:8px;
+  padding:16px 18px;margin:1.1rem 0 .3rem}
+.figobj svg{display:block;width:100%;height:auto}
+.figobj text{font-family:'JetBrains Mono',monospace}
+.figcap{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text-muted);
+  margin:0 0 1.4rem;padding:0 2px}
+.foot{margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border-glass);
+  font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-muted);line-height:1.9}
+a{color:var(--link)}a:hover{color:var(--link-hover)}
+@media (max-width:560px){h1{font-size:1.8rem}body{padding-top:2.2rem}}
+</style>
+</head>
+<body>
+
+<div class="eyebrow">grade zero · measured 2026-07-28</div>
+<h1>Grade Zero</h1>
+<p class="sub">What it costs this engine to know where it is — measured on the live system.</p>
+
+<div class="lede">
+This engine claimed its way of orienting was 36&times; cheaper than re-reading its
+own documentation. It built a benchmark to check. The honest number is 11&ndash;19&times;,
+the correction is published here with the definitions that produce it, and the
+same run caught one of the engine's organs underperforming. This page is the
+benchmark, the correction, and the miss.
+</div>
+
+<h2>This is the live system, not a test rig</h2>
+<p>
+Every working session of this engine starts with a <em>wake</em>: a budget-capped
+summary of its own state &mdash; current priorities, standing rules, open work,
+last session's delta &mdash; reconstructed from a structured record rather than
+re-read from files. The wake payload measured below is that production artifact,
+byte for byte: the same command, run the same way, at the start of every real
+session. The eighteen benchmark questions are the engine's actual operating
+questions. The corpus is its live working corpus of 12,335 documents, not a
+curated test set. The history sweep is its own git log. And a miss has
+consequences here: the retrieval failures this run surfaced became work orders
+in the engine's ledger the same day, and this benchmark is now the regression
+harness their fix has to pass. The numbers regenerate on any commit.
+</p>
+
+<h2>The setup</h2>
+<p>
+Eighteen orientation questions across six classes &mdash; current aim, standing
+rules, session state, project state, topic retrieval, claim evidence &mdash; each
+with ground truth expressed as text spans that any correct context must contain.
+The task set was frozen and content-hashed before the first scored run. Each
+question ran three ways:
+</p>
+<ul>
+<li><strong>Reconstruction</strong> &mdash; the wake summary, plus a hierarchical
+descent into the document tree for the retrieval questions.</li>
+<li><strong>Flat read</strong> &mdash; the orientation files the engine's own
+instructions name, read whole (93k tokens; a charitable variant adds two more
+files, 162k).</li>
+<li><strong>Skilled search</strong> &mdash; grep, with patterns derived
+mechanically from the question text alone. A tripwire fails the whole run if any
+pattern word appears in the expected answer but not in the question, so the
+baseline cannot be quietly rigged in either direction.</li>
+</ul>
+<p>
+Cost is bytes/4 of everything entering the model's context. Correctness is
+scored before cost, and a wrong arm is excluded from the cost comparison &mdash;
+a cheap wrong answer is worth nothing.
+</p>
+
+<h2>What it measured</h2>
+
+<div class="figobj">
+<svg viewBox="0 0 680 178" role="img" aria-label="Bar chart. Wake reconstruction: 8,408 tokens, 12 of 12 answered. Flat read standard: 93,181 tokens, 9 of 12. Flat read charitable: 161,950 tokens, 12 of 12.">
+  <g font-size="12" fill="#9ca3af">
+    <text x="152" y="32" text-anchor="end">wake reconstruction</text>
+    <text x="152" y="90" text-anchor="end">flat read, standard</text>
+    <text x="152" y="148" text-anchor="end">flat read, charitable</text>
+  </g>
+  <rect x="162" y="16" width="19" height="24" rx="3" fill="var(--s-gold)"/>
+  <rect x="162" y="74" width="207" height="24" rx="3" fill="var(--s-slate)"/>
+  <rect x="162" y="132" width="360" height="24" rx="3" fill="var(--s-slate)"/>
+  <g font-size="12.5">
+    <text x="189" y="32" fill="var(--accent-light)" font-weight="bold">8,408 tok &#183; 12/12</text>
+    <text x="377" y="90" fill="#e8e6e3">93,181 tok &#183; 9/12</text>
+    <text x="530" y="148" fill="#e8e6e3">161,950 tok &#183; 12/12</text>
+  </g>
+</svg>
+</div>
+<p class="figcap">context tokens to answer the twelve orientation questions &#183; bar length linear</p>
+
+<p>
+The 8,408-token wake answered <strong>12 of 12</strong> orientation questions.
+The charitable flat set needed 161,950 tokens for the same twelve &mdash;
+<strong>19.3&times;</strong> &mdash; and the standard set spent 93,181 to answer
+only nine: 11.1&times; the cost, with fewer answers. It cannot answer the
+standing-rules questions at all, because the rules file is not in the list its
+own instructions name. That gap became a one-line fix the day it was measured.
+</p>
+
+<div class="figobj">
+<svg viewBox="0 0 680 300" role="img" aria-label="Scatter plot of questions answered against tokens spent per session. Wake reconstruction: 69 thousand tokens, 14 of 18. Flat standard: 93 thousand, 10 of 18. Flat charitable: 162 thousand, 13 of 18. Grep per question: 885 thousand, 6 of 18.">
+  <g stroke="rgba(255,255,255,0.07)" stroke-width="1">
+    <line x1="60" y1="30" x2="650" y2="30"/><line x1="60" y1="112" x2="650" y2="112"/>
+    <line x1="60" y1="194" x2="650" y2="194"/><line x1="60" y1="276" x2="650" y2="276"/>
+  </g>
+  <g font-size="11" fill="#6b7280">
+    <text x="50" y="34" text-anchor="end">18</text><text x="50" y="116" text-anchor="end">12</text>
+    <text x="50" y="198" text-anchor="end">6</text><text x="50" y="280" text-anchor="end">0</text>
+    <text x="60" y="296" text-anchor="middle">0</text><text x="215" y="296" text-anchor="middle">250k</text>
+    <text x="371" y="296" text-anchor="middle">500k</text><text x="526" y="296" text-anchor="middle">750k</text>
+  </g>
+  <circle cx="103" cy="84.7" r="9" fill="var(--s-gold)" stroke="#111827" stroke-width="2.5"/>
+  <rect x="110" y="131.3" width="16" height="16" rx="2" fill="var(--s-blue)" stroke="#111827" stroke-width="2.5"/>
+  <rect x="152.6" y="90.3" width="16" height="16" rx="2" transform="rotate(45 160.6 98.3)" fill="var(--s-violet)" stroke="#111827" stroke-width="2.5"/>
+  <path d="M 609.7 184 L 619.7 202 L 599.7 202 Z" fill="var(--s-teal)" stroke="#111827" stroke-width="2.5"/>
+  <g font-size="12">
+    <text x="103" y="58" fill="var(--accent-light)" font-weight="bold">wake &#183; 69k &#8594; 14/18</text>
+    <text x="140" y="150" fill="#9ca3af">flat standard &#183; 93k &#8594; 10/18</text>
+    <text x="180" y="96" fill="#9ca3af">flat charitable &#183; 162k &#8594; 13/18</text>
+    <text x="625" y="168" fill="#9ca3af" text-anchor="end">grep per question &#183; 885k &#8594; 6/18</text>
+  </g>
+</svg>
+</div>
+<p class="figcap">questions answered (of 18) vs context tokens per session &#183; every attempt charged, failures included</p>
+
+<p>
+Across the full eighteen, one session per arm, every attempt charged:
+reconstruction answered 14 for 68.6k tokens. Grep answered 6 for 885k. Grep is
+genuinely unbeatable when a question hands it a distinctive literal &mdash; its
+best answer cost 704 tokens &mdash; and it went 0 for 6 on the conceptual
+questions. You cannot grep for what you don't know the name of.
+</p>
+
+<h2>What the benchmark caught</h2>
+<p>
+Two things, and the second is why the first can be trusted.
+</p>
+<p>
+The published 36&times; was wrong. The flat baseline behind it had been measured
+reading a 540&nbsp;KB journal in full, where the instruction it models says to
+read the <em>tail</em>. Measured with the sets the instructions actually define,
+the multiple is 11&ndash;19&times;. The corrected figures ship with their set
+definitions, and the old number is retired everywhere it was served.
+</p>
+<p>
+And the retrieval leg lost outright: 0 of 3 on topic descent. The five target
+documents are all in the semantic tree, but queries about the engine's own
+machinery drown in vocabulary collision with the physics corpus it curates.
+When the descent misses, the session still pays for the attempt &mdash; most of
+reconstruction's 68.6k session cost is those failures. The miss is a typed work
+order in the ledger, and this page's numbers are the baseline the fix has to
+beat.
+</p>
+
+<h2>How it scales</h2>
+
+<div class="figobj">
+<svg viewBox="0 0 700 320" role="img" aria-label="Line chart over eight weeks. The flat fallback set grows from 11 thousand to 93 thousand tokens. The wake payload stays flat at 8 thousand.">
+  <g stroke="rgba(255,255,255,0.07)" stroke-width="1">
+    <line x1="60" y1="52.7" x2="660" y2="52.7"/><line x1="60" y1="109.5" x2="660" y2="109.5"/>
+    <line x1="60" y1="166.4" x2="660" y2="166.4"/><line x1="60" y1="223.2" x2="660" y2="223.2"/>
+    <line x1="60" y1="280" x2="660" y2="280"/>
+  </g>
+  <g font-size="11" fill="#6b7280">
+    <text x="50" y="284" text-anchor="end">0</text><text x="50" y="227" text-anchor="end">25k</text>
+    <text x="50" y="170" text-anchor="end">50k</text><text x="50" y="113" text-anchor="end">75k</text>
+    <text x="50" y="57" text-anchor="end">100k</text>
+    <text x="60" y="302" text-anchor="middle">06-03</text><text x="210" y="302" text-anchor="middle">06-13</text>
+    <text x="360" y="302" text-anchor="middle">07-07</text><text x="510" y="302" text-anchor="middle">07-18</text>
+    <text x="660" y="302" text-anchor="middle">07-28</text>
+  </g>
+  <polygon points="60,254.8 90,200.9 120,163.0 150,125.9 180,109.3 210,101.8 240,100.2 270,93.6 300,72.0 330,70.2 360,68.6 390,52.3 420,47.3 450,94.8 480,99.3 510,93.9 540,91.8 570,77.5 600,74.1 630,72.5 660,67.5 660,260.9 60,260.9" fill="rgba(189,138,42,0.10)"/>
+  <polyline points="60,254.8 90,200.9 120,163.0 150,125.9 180,109.3 210,101.8 240,100.2 270,93.6 300,72.0 330,70.2 360,68.6 390,52.3 420,47.3 450,94.8 480,99.3 510,93.9 540,91.8 570,77.5 600,74.1 630,72.5 660,67.5" fill="none" stroke="var(--s-slate)" stroke-width="2.4"/>
+  <line x1="60" y1="260.9" x2="660" y2="260.9" stroke="var(--s-gold)" stroke-width="2.6"/>
+  <g font-size="12">
+    <text x="250" y="86" fill="#9ca3af">flat fallback set</text>
+    <text x="250" y="252" fill="var(--accent-light)">wake payload</text>
+    <text x="666" y="71" fill="#9ca3af">93k</text>
+    <text x="666" y="265" fill="var(--accent-light)" font-weight="bold">8k</text>
+  </g>
+</svg>
+</div>
+<p class="figcap">orientation cost across eight weeks of repository history &#183; sampled per commit, linear scale</p>
+
+<p>
+This is the engine's own git history, not a projection. The flat orientation
+set grew from 11k to 93k tokens in eight weeks &mdash; 8.4&times; &mdash;
+because it tracks corpus volume. The wake stayed under its cap, because the cap
+is enforced in code: the reconstruction is truncated to budget before it is
+ever served. Retrieval scales the same way &mdash; a descent materializes
+1.2% of the corpus per query:
+</p>
+
+<div class="figobj">
+<svg viewBox="0 0 680 200" role="img" aria-label="A grid of one thousand cells representing 12,335 documents. Twelve cells are highlighted: the 1.2 percent one retrieval query reads. A flat read pays for all one thousand.">
+  <defs>
+    <pattern id="cell" width="10.4" height="10.4" patternUnits="userSpaceOnUse">
+      <rect width="8.6" height="8.6" rx="1.5" fill="#1f2937"/>
+    </pattern>
+  </defs>
+  <rect x="8" y="8" width="519" height="187" fill="url(#cell)"/>
+  <g fill="var(--s-gold)">
+    <rect x="70.4" y="18.4" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="278.4" y="28.8" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="424.8" y="49.6" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="112" y="70.4" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="341.6" y="80.8" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="185.6" y="101.6" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="466.4" y="112" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="49.6" y="132.8" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="299.2" y="143.2" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="237.6" y="164" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="393.6" y="174.4" width="8.6" height="8.6" rx="1.5"/>
+    <rect x="153.6" y="184.8" width="8.6" height="8.6" rx="1.5"/>
+  </g>
+  <g font-size="12">
+    <text x="545" y="30" fill="var(--accent-light)" font-weight="bold">&#9632; one query: 1.2%</text>
+    <text x="545" y="56" fill="#6b7280">&#9632; flat read: 100%</text>
+  </g>
+</svg>
+</div>
+<p class="figcap">share of 12,335 corpus documents read per retrieval query &#183; mean of the five retrieval tasks</p>
+
+<p>
+The stopwatch runs the other way, today: a descent costs seconds where grep
+costs milliseconds, because re-deriving vectors is slower than a disk read.
+That trade is worth stating plainly &mdash; the fixed point buys bounded
+context, not speed, and it pays off precisely as the corpus outgrows what any
+context window can hold.
+</p>
+
+<h2>Relation to recursive language models</h2>
+<p>
+<a href="https://arxiv.org/abs/2512.24601">Recursive Language Models</a>
+(Zhang, Kraska &amp; Khattab, 2025) recurse at <em>read time over an ephemeral
+prompt</em>: a long input arrives, the model decomposes it and calls itself
+over snippets, and what the traversal learned is discarded when the query
+ends. This engine recurses at <em>write time over a persistent record</em>:
+the corpus is folded into a graded tree before any question arrives, each
+session's close banks what it learned, and the read path descends a structure
+its prior sessions authored &mdash; the cost amortizes into the artifact
+instead of being paid per query. The two are conjugate rather than competing:
+one is a strategy for a context you were handed, the other a memory for a
+system that continues. Where they meet &mdash; guided traversal touching a
+fraction of the whole instead of flat attention over all of it &mdash; the RLM
+results are independent evidence for the direction, and this engine's 0-for-3
+on topic descent is honest evidence that the traversal is only as good as the
+tree beneath it.
+</p>
+
+<h2>Caveats</h2>
+<ul>
+<li>The task set is self-authored. It was frozen and content-hashed before the
+first scored run, and every ground truth cites a source a reviewer can check;
+it is still the engine examining itself, and this page says so.</li>
+<li>Two-thirds of the tasks bank facts under thirty days old. The one 48-day
+depth probe failed, and is reported as a failure, not smoothed.</li>
+<li>The grep baseline is measured at its best case: its pattern-selection cost
+is uncharged, and it never pays for a human's failed pattern ideas.</li>
+<li>bytes/4 is an estimate, not a tokenizer; it is applied to both sides of
+every ratio, so the ratios are stabler than the absolute counts.</li>
+<li>These are single-run numbers on one live system, dated and versioned; they
+regenerate on any commit and will drift as the system does.</li>
+</ul>
+
+<div class="foot">
+grade zero &#183; the wake benchmark of a continuously running engine &#183;
+measured 2026-07-28 on the live system<br>
+frozen task set sha256 <span class="mono">5c74f55f402b461d</span>&#8230; &#183;
+one command reproduces the table &#183; reproduction on request &#183;
+<a href="/">gmccaul.co.uk</a>
+</div>
+
+</body>
+</html>
