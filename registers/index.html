@@ -136,6 +136,21 @@ function norm(s){return s.trim().toLowerCase();}
 // two slots per register: data.enc under the audience's phrase, master.enc under
 // the author's. Same scheme per blob; the second slot is what makes one master
 // phrase open every register.
+// on the hub, the phrase is also the address: typing a register's passname
+// routes straight to that page, its key pre-cached so it opens on arrival
+const HUB=true;
+async function route(pw){
+  const slug=encodeURIComponent(pw);
+  const r=await fetch(slug+"/data.enc",{cache:"no-store"});
+  if(!r.ok)return false;
+  const b=new Uint8Array(await r.arrayBuffer());
+  for(let i=0;i<MAGIC.length;i++)if(b[i]!==MAGIC[i])return false;
+  const key=await deriveKey(pw,b.subarray(MAGIC.length,MAGIC.length+16));
+  const iv=b.subarray(MAGIC.length+16,MAGIC.length+28);
+  await crypto.subtle.decrypt({name:"AES-GCM",iv},key,b.subarray(MAGIC.length+28));
+  try{await idbSet("key-"+location.pathname+slug+"/",key);
+      await idbSet("key-"+location.pathname+slug+"/-which","data.enc");}catch(_){}
+  location.href=slug+"/";return true;}
 $("lf").addEventListener("submit",async e=>{e.preventDefault();
   $("msg").textContent="deriving…";$("msg").className="msg";
   const pw=norm($("pw").value);
@@ -147,6 +162,7 @@ $("lf").addEventListener("submit",async e=>{e.preventDefault();
       return;
     }catch(err){}
   }
+  if(HUB){try{if(await route(pw))return;}catch(_){}}
   $("msg").textContent="that passphrase does not unlock this page";
   $("msg").className="msg bad";});
 $("forget").addEventListener("click",async()=>{await idbDel(KEY);await idbDel(KEY+"-which");
