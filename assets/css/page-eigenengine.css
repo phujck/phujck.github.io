@@ -197,3 +197,8 @@
   .ee-stage .v { white-space: normal; }
   #ee-graph { height: 320px; }
 }
+
+/* the registers door: quiet, evidence-toned, end of provenance (2026-07-28) */
+.ee-registers-door { margin-top: 1.4rem; font-size: 0.78rem; }
+.ee-registers-door a { color: var(--evidence); text-decoration-color: var(--border-glass); }
+.ee-registers-door a:hover { color: var(--accent); }
