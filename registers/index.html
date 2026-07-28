@@ -115,33 +115,44 @@ async function idbGet(k){const db=await idb();return new Promise(res=>{
 async function idbDel(k){const db=await idb();return new Promise(res=>{
   const t=db.transaction("kv","readwrite");t.objectStore("kv").delete(k);
   t.oncomplete=res;t.onerror=res;});}
-let BLOB=null;
-async function blob(){if(BLOB)return BLOB;
-  const r=await fetch("data.enc",{cache:"no-store"});
-  if(!r.ok)throw new Error("data.enc "+r.status);
-  BLOB=new Uint8Array(await r.arrayBuffer());
-  for(let i=0;i<MAGIC.length;i++)if(BLOB[i]!==MAGIC[i])throw new Error("not a register bundle");
-  return BLOB;}
+const BLOBS={};
+async function blob(name){if(BLOBS[name])return BLOBS[name];
+  const r=await fetch(name,{cache:"no-store"});
+  if(!r.ok)throw new Error(name+" "+r.status);
+  const b=new Uint8Array(await r.arrayBuffer());
+  for(let i=0;i<MAGIC.length;i++)if(b[i]!==MAGIC[i])throw new Error("not a register bundle");
+  BLOBS[name]=b;return b;}
 async function deriveKey(pw,salt){
   const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
   return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:ITER,hash:"SHA-256"},km,
     {name:"AES-GCM",length:256},false,["decrypt"]);}
-async function open_(key){const b=await blob();const body=b.subarray(MAGIC.length);
+async function open_(key,name){const b=await blob(name);const body=b.subarray(MAGIC.length);
   const iv=body.subarray(16,28),ct=body.subarray(28);
   const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv},key,ct);
   $("doc").innerHTML=new TextDecoder().decode(pt);
   $("lock").remove();$("doc").classList.remove("hidden");}
+// the passphrase is the reader: normalized so capitalization can't lock anyone out
+function norm(s){return s.trim().toLowerCase();}
+// two slots per register: data.enc under the audience's phrase, master.enc under
+// the author's. Same scheme per blob; the second slot is what makes one master
+// phrase open every register.
 $("lf").addEventListener("submit",async e=>{e.preventDefault();
   $("msg").textContent="deriving…";$("msg").className="msg";
-  try{const b=await blob();const salt=b.subarray(MAGIC.length,MAGIC.length+16);
-    const key=await deriveKey($("pw").value,salt);
-    await open_(key);
-    if($("rem").checked){try{await idbSet(KEY,key);}catch(_){}}
-  }catch(err){$("msg").textContent="that passphrase does not unlock this page";
-    $("msg").className="msg bad";}});
-$("forget").addEventListener("click",async()=>{await idbDel(KEY);
+  const pw=norm($("pw").value);
+  for(const name of ["data.enc","master.enc"]){
+    try{const b=await blob(name);
+      const key=await deriveKey(pw,b.subarray(MAGIC.length,MAGIC.length+16));
+      await open_(key,name);
+      if($("rem").checked){try{await idbSet(KEY,key);await idbSet(KEY+"-which",name);}catch(_){}}
+      return;
+    }catch(err){}
+  }
+  $("msg").textContent="that passphrase does not unlock this page";
+  $("msg").className="msg bad";});
+$("forget").addEventListener("click",async()=>{await idbDel(KEY);await idbDel(KEY+"-which");
   $("msg").textContent="forgotten on this device";$("msg").className="msg";});
-(async()=>{try{const k=await idbGet(KEY);if(k)await open_(k);}catch(_){}})();
+(async()=>{try{const k=await idbGet(KEY);const w=await idbGet(KEY+"-which");
+  if(k&&w)await open_(k,w);}catch(_){}})();
 })();
 </script>
 </body>
