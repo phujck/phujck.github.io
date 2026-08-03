@@ -84,7 +84,7 @@
 }
 
 /* Each cell is a specimen, not a floating glass card: a static left
-   accent rule (echoing the engine panel below), and the mono address
+   accent rule, and the mono address
    pinned to a shared baseline across the row. No lift, no draw-in —
    the composition carries itself at rest. The only hover response is
    colour: the rule warms, the title takes the accent and underlines. */
@@ -178,45 +178,6 @@
   margin-top: var(--space-md);
 }
 
-/* ---------- Engine exhibit: the corpora as record ---------- */
-/* Two real corpora, each pill keyed to the conceptric it counts
-   (paths in the title attribute). Numbers verified against
-   paper_falqon/ and eigenengine/ manuscripts. */
-.engine-figures {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-  margin-bottom: var(--space-lg);
-}
-
-.engine-figure {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.5ch;
-  padding: 0.3rem 0.7rem;
-  border: 1px solid rgba(201, 169, 110, 0.3);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--evidence);
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-}
-
-.engine-figure .corpus {
-  font-size: 0.82em;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  margin-right: 0.4ch;
-}
-
-.engine-figure b {
-  color: var(--accent);
-  font-weight: 500;
-}
-
 /* ---------- Responsive: 375px is a hard gate ---------- */
 @media (max-width: 720px) {
   .work-programmes {
@@ -239,11 +200,6 @@
     background-position: center top;
     -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
     mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
-  }
-  /* reclaim the phone's width: the shell's engine panel pads by 3rem
-     each side, which crowds the corpus pills and lede at 375px. */
-  .engine-panel {
-    padding: var(--space-lg);
   }
 }
 
