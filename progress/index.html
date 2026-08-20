@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="theme-color" content="#0a0e1a">
+<title>The EigenEngine — progress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <style id="identity-tokens">:root{--bg-primary:#0a0e1a;--bg-secondary:#111827;--bg-card:rgba(255, 255, 255, 0.04);--bg-card-hover:rgba(255, 255, 255, 0.07);--bg-glass:rgba(255, 255, 255, 0.06);--border-glass:rgba(255, 255, 255, 0.08);--text-primary:#e8e6e3;--text-secondary:#9ca3af;--text-muted:#6b7280;--accent:#c9a96e;--accent-light:#dfc599;--accent-dim:rgba(201, 169, 110, 0.15);--accent-warm-1:#e6cc92;--accent-warm-2:#b8894a;--accent-warm-3:#8a6330;--link:#7eb8da;--link-hover:#a8d4f0;--refused:#c0392b;--refused-dim:rgba(192, 57, 43, 0.12);--evidence:#a89a7a;}</style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg-primary)}
+body{font-family:'Lora',Georgia,serif;background:var(--bg-primary);color:var(--text-primary);
+  font-size:16.5px;line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(1100px 500px at 70% -10%, rgba(201,169,110,.055), transparent 60%)}
+a{color:var(--link)}a:hover{color:var(--link-hover)}
+.wrap{max-width:72ch;margin:0 auto;padding:3.4rem 1.25rem 5.5rem}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--evidence);margin-bottom:1.1rem}
+h1{font-family:'Outfit',sans-serif;font-weight:700;font-size:2.15rem;line-height:1.12;
+  letter-spacing:-.015em;margin-bottom:.5rem}
+.sub{color:var(--text-secondary);font-style:italic;margin-bottom:1.6rem;font-size:1.02rem}
+.provenance{font-size:.84rem;color:var(--text-secondary);border:1px solid var(--border-glass);
+  border-left:2px solid var(--accent);border-radius:6px;padding:.7rem .95rem;margin-bottom:2.4rem;
+  background:var(--bg-glass)}
+h2{font-family:'Outfit',sans-serif;font-weight:600;font-size:1.3rem;letter-spacing:-.01em;
+  margin:3rem 0 .95rem;padding-bottom:.4rem;border-bottom:1px solid var(--border-glass)}
+p{margin:.75rem 0}
+strong{font-weight:600;color:var(--text-primary)}
+em{color:var(--text-primary)}
+.evidence,code{font-family:'JetBrains Mono',monospace;font-weight:400;font-size:.86em;
+  color:var(--evidence)}
+.board{list-style:none;margin:1.1rem 0}
+.board li{display:flex;gap:.75rem;align-items:baseline;padding:.5rem 0;
+  border-bottom:1px dotted var(--border-glass)}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:500;letter-spacing:.12em;
+  text-transform:uppercase;padding:.18rem .5rem;border-radius:3px;flex:0 0 auto;min-width:6.4rem;
+  text-align:center;border:1px solid var(--border-glass);color:var(--bg-primary)}
+.c-run{background:var(--accent)}
+.c-ver{background:var(--link)}
+.c-proto{background:var(--accent-warm-2);color:var(--bg-primary)}
+.c-open{background:var(--text-muted)}
+.cap{font-size:.9rem;color:var(--text-secondary);margin:1rem 0 .4rem}
+.figobj{margin:.3rem 0 .5rem;background:var(--bg-secondary);border:1px solid var(--border-glass);
+  border-radius:6px;padding:14px;box-shadow:0 18px 44px -22px rgba(0,0,0,.75)}
+.figobj svg{display:block;width:100%;height:auto}
+details{margin:.25rem 0 1.6rem}
+details summary{font-family:'JetBrains Mono',monospace;font-size:.74rem;color:var(--link);
+  cursor:pointer;letter-spacing:.02em}
+details[open] summary{color:var(--link-hover)}
+details>.figbox{margin:.6rem 0 .2rem;border:1px solid var(--border-glass);border-radius:6px;
+  background:var(--bg-secondary);overflow-x:auto;padding:10px;
+  animation:reveal 170ms cubic-bezier(.16,1,.3,1)}
+@keyframes reveal{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.figbox svg{display:block;min-width:640px;width:100%;height:auto}
+.overlay-note{border:1px solid var(--border-glass);border-left:2px solid var(--link);
+  border-radius:6px;background:var(--bg-glass);padding:.8rem 1rem;margin:1.1rem 0;
+  font-size:.95rem}
+.foot{margin-top:4rem;padding-top:1.1rem;border-top:1px solid var(--border-glass);
+  font-size:.85rem;color:var(--text-secondary)}
+/* number cards: a marked number carries its provenance tree on hover/focus */
+.num{position:relative;cursor:help;border-bottom:1px dotted var(--evidence)}
+.num>.numcard{display:none;position:absolute;left:0;bottom:calc(100% + 8px);z-index:40;
+  width:max-content;max-width:36ch;background:var(--bg-secondary);
+  border:1px solid var(--border-glass);border-left:2px solid var(--accent);
+  border-radius:6px;padding:.55rem .8rem;font-family:'JetBrains Mono',monospace;
+  font-size:.66rem;line-height:1.6;color:var(--text-secondary);font-style:normal;
+  box-shadow:0 18px 44px -22px rgba(0,0,0,.75)}
+.num:hover>.numcard,.num:focus>.numcard{display:block}
+.numcard .nct{color:var(--text-primary);font-family:'Outfit',sans-serif;font-size:.7rem}
+.numcard .ncs{color:var(--evidence);font-size:.6rem}
+/* ---- the lock ---- */
+#lock{position:fixed;inset:0;z-index:100;background:var(--bg-primary);display:flex;
+  align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:24px}
+#lock h1{font-size:1.25rem;margin:0}
+#lock .lsub{color:var(--text-muted);font-size:.78rem;font-family:'JetBrains Mono',monospace;
+  text-align:center;max-width:34rem;line-height:1.6}
+#lock form{display:flex;flex-direction:column;gap:10px;width:min(340px,88vw)}
+#lock input[type=password]{background:var(--bg-secondary);border:1px solid var(--border-glass);
+  color:var(--text-primary);padding:12px 14px;border-radius:8px;font:inherit}
+#lock input:focus{outline:none;border-color:var(--accent)}
+#lock button{background:var(--accent);border:0;color:var(--bg-primary);padding:12px;
+  border-radius:8px;font-family:'Outfit',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer}
+#lock button.quiet{background:transparent;border:1px solid var(--border-glass);
+  color:var(--text-secondary);font-weight:400;font-size:.8rem}
+#lock label{display:flex;gap:7px;align-items:center;color:var(--text-secondary);font-size:.82rem}
+#lock .msg{color:var(--text-muted);font-size:.75rem;min-height:16px;
+  font-family:'JetBrains Mono',monospace}
+#lock .msg.bad{color:var(--refused)}
+.hidden{display:none!important}
+@media (max-width:640px){.wrap{padding:2.2rem 1rem 4rem}h1{font-size:1.7rem}}
+</style>
+<style>
+/* ---- the deck: a presentation projection of the register chrome ---- */
+.deck{--u:min(1vw,1.7778vh)}
+.deck .slide{position:relative;min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;padding:calc(var(--u)*4.5) calc(var(--u)*8);gap:calc(var(--u)*0.9)}
+.deck .slide .eyebrow{margin:0;font-size:calc(var(--u)*0.95)}
+.deck .slide h2{font-family:'Outfit',sans-serif;font-weight:700;border:0;margin:0;padding:0;
+  font-size:calc(var(--u)*3.4);line-height:1.08;letter-spacing:-.015em;max-width:26ch}
+.deck .slide .scope{font-family:'JetBrains Mono',monospace;font-weight:400;
+  font-size:calc(var(--u)*0.95);line-height:1.6;color:var(--text-secondary);margin:0}
+.deck .slide .body{font-size:calc(var(--u)*1.55);line-height:1.55;max-width:52ch;margin:0}
+.deck .slide .bignum{font-family:'JetBrains Mono',monospace;font-weight:400;
+  font-size:calc(var(--u)*5.0);line-height:1.05;color:var(--accent-light);
+  margin:calc(var(--u)*0.6) 0 0}
+.deck .bignum .evidence{font-size:inherit;color:var(--accent-light)}
+.deck .bignum .bnu{font-family:'Lora',Georgia,serif;font-size:calc(var(--u)*1.3);
+  color:var(--text-secondary);margin-left:calc(var(--u)*0.8)}
+.deck .slide .honest{font-style:italic;color:var(--text-secondary);
+  font-size:calc(var(--u)*1.15);line-height:1.55;border-left:2px solid var(--accent-dim);
+  padding-left:calc(var(--u)*1.2);margin:calc(var(--u)*0.6) 0 0;max-width:66ch}
+.deck .slide .src{margin:calc(var(--u)*0.8) 0 0}
+.deck .srcline{font-family:'JetBrains Mono',monospace;font-weight:400;
+  font-size:calc(var(--u)*0.85);color:var(--text-muted)}
+.deck .slide .simplefig{background:var(--bg-secondary);border:1px solid var(--border-glass);
+  border-radius:10px;padding:calc(var(--u)*0.9);
+  box-shadow:0 18px 44px -22px rgba(0,0,0,.75);margin:0}
+.deck .slide .simplefig svg{display:block;width:100%;height:auto}
+/* claim layout: text left, figure(s) right */
+.deck .slide.claim{display:grid;grid-template-columns:10fr 9fr;align-items:center;
+  column-gap:calc(var(--u)*4)}
+.deck .cleft,.deck .cright{display:flex;flex-direction:column;gap:calc(var(--u)*1.1);min-width:0}
+/* the three-layer stack */
+.deck .lgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:calc(var(--u)*2);
+  margin-top:calc(var(--u)*1.2)}
+.deck .lcard{background:var(--bg-card);border:1px solid var(--border-glass);
+  border-radius:12px;padding:calc(var(--u)*1.8)}
+.deck .lcard.lit{border-color:var(--accent)}
+.deck .lcard h3{font-family:'Outfit',sans-serif;font-weight:600;margin:0 0 calc(var(--u)*0.7);
+  font-size:calc(var(--u)*1.6);color:var(--accent-light)}
+.deck .lcard p{font-size:calc(var(--u)*1.2);line-height:1.5;color:var(--text-secondary);
+  margin:0 0 calc(var(--u)*0.55)}
+/* title + colophon + annex */
+.deck .slide.title h2{font-size:calc(var(--u)*4.6);max-width:18ch}
+.deck .tsub{font-size:calc(var(--u)*1.5);font-style:italic;color:var(--text-secondary);
+  max-width:46ch;margin:0}
+.deck .stamps{display:flex;gap:calc(var(--u)*1.4);flex-wrap:wrap;margin-top:calc(var(--u)*1.2)}
+.deck .stamp{font-family:'JetBrains Mono',monospace;font-weight:400;
+  font-size:calc(var(--u)*0.95);color:var(--evidence);border:1px solid var(--border-glass);
+  border-radius:6px;padding:calc(var(--u)*0.55) calc(var(--u)*1)}
+.deck .slide.onepager{justify-content:flex-start;padding-top:calc(var(--u)*4)}
+/* number-card hovers inherit theme; keep them above slide chrome */
+.deck .num>.numcard{z-index:70;font-style:normal}
+/* ---- screen, script on: one slide at a time ---- */
+@media screen{
+  .deck.js-on{height:100vh;overflow:hidden}
+  .deck.js-on .slide{display:none}
+  .deck.js-on .slide.on{display:flex;animation:reveal 170ms cubic-bezier(.16,1,.3,1)}
+  .deck.js-on .slide.claim.on{display:grid}
+  /* overview: shrink the unit, tile every slide */
+  .deck.js-on.overview{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+    height:100vh;overflow:auto;padding:14px;--u:3.1px}
+  .deck.js-on.overview .slide{display:flex;min-height:0;border:1px solid var(--border-glass);
+    border-radius:8px;cursor:pointer;overflow:hidden;aspect-ratio:16/9}
+  .deck.js-on.overview .slide.claim{display:grid}
+  .deck.js-on.overview .slide.on{border-color:var(--accent)}
+}
+/* ---- deck chrome (shell, not payload) ---- */
+#deckbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;
+  align-items:center;justify-content:space-between;padding:9px 18px 8px;
+  font-family:'JetBrains Mono',monospace;font-weight:400;font-size:.68rem;
+  color:var(--text-muted);pointer-events:none}
+body.js-deck #deckbar{display:flex}
+#deckprogwrap{position:absolute;top:0;left:0;right:0;height:2px;background:var(--border-glass)}
+#deckprog{height:100%;width:0;background:var(--accent);
+  transition:width 170ms cubic-bezier(.16,1,.3,1)}
+#deckhint{transition:opacity 400ms}
+#deckhint.gone{opacity:0}
+/* ---- print: every slide, one per 16:9 page, dark kept ---- */
+@page{size:338.7mm 190.5mm;margin:0}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:var(--bg-primary)}
+  .deck{--u:12.8px}
+  .deck .slide{display:flex;min-height:0;height:190.5mm;overflow:hidden;
+    break-inside:avoid;break-after:page}
+  .deck .slide.claim{display:grid}
+  .deck .slide:last-child{break-after:auto}
+  #deckbar{display:none}
+  .deck .num>.numcard{display:none}
+  .deck .num{border-bottom:0}
+}
+</style>
+</head>
+<body>
+<div id="lock">
+  <div style="font-size:28px;color:var(--accent)">◈</div>
+  <h1>The EigenEngine — progress</h1>
+  <div class="lsub">nothing decrypts on the server — the bytes are scrambled under your passphrase</div>
+  <form id="lf">
+    <input type="password" id="pw" placeholder="passphrase" autocomplete="current-password" autofocus>
+    <label><input type="checkbox" id="rem" checked> remember on this device</label>
+    <button type="submit">unlock</button>
+    <button type="button" class="quiet" id="forget">forget passphrase on this device</button>
+    <div class="msg" id="msg"></div>
+  </form>
+  <noscript><div class="lsub">this page decrypts in the browser and needs JavaScript</div></noscript>
+</div>
+<div id="doc" class="hidden"></div>
+<script>
+(function(){
+const MAGIC=[76,82,69,86,49,0],ITER=200000,IDB="laplace-registers",KEY="key-"+location.pathname;
+const $=id=>document.getElementById(id);
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(IDB,1);
+  r.onupgradeneeded=()=>r.result.createObjectStore("kv");
+  r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function idbSet(k,v){const db=await idb();return new Promise((res,rej)=>{
+  const t=db.transaction("kv","readwrite");t.objectStore("kv").put(v,k);
+  t.oncomplete=res;t.onerror=()=>rej(t.error);});}
+async function idbGet(k){const db=await idb();return new Promise(res=>{
+  const t=db.transaction("kv");const r=t.objectStore("kv").get(k);
+  r.onsuccess=()=>res(r.result);r.onerror=()=>res(null);});}
+async function idbDel(k){const db=await idb();return new Promise(res=>{
+  const t=db.transaction("kv","readwrite");t.objectStore("kv").delete(k);
+  t.oncomplete=res;t.onerror=res;});}
+const BLOBS={};
+async function blob(name){if(BLOBS[name])return BLOBS[name];
+  const r=await fetch(name,{cache:"no-store"});
+  if(!r.ok)throw new Error(name+" "+r.status);
+  const b=new Uint8Array(await r.arrayBuffer());
+  for(let i=0;i<MAGIC.length;i++)if(b[i]!==MAGIC[i])throw new Error("not a register bundle");
+  BLOBS[name]=b;return b;}
+async function deriveKey(pw,salt){
+  const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:ITER,hash:"SHA-256"},km,
+    {name:"AES-GCM",length:256},false,["decrypt"]);}
+async function open_(key,name){const b=await blob(name);const body=b.subarray(MAGIC.length);
+  const iv=body.subarray(16,28),ct=body.subarray(28);
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv},key,ct);
+  $("doc").innerHTML=new TextDecoder().decode(pt);
+  $("lock").remove();$("doc").classList.remove("hidden");}
+// the passphrase is the reader: normalized so capitalization can't lock anyone out
+function norm(s){return s.trim().toLowerCase();}
+// two slots per register: data.enc under the audience's phrase, master.enc under
+// the author's. Same scheme per blob; the second slot is what makes one master
+// phrase open every register.
+// on the hub, the phrase is also the address: typing a register's passname
+// routes straight to that page, its key pre-cached so it opens on arrival
+const HUB=false;
+async function route(pw){
+  const slug=encodeURIComponent(pw);
+  const r=await fetch(slug+"/data.enc",{cache:"no-store"});
+  if(!r.ok)return false;
+  const b=new Uint8Array(await r.arrayBuffer());
+  for(let i=0;i<MAGIC.length;i++)if(b[i]!==MAGIC[i])return false;
+  const key=await deriveKey(pw,b.subarray(MAGIC.length,MAGIC.length+16));
+  const iv=b.subarray(MAGIC.length+16,MAGIC.length+28);
+  await crypto.subtle.decrypt({name:"AES-GCM",iv},key,b.subarray(MAGIC.length+28));
+  try{await idbSet("key-"+location.pathname+slug+"/",key);
+      await idbSet("key-"+location.pathname+slug+"/-which","data.enc");}catch(_){}
+  location.href=slug+"/";return true;}
+$("lf").addEventListener("submit",async e=>{e.preventDefault();
+  $("msg").textContent="deriving…";$("msg").className="msg";
+  const pw=norm($("pw").value);
+  for(const name of ["data.enc","master.enc"]){
+    try{const b=await blob(name);
+      const key=await deriveKey(pw,b.subarray(MAGIC.length,MAGIC.length+16));
+      await open_(key,name);
+      if($("rem").checked){try{await idbSet(KEY,key);await idbSet(KEY+"-which",name);}catch(_){}}
+      return;
+    }catch(err){}
+  }
+  if(HUB){try{if(await route(pw))return;}catch(_){}}
+  $("msg").textContent="that passphrase does not unlock this page";
+  $("msg").className="msg bad";});
+$("forget").addEventListener("click",async()=>{await idbDel(KEY);await idbDel(KEY+"-which");
+  $("msg").textContent="forgotten on this device";$("msg").className="msg";});
+(async()=>{try{const k=await idbGet(KEY);const w=await idbGet(KEY+"-which");
+  if(k&&w)await open_(k,w);}catch(_){}})();
+})();
+</script>
+<div id="deckbar">
+  <div id="deckprogwrap"><div id="deckprog"></div></div>
+  <span id="deckhint">→ advance · ← back · g overview · f fullscreen</span>
+  <span id="deckcount"></span>
+</div>
+<script>
+(function(){
+const doc=document.getElementById('doc');
+if(!doc)return;
+let deck=null,slides=[],cur=0;
+const $=id=>document.getElementById(id);
+function show(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,j)=>s.classList.toggle('on',j===cur));
+  const c=$('deckcount');if(c)c.textContent=(cur+1)+' / '+slides.length;
+  const p=$('deckprog');if(p)p.style.width=(100*(cur+1)/slides.length)+'%';
+  if(slides[cur].id)history.replaceState(null,'','#'+slides[cur].id);
+  const h=$('deckhint');if(h&&cur>0)h.classList.add('gone');
+}
+function overview(on){
+  if(!deck)return;
+  const want=(on===undefined)?!deck.classList.contains('overview'):on;
+  deck.classList.toggle('overview',want);
+}
+function init(){
+  deck=doc.querySelector('.deck');
+  if(!deck||deck.classList.contains('js-on'))return false;
+  slides=Array.from(deck.querySelectorAll('.slide'));
+  if(!slides.length)return false;
+  deck.classList.add('js-on');
+  document.body.classList.add('js-deck');
+  const i=slides.findIndex(s=>s.id===location.hash.slice(1));
+  show(i>=0?i:0);
+  return true;
+}
+addEventListener('keydown',e=>{
+  if(!deck||!deck.classList.contains('js-on'))return;
+  if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))return;
+  const k=e.key;
+  if(k==='ArrowRight'||k===' '||k==='PageDown'||k==='j'||k==='n'){e.preventDefault();show(cur+1);}
+  else if(k==='ArrowLeft'||k==='PageUp'||k==='k'||k==='p'){e.preventDefault();show(cur-1);}
+  else if(k==='Home'){e.preventDefault();show(0);}
+  else if(k==='End'){e.preventDefault();show(slides.length-1);}
+  else if(k==='f'){const el=document.documentElement;
+    (document.fullscreenElement?document.exitFullscreen():el.requestFullscreen()).catch(()=>{});}
+  else if(k==='g'){overview();}
+  else if(k==='Escape'){deck.classList.remove('overview');}
+});
+addEventListener('hashchange',()=>{
+  if(!slides.length)return;
+  const i=slides.findIndex(s=>s.id===location.hash.slice(1));
+  if(i>=0){deck.classList.remove('overview');show(i);}
+});
+addEventListener('click',e=>{
+  if(!deck||!deck.classList.contains('js-on'))return;
+  if(deck.classList.contains('overview')){
+    const s=e.target.closest('.slide');
+    if(s){overview(false);show(slides.indexOf(s));}
+    return;
+  }
+  if(e.target.closest('a,.num,details,summary,button,input,label'))return;
+  const sel=getSelection();if(sel&&!sel.isCollapsed)return;
+  const x=e.clientX/innerWidth;
+  if(x>0.45)show(cur+1);else if(x<0.30)show(cur-1);
+});
+let tx=null;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+addEventListener('touchend',e=>{
+  if(tx===null)return;
+  const dx=e.changedTouches[0].clientX-tx;tx=null;
+  if(Math.abs(dx)>40)show(cur+(dx<0?1:-1));
+},{passive:true});
+if(!init()){
+  new MutationObserver((m,o)=>{if(init())o.disconnect();})
+    .observe(doc,{childList:true,subtree:false});
+}
+})();
+</script>
+</body>
+</html>
