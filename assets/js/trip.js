@@ -184,28 +184,46 @@
     var dvTitle = document.getElementById('trip-dayview-title');
     var dvNote = document.getElementById('trip-dayview-note');
     var dvHost = document.getElementById('trip-dayview-photos');
-    var shownDay = -1;
+    var shownDay = -1, dvIdx = 0;
+    function big(p) { return '/assets/img/trip/' + p.id + '.jpg'; }
+    function dvRender() {
+      var g = days[shownDay], n = g.items.length, p = g.items[dvIdx];
+      dvNote.textContent = p.t.slice(11, 16) + ' UTC · ±' + p.dt + ' min' +
+        (p.place ? ' · ' + p.place.split(',')[0] : '') + ' · click for full size';
+      dvHost.innerHTML =
+        '<div class="trip-dayframe">' +
+        '<img src="' + big(p) + '" alt="" decoding="async" ' +
+          'style="aspect-ratio:' + (p.w || 1) + '/' + (p.h || 1) + '">' +
+        (n > 1 ? '<button class="trip-df-nav prev" type="button" aria-label="Previous">&#8249;</button>' +
+                 '<button class="trip-df-nav next" type="button" aria-label="Next">&#8250;</button>' : '') +
+        '<span class="trip-df-count">' + (dvIdx + 1) + ' / ' + n + '</span>' +
+        '</div>';
+      // the neighbours load while this one is on screen, so flicking is instant
+      if (n > 1) {
+        new Image().src = big(g.items[(dvIdx + 1) % n]);
+        new Image().src = big(g.items[(dvIdx - 1 + n) % n]);
+      }
+    }
     function showDay(gi) {
       if (gi < 0 || gi === shownDay || !dvHost) return;
-      shownDay = gi;
+      shownDay = gi; dvIdx = 0;
       var g = days[gi];
       dvTitle.textContent = label(g.d) + (g.place ? ' — ' + g.place.split(',')[0] : '');
-      dvNote.textContent = g.items.length + (g.items.length === 1 ? ' frame' : ' frames') +
-        ' · click one for the full image';
-      var RH = 96;
-      dvHost.innerHTML = g.items.map(function (p) {
-        var ar = (p.w > 0 && p.h > 0) ? p.w / p.h : 1;
-        return '<button class="trip-photo" type="button" data-id="' + p.id + '" ' +
-          'style="flex:' + (ar * 100).toFixed(1) + ' 1 ' + (ar * RH).toFixed(0) + 'px;' +
-          'aspect-ratio:' + (p.w || 1) + '/' + (p.h || 1) + '">' +
-          '<img src="/assets/img/trip/' + p.id + '_t.jpg" alt="" loading="lazy" decoding="async">' +
-          '<em>' + p.t.slice(11, 16) + ' &plusmn;' + p.dt + 'm</em></button>';
-      }).join('');
+      dvRender();
     }
     if (dvHost) dvHost.addEventListener('click', function (e) {
-      var b = e.target.closest('.trip-photo'); if (!b) return;
-      var i = photos.findIndex(function (x) { return x.id === b.dataset.id; });
-      if (i >= 0) show(i);
+      var n = days[shownDay] ? days[shownDay].items.length : 0;
+      if (!n) return;
+      var b = e.target.closest('.trip-df-nav');
+      if (b) {
+        dvIdx = (dvIdx + (b.classList.contains('next') ? 1 : -1) + n) % n;
+        dvRender();
+        return;
+      }
+      if (e.target.closest('img')) {
+        var i = photos.findIndex(function (x) { return x.id === days[shownDay].items[dvIdx].id; });
+        if (i >= 0) show(i);
+      }
     });
 
     /* ------------------------- map interaction ----------------------- */
