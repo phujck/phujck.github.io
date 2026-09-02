@@ -183,42 +183,56 @@
        is hovered, so the pointer can travel from mark to photograph. */
     var dvNote = document.getElementById('trip-dayview-note');
     var dvHost = document.getElementById('trip-dayview-photos');
-    var shownDay = -1, dvIdx = 0, pinned = false;
-    function big(p) { return '/assets/img/trip/' + p.id + '.jpg'; }
+    var shownDay = -1, pinned = false;
     function dvRender() {
-      var g = days[shownDay], n = g.items.length, p = g.items[dvIdx];
-      var where = (p.place || g.place || '').split(',')[0];
-      dvNote.textContent = (where ? where + ' · ' : '') + label(g.d) + ' · ' +
-        p.t.slice(11, 16) + ' UTC ±' + p.dt + ' min';
-      dvHost.innerHTML =
-        '<img src="' + big(p) + '" alt="" decoding="async">' +
-        (n > 1 ? '<button class="trip-df-nav prev" type="button" aria-label="Previous">&#8249;</button>' +
-                 '<button class="trip-df-nav next" type="button" aria-label="Next">&#8250;</button>' : '') +
-        '<span class="trip-df-count">' + (dvIdx + 1) + ' / ' + n + '</span>';
-      // the neighbours load while this one is on screen, so flicking is instant
-      if (n > 1) {
-        new Image().src = big(g.items[(dvIdx + 1) % n]);
-        new Image().src = big(g.items[(dvIdx - 1 + n) % n]);
+      var g = days[shownDay], items = g.items, n = items.length;
+      var ars = items.map(function (p) { return (p.w > 0 && p.h > 0) ? p.w / p.h : 1; });
+      var total = ars.reduce(function (a, b) { return a + b; }, 0);
+      var r = dvHost.getBoundingClientRect();
+      var boxAr = (r.width > 0 && r.height > 0) ? r.width / r.height : 340 / 620;
+      // Rows of equal aspect-ratio sum share one distortion factor
+      // s = (W/H) * sum over rows of 1/A_row; the row count that puts s
+      // nearest 1 tiles the whole panel with uniform, minimal cropping.
+      var best = null;
+      for (var k = 1; k <= n; k++) {
+        var target = total / k, rows = [[]], acc = 0;
+        for (var i = 0; i < n; i++) {
+          if (acc >= target * rows.length && rows.length < k) rows.push([]);
+          rows[rows.length - 1].push(i);
+          acc += ars[i];
+        }
+        var invH = rows.reduce(function (v, row) {
+          return v + 1 / row.reduce(function (a, j) { return a + ars[j]; }, 0);
+        }, 0);
+        var score = Math.abs(Math.log(boxAr * invH));
+        if (!best || score < best.score) best = { rows: rows, score: score };
       }
+      var where = (g.place || '').split(',')[0];
+      dvNote.textContent = (where ? where + ' · ' : '') + label(g.d) + ' · ' +
+        n + (n === 1 ? ' frame' : ' frames') + ' · click one to open';
+      dvHost.innerHTML = best.rows.map(function (row) {
+        var A = row.reduce(function (a, j) { return a + ars[j]; }, 0);
+        return '<div class="trip-dfrow" style="flex-grow:' + (1000 / A).toFixed(2) + '">' +
+          row.map(function (j) {
+            var p = items[j];
+            var cw = 340 * ars[j] / A;   // cell width at panel scale, for source choice
+            var src = '/assets/img/trip/' + p.id + (cw > 300 ? '' : '_t') + '.jpg';
+            return '<button class="trip-dfcell" type="button" data-id="' + p.id + '" ' +
+              'style="flex-grow:' + (ars[j] * 100).toFixed(1) + '">' +
+              '<img src="' + src + '" alt="" loading="lazy" decoding="async">' +
+              '<em>' + p.t.slice(11, 16) + '</em></button>';
+          }).join('') + '</div>';
+      }).join('');
     }
     function showDay(gi) {
       if (gi < 0 || gi === shownDay || !dvHost) return;
-      shownDay = gi; dvIdx = 0;
+      shownDay = gi;
       dvRender();
     }
     if (dvHost) dvHost.addEventListener('click', function (e) {
-      var n = days[shownDay] ? days[shownDay].items.length : 0;
-      if (!n) return;
-      var b = e.target.closest('.trip-df-nav');
-      if (b) {
-        dvIdx = (dvIdx + (b.classList.contains('next') ? 1 : -1) + n) % n;
-        dvRender();
-        return;
-      }
-      if (e.target.closest('img')) {
-        var i = photos.findIndex(function (x) { return x.id === days[shownDay].items[dvIdx].id; });
-        if (i >= 0) show(i);
-      }
+      var b = e.target.closest('.trip-dfcell'); if (!b) return;
+      var i = photos.findIndex(function (x) { return x.id === b.dataset.id; });
+      if (i >= 0) show(i);
     });
 
     /* ------------------------- map interaction ----------------------- */

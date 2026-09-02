@@ -158,12 +158,29 @@
 .trip-dayview { display: flex; flex-direction: column; height: 100%; min-height: 0; }
 .trip-dayframe {
   position: relative; flex: 1; min-height: 0;
+  display: flex; flex-direction: column; gap: 3px;
   background: var(--bg-secondary); border: 1px solid var(--border-glass);
-  border-radius: var(--radius-md); overflow: hidden;
+  border-radius: var(--radius-md); overflow: hidden; padding: 3px;
 }
-.trip-dayframe img {
-  display: block; width: 100%; height: 100%; object-fit: contain; cursor: zoom-in;
+.trip-dfrow { display: flex; gap: 3px; flex-shrink: 1; flex-basis: 0; min-height: 0; }
+.trip-dfcell {
+  position: relative; flex-shrink: 1; flex-basis: 0; min-width: 0;
+  padding: 0; border: 0; background: var(--bg-primary);
+  border-radius: 2px; overflow: hidden; cursor: zoom-in;
 }
+.trip-dfcell img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  transition: opacity var(--transition-fast);
+}
+.trip-dfcell:hover img { opacity: 0.78; }
+.trip-dfcell:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.trip-dfcell em {
+  position: absolute; left: 0; right: 0; bottom: 0; font-style: normal;
+  font-family: var(--font-mono); font-size: 0.58rem; color: #fff;
+  background: linear-gradient(to top, rgba(0,0,0,.7), transparent);
+  padding: 0.45rem 0.3rem 0.16rem; opacity: 0; transition: opacity var(--transition-fast);
+}
+.trip-dfcell:hover em { opacity: 1; }
 .trip-dayframe-hint {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   margin: 0; padding: var(--space-xl); text-align: center;
@@ -175,20 +192,6 @@
   color: var(--text-secondary);
 }
 @media (max-width: 980px) { .trip-dayframe { min-height: 62vw; } }
-.trip-df-nav {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  background: rgba(5, 7, 14, 0.45); border: 0; color: #fff; cursor: pointer;
-  font-size: 1.6rem; line-height: 1; padding: 0.55rem 0.5rem; border-radius: 3px;
-  opacity: 0.75; transition: opacity var(--transition-fast);
-}
-.trip-df-nav:hover { opacity: 1; }
-.trip-df-nav.prev { left: 0.4rem; }
-.trip-df-nav.next { right: 0.4rem; }
-.trip-df-count {
-  position: absolute; right: 0.5rem; bottom: 0.45rem;
-  font-family: var(--font-mono); font-size: 0.66rem; color: #fff;
-  background: rgba(5, 7, 14, 0.55); padding: 0.16rem 0.4rem; border-radius: 3px;
-}
 
 /* facts flow in two columns once they sit beneath the map */
 .trip-facts.cols { columns: 2; column-gap: var(--space-2xl); }
