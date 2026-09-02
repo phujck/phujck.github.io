@@ -246,14 +246,54 @@
         var q = sx(g.lat, g.lon), d = Math.hypot(q[0] - mx, q[1] - my);
         if (d < bd) { bd = d; best = i; }
       });
-      return bd < 26 ? best : -1;
+      // the hit radius is set in screen pixels, so a fingertip on a phone
+      // covers a mark just as well as a cursor on a desktop
+      var r = cv.getBoundingClientRect();
+      var R = Math.max(26, 13 * (r.width > 0 ? cv.width / r.width : 1));
+      return bd < R ? best : -1;
     }
-    var drag = null;
-    cv.addEventListener('mousedown', function (e) {
-      drag = { x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false };
-      cv.classList.add('dragging');
+
+    /* Pointer events cover mouse and touch alike: one pointer drags the
+       view, two pinch-zoom it, and a pointer that barely moves is a tap. */
+    var pointers = {}, drag = null, pinch = null;
+    function pinToggle(d) {
+      if (d >= 0) {
+        // a tap or click pins the day so pointing elsewhere doesn't steal
+        // the panel; tapping the pinned day again releases it
+        if (pinned && d === hotDay) { pinned = false; return; }
+        pinned = true; hotDay = d; drawRoute(); showDay(d);
+      } else if (pinned) {
+        pinned = false; hotDay = -1; drawRoute();
+      }
+    }
+    cv.addEventListener('pointerdown', function (e) {
+      try { cv.setPointerCapture(e.pointerId); } catch (err) { /* already released */ }
+      pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+      var ids = Object.keys(pointers);
+      if (ids.length === 1) {
+        drag = { id: e.pointerId, x: e.clientX, y: e.clientY,
+                 tx: view.tx, ty: view.ty, moved: false, touch: e.pointerType !== 'mouse' };
+        cv.classList.add('dragging');
+      } else if (ids.length === 2) {
+        drag = null;
+        var a = pointers[ids[0]], b = pointers[ids[1]];
+        pinch = { d: Math.hypot(a.x - b.x, a.y - b.y),
+                  mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 };
+      }
+      if (e.pointerType !== 'mouse') e.preventDefault();
     });
-    addEventListener('mouseup', function () { drag = null; cv.classList.remove('dragging'); });
+    function endPointer(e) {
+      var wasDrag = drag && drag.id === e.pointerId;
+      if (wasDrag && !drag.moved && e.type === 'pointerup') {
+        var p = canvasXY(e);
+        pinToggle(dayUnder(p[0], p[1]));
+      }
+      delete pointers[e.pointerId];
+      if (Object.keys(pointers).length < 2) pinch = null;
+      if (wasDrag || !Object.keys(pointers).length) { drag = null; cv.classList.remove('dragging'); }
+    }
+    cv.addEventListener('pointerup', endPointer);
+    cv.addEventListener('pointercancel', endPointer);
     cv.addEventListener('wheel', function (e) {
       e.preventDefault();
       var p = canvasXY(e);
@@ -265,15 +305,35 @@
       else zoomAbout(cv.width / 2, cv.height / 2, b.dataset.z === 'in' ? 1.5 : 1 / 1.5);
     });
 
-    cv.addEventListener('mousemove', function (e) {
-      if (drag) {
+    cv.addEventListener('pointermove', function (e) {
+      if (pointers[e.pointerId]) pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+
+      if (pinch) {
+        var ids = Object.keys(pointers);
+        if (ids.length >= 2) {
+          var a = pointers[ids[0]], b = pointers[ids[1]];
+          var nd = Math.hypot(a.x - b.x, a.y - b.y);
+          var nmx = (a.x + b.x) / 2, nmy = (a.y + b.y) / 2;
+          var r0 = cv.getBoundingClientRect(), sc0 = cv.width / r0.width;
+          if (pinch.d > 0 && nd > 0) {
+            zoomAbout((nmx - r0.left) * sc0, (nmy - r0.top) * sc0, nd / pinch.d);
+          }
+          view.tx += (nmx - pinch.mx) * sc0;
+          view.ty += (nmy - pinch.my) * sc0;
+          clampView(); drawRoute();
+          pinch.d = nd; pinch.mx = nmx; pinch.my = nmy;
+        }
+        return;
+      }
+      if (drag && drag.id === e.pointerId) {
         var r = cv.getBoundingClientRect(), sc = cv.width / r.width;
         view.tx = drag.tx + (e.clientX - drag.x) * sc;
         view.ty = drag.ty + (e.clientY - drag.y) * sc;
-        if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 3) drag.moved = true;
+        if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > (drag.touch ? 9 : 3)) drag.moved = true;
         clampView(); drawRoute();
         return;
       }
+      if (e.pointerType !== 'mouse') return;   // hover is a mouse idea
       var p = canvasXY(e), mx = p[0], my = p[1];
 
       var d = dayUnder(mx, my);
@@ -309,18 +369,6 @@
     cv.addEventListener('mouseleave', function () {
       tip.style.opacity = 0;
       if (!pinned && hotDay !== -1) { hotDay = -1; drawRoute(); }
-    });
-    cv.addEventListener('click', function (e) {
-      if (drag && drag.moved) return;
-      var p = canvasXY(e), d = dayUnder(p[0], p[1]);
-      if (d >= 0) {
-        // click pins the day so hovering elsewhere doesn't steal the panel;
-        // clicking the pinned day again releases it
-        if (pinned && d === hotDay) { pinned = false; return; }
-        pinned = true; hotDay = d; drawRoute(); showDay(d);
-      } else if (pinned) {
-        pinned = false; hotDay = -1; drawRoute();
-      }
     });
     cv.addEventListener('dblclick', function () { view = { k: 1, tx: 0, ty: 0 }; drawRoute(); });
 
