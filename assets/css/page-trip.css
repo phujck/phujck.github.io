@@ -191,11 +191,15 @@
 .trip-three .trip-parks { grid-template-columns: 1fr; border-top: 0; }
 .trip-three .trip-scroll { max-height: 340px; }
 
-/* ---------- photographs: dense mosaic ---------- */
+/* ---------- photographs: justified mosaic ----------
+   Each frame carries inline flex-grow AND flex-basis proportional to its
+   aspect ratio, so widths within a row stay proportional to ar and the
+   shared row height falls out exactly — true ratios, no crops, no JS
+   relayout. The ::after spacer stops the final row from over-stretching. */
 .trip-mosaic {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: 4px; margin-top: var(--space-lg);
+  display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--space-lg);
 }
+.trip-mosaic::after { content: ''; flex-grow: 100000; }
 .trip-photo.first { outline: 1px solid var(--accent-dim); outline-offset: -1px; }
 .daychip {
   position: absolute; top: 0; left: 0; font-style: normal;
@@ -204,11 +208,11 @@
   padding: 0.16rem 0.34rem; border-bottom-right-radius: 3px; z-index: 1;
 }
 .trip-photo {
-  display: block; width: 100%; padding: 0; border: 0; background: var(--bg-secondary);
+  display: block; min-width: 0; padding: 0; border: 0; background: var(--bg-secondary);
   border-radius: 2px; overflow: hidden; cursor: pointer; font: inherit; position: relative;
 }
 .trip-photo img {
-  display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover;
+  display: block; width: 100%; height: 100%; object-fit: cover;
   transition: opacity var(--transition-fast);
 }
 .trip-photo:hover img { opacity: 0.72; }

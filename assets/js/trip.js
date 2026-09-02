@@ -453,9 +453,13 @@
 
     /* ----------------------------- mosaic ---------------------------- */
     var host = document.getElementById('trip-photos');
+    var ROW_H = 132;                       // target row height, px
     host.innerHTML = days.map(function (g, gi) {
       return g.items.map(function (p, k) {
+        var ar = (p.w > 0 && p.h > 0) ? p.w / p.h : 1;
         return '<button class="trip-photo' + (k === 0 ? ' first' : '') + '" type="button" ' +
+          'style="flex:' + (ar * 100).toFixed(1) + ' 1 ' + (ar * ROW_H).toFixed(0) + 'px;' +
+          'aspect-ratio:' + (p.w || 1) + '/' + (p.h || 1) + '" ' +
           'data-id="' + p.id + '" data-g="' + gi + '">' +
           '<img src="/assets/img/trip/' + p.id + '_t.jpg" alt="" loading="lazy" decoding="async">' +
           (k === 0 ? '<i class="daychip">' + label(g.d).replace(/ \d{4}$/, '') + '</i>' : '') +
