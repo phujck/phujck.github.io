@@ -1,5 +1,5 @@
   <header class="page-hero">
-    <div class="page-hero-bg" style="background-image: url('/assets/img/trip_hero.jpg');"></div>
+    <div class="page-hero-bg" style="background-image: url('/assets/img/trip/20231014-223155.jpg');"></div>
     <div class="container">
       <h1 class="page-hero-title fade-in">The Long Way Round</h1>
       <p class="page-hero-subtitle fade-in fade-in-delay-1">A loop of the United States,
@@ -25,7 +25,7 @@
                 <button type="button" data-z="reset" aria-label="Reset view">reset</button>
               </div>
               <p class="trip-hint">scroll to zoom &middot; drag to pan &middot; hover a blue mark
-                to open that day's photographs</p>
+                to see that day's photographs alongside</p>
             </div>
             <div class="trip-caption">
               <span class="key">Oct</span>
@@ -42,11 +42,18 @@
           </div>
 
           <aside class="trip-split-side">
-            <div class="trip-ledger" id="trip-ledger"></div>
-            <dl class="trip-facts" id="trip-facts"></dl>
+            <div class="trip-dayview" id="trip-dayview">
+              <h3 class="trip-h3" id="trip-dayview-title">Photographs by day</h3>
+              <p class="trip-note" id="trip-dayview-note">Hover or tap a blue mark on the map;
+                that day's frames appear here.</p>
+              <div class="trip-mosaic tight" id="trip-dayview-photos"></div>
+            </div>
             <p class="trip-loading" id="trip-status">Loading&hellip;</p>
           </aside>
         </div>
+
+        <div class="trip-ledger" id="trip-ledger"></div>
+        <dl class="trip-facts cols" id="trip-facts"></dl>
       </div>
     </section>
 
@@ -93,15 +100,14 @@
             <h3 class="trip-h3">Closest approach</h3>
             <div class="trip-parks" id="trip-parks"></div>
           </div>
-          <div>
-            <h3 class="trip-h3">Stays of 9 hours or more</h3>
-            <div class="trip-scroll">
-              <table class="trip-table" id="trip-stops">
-                <thead><tr><th>Dates</th><th>Place</th><th></th><th class="r">Nts</th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
+        </div>
+        <div style="margin-top:var(--space-2xl)">
+          <h3 class="trip-h3">Where the nights went</h3>
+          <div class="trip-figure pad">
+            <svg id="trip-stops" viewBox="0 0 1080 480" role="img"
+              aria-label="Total nights per place, longest first, coloured by arrival date"></svg>
           </div>
+          <p class="trip-note" id="trip-stops-note"></p>
         </div>
       </div>
     </section>

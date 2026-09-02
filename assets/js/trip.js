@@ -155,8 +155,8 @@
         ctx.strokeStyle = css('--accent'); ctx.lineWidth = 2.4; ctx.stroke();
       });
 
-      // One mark per day rather than per frame; hovering a mark fans that
-      // day's frames out around it rather than stacking 174 dots on the route.
+      // One mark per day rather than per frame; hovering a mark puts that
+      // day's frames in the panel beside the map.
       days.forEach(function (g, i) {
         var q = sx(g.lat, g.lon);
         var s = 7 + Math.min(Math.sqrt(g.items.length) * 2.6, 8);
@@ -168,8 +168,6 @@
         ctx.globalAlpha = 1;
       });
 
-      if (hotDay >= 0) explode(days[hotDay]);
-
       var h = sx(T.home[0], T.home[1]);
       ctx.beginPath(); ctx.arc(h[0], h[1], 7.5, 0, 7);
       ctx.fillStyle = css('--text-primary'); ctx.fill();
@@ -178,52 +176,37 @@
 
     var tip = document.getElementById('trip-tip');
 
-    /* ------------------------- exploded day view ---------------------- */
-    var imgCache = {};
-    function thumbFor(p) {
-      if (imgCache[p.id]) return imgCache[p.id];
-      var im = new Image();
-      im.onload = function () { if (hotDay >= 0) drawRoute(); };
-      im.src = '/assets/img/trip/' + p.id + '_t.jpg';
-      imgCache[p.id] = im;
-      return im;
+    /* --------------------------- day panel ---------------------------
+       The photographs for whichever day the pointer finds on the map are
+       shown full-size in the panel beside it, not drawn onto the canvas.
+       The panel is sticky per day: it keeps the last day until a new one
+       is hovered, so the pointer can travel from mark to photograph. */
+    var dvTitle = document.getElementById('trip-dayview-title');
+    var dvNote = document.getElementById('trip-dayview-note');
+    var dvHost = document.getElementById('trip-dayview-photos');
+    var shownDay = -1;
+    function showDay(gi) {
+      if (gi < 0 || gi === shownDay || !dvHost) return;
+      shownDay = gi;
+      var g = days[gi];
+      dvTitle.textContent = label(g.d) + (g.place ? ' — ' + g.place.split(',')[0] : '');
+      dvNote.textContent = g.items.length + (g.items.length === 1 ? ' frame' : ' frames') +
+        ' · click one for the full image';
+      var RH = 96;
+      dvHost.innerHTML = g.items.map(function (p) {
+        var ar = (p.w > 0 && p.h > 0) ? p.w / p.h : 1;
+        return '<button class="trip-photo" type="button" data-id="' + p.id + '" ' +
+          'style="flex:' + (ar * 100).toFixed(1) + ' 1 ' + (ar * RH).toFixed(0) + 'px;' +
+          'aspect-ratio:' + (p.w || 1) + '/' + (p.h || 1) + '">' +
+          '<img src="/assets/img/trip/' + p.id + '_t.jpg" alt="" loading="lazy" decoding="async">' +
+          '<em>' + p.t.slice(11, 16) + ' &plusmn;' + p.dt + 'm</em></button>';
+      }).join('');
     }
-    function explode(g) {
-      var q = sx(g.lat, g.lon);
-      var n = g.items.length;
-      var TH = 74, GAP = 6;
-      // radius grows with count so the ring never self-overlaps
-      var R = Math.max(96, (n * (TH + GAP)) / (2 * Math.PI) + TH / 2);
-      var start = -Math.PI / 2;
-      ctx.save();
-      // dim the map behind the fan
-      ctx.fillStyle = 'rgba(8,12,18,0.55)';
-      ctx.beginPath(); ctx.arc(q[0], q[1], R + TH, 0, 7); ctx.fill();
-
-      g.items.forEach(function (p, i) {
-        var a = start + (i / n) * Math.PI * 2;
-        var x = q[0] + Math.cos(a) * R, y = q[1] + Math.sin(a) * R;
-        ctx.strokeStyle = css('--accent'); ctx.globalAlpha = 0.5; ctx.lineWidth = 1.4;
-        ctx.beginPath(); ctx.moveTo(q[0], q[1]); ctx.lineTo(x, y); ctx.stroke();
-        ctx.globalAlpha = 1;
-        var im = thumbFor(p);
-        ctx.fillStyle = css('--bg-secondary');
-        ctx.fillRect(x - TH / 2, y - TH / 2, TH, TH);
-        if (im.complete && im.naturalWidth) {
-          var sMin = Math.min(im.naturalWidth, im.naturalHeight);
-          ctx.drawImage(im, (im.naturalWidth - sMin) / 2, (im.naturalHeight - sMin) / 2, sMin, sMin,
-                        x - TH / 2, y - TH / 2, TH, TH);
-        }
-        ctx.strokeStyle = css('--accent'); ctx.lineWidth = 2;
-        ctx.strokeRect(x - TH / 2, y - TH / 2, TH, TH);
-        p._fx = x; p._fy = y; p._fs = TH;
-      });
-      // marker on top of its own fan
-      ctx.beginPath(); ctx.arc(q[0], q[1], 7, 0, 7);
-      ctx.fillStyle = css('--accent'); ctx.fill();
-      ctx.strokeStyle = css('--bg-secondary'); ctx.lineWidth = 2; ctx.stroke();
-      ctx.restore();
-    }
+    if (dvHost) dvHost.addEventListener('click', function (e) {
+      var b = e.target.closest('.trip-photo'); if (!b) return;
+      var i = photos.findIndex(function (x) { return x.id === b.dataset.id; });
+      if (i >= 0) show(i);
+    });
 
     /* ------------------------- map interaction ----------------------- */
     function canvasXY(e) {
@@ -238,16 +221,6 @@
       });
       return bd < 26 ? best : -1;
     }
-    function photoUnder(mx, my) {
-      if (hotDay < 0) return null;
-      var hit = null;
-      days[hotDay].items.forEach(function (p) {
-        if (p._fx == null) return;
-        if (Math.abs(mx - p._fx) <= p._fs / 2 && Math.abs(my - p._fy) <= p._fs / 2) hit = p;
-      });
-      return hit;
-    }
-
     var drag = null;
     cv.addEventListener('mousedown', function (e) {
       drag = { x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false };
@@ -276,33 +249,17 @@
       }
       var p = canvasXY(e), mx = p[0], my = p[1];
 
-      // while a day is open, keep it open over its own fan
-      var overPhoto = photoUnder(mx, my);
-      if (overPhoto) {
-        tipAt(e, overPhoto.t.slice(11, 16) + ' · ±' + overPhoto.dt + ' min' +
-                 (overPhoto.place ? ' · ' + overPhoto.place : ''));
-        cv.style.cursor = 'zoom-in';
-        return;
-      }
-      cv.style.cursor = '';
-
       var d = dayUnder(mx, my);
-      if (d !== hotDay) {
-        // don't close while the pointer is still inside the open fan's disc
-        if (hotDay >= 0 && d === -1) {
-          var q = sx(days[hotDay].lat, days[hotDay].lon);
-          var n = days[hotDay].items.length;
-          var R = Math.max(96, (n * 80) / (2 * Math.PI) + 37);
-          if (Math.hypot(mx - q[0], my - q[1]) < R + 74) return;
-        }
-        hotDay = d; drawRoute();
-      }
+      if (d !== hotDay) { hotDay = d; drawRoute(); }
       if (d >= 0) {
+        showDay(d);
         var g = days[d];
         tipAt(e, label(g.d) + ' — ' + g.items.length +
               (g.items.length === 1 ? ' frame' : ' frames') + (g.place ? ' · ' + g.place : ''));
+        cv.style.cursor = 'pointer';
         return;
       }
+      cv.style.cursor = '';
 
       var cand = T.parks.map(function (x) {
         return { lat: x.lat, lon: x.lon, t: x.name + ' — ' + x.date + ', within ' + x.km + ' km' };
@@ -328,11 +285,8 @@
     });
     cv.addEventListener('click', function (e) {
       if (drag && drag.moved) return;
-      var p = canvasXY(e), hit = photoUnder(p[0], p[1]);
-      if (hit) {
-        var i = photos.findIndex(function (x) { return x.id === hit.id; });
-        if (i >= 0) show(i);
-      }
+      var p = canvasXY(e), d = dayUnder(p[0], p[1]);   // tap = hover, for touch
+      if (d >= 0) { hotDay = d; drawRoute(); showDay(d); }
     });
     cv.addEventListener('dblclick', function () { view = { k: 1, tx: 0, ty: 0 }; drawRoute(); });
 
@@ -514,11 +468,34 @@
         return '<div class="trip-state transit"><b>' + s + '</b><span>·</span></div>';
       }).join('');
 
-    /* ------------------------------- stops --------------------------- */
-    document.querySelector('#trip-stops tbody').innerHTML = T.stops.map(function (s) {
-      return '<tr><td class="m">' + s.start.slice(5) + ' → ' + s.end.slice(5) + '</td><td>' +
-        s.name + '</td><td class="m">' + s.state + '</td><td class="r">' + s.days.toFixed(1) + '</td></tr>';
-    }).join('');
+    /* ------------------------------- stops ---------------------------
+       Total nights per place, longest first, as bars. The stops rows are
+       aggregates (New Orleans spans the bookend stays), so a bar per place
+       is the honest shape; a timeline would draw overlapping intervals. */
+    (function () {
+      var S = T.stops.filter(function (s) { return s.days >= 1; })
+                     .sort(function (a, b) { return b.days - a.days; });
+      var minor = T.stops.length - S.length;
+      var W = 1080, RH = 26, ML = 200, MR = 56;
+      var maxD = S.length ? S[0].days : 1;
+      var t0 = +new Date(T.days[0].d), t1 = +new Date(T.days[T.days.length - 1].d);
+      var el = document.getElementById('trip-stops');
+      el.setAttribute('viewBox', '0 0 ' + W + ' ' + (S.length * RH + 6));
+      el.innerHTML = S.map(function (s, i) {
+        var y = i * RH + 3, bw = Math.max((W - ML - MR) * s.days / maxD, 2);
+        var f = Math.min(Math.max((+new Date(s.start) - t0) / (t1 - t0), 0), 1);
+        return '<text class="axt" text-anchor="end" x="' + (ML - 10) + '" y="' + (y + RH / 2 + 3.5) + '">' +
+            s.name + ', ' + s.state + '</text>' +
+          '<rect x="' + ML + '" y="' + (y + 4) + '" width="' + bw.toFixed(1) + '" height="' + (RH - 8) +
+            '" rx="2" fill="' + rampAt(f) + '"><title>' + s.name + ', ' + s.state + ' — ' +
+            s.start.slice(5) + ' &#8594; ' + s.end.slice(5) + ' &#183; ' + s.days.toFixed(1) + ' nights</title></rect>' +
+          '<text class="axl" x="' + (ML + bw + 7).toFixed(1) + '" y="' + (y + RH / 2 + 3.5) + '">' +
+            s.days.toFixed(1) + '</text>';
+      }).join('');
+      document.getElementById('trip-stops-note').textContent =
+        'Stays of nine hours or more, summed per place; bar colour is arrival date on the ' +
+        'October-to-January ramp. ' + minor + ' shorter pauses are counted but not drawn.';
+    })();
 
     /* ------------------------------ facts ---------------------------- */
     var d = T.days;
@@ -548,12 +525,12 @@
       var n = document.getElementById(id);
       if (n) n.classList.add('visible');
     });
-    document.querySelectorAll('.trip .trip-figure, .trip .trip-grid, .trip .trip-three, .trip .trip-scroll, .trip .trip-caption')
+    document.querySelectorAll('.trip .trip-figure, .trip .trip-grid, .trip .trip-three, .trip .trip-caption')
       .forEach(function (n) { n.classList.add('visible'); });
 
     // small hook so the figure can be driven and checked from the console
     window.__trip = { days: days, photos: photos, sx: sx, view: view, redraw: drawRoute,
-                      hot: function (i) { hotDay = i; drawRoute(); } };
+                      hot: function (i) { hotDay = i; drawRoute(); if (i >= 0) showDay(i); } };
 
     drawRoute();
   }
