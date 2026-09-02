@@ -69,6 +69,25 @@
       return [OX + (q[0] - bb[0]) * SC, OY + (bb[3] - q[1]) * SC];   // canvas y grows down
     }
 
+    /* --------------------------- pan and zoom ------------------------ */
+    // proj() gives map pixels; view maps those onto the canvas.
+    var view = { k: 1, tx: 0, ty: 0 };
+    function sx(lat, lon) { var q = proj(lat, lon); return [q[0] * view.k + view.tx, q[1] * view.k + view.ty]; }
+    function clampView() {
+      view.k = Math.min(Math.max(view.k, 1), 14);
+      var w = cv.width, h = cv.height;
+      view.tx = Math.min(0, Math.max(view.tx, w - w * view.k));
+      view.ty = Math.min(0, Math.max(view.ty, h - h * view.k));
+    }
+    function zoomAbout(cxp, cyp, factor) {
+      var k0 = view.k;
+      view.k = Math.min(Math.max(view.k * factor, 1), 14);
+      var r = view.k / k0;
+      view.tx = cxp - (cxp - view.tx) * r;
+      view.ty = cyp - (cyp - view.ty) * r;
+      clampView(); drawRoute();
+    }
+
     /* ------------------------------- ramp ---------------------------- */
     function hx(x) { return [parseInt(x.slice(1,3),16), parseInt(x.slice(3,5),16), parseInt(x.slice(5,7),16)]; }
     function rampAt(t) {
@@ -110,7 +129,7 @@
         polys.forEach(function (poly) {
           poly.forEach(function (ring) {
             ring.forEach(function (pt, i) {
-              var q = proj(pt[1], pt[0]);
+              var q = sx(pt[1], pt[0]);
               if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]);
             });
             ctx.closePath();
@@ -122,7 +141,7 @@
       var tr = T.track, N = tr.length, STEP = Math.max(1, Math.floor(N / 2600));
       ctx.lineWidth = 3.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       for (var i = STEP; i < N; i += STEP) {
-        var a = proj(tr[i - STEP][0], tr[i - STEP][1]), b = proj(tr[i][0], tr[i][1]);
+        var a = sx(tr[i - STEP][0], tr[i - STEP][1]), b = sx(tr[i][0], tr[i][1]);
         if (Math.hypot(b[0] - a[0], b[1] - a[1]) > 230) continue;   // not a road
         ctx.strokeStyle = rampAt(i / N);
         ctx.globalAlpha = 0.85;
@@ -131,15 +150,15 @@
       ctx.globalAlpha = 1;
 
       T.parks.forEach(function (p) {
-        var q = proj(p.lat, p.lon);
+        var q = sx(p.lat, p.lon);
         ctx.beginPath(); ctx.arc(q[0], q[1], 9, 0, 7);
         ctx.strokeStyle = css('--accent'); ctx.lineWidth = 2.4; ctx.stroke();
       });
 
-      // One mark per day rather than per frame: side scales with the number of
-      // photographs, so a busy day reads bigger without 174 dots overlapping.
+      // One mark per day rather than per frame; hovering a mark fans that
+      // day's frames out around it rather than stacking 174 dots on the route.
       days.forEach(function (g, i) {
-        var q = proj(g.lat, g.lon);
+        var q = sx(g.lat, g.lon);
         var s = 7 + Math.min(Math.sqrt(g.items.length) * 2.6, 8);
         ctx.fillStyle = i === hotDay ? css('--accent') : css('--link');
         ctx.globalAlpha = i === hotDay ? 1 : 0.85;
@@ -149,38 +168,173 @@
         ctx.globalAlpha = 1;
       });
 
-      var h = proj(T.home[0], T.home[1]);
+      if (hotDay >= 0) explode(days[hotDay]);
+
+      var h = sx(T.home[0], T.home[1]);
       ctx.beginPath(); ctx.arc(h[0], h[1], 7.5, 0, 7);
       ctx.fillStyle = css('--text-primary'); ctx.fill();
       ctx.strokeStyle = css('--bg-secondary'); ctx.lineWidth = 2.4; ctx.stroke();
     }
 
     var tip = document.getElementById('trip-tip');
-    cv.addEventListener('mousemove', function (e) {
+
+    /* ------------------------- exploded day view ---------------------- */
+    var imgCache = {};
+    function thumbFor(p) {
+      if (imgCache[p.id]) return imgCache[p.id];
+      var im = new Image();
+      im.onload = function () { if (hotDay >= 0) drawRoute(); };
+      im.src = '/assets/img/trip/' + p.id + '_t.jpg';
+      imgCache[p.id] = im;
+      return im;
+    }
+    function explode(g) {
+      var q = sx(g.lat, g.lon);
+      var n = g.items.length;
+      var TH = 74, GAP = 6;
+      // radius grows with count so the ring never self-overlaps
+      var R = Math.max(96, (n * (TH + GAP)) / (2 * Math.PI) + TH / 2);
+      var start = -Math.PI / 2;
+      ctx.save();
+      // dim the map behind the fan
+      ctx.fillStyle = 'rgba(8,12,18,0.55)';
+      ctx.beginPath(); ctx.arc(q[0], q[1], R + TH, 0, 7); ctx.fill();
+
+      g.items.forEach(function (p, i) {
+        var a = start + (i / n) * Math.PI * 2;
+        var x = q[0] + Math.cos(a) * R, y = q[1] + Math.sin(a) * R;
+        ctx.strokeStyle = css('--accent'); ctx.globalAlpha = 0.5; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(q[0], q[1]); ctx.lineTo(x, y); ctx.stroke();
+        ctx.globalAlpha = 1;
+        var im = thumbFor(p);
+        ctx.fillStyle = css('--bg-secondary');
+        ctx.fillRect(x - TH / 2, y - TH / 2, TH, TH);
+        if (im.complete && im.naturalWidth) {
+          var sMin = Math.min(im.naturalWidth, im.naturalHeight);
+          ctx.drawImage(im, (im.naturalWidth - sMin) / 2, (im.naturalHeight - sMin) / 2, sMin, sMin,
+                        x - TH / 2, y - TH / 2, TH, TH);
+        }
+        ctx.strokeStyle = css('--accent'); ctx.lineWidth = 2;
+        ctx.strokeRect(x - TH / 2, y - TH / 2, TH, TH);
+        p._fx = x; p._fy = y; p._fs = TH;
+      });
+      // marker on top of its own fan
+      ctx.beginPath(); ctx.arc(q[0], q[1], 7, 0, 7);
+      ctx.fillStyle = css('--accent'); ctx.fill();
+      ctx.strokeStyle = css('--bg-secondary'); ctx.lineWidth = 2; ctx.stroke();
+      ctx.restore();
+    }
+
+    /* ------------------------- map interaction ----------------------- */
+    function canvasXY(e) {
       var r = cv.getBoundingClientRect();
-      var mx = (e.clientX - r.left) * cv.width / r.width;
-      var my = (e.clientY - r.top) * cv.height / r.height;
-      var cand = T.parks.map(function (p) {
-        return { lat: p.lat, lon: p.lon, t: p.name + ' — ' + p.date + ', within ' + p.km + ' km' };
-      }).concat(days.map(function (g) {
-        return { lat: g.lat, lon: g.lon,
-          t: label(g.d) + ' — ' + g.items.length + (g.items.length === 1 ? ' frame' : ' frames') +
-             (g.place ? ' · ' + g.place : '') };
-      })).concat(T.stops.filter(function (s) { return s.days >= 1; }).map(function (s) {
+      return [(e.clientX - r.left) * cv.width / r.width, (e.clientY - r.top) * cv.height / r.height];
+    }
+    function dayUnder(mx, my) {
+      var best = -1, bd = 1e9;
+      days.forEach(function (g, i) {
+        var q = sx(g.lat, g.lon), d = Math.hypot(q[0] - mx, q[1] - my);
+        if (d < bd) { bd = d; best = i; }
+      });
+      return bd < 26 ? best : -1;
+    }
+    function photoUnder(mx, my) {
+      if (hotDay < 0) return null;
+      var hit = null;
+      days[hotDay].items.forEach(function (p) {
+        if (p._fx == null) return;
+        if (Math.abs(mx - p._fx) <= p._fs / 2 && Math.abs(my - p._fy) <= p._fs / 2) hit = p;
+      });
+      return hit;
+    }
+
+    var drag = null;
+    cv.addEventListener('mousedown', function (e) {
+      drag = { x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false };
+      cv.classList.add('dragging');
+    });
+    addEventListener('mouseup', function () { drag = null; cv.classList.remove('dragging'); });
+    cv.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var p = canvasXY(e);
+      zoomAbout(p[0], p[1], e.deltaY < 0 ? 1.18 : 1 / 1.18);
+    }, { passive: false });
+    document.querySelector('.trip-mapctl').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.z === 'reset') { view = { k: 1, tx: 0, ty: 0 }; drawRoute(); }
+      else zoomAbout(cv.width / 2, cv.height / 2, b.dataset.z === 'in' ? 1.5 : 1 / 1.5);
+    });
+
+    cv.addEventListener('mousemove', function (e) {
+      if (drag) {
+        var r = cv.getBoundingClientRect(), sc = cv.width / r.width;
+        view.tx = drag.tx + (e.clientX - drag.x) * sc;
+        view.ty = drag.ty + (e.clientY - drag.y) * sc;
+        if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 3) drag.moved = true;
+        clampView(); drawRoute();
+        return;
+      }
+      var p = canvasXY(e), mx = p[0], my = p[1];
+
+      // while a day is open, keep it open over its own fan
+      var overPhoto = photoUnder(mx, my);
+      if (overPhoto) {
+        tipAt(e, overPhoto.t.slice(11, 16) + ' · ±' + overPhoto.dt + ' min' +
+                 (overPhoto.place ? ' · ' + overPhoto.place : ''));
+        cv.style.cursor = 'zoom-in';
+        return;
+      }
+      cv.style.cursor = '';
+
+      var d = dayUnder(mx, my);
+      if (d !== hotDay) {
+        // don't close while the pointer is still inside the open fan's disc
+        if (hotDay >= 0 && d === -1) {
+          var q = sx(days[hotDay].lat, days[hotDay].lon);
+          var n = days[hotDay].items.length;
+          var R = Math.max(96, (n * 80) / (2 * Math.PI) + 37);
+          if (Math.hypot(mx - q[0], my - q[1]) < R + 74) return;
+        }
+        hotDay = d; drawRoute();
+      }
+      if (d >= 0) {
+        var g = days[d];
+        tipAt(e, label(g.d) + ' — ' + g.items.length +
+              (g.items.length === 1 ? ' frame' : ' frames') + (g.place ? ' · ' + g.place : ''));
+        return;
+      }
+
+      var cand = T.parks.map(function (x) {
+        return { lat: x.lat, lon: x.lon, t: x.name + ' — ' + x.date + ', within ' + x.km + ' km' };
+      }).concat(T.stops.filter(function (s) { return s.days >= 1; }).map(function (s) {
         return { lat: s.lat, lon: s.lon, t: s.name + ', ' + s.state + ' — ' + s.start };
       }));
       var best = null, bd = 1e9;
       cand.forEach(function (c) {
-        var q = proj(c.lat, c.lon), d = Math.hypot(q[0] - mx, q[1] - my);
-        if (d < bd) { bd = d; best = c; }
+        var q = sx(c.lat, c.lon), dd = Math.hypot(q[0] - mx, q[1] - my);
+        if (dd < bd) { bd = dd; best = c; }
       });
-      if (best && bd < 24) {
-        tip.textContent = best.t; tip.style.opacity = 1;
-        tip.style.left = Math.min((e.clientX - r.left) + 14, r.width - tip.offsetWidth - 8) + 'px';
-        tip.style.top = ((e.clientY - r.top) - 34) + 'px';
-      } else { tip.style.opacity = 0; }
+      if (best && bd < 22) tipAt(e, best.t); else tip.style.opacity = 0;
     });
-    cv.addEventListener('mouseleave', function () { tip.style.opacity = 0; });
+    function tipAt(e, text) {
+      var r = cv.getBoundingClientRect();
+      tip.textContent = text; tip.style.opacity = 1;
+      tip.style.left = Math.min((e.clientX - r.left) + 14, r.width - tip.offsetWidth - 8) + 'px';
+      tip.style.top = ((e.clientY - r.top) - 34) + 'px';
+    }
+    cv.addEventListener('mouseleave', function () {
+      tip.style.opacity = 0;
+      if (hotDay !== -1) { hotDay = -1; drawRoute(); }
+    });
+    cv.addEventListener('click', function (e) {
+      if (drag && drag.moved) return;
+      var p = canvasXY(e), hit = photoUnder(p[0], p[1]);
+      if (hit) {
+        var i = photos.findIndex(function (x) { return x.id === hit.id; });
+        if (i >= 0) show(i);
+      }
+    });
+    cv.addEventListener('dblclick', function () { view = { k: 1, tx: 0, ty: 0 }; drawRoute(); });
 
     /* ----------------------------- mile log -------------------------- */
     (function () {
@@ -297,31 +451,21 @@
       document.getElementById('trip-sorted').innerHTML = s;
     })();
 
-    /* --------------------------- gallery by day ---------------------- */
+    /* ----------------------------- mosaic ---------------------------- */
     var host = document.getElementById('trip-photos');
     host.innerHTML = days.map(function (g, gi) {
-      return '<section class="trip-day" data-g="' + gi + '">' +
-        '<div class="trip-day-head"><b>' + label(g.d) + '</b>' +
-        (g.place ? '<span class="place">' + g.place + '</span>' : '') +
-        '<span>' + g.items.length + (g.items.length === 1 ? ' frame' : ' frames') + '</span></div>' +
-        '<div class="trip-strip">' + g.items.map(function (p) {
-          return '<button class="trip-photo" type="button" data-id="' + p.id + '">' +
-            '<img src="/assets/img/trip/' + p.id + '_t.jpg" alt="" loading="lazy" decoding="async">' +
-            '<em>' + p.t.slice(11, 16) + ' · &plusmn;' + p.dt + ' min</em></button>';
-        }).join('') + '</div></section>';
+      return g.items.map(function (p, k) {
+        return '<button class="trip-photo' + (k === 0 ? ' first' : '') + '" type="button" ' +
+          'data-id="' + p.id + '" data-g="' + gi + '">' +
+          '<img src="/assets/img/trip/' + p.id + '_t.jpg" alt="" loading="lazy" decoding="async">' +
+          (k === 0 ? '<i class="daychip">' + label(g.d).replace(/ \d{4}$/, '') + '</i>' : '') +
+          '<em>' + p.t.slice(11, 16) + ' &plusmn;' + p.dt + 'm' +
+          (p.place ? ' · ' + p.place.split(',')[0] : '') + '</em></button>';
+      }).join('');
     }).join('');
+
     document.getElementById('trip-photo-count').textContent =
       photos.length + ' frames over ' + days.length + ' days.';
-
-    host.addEventListener('mouseover', function (e) {
-      var s = e.target.closest('.trip-day');
-      if (!s) return;
-      var gi = +s.dataset.g;
-      if (gi !== hotDay) { hotDay = gi; drawRoute(); }
-    });
-    host.addEventListener('mouseleave', function () {
-      if (hotDay !== -1) { hotDay = -1; drawRoute(); }
-    });
 
     /* ----------------------------- lightbox -------------------------- */
     var lb = document.getElementById('trip-lightbox'), cur = 0;
@@ -371,6 +515,41 @@
       return '<tr><td class="m">' + s.start.slice(5) + ' → ' + s.end.slice(5) + '</td><td>' +
         s.name + '</td><td class="m">' + s.state + '</td><td class="r">' + s.days.toFixed(1) + '</td></tr>';
     }).join('');
+
+    /* ------------------------------ facts ---------------------------- */
+    var d = T.days;
+    var far = d.reduce(function (a, b) { return b.home > a.home ? b : a; });
+    var zero = d.filter(function (x) { return x.drive < 5; }).length;
+    var sorted = d.map(function (x) { return x.drive; }).sort(function (a, b) { return a - b; });
+    var med = sorted[Math.floor(sorted.length / 2)];
+    var busiest = days.reduce(function (a, b) { return b.items.length > a.items.length ? b : a; });
+    var top = T.nights.slice(0, 3).map(function (x) { return x[0] + ' ' + x[1]; }).join(', ');
+    document.getElementById('trip-facts').innerHTML = [
+      ['Longest driving day', fmt(T.drive.longest.km) + ' km · ' + T.drive.longest.d],
+      ['Median driving day', Math.round(med) + ' km'],
+      ['Days with no driving', zero + ' of ' + d.length],
+      ['Furthest from home', fmt(far.home) + ' km · ' + far.d],
+      ['Most nights', top],
+      ['Distinct stops', T.stops.length],
+      ['Photographs', photos.length + ' over ' + days.length + ' days'],
+      ['Busiest day for frames', busiest.items.length + ' · ' + label(busiest.d)],
+      ['Southernmost', 'Key West, 24.55°N'],
+      ['Westernmost', 'Pocatello, 112.45°W']
+    ].map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>'; }).join('');
+
+    // Anything this script fills was empty when main.js observed it, so the
+    // site's one-shot fade observer can leave it stuck at opacity 0. Reveal
+    // the dynamic containers directly rather than relying on that observer.
+    ['trip-ledger','trip-facts','trip-photos','trip-parks','trip-states'].forEach(function (id) {
+      var n = document.getElementById(id);
+      if (n) n.classList.add('visible');
+    });
+    document.querySelectorAll('.trip .trip-figure, .trip .trip-grid, .trip .trip-three, .trip .trip-scroll, .trip .trip-caption')
+      .forEach(function (n) { n.classList.add('visible'); });
+
+    // small hook so the figure can be driven and checked from the console
+    window.__trip = { days: days, photos: photos, sx: sx, view: view, redraw: drawRoute,
+                      hot: function (i) { hotDay = i; drawRoute(); } };
 
     drawRoute();
   }

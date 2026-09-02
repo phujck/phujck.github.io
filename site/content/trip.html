@@ -1,4 +1,5 @@
   <header class="page-hero">
+    <div class="page-hero-bg" style="background-image: url('/assets/img/trip_hero.jpg');"></div>
     <div class="container">
       <h1 class="page-hero-title fade-in">The Long Way Round</h1>
       <p class="page-hero-subtitle fade-in fade-in-delay-1">A loop of the United States,
@@ -10,31 +11,42 @@
 
     <section class="section" id="route">
       <div class="container">
-        <span class="section-label fade-in">Route</span>
-        <h2 class="section-title fade-in">Where the car went</h2>
+        <div class="trip-split">
+          <div class="trip-split-main">
+            <span class="section-label fade-in">Route</span>
+            <h2 class="section-title fade-in">Where the car went</h2>
+            <div class="trip-figure" id="trip-figure">
+              <canvas id="trip-route" width="2200" height="1500"
+                aria-label="Map of the United States with the driven route, coloured by date"></canvas>
+              <div class="trip-tip" id="trip-tip"></div>
+              <div class="trip-mapctl">
+                <button type="button" data-z="in" aria-label="Zoom in">+</button>
+                <button type="button" data-z="out" aria-label="Zoom out">&minus;</button>
+                <button type="button" data-z="reset" aria-label="Reset view">reset</button>
+              </div>
+              <p class="trip-hint">scroll to zoom &middot; drag to pan &middot; hover a blue mark
+                to open that day's photographs</p>
+            </div>
+            <div class="trip-caption">
+              <span class="key">Oct</span>
+              <span class="trip-rampbar">
+                <i style="background:var(--route-1)"></i><i style="background:var(--route-2)"></i><i
+                  style="background:var(--route-3)"></i><i style="background:var(--route-4)"></i><i
+                  style="background:var(--route-5)"></i>
+              </span>
+              <span class="key">Jan</span>
+              <span class="key"><i class="swatch ring"></i>park or monument, within 28 km</span>
+              <span class="key"><i class="swatch sq" style="background:var(--link)"></i>day with photographs</span>
+              <span class="key"><i class="swatch" style="background:var(--text-primary)"></i>New Orleans</span>
+            </div>
+          </div>
 
-        <div class="trip-ledger fade-in" id="trip-ledger"></div>
-        <p class="trip-loading" id="trip-status">Loading&hellip;</p>
-
-        <div class="trip-figure fade-in">
-          <canvas id="trip-route" width="2200" height="1400"
-            aria-label="Map of the United States with the driven route, coloured by date"></canvas>
-          <div class="trip-tip" id="trip-tip"></div>
+          <aside class="trip-split-side">
+            <div class="trip-ledger" id="trip-ledger"></div>
+            <dl class="trip-facts" id="trip-facts"></dl>
+            <p class="trip-loading" id="trip-status">Loading&hellip;</p>
+          </aside>
         </div>
-        <div class="trip-caption">
-          <span class="key">Oct</span>
-          <span class="trip-rampbar">
-            <i style="background:var(--route-1)"></i><i style="background:var(--route-2)"></i><i
-              style="background:var(--route-3)"></i><i style="background:var(--route-4)"></i><i
-              style="background:var(--route-5)"></i>
-          </span>
-          <span class="key">Jan</span>
-          <span class="key"><i class="swatch ring"></i>park or monument, within 28 km</span>
-          <span class="key"><i class="swatch sq" style="background:var(--link)"></i>day with photographs</span>
-          <span class="key"><i class="swatch" style="background:var(--text-primary)"></i>New Orleans</span>
-        </div>
-        <p class="trip-note fade-in">Every logged position, in date order. Marks scale with the
-          number of frames taken that day.</p>
       </div>
     </section>
 
@@ -42,21 +54,11 @@
       <div class="container">
         <span class="section-label fade-in">Distance</span>
         <h2 class="section-title fade-in">Kilometres per day</h2>
-        <div class="trip-figure pad fade-in">
+        <div class="trip-figure pad">
           <svg id="trip-log" viewBox="0 0 1080 320" role="img"
             aria-label="Kilometres driven per day, with cumulative total"></svg>
         </div>
-        <p class="trip-note fade-in">Bars are daily driving distance; the dashed line is the
-          running total. The band underneath gives the state. Distance is the sum of segments
-          the phone classified as car travel, so it undercounts where signal was lost.</p>
-      </div>
-    </section>
-
-    <section class="section" id="shape">
-      <div class="container">
-        <span class="section-label fade-in">Shape</span>
-        <h2 class="section-title fade-in">Two views of the same 95 days</h2>
-        <div class="trip-grid fade-in">
+        <div class="trip-grid" style="margin-top:var(--space-xl)">
           <div class="trip-panel">
             <h3>Distance from New Orleans</h3>
             <p>Great-circle distance from the house, by day.</p>
@@ -65,9 +67,40 @@
           </div>
           <div class="trip-panel">
             <h3>Days ranked by distance driven</h3>
-            <p>Every day of the trip, sorted. Median and the count of zero-driving days marked.</p>
+            <p>Every day, sorted. Median and zero-driving count marked.</p>
             <svg id="trip-sorted" viewBox="0 0 420 300" role="img"
               aria-label="Days ranked by distance driven"></svg>
+          </div>
+        </div>
+        <p class="trip-note">Bars are daily driving distance; the dashed line is the running
+          total; the band underneath gives the state. Distance sums the segments the phone
+          classified as car travel, so it undercounts where signal was lost.</p>
+      </div>
+    </section>
+
+    <section class="section" id="ground">
+      <div class="container">
+        <span class="section-label fade-in">Ground covered</span>
+        <h2 class="section-title fade-in">States, parks, stops</h2>
+        <div class="trip-three">
+          <div>
+            <h3 class="trip-h3">Nights per state</h3>
+            <div class="trip-states" id="trip-states"></div>
+            <p class="trip-note">Dashed tiles were crossed without stopping. Point-in-polygon
+              against the US Census boundaries.</p>
+          </div>
+          <div>
+            <h3 class="trip-h3">Closest approach</h3>
+            <div class="trip-parks" id="trip-parks"></div>
+          </div>
+          <div>
+            <h3 class="trip-h3">Stays of 9 hours or more</h3>
+            <div class="trip-scroll">
+              <table class="trip-table" id="trip-stops">
+                <thead><tr><th>Dates</th><th>Place</th><th></th><th class="r">Nts</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -76,48 +109,11 @@
     <section class="section" id="photographs">
       <div class="container">
         <span class="section-label fade-in">Photographs</span>
-        <h2 class="section-title fade-in" id="trip-photo-heading">By day</h2>
-        <p class="trip-note fade-in">None of these carry GPS. Each carries a timestamp, and the
-          location log gives a position for that minute; the offset between the two is shown on
-          each frame. <span id="trip-photo-count"></span></p>
-        <div class="trip-days fade-in" id="trip-photos"></div>
-      </div>
-    </section>
-
-    <section class="section" id="parks">
-      <div class="container">
-        <span class="section-label fade-in">Parks</span>
-        <h2 class="section-title fade-in">Closest approach</h2>
-        <p class="trip-note fade-in">Distance from the recorded track to each park's centre
-          point, in date order. Matched against a fixed list of coordinates, so anywhere not on
-          that list is absent.</p>
-        <div class="trip-parks fade-in" id="trip-parks"></div>
-      </div>
-    </section>
-
-    <section class="section" id="states">
-      <div class="container">
-        <span class="section-label fade-in">States</span>
-        <h2 class="section-title fade-in">Nights per state</h2>
-        <p class="trip-note fade-in">Solid tiles carry a night count; dashed tiles were crossed
-          without stopping. From point-in-polygon against the US Census boundaries.</p>
-        <div class="trip-states fade-in" id="trip-states"></div>
-      </div>
-    </section>
-
-    <section class="section" id="stops">
-      <div class="container">
-        <span class="section-label fade-in">Stops</span>
-        <h2 class="section-title fade-in">Stays of nine hours or more</h2>
-        <p class="trip-note fade-in">Place names are the nearest settlement of 800 or more.</p>
-        <div class="trip-scroll fade-in">
-          <table class="trip-table" id="trip-stops">
-            <thead>
-              <tr><th>Dates</th><th>Place</th><th></th><th class="r">Nights</th></tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
+        <h2 class="section-title fade-in">Every frame, in order</h2>
+        <p class="trip-note">None carry GPS. Each carries a timestamp, and the location log gives
+          a position for that minute; the offset is shown on hover.
+          <span id="trip-photo-count"></span></p>
+        <div class="trip-mosaic" id="trip-photos"></div>
       </div>
     </section>
 
@@ -127,10 +123,7 @@
       <button class="trip-lb-nav next" id="trip-lb-next" aria-label="Next">&#8250;</button>
       <figure>
         <img id="trip-lb-img" alt="">
-        <figcaption>
-          <b id="trip-lb-title"></b>
-          <span id="trip-lb-meta"></span>
-        </figcaption>
+        <figcaption><b id="trip-lb-title"></b><span id="trip-lb-meta"></span></figcaption>
       </figure>
     </div>
 
