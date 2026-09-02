@@ -175,6 +175,28 @@
       "body_scripts": "  <script>\n    fetch('https://littlelearningmachine.substack.com/api/v1/posts/?limit=1')\n      .then(function (r) { return r.json(); })\n      .then(function (posts) {\n        if (!posts || !posts.length) return;\n        var p = posts[0];\n        document.getElementById('substack-latest-link').href = p.canonical_url;\n        document.getElementById('substack-latest-title').textContent = p.title;\n        if (p.subtitle) document.getElementById('substack-latest-subtitle').textContent = p.subtitle;\n        var date = new Date(p.post_date).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });\n        document.getElementById('substack-latest-date').textContent = date;\n        document.getElementById('substack-latest').style.display = '';\n      })\n      .catch(function () { });\n  </script>"
     },
     {
+      "path": "trip.html",
+      "layout": "full",
+      "title": "The Long Way Round — Gerard McCaul",
+      "description": "Ninety-five days and 16,858 km anticlockwise around the United States, October 2023 to January 2024, reconstructed entirely from a phone's location history.",
+      "canonical": "https://gmccaul.co.uk/trip.html",
+      "head_extra": "  <meta name=\"robots\" content=\"noindex, follow\">",
+      "og_type": "article",
+      "og_title": "The Long Way Round",
+      "og_description": "A 95-day, 16,858 km loop of the United States, reconstructed from location history: the route, the mile log, the parks, and every stop.",
+      "og_image": "https://gmccaul.co.uk/assets/img/trip/20231102-001724.jpg",
+      "og_image_width": "1200",
+      "og_image_height": "630",
+      "twitter_card": "summary_large_image",
+      "twitter_title": "The Long Way Round",
+      "twitter_description": "A 95-day, 16,858 km loop of the United States, reconstructed from location history.",
+      "twitter_image": "https://gmccaul.co.uk/assets/img/trip/20231102-001724.jpg",
+      "extra_css": [
+        "/assets/css/page-trip.css"
+      ],
+      "body_scripts": "  <script src=\"/assets/js/trip.js\" defer></script>"
+    },
+    {
       "path": "404.html",
       "layout": "bare",
       "title": "404 — Page Not Found"
