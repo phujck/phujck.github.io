@@ -149,18 +149,32 @@
 /* ---------- two-column split: map beside the numbers ---------- */
 /* the route section runs wider than the page column, so the map earns real size */
 #route .container { max-width: 1360px; }
-.trip-split { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-2xl); align-items: start; }
-.trip-split-side { position: static; }
+.trip-split { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-2xl); align-items: stretch; }
+.trip-split-side { position: static; min-height: 0; }
 @media (max-width: 980px) { .trip-split { grid-template-columns: 1fr; } .trip-split-side { position: static; } }
 
-/* the day panel: one photograph at panel width, arrows to flick through the day */
-.trip-dayview .trip-h3 { margin-bottom: var(--space-sm); }
+/* the day panel: the photograph fills the side area, flush with the map figure;
+   arrows flick through the day, click pins */
+.trip-dayview { display: flex; flex-direction: column; height: 100%; min-height: 0; }
 .trip-dayframe {
-  position: relative; margin-top: var(--space-md);
+  position: relative; flex: 1; min-height: 0;
   background: var(--bg-secondary); border: 1px solid var(--border-glass);
   border-radius: var(--radius-md); overflow: hidden;
 }
-.trip-dayframe img { display: block; width: 100%; height: auto; cursor: zoom-in; }
+.trip-dayframe img {
+  display: block; width: 100%; height: 100%; object-fit: contain; cursor: zoom-in;
+}
+.trip-dayframe-hint {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  margin: 0; padding: var(--space-xl); text-align: center;
+  color: var(--text-muted); font-size: 0.85rem;
+}
+.trip-dayview-note {
+  margin: var(--space-md) 0 0; min-height: 1.2em;
+  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+@media (max-width: 980px) { .trip-dayframe { min-height: 62vw; } }
 .trip-df-nav {
   position: absolute; top: 50%; transform: translateY(-50%);
   background: rgba(5, 7, 14, 0.45); border: 0; color: #fff; cursor: pointer;

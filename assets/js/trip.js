@@ -181,23 +181,20 @@
        shown full-size in the panel beside it, not drawn onto the canvas.
        The panel is sticky per day: it keeps the last day until a new one
        is hovered, so the pointer can travel from mark to photograph. */
-    var dvTitle = document.getElementById('trip-dayview-title');
     var dvNote = document.getElementById('trip-dayview-note');
     var dvHost = document.getElementById('trip-dayview-photos');
-    var shownDay = -1, dvIdx = 0;
+    var shownDay = -1, dvIdx = 0, pinned = false;
     function big(p) { return '/assets/img/trip/' + p.id + '.jpg'; }
     function dvRender() {
       var g = days[shownDay], n = g.items.length, p = g.items[dvIdx];
-      dvNote.textContent = p.t.slice(11, 16) + ' UTC · ±' + p.dt + ' min' +
-        (p.place ? ' · ' + p.place.split(',')[0] : '') + ' · click for full size';
+      var where = (p.place || g.place || '').split(',')[0];
+      dvNote.textContent = (where ? where + ' · ' : '') + label(g.d) + ' · ' +
+        p.t.slice(11, 16) + ' UTC ±' + p.dt + ' min';
       dvHost.innerHTML =
-        '<div class="trip-dayframe">' +
-        '<img src="' + big(p) + '" alt="" decoding="async" ' +
-          'style="aspect-ratio:' + (p.w || 1) + '/' + (p.h || 1) + '">' +
+        '<img src="' + big(p) + '" alt="" decoding="async">' +
         (n > 1 ? '<button class="trip-df-nav prev" type="button" aria-label="Previous">&#8249;</button>' +
                  '<button class="trip-df-nav next" type="button" aria-label="Next">&#8250;</button>' : '') +
-        '<span class="trip-df-count">' + (dvIdx + 1) + ' / ' + n + '</span>' +
-        '</div>';
+        '<span class="trip-df-count">' + (dvIdx + 1) + ' / ' + n + '</span>';
       // the neighbours load while this one is on screen, so flicking is instant
       if (n > 1) {
         new Image().src = big(g.items[(dvIdx + 1) % n]);
@@ -207,8 +204,6 @@
     function showDay(gi) {
       if (gi < 0 || gi === shownDay || !dvHost) return;
       shownDay = gi; dvIdx = 0;
-      var g = days[gi];
-      dvTitle.textContent = label(g.d) + (g.place ? ' — ' + g.place.split(',')[0] : '');
       dvRender();
     }
     if (dvHost) dvHost.addEventListener('click', function (e) {
@@ -268,12 +263,12 @@
       var p = canvasXY(e), mx = p[0], my = p[1];
 
       var d = dayUnder(mx, my);
-      if (d !== hotDay) { hotDay = d; drawRoute(); }
+      if (!pinned && d !== hotDay) { hotDay = d; drawRoute(); }
       if (d >= 0) {
-        showDay(d);
+        if (!pinned) showDay(d);
         var g = days[d];
-        tipAt(e, label(g.d) + ' — ' + g.items.length +
-              (g.items.length === 1 ? ' frame' : ' frames') + (g.place ? ' · ' + g.place : ''));
+        tipAt(e, label(g.d) + (g.place ? ' · ' + g.place.split(',')[0] : '') +
+              (pinned && d !== hotDay ? ' — pinned to ' + label(days[hotDay].d) : ' — click to pin'));
         cv.style.cursor = 'pointer';
         return;
       }
@@ -299,12 +294,19 @@
     }
     cv.addEventListener('mouseleave', function () {
       tip.style.opacity = 0;
-      if (hotDay !== -1) { hotDay = -1; drawRoute(); }
+      if (!pinned && hotDay !== -1) { hotDay = -1; drawRoute(); }
     });
     cv.addEventListener('click', function (e) {
       if (drag && drag.moved) return;
-      var p = canvasXY(e), d = dayUnder(p[0], p[1]);   // tap = hover, for touch
-      if (d >= 0) { hotDay = d; drawRoute(); showDay(d); }
+      var p = canvasXY(e), d = dayUnder(p[0], p[1]);
+      if (d >= 0) {
+        // click pins the day so hovering elsewhere doesn't steal the panel;
+        // clicking the pinned day again releases it
+        if (pinned && d === hotDay) { pinned = false; return; }
+        pinned = true; hotDay = d; drawRoute(); showDay(d);
+      } else if (pinned) {
+        pinned = false; hotDay = -1; drawRoute();
+      }
     });
     cv.addEventListener('dblclick', function () { view = { k: 1, tx: 0, ty: 0 }; drawRoute(); });
 

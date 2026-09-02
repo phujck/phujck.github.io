@@ -11,10 +11,10 @@
 
     <section class="section" id="route">
       <div class="container">
+        <span class="section-label fade-in">Route</span>
+        <h2 class="section-title fade-in">Where the car went</h2>
         <div class="trip-split">
           <div class="trip-split-main">
-            <span class="section-label fade-in">Route</span>
-            <h2 class="section-title fade-in">Where the car went</h2>
             <div class="trip-figure" id="trip-figure">
               <canvas id="trip-route" width="2200" height="1500"
                 aria-label="Map of the United States with the driven route, coloured by date"></canvas>
@@ -25,7 +25,7 @@
                 <button type="button" data-z="reset" aria-label="Reset view">reset</button>
               </div>
               <p class="trip-hint">scroll to zoom &middot; drag to pan &middot; hover a blue mark
-                to see that day's photographs alongside</p>
+                for that day's photographs &middot; click to pin</p>
             </div>
             <div class="trip-caption">
               <span class="key">Oct</span>
@@ -43,10 +43,11 @@
 
           <aside class="trip-split-side">
             <div class="trip-dayview" id="trip-dayview">
-              <h3 class="trip-h3" id="trip-dayview-title">Photographs by day</h3>
-              <p class="trip-note" id="trip-dayview-note">Hover or tap a blue mark on the map;
-                that day's frames appear here.</p>
-              <div id="trip-dayview-photos"></div>
+              <div class="trip-dayframe" id="trip-dayview-photos">
+                <p class="trip-dayframe-hint">Hover a blue mark on the map for that day's
+                  photographs; click the mark to pin the day.</p>
+              </div>
+              <p class="trip-dayview-note" id="trip-dayview-note">&nbsp;</p>
             </div>
             <p class="trip-loading" id="trip-status">Loading&hellip;</p>
           </aside>
