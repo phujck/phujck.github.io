@@ -1,186 +1,1398 @@
 {
-  "schema": "skein-release-manifest-v2",
-  "version": 2,
+  "schema": "reconstruction-release-v2.1",
+  "version": "2.1",
   "title": "Memory in pieces",
-  "method_public_name": "Parallax",
-  "historical_method_key": "skein",
-  "parent_release": {
-    "path": "release_manifest.json",
-    "sha256": "7b853d258632fcf5efd6b9e0fdcf16f89cdb27d0c7a42cfb525f7f1319f521db"
+  "reason": "User-requested8,000-token follow-up update of the same manuscript and Andrew/Jack report",
+  "parent": {
+    "path": "release_manifest_v2.json",
+    "sha256": "a10eb0e91a7dd8b3c4cb38117c8ab4cb50388faa9493de39f9f48ba4edb3e89f"
   },
-  "deliverables": {
-    "manuscript": {
-      "revises": "output/pdf/skein.pdf",
-      "path": "output/pdf/v2/skein.pdf"
-    },
-    "andrew_jack_report": {
-      "revises": "output/pdf/andrew-jack.pdf",
-      "path": "output/web/andrew-jack-v2/index.html",
-      "url": "https://gmccaul.co.uk/unlisted/reconstruction-2026-09-20/"
-    }
-  },
+  "paper": "output/pdf/v2.1/skein.pdf",
+  "report": "output/web/andrew-jack-v2.1/index.html",
+  "url": "https://gmccaul.co.uk/unlisted/reconstruction-2026-09-20/",
   "artifacts": {
-    "output/pdf/v2/skein.pdf": {
-      "sha256": "baec6e60dff015bd00b3918bfe6e235914d25cbc730082c217e1603cac78f92f",
-      "bytes": 666014
+    "output/pdf/v2.1/skein.pdf": {
+      "sha256": "dbc3b568b21a1f3c6d6b7ddff85b3e5ac34b9753052a8ecf1e361f72b0cbb009",
+      "bytes": 686549
     },
-    "output/pdf/v2/skein.tex": {
-      "sha256": "d030e7932c5ac626d738922c8f44a2084882b2e18fe1a64f5a81c47b9822b4ea",
-      "bytes": 26610
+    "output/pdf/v2.1/skein.tex": {
+      "sha256": "a714d33ca77b7d8fc13ca8f5d5caed032557ccedadd5c1417c2c746195ef7c47",
+      "bytes": 26744
     },
-    "output/pdf/v2/evaluation-results.tex": {
-      "sha256": "0cdb151c0c3f9df36f2f33c1af5b04590ea5d935c9002c0eabe7f413f7e89b8f",
-      "bytes": 4675
+    "output/pdf/v2.1/evaluation-results.tex": {
+      "sha256": "5e1c218ba70193d33443be4dffea9e13737fcad138ae7b221c7726df9d5d4547",
+      "bytes": 7515
     },
-    "output/pdf/v2/reconstruction_appendices.tex": {
-      "sha256": "3ee78d96cb81116e5ec8eb7ec41252130a4b1b1469775ec9fb2473326a23d803",
-      "bytes": 35007
+    "output/pdf/v2.1/extension_appendices.tex": {
+      "sha256": "feb003dce77e0d8aca461e2ae579ffbcb439bccb55cd045482a5553a747bbb54",
+      "bytes": 5157
     },
-    "output/pdf/v2/extension_appendices.tex": {
-      "sha256": "4dcdb1a633e817688b95ab6cad1aed18aa770522aa1564d1021854f7b36ae89e",
-      "bytes": 4613
+    "output/web/andrew-jack-v2.1/index.html": {
+      "sha256": "53ad882916beb0db1b30096fdb0eaa3e29f4679271c074ed53ab450fab4d8c0f",
+      "bytes": 29242
     },
-    "output/pdf/v2/reconstruction_refs.bib": {
-      "sha256": "c75624e670b4a7f50dadbd1a53b2bf1f14fdb12063fec2e93dc17c3568331542",
-      "bytes": 2555
+    "output/web/andrew-jack-v2.1/assets/answer-budget.png": {
+      "sha256": "e8bd00da2e0f353d932a8b07d20c5dca85fcacbb02d43be356b56c2c084c8065",
+      "bytes": 71356
     },
-    "output/web/andrew-jack-v2/index.html": {
-      "sha256": "7b42b54691ab22994f5e58d9ec7b528e93e57cc7a118d7c8d482729d111bbdcc",
-      "bytes": 28269
+    "extension/figures/budget8k/answer_budget_followup.pdf": {
+      "sha256": "a748e8d3423035e5c7f9ecae0573e6de35767f1715ea36d5b0eb4f9ad82f1936",
+      "bytes": 18438
     },
-    "extension/output/web/build_visual_report.py": {
-      "sha256": "4a94b51dd40c6b8b024042ac2c4f02e9d2572e39f20ba1d91b5f7fac23d03f05",
-      "bytes": 19122
+    "extension/figures/budget8k/generate_budget_figure.py": {
+      "sha256": "845d7f9109a0a97d5686ee2c2c9eca87b0a87874b0621ceed113c57e87f85f54",
+      "bytes": 2819
     },
-    "extension/figures/observable_sections.pdf": {
-      "sha256": "b90194b0c78b001905ce35c5e8b9afa250426a28f3648abef502efed58ac9edb",
-      "bytes": 91898
+    "extension/figures/budget8k/answer_budget_followup.provenance.json": {
+      "sha256": "36f6583db9bca5d8dbca9bca75a41a911e57514b125893d97ec79cc3e7d93acb",
+      "bytes": 540
     },
-    "extension/figures/query_locality_completed_v1.pdf": {
-      "sha256": "d845800aa3e60456de4abc753d063835a0ad1ffe8b5222cbec81681abf5e74ee",
-      "bytes": 42660
+    "extension/results/budget8k_v1/comparison.json": {
+      "sha256": "eecd6fb88253b5e5cf6518200ea07a7d7195af0340ed2e4efded3b6ee12d6ec6",
+      "bytes": 37766
     },
-    "extension/figures/controlled_effective_dynamics_v1.pdf": {
-      "sha256": "580bda307600c21b9c69268fae57ae4de77c61ef2cf058fb7ba32aa58aba424e",
-      "bytes": 31516
+    "extension/results/budget8k_v1/comparison.md": {
+      "sha256": "0bc8104dbb2796a5b2236747eaac04a3aabf9c6b501f29c87a9b313d3aac8b3d",
+      "bytes": 864
     },
-    "extension/figures/language_evidence_v1.pdf": {
-      "sha256": "11e80367a5a39f936ad417eaece896c68c35e1d453ef2587e9d468bd618750ab",
-      "bytes": 25570
+    "extension/results/budget8k_v1/completion.json": {
+      "sha256": "0051034851b273458a57c069706d1eaad018d55310ed64b2cce503d7c0b42b24",
+      "bytes": 2050
     },
-    "extension/figures/completed_figures_provenance_v1.json": {
-      "sha256": "28176973d76d975acdae66e395a3045cca37f74b54691f09b13b239916b4dc3a",
-      "bytes": 1533
+    "extension/results/budget8k_v1/followup_lock.json": {
+      "sha256": "5aafde150fe50890c1354076c4eac3c581133b94b068e67b2f83983d834c49a2",
+      "bytes": 2032
     },
-    "extension/figures/language_evidence_v1.receipt.json": {
-      "sha256": "9e551102c5e6839b44ef6848c4e45e8cccda423aeaecb83a40d9889cf1bdc862",
-      "bytes": 2656
-    },
-    "extension/results/query_locality_matrix_v1.json": {
-      "sha256": "b6a6661eb437f911c95426c5d5640c520b592b188719992298e9a272b2d66031",
-      "bytes": 3480201
-    },
-    "extension/results/locality_matrix_v1.json": {
-      "sha256": "03446b70eccd3b8187d49959a99119502b519a7a44c9fd3df523e72c96e1c3f2",
-      "bytes": 733750
-    },
-    "extension/results/qasper_final256_retrieval_v1.json": {
-      "sha256": "74ddbbf554e0a40feb84543ce1bef2818e71ba84f1fee685affd92d22ba2a093",
-      "bytes": 31666634
-    },
-    "extension/results/qasper_final256_scores_v1.json": {
-      "sha256": "05a45c4e5edefdf1d7f2e90a9c3d7aac93541402cc3bf7efbc0ac8d80f8796c7",
-      "bytes": 1971097
-    },
-    "extension/results/memory_final48_rankings_v1.json": {
-      "sha256": "4343ed000790d3e2412631b65cbd2240a6c9fc196ac8ea6800d0279ee13d6280",
-      "bytes": 22773754
-    },
-    "extension/results/memory_final48_metrics_v1.json": {
-      "sha256": "47c062ebb4ecab48986defa54d02bc1864fa5b481081805b1bfa0c1956266cb6",
-      "bytes": 1116832
-    },
-    "extension/results/shared_reader_contexts_v1.json": {
-      "sha256": "96c26c8762610c3bab7206f8fbe6888b7630aabaa93309e22593d38083cfdd6e",
-      "bytes": 9166876
-    },
-    "extension/results/shared_reader_predictions_v1.json": {
-      "sha256": "a138db34de7c6d45424faab3d5ad8f76e618adfb805663b14e6f27fe8916a3a2",
-      "bytes": 280514
-    },
-    "extension/results/shared_reader_qasper_scores_v1.json": {
-      "sha256": "dd59ef6f77b76f80c857c41feb7b90c7e4f62ee90c6c793682b4d1d114430b26",
-      "bytes": 77982
-    },
-    "extension/results/shared_reader_longmem_judgements_v1.json": {
-      "sha256": "d3bb5c9d1d3eb6cca1aa085096a5a12208b0e468299dbdfce57aa9d365d6a5ba",
-      "bytes": 102644
-    },
-    "extension/results/shared_reader_longmem_scores_v1.json": {
-      "sha256": "2c0f9accb4d4fd83f152d4e63df30c0493043c67315df0fe7d506a1c377fb71b",
-      "bytes": 28078
-    },
-    "extension/results/source_view_diagnostic_devonly_v1.receipt.json": {
-      "sha256": "1edc4645b00f1ea5105a79fa886968e3b198f0c5d8b153a9e721275c27ca151e",
-      "bytes": 2758
-    },
-    "extension/results/qasper_train32_source_view_metrics_v1.json": {
-      "sha256": "6a81b3f51957b38e62df8875672bb16036468dddf9f3d09e7f2c54cd520baec5",
-      "bytes": 158272
-    },
-    "extension/results/memory_dev24_source_view_metrics_v1.json": {
-      "sha256": "9482b41cfce402832b5a210ffaba71103c58551e12e2c93f85e643fbf2561863",
-      "bytes": 341403
-    },
-    "extension/reviews/memory_in_pieces_math_review_v1.json": {
-      "sha256": "bec5efe1ea312253e70af95dd00c15cbbb1f36878d609b5da3ffa0a99aa2dc0e",
-      "bytes": 4186
-    },
-    "extension/reviews/cold_reader_v2.json": {
-      "sha256": "7a9868048d703603c8e008a64bd4e347021abde092b17486bd81c33f97340231",
-      "bytes": 6036
-    },
-    "extension/reviews/reader_context_integration_review_v2.json": {
-      "sha256": "dfd5ac53e57a5802d9c33cdfa88ef51da1c3ae672017850c9cfdfea1a6137713",
-      "bytes": 1997
+    "reviews/v2_1_budget_update_review.json": {
+      "sha256": "9ba9bc0d8beb6b4d55c4d242cdd38163afb9b8036ab372f215384d4093028713",
+      "bytes": 2664
     }
   },
   "results": {
-    "integer_matrix": {
-      "cells": 524,
-      "measured": 500,
-      "capacity_refusals": 24
+    "qasper": {
+      "dense": {
+        "questions": 32,
+        "before": 0.46395943208657914,
+        "after": 0.46008728183790587,
+        "paired_change": {
+          "difference": -0.0038721502486732872,
+          "ci95_low": -0.03748549628137931,
+          "ci95_high": 0.022144003027783524,
+          "samples": 10000,
+          "seed": 1947
+        },
+        "improved_questions": 8,
+        "worsened_questions": 6,
+        "unchanged_questions": 18,
+        "before_failures": 0,
+        "after_failures": 0,
+        "question_changes": [
+          {
+            "evaluation_id": "06eb9f2320451df83e27362c22eb02f4a426a018",
+            "before": 0.6857142857142857,
+            "after": 0.6857142857142857
+          },
+          {
+            "evaluation_id": "1cb100182508cf55b3509283c0e2bbcd527d625e",
+            "before": 0.5625,
+            "after": 0.7500000000000001
+          },
+          {
+            "evaluation_id": "1dac4bc5af239024566fcb0f43bb9ff1c248ecec",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "218bc82796eb8d91611996979a4a42500131a936",
+            "before": 0.6666666666666666,
+            "after": 0.6666666666666666
+          },
+          {
+            "evaluation_id": "220d11a03897d85af91ec88a9b502815c7d2b6f3",
+            "before": 0.0689655172413793,
+            "after": 0.20689655172413796
+          },
+          {
+            "evaluation_id": "27cf16bc9ef71761b9df6217f00f39f21130ce15",
+            "before": 0.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "41ac23e32bf208b69414f4b687c4f324c6132464",
+            "before": 0.8,
+            "after": 0.8
+          },
+          {
+            "evaluation_id": "51fe4d44887c5cc5fc98b65ca4cb5876f0a56dad",
+            "before": 0.3636363636363636,
+            "after": 0.3636363636363636
+          },
+          {
+            "evaluation_id": "54e945ea4b014e11ed4e1e61abc2aa9e68fea310",
+            "before": 0.2857142857142857,
+            "after": 0.2857142857142857
+          },
+          {
+            "evaluation_id": "5c88d601e8fca96bffebfa9ef22331ecf31c6d75",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "603fee7314fa65261812157ddfc2c544277fcf90",
+            "before": 0.23529411764705882,
+            "after": 0.26666666666666666
+          },
+          {
+            "evaluation_id": "63a1cbe66fd58ff0ead895a8bac1198c38c008aa",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "63bb2040fa107c5296351c2b5f0312336dad2863",
+            "before": 0.20512820512820512,
+            "after": 0.22727272727272727
+          },
+          {
+            "evaluation_id": "6415f38a06c2f99e8627e8ba6251aa4b364ade2d",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "73e83c54251f6a07744413ac8b8bed6480b2294f",
+            "before": 0.07407407407407407,
+            "after": 0.10526315789473685
+          },
+          {
+            "evaluation_id": "88e5d37617e14d6976cc602a168332fc23644f19",
+            "before": 0.5714285714285715,
+            "after": 0.1818181818181818
+          },
+          {
+            "evaluation_id": "984fc3e726848f8f13dfe72b89e3770d00c3a1af",
+            "before": 0.4444444444444444,
+            "after": 0.3529411764705882
+          },
+          {
+            "evaluation_id": "ad1be65c4f0655ac5c902d17f05454c0d4c4a15d",
+            "before": 0.3287671232876712,
+            "after": 0.3050847457627119
+          },
+          {
+            "evaluation_id": "b249b60a8c94d0e40d65f1ffdfcac527dab57516",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "b7381927764536bd97b099b6a172708125364954",
+            "before": 0.34408602150537637,
+            "after": 0.3829787234042553
+          },
+          {
+            "evaluation_id": "bd5bd1765362c2d972a762ca12675108754aa437",
+            "before": 0.15384615384615385,
+            "after": 0.15384615384615385
+          },
+          {
+            "evaluation_id": "c0bee6539eb6956a7347daa9d2419b367bd02064",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "d015faf0f8dcf2e15c1690bbbe2bf1e7e0ce3751",
+            "before": 0.25641025641025644,
+            "after": 0.25641025641025644
+          },
+          {
+            "evaluation_id": "d3ff2986ca8cb85a9a5cec039c266df756947b43",
+            "before": 0.8333333333333334,
+            "after": 0.8333333333333334
+          },
+          {
+            "evaluation_id": "d9980676a83295dda37c20cfd5d58e574d0a4859",
+            "before": 0.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "de53af4eddbc30c808d90b8a11a29217d377569e",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "df0257ab04686ddf1c6c4d9b0529a7632330b98e",
+            "before": 0.23999999999999996,
+            "after": 0.20588235294117646
+          },
+          {
+            "evaluation_id": "dfca00be3284cc555a6a4eac4831471fb1f5875b",
+            "before": 0.1904761904761905,
+            "after": 0.14285714285714288
+          },
+          {
+            "evaluation_id": "e3a2d8886f03e78ed5e138df870f48635875727e",
+            "before": 0.21621621621621623,
+            "after": 0.23529411764705882
+          },
+          {
+            "evaluation_id": "e97186c51d4af490dba6faaf833d269c8256426c",
+            "before": 0.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "fd8e23947095fe2230ffe1a478945829b09c8c95",
+            "before": 0.0,
+            "after": 0.06451612903225808
+          },
+          {
+            "evaluation_id": "fde700d5134a9ae8f7579bea1f1b75f34d7c1c4c",
+            "before": 0.31999999999999995,
+            "after": 0.25
+          }
+        ]
+      },
+      "hybrid": {
+        "questions": 32,
+        "before": 0.44367706919417793,
+        "after": 0.4339587498737701,
+        "paired_change": {
+          "difference": -0.009718319320407854,
+          "ci95_low": -0.08826511577633529,
+          "ci95_high": 0.047281292142047515,
+          "samples": 10000,
+          "seed": 1947
+        },
+        "improved_questions": 9,
+        "worsened_questions": 6,
+        "unchanged_questions": 17,
+        "before_failures": 0,
+        "after_failures": 0,
+        "question_changes": [
+          {
+            "evaluation_id": "06eb9f2320451df83e27362c22eb02f4a426a018",
+            "before": 0.6857142857142857,
+            "after": 0.6857142857142857
+          },
+          {
+            "evaluation_id": "1cb100182508cf55b3509283c0e2bbcd527d625e",
+            "before": 0.42857142857142855,
+            "after": 0.5625
+          },
+          {
+            "evaluation_id": "1dac4bc5af239024566fcb0f43bb9ff1c248ecec",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "218bc82796eb8d91611996979a4a42500131a936",
+            "before": 0.6666666666666666,
+            "after": 0.6666666666666666
+          },
+          {
+            "evaluation_id": "220d11a03897d85af91ec88a9b502815c7d2b6f3",
+            "before": 0.06451612903225808,
+            "after": 0.0689655172413793
+          },
+          {
+            "evaluation_id": "27cf16bc9ef71761b9df6217f00f39f21130ce15",
+            "before": 0.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "41ac23e32bf208b69414f4b687c4f324c6132464",
+            "before": 0.8,
+            "after": 0.8
+          },
+          {
+            "evaluation_id": "51fe4d44887c5cc5fc98b65ca4cb5876f0a56dad",
+            "before": 0.4,
+            "after": 0.25
+          },
+          {
+            "evaluation_id": "54e945ea4b014e11ed4e1e61abc2aa9e68fea310",
+            "before": 0.2857142857142857,
+            "after": 0.2857142857142857
+          },
+          {
+            "evaluation_id": "5c88d601e8fca96bffebfa9ef22331ecf31c6d75",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "603fee7314fa65261812157ddfc2c544277fcf90",
+            "before": 0.2857142857142857,
+            "after": 0.2857142857142857
+          },
+          {
+            "evaluation_id": "63a1cbe66fd58ff0ead895a8bac1198c38c008aa",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "63bb2040fa107c5296351c2b5f0312336dad2863",
+            "before": 0.15789473684210528,
+            "after": 0.20512820512820512
+          },
+          {
+            "evaluation_id": "6415f38a06c2f99e8627e8ba6251aa4b364ade2d",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "73e83c54251f6a07744413ac8b8bed6480b2294f",
+            "before": 0.0625,
+            "after": 0.049999999999999996
+          },
+          {
+            "evaluation_id": "88e5d37617e14d6976cc602a168332fc23644f19",
+            "before": 0.4,
+            "after": 0.6153846153846153
+          },
+          {
+            "evaluation_id": "984fc3e726848f8f13dfe72b89e3770d00c3a1af",
+            "before": 0.5185185185185185,
+            "after": 0.43749999999999994
+          },
+          {
+            "evaluation_id": "ad1be65c4f0655ac5c902d17f05454c0d4c4a15d",
+            "before": 0.2923076923076923,
+            "after": 0.2975206611570248
+          },
+          {
+            "evaluation_id": "b249b60a8c94d0e40d65f1ffdfcac527dab57516",
+            "before": 1.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "b7381927764536bd97b099b6a172708125364954",
+            "before": 0.13793103448275862,
+            "after": 0.2947368421052632
+          },
+          {
+            "evaluation_id": "bd5bd1765362c2d972a762ca12675108754aa437",
+            "before": 0.25,
+            "after": 0.25
+          },
+          {
+            "evaluation_id": "c0bee6539eb6956a7347daa9d2419b367bd02064",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "d015faf0f8dcf2e15c1690bbbe2bf1e7e0ce3751",
+            "before": 0.21621621621621623,
+            "after": 0.21621621621621623
+          },
+          {
+            "evaluation_id": "d3ff2986ca8cb85a9a5cec039c266df756947b43",
+            "before": 0.8333333333333334,
+            "after": 0.8333333333333334
+          },
+          {
+            "evaluation_id": "d9980676a83295dda37c20cfd5d58e574d0a4859",
+            "before": 0.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "de53af4eddbc30c808d90b8a11a29217d377569e",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "df0257ab04686ddf1c6c4d9b0529a7632330b98e",
+            "before": 0.08108108108108107,
+            "after": 0.15384615384615385
+          },
+          {
+            "evaluation_id": "dfca00be3284cc555a6a4eac4831471fb1f5875b",
+            "before": 0.15384615384615385,
+            "after": 0.45454545454545453
+          },
+          {
+            "evaluation_id": "e3a2d8886f03e78ed5e138df870f48635875727e",
+            "before": 0.10810810810810811,
+            "after": 0.24242424242424243
+          },
+          {
+            "evaluation_id": "e97186c51d4af490dba6faaf833d269c8256426c",
+            "before": 0.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "fd8e23947095fe2230ffe1a478945829b09c8c95",
+            "before": 0.12903225806451615,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "fde700d5134a9ae8f7579bea1f1b75f34d7c1c4c",
+            "before": 0.24,
+            "after": 0.23076923076923078
+          }
+        ]
+      },
+      "skein": {
+        "questions": 32,
+        "before": 0.4635385566657037,
+        "after": 0.4588811414870287,
+        "paired_change": {
+          "difference": -0.00465741517867506,
+          "ci95_low": -0.03828853255120718,
+          "ci95_high": 0.021264094997611015,
+          "samples": 10000,
+          "seed": 1947
+        },
+        "improved_questions": 8,
+        "worsened_questions": 6,
+        "unchanged_questions": 18,
+        "before_failures": 0,
+        "after_failures": 0,
+        "question_changes": [
+          {
+            "evaluation_id": "06eb9f2320451df83e27362c22eb02f4a426a018",
+            "before": 0.6857142857142857,
+            "after": 0.6857142857142857
+          },
+          {
+            "evaluation_id": "1cb100182508cf55b3509283c0e2bbcd527d625e",
+            "before": 0.5625,
+            "after": 0.7500000000000001
+          },
+          {
+            "evaluation_id": "1dac4bc5af239024566fcb0f43bb9ff1c248ecec",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "218bc82796eb8d91611996979a4a42500131a936",
+            "before": 0.6666666666666666,
+            "after": 0.6666666666666666
+          },
+          {
+            "evaluation_id": "220d11a03897d85af91ec88a9b502815c7d2b6f3",
+            "before": 0.0689655172413793,
+            "after": 0.20689655172413796
+          },
+          {
+            "evaluation_id": "27cf16bc9ef71761b9df6217f00f39f21130ce15",
+            "before": 0.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "41ac23e32bf208b69414f4b687c4f324c6132464",
+            "before": 0.8,
+            "after": 0.8
+          },
+          {
+            "evaluation_id": "51fe4d44887c5cc5fc98b65ca4cb5876f0a56dad",
+            "before": 0.3636363636363636,
+            "after": 0.3636363636363636
+          },
+          {
+            "evaluation_id": "54e945ea4b014e11ed4e1e61abc2aa9e68fea310",
+            "before": 0.2857142857142857,
+            "after": 0.2857142857142857
+          },
+          {
+            "evaluation_id": "5c88d601e8fca96bffebfa9ef22331ecf31c6d75",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "603fee7314fa65261812157ddfc2c544277fcf90",
+            "before": 0.23529411764705882,
+            "after": 0.26666666666666666
+          },
+          {
+            "evaluation_id": "63a1cbe66fd58ff0ead895a8bac1198c38c008aa",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "63bb2040fa107c5296351c2b5f0312336dad2863",
+            "before": 0.20512820512820512,
+            "after": 0.22727272727272727
+          },
+          {
+            "evaluation_id": "6415f38a06c2f99e8627e8ba6251aa4b364ade2d",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "73e83c54251f6a07744413ac8b8bed6480b2294f",
+            "before": 0.0606060606060606,
+            "after": 0.06666666666666667
+          },
+          {
+            "evaluation_id": "88e5d37617e14d6976cc602a168332fc23644f19",
+            "before": 0.5714285714285715,
+            "after": 0.1818181818181818
+          },
+          {
+            "evaluation_id": "984fc3e726848f8f13dfe72b89e3770d00c3a1af",
+            "before": 0.4444444444444444,
+            "after": 0.3529411764705882
+          },
+          {
+            "evaluation_id": "ad1be65c4f0655ac5c902d17f05454c0d4c4a15d",
+            "before": 0.3287671232876712,
+            "after": 0.3050847457627119
+          },
+          {
+            "evaluation_id": "b249b60a8c94d0e40d65f1ffdfcac527dab57516",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "b7381927764536bd97b099b6a172708125364954",
+            "before": 0.34408602150537637,
+            "after": 0.3829787234042553
+          },
+          {
+            "evaluation_id": "bd5bd1765362c2d972a762ca12675108754aa437",
+            "before": 0.15384615384615385,
+            "after": 0.15384615384615385
+          },
+          {
+            "evaluation_id": "c0bee6539eb6956a7347daa9d2419b367bd02064",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "d015faf0f8dcf2e15c1690bbbe2bf1e7e0ce3751",
+            "before": 0.25641025641025644,
+            "after": 0.25641025641025644
+          },
+          {
+            "evaluation_id": "d3ff2986ca8cb85a9a5cec039c266df756947b43",
+            "before": 0.8333333333333334,
+            "after": 0.8333333333333334
+          },
+          {
+            "evaluation_id": "d9980676a83295dda37c20cfd5d58e574d0a4859",
+            "before": 0.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "de53af4eddbc30c808d90b8a11a29217d377569e",
+            "before": 1.0,
+            "after": 1.0
+          },
+          {
+            "evaluation_id": "df0257ab04686ddf1c6c4d9b0529a7632330b98e",
+            "before": 0.23999999999999996,
+            "after": 0.20588235294117646
+          },
+          {
+            "evaluation_id": "dfca00be3284cc555a6a4eac4831471fb1f5875b",
+            "before": 0.1904761904761905,
+            "after": 0.14285714285714288
+          },
+          {
+            "evaluation_id": "e3a2d8886f03e78ed5e138df870f48635875727e",
+            "before": 0.21621621621621623,
+            "after": 0.23529411764705882
+          },
+          {
+            "evaluation_id": "e97186c51d4af490dba6faaf833d269c8256426c",
+            "before": 0.0,
+            "after": 0.0
+          },
+          {
+            "evaluation_id": "fd8e23947095fe2230ffe1a478945829b09c8c95",
+            "before": 0.0,
+            "after": 0.06451612903225808
+          },
+          {
+            "evaluation_id": "fde700d5134a9ae8f7579bea1f1b75f34d7c1c4c",
+            "before": 0.31999999999999995,
+            "after": 0.25
+          }
+        ]
+      }
     },
-    "qasper_final_evidence_4k": {
-      "eligible": 235,
-      "witness": 182,
-      "dense": 182,
-      "hybrid": 179
-    },
-    "longmem_final_evidence_4k": {
-      "eligible": 42,
-      "witness": 25,
-      "dense": 28,
-      "hybrid": 29
-    },
-    "qasper_final_answer_f1": {
-      "questions": 32,
-      "witness": 0.4635385566657037,
-      "dense": 0.46395943208657914,
-      "hybrid": 0.44367706919417793
-    },
-    "longmem_final_adapted_correct": {
-      "questions": 48,
-      "witness": 30,
-      "dense": 33,
-      "hybrid": 34
-    },
-    "reader_matrix": {
-      "records": 240,
-      "unique_requests": 164,
-      "failures": 0
-    },
-    "new_language_superiority": false
+    "longmem": {
+      "dense": {
+        "questions": 48,
+        "before": 0.6875,
+        "after": 0.7708333333333334,
+        "paired_change": {
+          "difference": 0.08333333333333333,
+          "ci95_low": 0.0,
+          "ci95_high": 0.1875,
+          "samples": 10000,
+          "seed": 1947
+        },
+        "improved_questions": 5,
+        "worsened_questions": 1,
+        "unchanged_questions": 42,
+        "before_failures": 0,
+        "after_failures": 0,
+        "question_changes": [
+          {
+            "evaluation_id": "06f04340",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "0a34ad58",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "15745da0_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "19b5f2b3_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "1d4e3b97",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "1da05512",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "1e043500",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "25e5aa4f",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "29f2956b_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "35a27287",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "3b6f954b",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "41275add",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "4b24c848",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "54026fce",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "5a4f22c0",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "6a1eabeb",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "6a27ffc2",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "6b7dfb22",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "6c49646a",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "7e974930",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "86f00804",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "88432d0a",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "95bcc1c8",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "982b5123_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "9a707b81",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "9bbe84a2",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "a1cc6108",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "a40e080f",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "ac031881",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "b46e15ed",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "c18a7dc8",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "c4a1ceb8",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "ce6d2d27",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "e3fc4d6e",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "e5ba910e_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "e982271f",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "edced276",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "f4f1d8a4",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "f523d9fe",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "faba32e5",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "fea54f57",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_0b2f1d21",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_15e38248",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "gpt4_78cf46a3",
+            "before": true,
+            "after": false
+          },
+          {
+            "evaluation_id": "gpt4_93159ced_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_b5700ca9",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_cd90e484",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_d9af6064",
+            "before": true,
+            "after": true
+          }
+        ]
+      },
+      "hybrid": {
+        "questions": 48,
+        "before": 0.7083333333333334,
+        "after": 0.75,
+        "paired_change": {
+          "difference": 0.041666666666666664,
+          "ci95_low": -0.041666666666666664,
+          "ci95_high": 0.125,
+          "samples": 10000,
+          "seed": 1947
+        },
+        "improved_questions": 3,
+        "worsened_questions": 1,
+        "unchanged_questions": 44,
+        "before_failures": 0,
+        "after_failures": 0,
+        "question_changes": [
+          {
+            "evaluation_id": "06f04340",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "0a34ad58",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "15745da0_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "19b5f2b3_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "1d4e3b97",
+            "before": true,
+            "after": false
+          },
+          {
+            "evaluation_id": "1da05512",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "1e043500",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "25e5aa4f",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "29f2956b_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "35a27287",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "3b6f954b",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "41275add",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "4b24c848",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "54026fce",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "5a4f22c0",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "6a1eabeb",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "6a27ffc2",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "6b7dfb22",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "6c49646a",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "7e974930",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "86f00804",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "88432d0a",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "95bcc1c8",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "982b5123_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "9a707b81",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "9bbe84a2",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "a1cc6108",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "a40e080f",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "ac031881",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "b46e15ed",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "c18a7dc8",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "c4a1ceb8",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "ce6d2d27",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "e3fc4d6e",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "e5ba910e_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "e982271f",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "edced276",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "f4f1d8a4",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "f523d9fe",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "faba32e5",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "fea54f57",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_0b2f1d21",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_15e38248",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "gpt4_78cf46a3",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_93159ced_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_b5700ca9",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_cd90e484",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_d9af6064",
+            "before": true,
+            "after": true
+          }
+        ]
+      },
+      "skein": {
+        "questions": 48,
+        "before": 0.625,
+        "after": 0.75,
+        "paired_change": {
+          "difference": 0.125,
+          "ci95_low": 0.041666666666666664,
+          "ci95_high": 0.22916666666666666,
+          "samples": 10000,
+          "seed": 1947
+        },
+        "improved_questions": 6,
+        "worsened_questions": 0,
+        "unchanged_questions": 42,
+        "before_failures": 0,
+        "after_failures": 0,
+        "question_changes": [
+          {
+            "evaluation_id": "06f04340",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "0a34ad58",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "15745da0_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "19b5f2b3_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "1d4e3b97",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "1da05512",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "1e043500",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "25e5aa4f",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "29f2956b_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "35a27287",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "3b6f954b",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "41275add",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "4b24c848",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "54026fce",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "5a4f22c0",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "6a1eabeb",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "6a27ffc2",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "6b7dfb22",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "6c49646a",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "7e974930",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "86f00804",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "88432d0a",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "95bcc1c8",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "982b5123_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "9a707b81",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "9bbe84a2",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "a1cc6108",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "a40e080f",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "ac031881",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "b46e15ed",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "c18a7dc8",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "c4a1ceb8",
+            "before": false,
+            "after": true
+          },
+          {
+            "evaluation_id": "ce6d2d27",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "e3fc4d6e",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "e5ba910e_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "e982271f",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "edced276",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "f4f1d8a4",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "f523d9fe",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "faba32e5",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "fea54f57",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_0b2f1d21",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "gpt4_15e38248",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "gpt4_78cf46a3",
+            "before": false,
+            "after": false
+          },
+          {
+            "evaluation_id": "gpt4_93159ced_abs",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_b5700ca9",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_cd90e484",
+            "before": true,
+            "after": true
+          },
+          {
+            "evaluation_id": "gpt4_d9af6064",
+            "before": false,
+            "after": true
+          }
+        ]
+      }
+    }
   },
-  "publication": "Version2 scientific record. Pipeline and website publication receipts are recorded separately; v1 remains unchanged."
+  "validation": {
+    "figures": 6,
+    "budget_review": "PASS",
+    "original_v2_preserved": true,
+    "pipeline": "versioned source update \u2192 independent budget/result review \u2192 root synthesis \u2192 LaTeX Forge \u2192 rendered review \u2192 web publication",
+    "post_review_clarification": "Dense and hybrid definitions added directly from evidence_selection._feature_weights and lexical_index; no numerical or methodological change."
+  }
 }
