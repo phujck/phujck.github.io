@@ -1,0 +1,186 @@
+{
+  "schema": "skein-release-manifest-v2",
+  "version": 2,
+  "title": "Memory in pieces",
+  "method_public_name": "Parallax",
+  "historical_method_key": "skein",
+  "parent_release": {
+    "path": "release_manifest.json",
+    "sha256": "7b853d258632fcf5efd6b9e0fdcf16f89cdb27d0c7a42cfb525f7f1319f521db"
+  },
+  "deliverables": {
+    "manuscript": {
+      "revises": "output/pdf/skein.pdf",
+      "path": "output/pdf/v2/skein.pdf"
+    },
+    "andrew_jack_report": {
+      "revises": "output/pdf/andrew-jack.pdf",
+      "path": "output/web/andrew-jack-v2/index.html",
+      "url": "https://gmccaul.co.uk/unlisted/reconstruction-2026-09-20/"
+    }
+  },
+  "artifacts": {
+    "output/pdf/v2/skein.pdf": {
+      "sha256": "baec6e60dff015bd00b3918bfe6e235914d25cbc730082c217e1603cac78f92f",
+      "bytes": 666014
+    },
+    "output/pdf/v2/skein.tex": {
+      "sha256": "d030e7932c5ac626d738922c8f44a2084882b2e18fe1a64f5a81c47b9822b4ea",
+      "bytes": 26610
+    },
+    "output/pdf/v2/evaluation-results.tex": {
+      "sha256": "0cdb151c0c3f9df36f2f33c1af5b04590ea5d935c9002c0eabe7f413f7e89b8f",
+      "bytes": 4675
+    },
+    "output/pdf/v2/reconstruction_appendices.tex": {
+      "sha256": "3ee78d96cb81116e5ec8eb7ec41252130a4b1b1469775ec9fb2473326a23d803",
+      "bytes": 35007
+    },
+    "output/pdf/v2/extension_appendices.tex": {
+      "sha256": "4dcdb1a633e817688b95ab6cad1aed18aa770522aa1564d1021854f7b36ae89e",
+      "bytes": 4613
+    },
+    "output/pdf/v2/reconstruction_refs.bib": {
+      "sha256": "c75624e670b4a7f50dadbd1a53b2bf1f14fdb12063fec2e93dc17c3568331542",
+      "bytes": 2555
+    },
+    "output/web/andrew-jack-v2/index.html": {
+      "sha256": "7b42b54691ab22994f5e58d9ec7b528e93e57cc7a118d7c8d482729d111bbdcc",
+      "bytes": 28269
+    },
+    "extension/output/web/build_visual_report.py": {
+      "sha256": "4a94b51dd40c6b8b024042ac2c4f02e9d2572e39f20ba1d91b5f7fac23d03f05",
+      "bytes": 19122
+    },
+    "extension/figures/observable_sections.pdf": {
+      "sha256": "b90194b0c78b001905ce35c5e8b9afa250426a28f3648abef502efed58ac9edb",
+      "bytes": 91898
+    },
+    "extension/figures/query_locality_completed_v1.pdf": {
+      "sha256": "d845800aa3e60456de4abc753d063835a0ad1ffe8b5222cbec81681abf5e74ee",
+      "bytes": 42660
+    },
+    "extension/figures/controlled_effective_dynamics_v1.pdf": {
+      "sha256": "580bda307600c21b9c69268fae57ae4de77c61ef2cf058fb7ba32aa58aba424e",
+      "bytes": 31516
+    },
+    "extension/figures/language_evidence_v1.pdf": {
+      "sha256": "11e80367a5a39f936ad417eaece896c68c35e1d453ef2587e9d468bd618750ab",
+      "bytes": 25570
+    },
+    "extension/figures/completed_figures_provenance_v1.json": {
+      "sha256": "28176973d76d975acdae66e395a3045cca37f74b54691f09b13b239916b4dc3a",
+      "bytes": 1533
+    },
+    "extension/figures/language_evidence_v1.receipt.json": {
+      "sha256": "9e551102c5e6839b44ef6848c4e45e8cccda423aeaecb83a40d9889cf1bdc862",
+      "bytes": 2656
+    },
+    "extension/results/query_locality_matrix_v1.json": {
+      "sha256": "b6a6661eb437f911c95426c5d5640c520b592b188719992298e9a272b2d66031",
+      "bytes": 3480201
+    },
+    "extension/results/locality_matrix_v1.json": {
+      "sha256": "03446b70eccd3b8187d49959a99119502b519a7a44c9fd3df523e72c96e1c3f2",
+      "bytes": 733750
+    },
+    "extension/results/qasper_final256_retrieval_v1.json": {
+      "sha256": "74ddbbf554e0a40feb84543ce1bef2818e71ba84f1fee685affd92d22ba2a093",
+      "bytes": 31666634
+    },
+    "extension/results/qasper_final256_scores_v1.json": {
+      "sha256": "05a45c4e5edefdf1d7f2e90a9c3d7aac93541402cc3bf7efbc0ac8d80f8796c7",
+      "bytes": 1971097
+    },
+    "extension/results/memory_final48_rankings_v1.json": {
+      "sha256": "4343ed000790d3e2412631b65cbd2240a6c9fc196ac8ea6800d0279ee13d6280",
+      "bytes": 22773754
+    },
+    "extension/results/memory_final48_metrics_v1.json": {
+      "sha256": "47c062ebb4ecab48986defa54d02bc1864fa5b481081805b1bfa0c1956266cb6",
+      "bytes": 1116832
+    },
+    "extension/results/shared_reader_contexts_v1.json": {
+      "sha256": "96c26c8762610c3bab7206f8fbe6888b7630aabaa93309e22593d38083cfdd6e",
+      "bytes": 9166876
+    },
+    "extension/results/shared_reader_predictions_v1.json": {
+      "sha256": "a138db34de7c6d45424faab3d5ad8f76e618adfb805663b14e6f27fe8916a3a2",
+      "bytes": 280514
+    },
+    "extension/results/shared_reader_qasper_scores_v1.json": {
+      "sha256": "dd59ef6f77b76f80c857c41feb7b90c7e4f62ee90c6c793682b4d1d114430b26",
+      "bytes": 77982
+    },
+    "extension/results/shared_reader_longmem_judgements_v1.json": {
+      "sha256": "d3bb5c9d1d3eb6cca1aa085096a5a12208b0e468299dbdfce57aa9d365d6a5ba",
+      "bytes": 102644
+    },
+    "extension/results/shared_reader_longmem_scores_v1.json": {
+      "sha256": "2c0f9accb4d4fd83f152d4e63df30c0493043c67315df0fe7d506a1c377fb71b",
+      "bytes": 28078
+    },
+    "extension/results/source_view_diagnostic_devonly_v1.receipt.json": {
+      "sha256": "1edc4645b00f1ea5105a79fa886968e3b198f0c5d8b153a9e721275c27ca151e",
+      "bytes": 2758
+    },
+    "extension/results/qasper_train32_source_view_metrics_v1.json": {
+      "sha256": "6a81b3f51957b38e62df8875672bb16036468dddf9f3d09e7f2c54cd520baec5",
+      "bytes": 158272
+    },
+    "extension/results/memory_dev24_source_view_metrics_v1.json": {
+      "sha256": "9482b41cfce402832b5a210ffaba71103c58551e12e2c93f85e643fbf2561863",
+      "bytes": 341403
+    },
+    "extension/reviews/memory_in_pieces_math_review_v1.json": {
+      "sha256": "bec5efe1ea312253e70af95dd00c15cbbb1f36878d609b5da3ffa0a99aa2dc0e",
+      "bytes": 4186
+    },
+    "extension/reviews/cold_reader_v2.json": {
+      "sha256": "7a9868048d703603c8e008a64bd4e347021abde092b17486bd81c33f97340231",
+      "bytes": 6036
+    },
+    "extension/reviews/reader_context_integration_review_v2.json": {
+      "sha256": "dfd5ac53e57a5802d9c33cdfa88ef51da1c3ae672017850c9cfdfea1a6137713",
+      "bytes": 1997
+    }
+  },
+  "results": {
+    "integer_matrix": {
+      "cells": 524,
+      "measured": 500,
+      "capacity_refusals": 24
+    },
+    "qasper_final_evidence_4k": {
+      "eligible": 235,
+      "witness": 182,
+      "dense": 182,
+      "hybrid": 179
+    },
+    "longmem_final_evidence_4k": {
+      "eligible": 42,
+      "witness": 25,
+      "dense": 28,
+      "hybrid": 29
+    },
+    "qasper_final_answer_f1": {
+      "questions": 32,
+      "witness": 0.4635385566657037,
+      "dense": 0.46395943208657914,
+      "hybrid": 0.44367706919417793
+    },
+    "longmem_final_adapted_correct": {
+      "questions": 48,
+      "witness": 30,
+      "dense": 33,
+      "hybrid": 34
+    },
+    "reader_matrix": {
+      "records": 240,
+      "unique_requests": 164,
+      "failures": 0
+    },
+    "new_language_superiority": false
+  },
+  "publication": "Version2 scientific record. Pipeline and website publication receipts are recorded separately; v1 remains unchanged."
+}
