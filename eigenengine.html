@@ -194,7 +194,7 @@
     <div class="container" style="position: relative;">
       <h1 class="page-hero-title fade-in">EigenEngine</h1>
       <p class="page-hero-subtitle fade-in fade-in-delay-1">
-        Eigen is a routing and permission system for AI agents working on an organisation's documents. It keeps the documents as a graph, routes each question to the few passages it needs, enforces who may read what, and returns every answer with its sources. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
+        Eigen is a routing and permission system for AI agents, the programs that answer questions and carry out tasks over an organisation's documents. It keeps the documents as a graph, routes each question to the few passages it needs, enforces who may read what, and returns every answer with its sources. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
       </p>
     </div>
   </header>
@@ -287,7 +287,7 @@
     <rect x="64" y="50" width="80" height="100" rx="3"/>
   </g>
   <g stroke="#6b7280" stroke-width="1"><path d="M76 72h56M76 86h56M76 100h40M76 114h56M76 128h30"/></g>
-  <text x="96" y="185" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">documents and conversations</text>
+  <text x="96" y="185" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">documents</text>
   <!-- store once -->
   <path d="M152 108 L250 108" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ah)"/>
   <text x="201" y="98" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">stored once</text>
@@ -313,8 +313,7 @@
   <!-- tiny graphs inside boxes -->
   <g fill="#9ca3af"><circle cx="596" cy="69" r="2.5"/><circle cx="608" cy="62" r="2.5"/><circle cx="620" cy="72" r="2.5"/><circle cx="538" cy="135" r="2.5"/><circle cx="550" cy="128" r="2.5"/><circle cx="562" cy="138" r="2.5"/><circle cx="538" cy="201" r="2.5"/><circle cx="550" cy="194" r="2.5"/><circle cx="562" cy="204" r="2.5"/></g>
   <g stroke="#9ca3af" stroke-width="0.8"><path d="M596 69 L608 62 L620 72 M538 135 L550 128 L562 138 M538 201 L550 194 L562 204"/></g>
-  <g stroke="#c0392b" stroke-width="2"><path d="M654 126 L678 144 M678 126 L654 144"/></g>
-  <text x="666" y="108" font-family="Lora, serif" font-size="11.5" fill="#c0392b" text-anchor="middle">private: filtered by policy</text>
+    <text x="666" y="108" font-family="Lora, serif" font-size="11.5" fill="#c0392b" text-anchor="middle">private: filtered by policy</text>
   <text x="608" y="170" font-family="Lora, serif" font-size="11.5" fill="#6b7280" text-anchor="middle">not needed</text>
   <text x="550" y="236" font-family="Lora, serif" font-size="11.5" fill="#7bd389" text-anchor="middle">opened</text>
   <text x="608" y="262" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">each group holds linked passages</text>
@@ -347,7 +346,7 @@
   <section class="section" id="story">
     <div class="container">
       <span class="section-label fade-in">In motion</span>
-      <h2 class="section-title fade-in">One question, with and without Eigen</h2>
+      <h2 class="section-title fade-in">The same question, twice</h2>
       <div class="ee-lede fade-in">
         <p>A company has 128 documents in eight kinds: contracts, emails, invoices, reports, meeting minutes, drafts, policies, and personnel files that most agents may not read. An agent is asked one question about the supplier, first on its own, then through Eigen.</p>
       </div>
@@ -360,6 +359,7 @@
           <button type="button" id="st-5">5 · The answer, checked</button>
         </div>
         <p class="say" id="st-say"></p>
+        <p class="say" style="font-size:0.78rem;color:var(--text-muted);min-height:0;margin:0 0 var(--space-sm)"><span style="color:#c9a96e">■</span> opened by the agent &nbsp; <span style="color:#7bd389">■</span> opened through Eigen &nbsp; <span style="color:#c0392b">■</span> private &nbsp; <span style="color:#c9a96e">○</span> one line delivered, filtered</p>
         <div class="stage">
           <svg id="st-svg" viewBox="0 0 640 420" role="img" aria-label="128 documents in eight rows by kind; then the same documents as a map of linked passages in groups"></svg>
           <div class="side" id="st-side"></div>
@@ -376,7 +376,7 @@
         <div class="ee-fact"><h3>Customers</h3><p>Companies whose AI products answer questions for lawyers, analysts, underwriters, doctors or researchers, where a wrong or unsupported answer is costly. Research groups will be the first users.</p></div>
         <div class="ee-fact"><h3>How it is delivered</h3><p>As software the customer runs inside their own systems. Only the text of each request leaves, to the customer's own AI provider.</p></div>
         <div class="ee-fact"><h3>Who sets the rules</h3><p>The owner of the documents decides, document by document, which agents may read what. Eigen enforces it on every request.</p></div>
-        <div class="ee-fact"><h3>Compared with today's tools</h3><p>Today an AI's answer is judged by another AI, which gives a score. Eigen gives a record that the customer, or their auditor, can check against the sources.</p></div>
+        <div class="ee-fact"><h3>Compared with today's tools</h3><p>Today an AI's answer is judged by another AI, which gives a score. Eigen gives, with each answer, the list of passages it rests on, which the customer, or their auditor, can check against the sources.</p></div>
         <div class="ee-fact"><h3>When</h3><p>The first pilots are planned for early 2027.</p></div>
       </div>
     </div>
@@ -387,7 +387,7 @@
       <span class="section-label fade-in">Early prototypes</span>
       <h2 class="section-title fade-in">Eigen as part of an integrated research environment</h2>
       <div class="ee-lede fade-in">
-        <p>The first use of Eigen has been as the record underneath a research environment: it holds a project's sources, plans and drafts; papers and talks are written from it. Eigen built the graph for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026. Each definition, claim, result and limitation in the paper is a node; the lines are the links between them. Hover or tap a node to read it.</p>
+        <p>The first use of Eigen has been as the record underneath a research environment: it holds a project's sources, plans and drafts; papers and talks are written from it. Eigen built the graph for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026. Each definition, claim, result and limitation in the paper is a dot; the lines are the links between them. Hover or tap a dot to read it.</p>
       </div>
       <div class="ee-graph-wrap fade-in">
         <canvas id="ee-graph" width="1000" height="620" role="img" aria-label="The concept graph of one paper, coloured by kind"></canvas>
@@ -418,10 +418,10 @@
           <span class="kicker">Generated page</span>
           <h3>The long way round</h3>
           <p>95 days around the United States, reconstructed from a phone's location history: days, places and photos cross-linked on one map.</p>
-          <span class="go">Open the map →</span>
+          <span class="go">Open the page →</span>
         </a>
       </div>
-      <p class="ee-disclaimer">The paper, the talks and the map were algorithmically generated; not fit for human consumption.</p>
+      <p class="ee-disclaimer">The paper, the talks and the trip page were algorithmically generated; not fit for human consumption.</p>
     </div>
   </section>
 
@@ -435,7 +435,7 @@
     var pts = [];
     for (var i = 0; i < N; i++) {
       var row = Math.floor(i / 16), col = i % 16, a = rnd() * Math.PI * 2, r = 14 + rnd() * 40;
-      pts.push({ i: i, g: row, gx: 112 + col * 32, gy: 36 + row * 46, mx: centers[row][0] + Math.cos(a) * r, my: centers[row][1] + Math.sin(a) * r * 0.7, x: 0, y: 0 });
+      pts.push({ i: i, g: row, gx: 160 + col * 29, gy: 36 + row * 46, mx: centers[row][0] + Math.cos(a) * r, my: centers[row][1] + Math.sin(a) * r * 0.7, x: 0, y: 0 });
     }
     var links = [];
     for (i = 0; i < N; i++) { var j = i + 1, k = i + 3; if (j < N && j % 16 !== 0) links.push([i, j]); if (k < N && Math.floor(k / 16) === Math.floor(i / 16) && rnd() < 0.3) links.push([i, k]); }
@@ -447,9 +447,9 @@
     var SAY = {
       1: "The agent has the 128 documents in front of it. To find the answer it has to read every one, the personnel files included: nothing tells it which files matter without opening them. The answer names no source.",
       2: "Nothing was kept from last week, so the same question costs the same again: all 128 documents, the personnel files included.",
-      3: "Eigen reads the 128 documents once and keeps a graph of them: each document's passages, linked where they share a name, a date or a subject, gathered into groups by kind. Personnel files are a group this agent may not open.",
+      3: "Eigen reads the 128 documents once and keeps a graph of them: each document's passages, linked, gathered into groups by kind. Personnel files are a group this agent may not open.",
       4: "The question is routed only to the groups it needs: contracts and emails, where three passages are opened. One fact it needs sits in a personnel file. Eigen does not open that file for the agent; it delivers the one line asked for, with the name and the pay figure removed, as the rights policy for this agent requires.",
-      5: "The answer carries the four passages it rests on, including the transformed line from the personnel file, and a fingerprint of each. Change one of those passages and its fingerprint no longer matches: the answer is flagged until it is redone."
+      5: "Every passage has a fingerprint, a short code worked out from its exact words. The answer carries the four passages it rests on, including the filtered line from the personnel file, with the fingerprint of each. Edit one of those passages and its code changes, so the answer is flagged until it is redone."
     };
     var FP = { 2: "a1f3…", 20: "7c0e…", 25: "e94d…", 118: "52b7…" };
     function side(html) { el("st-side").innerHTML = html; }
@@ -458,7 +458,7 @@
       while (svg.firstChild) svg.removeChild(svg.firstChild);
       pos();
       if (t < 0.5) {
-        KINDS.forEach(function (k, r) { mk("text", { x: 100, y: 40 + r * 46, "text-anchor": "end", "font-family": "Lora, serif", "font-size": 11, fill: r === PRIV ? "#c0392b" : "#9ca3af" }).textContent = k + (r === PRIV ? " · private" : ""); });
+        KINDS.forEach(function (k, r) { mk("text", { x: 140, y: 40 + r * 46, "text-anchor": "end", "font-family": "Lora, serif", "font-size": 11, fill: r === PRIV ? "#c0392b" : "#9ca3af" }).textContent = k + (r === PRIV ? " · private" : ""); });
       }
       if (t > 0.5) {
         centers.forEach(function (c, gi) {
@@ -466,21 +466,21 @@
           mk("ellipse", { cx: c[0], cy: c[1], rx: 62, ry: 50, fill: on ? "rgba(123,211,137,0.10)" : (priv ? "rgba(192,57,43,0.10)" : "rgba(255,255,255,0.03)"), stroke: on ? "#7bd389" : (priv ? "#c0392b" : "rgba(255,255,255,0.15)"), "stroke-dasharray": on || priv ? "" : "4 4" });
           var lab = (priv ? "personnel" : KINDS[gi]), col = priv ? "#c0392b" : (on ? "#7bd389" : "#9ca3af");
           if (step >= 4) lab += priv ? " · filtered" : (on ? " · opened" : " · not needed"); else if (priv) lab += " · private";
-          mk("text", { x: c[0], y: c[1] - 56, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 11, fill: col }).textContent = lab;
+          mk("text", { x: c[0], y: c[1] + 64, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 11, fill: col }).textContent = lab;
         });
         links.forEach(function (l) { var a = pts[l[0]], b = pts[l[1]], lit = step >= 4 && NEED.indexOf(l[0]) >= 0 && NEED.indexOf(l[1]) >= 0; mk("line", { x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: lit ? "#c9a96e" : "rgba(255,255,255,0.10)", "stroke-width": lit ? 1.4 : 1, opacity: t }); });
-        if (step >= 4) { mk("text", { x: 320, y: 16, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 12, fill: "#c9a96e" }).textContent = "what did we agree with the supplier?"; NEEDG.forEach(function (gi) { mk("line", { x1: 320, y1: 22, x2: centers[gi][0], y2: centers[gi][1] - 50, stroke: "#c9a96e", "stroke-width": 1.2, "stroke-dasharray": "3 3" }); }); mk("line", { x1: 320, y1: 22, x2: centers[PRIV][0], y2: centers[PRIV][1] - 50, stroke: "#c0392b", "stroke-width": 1.2, "stroke-dasharray": "3 3" }); var pp = pts[PRIVNEED]; mk("circle", { cx: pp.x, cy: pp.y, r: 7, fill: "none", stroke: "#c9a96e", "stroke-width": 1.5 }); mk("text", { x: pp.x, y: pp.y + 20, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 10, fill: "#c9a96e" }).textContent = "one line; name, pay removed"; }
+        if (step >= 4) { mk("text", { x: 320, y: 16, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 12, fill: "#c9a96e" }).textContent = "what did we agree with the supplier?"; NEEDG.forEach(function (gi) { mk("line", { x1: 320, y1: 22, x2: centers[gi][0], y2: centers[gi][1] - 50, stroke: "#c9a96e", "stroke-width": 1.2, "stroke-dasharray": "3 3" }); }); mk("line", { x1: 320, y1: 22, x2: centers[PRIV][0], y2: centers[PRIV][1] - 50, stroke: "#c0392b", "stroke-width": 1.2, "stroke-dasharray": "3 3" }); var pp = pts[PRIVNEED]; mk("circle", { cx: pp.x, cy: pp.y, r: 7, fill: "none", stroke: "#c9a96e", "stroke-width": 1.5 }); mk("text", { x: pp.x, y: pp.y + 20, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 10, fill: "#c9a96e" }).textContent = ""; }
       }
       pts.forEach(function (p) {
         var priv = p.g === PRIV, read = readSet && readSet[p.i], bad = badSet && badSet[p.i], need = step >= 4 && NEED.indexOf(p.i) >= 0;
         var fill = need ? "#7bd389" : bad ? "#c0392b" : read ? "#c9a96e" : (priv ? "rgba(192,57,43,0.55)" : (t > 0.5 ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.12)"));
         if (step === 5 && changed && p.i === 20) fill = "#c0392b";
-        if (t < 0.5) mk("rect", { x: p.x - 11, y: p.y - 11, width: 22, height: 22, rx: 3, fill: fill, stroke: priv ? "rgba(192,57,43,0.6)" : "rgba(255,255,255,0.12)" });
+        if (t < 0.5) mk("rect", { x: p.x - 10, y: p.y - 10, width: 20, height: 20, rx: 3, fill: fill, stroke: priv ? "rgba(192,57,43,0.6)" : "rgba(255,255,255,0.12)" });
         else mk("circle", { cx: p.x, cy: p.y, r: need ? 5 : 3, fill: fill });
       });
     }
-    function counters(opened, priv, names) {
-      return '<div class="box">documents opened<span class="n">' + opened + '</span></div><div class="box">private documents opened<span class="n ' + (priv ? "bad" : "good") + '">' + priv + '</span></div><div class="box">documents the answer names<span class="n ' + (names === "none" ? "bad" : "good") + '">' + names + '</span></div>';
+    function counters(opened, priv, names, filtered) {
+      return '<div class="box">documents opened by the agent<span class="n">' + opened + '</span></div><div class="box">private documents opened<span class="n ' + (priv ? "bad" : "good") + '">' + priv + '</span></div>' + (filtered !== undefined ? '<div class="box">lines delivered from private files, filtered<span class="n good">' + filtered + '</span></div>' : '') + '<div class="box">documents the answer names<span class="n ' + (names === "none" ? "bad" : "good") + '">' + names + '</span></div>';
     }
     function sweep(done) {
       var readSet = {}, badSet = {}, i = 0, bad = 0;
@@ -502,7 +502,7 @@
       el("st-say").textContent = SAY[n];
       if (n === 1 || n === 2) { t = 0; draw(); sweep(); }
       if (n === 3) { t = 0; draw(); side('<h4>What the record holds for each passage</h4><div class="box">a passage of text</div><div class="box">what it says</div><div class="box">the names, dates and numbers in it</div><div class="box">links to other passages</div>'); morph(); }
-      if (n === 4) { t = 1; draw(); side(counters(3, 0, "4") + '<div class="box">opened for the agent: contracts, emails</div><div class="box">from the personnel files: one line, with the name and the pay figure removed; the file itself is never shown to the agent</div><div class="box">not needed: invoices, reports, minutes, drafts, policies</div>'); }
+      if (n === 4) { t = 1; draw(); side(counters(3, 0, "4", 1) + '<div class="box">opened for the agent: contracts, emails</div><div class="box">from the personnel files: one line, with the name and the pay figure removed; the file itself is never shown to the agent</div><div class="box">not needed: invoices, reports, minutes, drafts, policies</div>'); }
       if (n === 5) { t = 1; draw(); answer(); }
     }
     function answer() {
