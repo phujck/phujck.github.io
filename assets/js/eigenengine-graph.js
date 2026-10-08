@@ -55,7 +55,7 @@
     if (!readout) return;
     if (!n) { readout.innerHTML = '<span class="ee-dim">hover a node, or tap one on a phone</span>'; return; }
     var deg = edges.filter(function (e) { return e.src === n.id || e.dst === n.id; }).length;
-    var kind = NAME[n.kind] || n.kind, flag = orphans[n.id] ? " · a definition no claim uses" : "";
+    var kind = NAME[n.kind] || n.kind, flag = orphans[n.id] ? " · defined but never used" : "";
     readout.textContent = kind + " · " + deg + (deg === 1 ? " link" : " links") + flag + " — " + n.label;
   }
   canvas.addEventListener("mousemove", function (ev) { var n = pick(ev); if (n !== hover) { hover = n; describe(n); draw(); } });
@@ -66,7 +66,7 @@
     legend.innerHTML = ["def", "claim", "result", "limitation"].map(function (k) {
       return '<span class="ee-key"><i style="background:' + HUE[k] + '"></i>' + NAME[k] + (counts[k] ? " · " + counts[k] : "") + "</span>";
     }).join("") + '<span class="ee-key"><i style="background:' + NEUTRAL + ';border-radius:0"></i>section or group</span>' +
-      '<span class="ee-key"><i style="background:transparent;border:2px solid ' + RED + '"></i>definition no claim uses · ' + (C.def_orphans || []).length + "</span>";
+      '<span class="ee-key"><i style="background:transparent;border:2px solid ' + RED + '"></i>defined but never used · ' + (C.def_orphans || []).length + "</span>";
   }
   var first = nodes.filter(function (n) { return n.kind === "claim"; })[0] || nodes[0];
   hover = first; describe(first); draw();
