@@ -194,7 +194,7 @@
     <div class="container" style="position: relative;">
       <h1 class="page-hero-title fade-in">EigenEngine</h1>
       <p class="page-hero-subtitle fade-in fade-in-delay-1">
-        Eigen is a routing and permission system for AI agents, the programs that answer questions and carry out tasks over an organisation's documents. It keeps the documents as a graph, routes each question to the few passages it needs, enforces who may read what, and returns every answer with its sources. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
+        Eigen is a routing and permission system for AI agents, the programs that answer questions and carry out tasks over an organisation's documents. It stores every passage once, builds a map over the store, routes each question down the map to the three or four passages it needs, enforces who may read what, and returns every answer with its sources. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
       </p>
     </div>
   </header>
@@ -217,7 +217,7 @@
   <g font-family="JetBrains Mono, monospace" font-size="11" fill="#e8e6e3">
     <text x="60" y="186" text-anchor="middle">all 60</text><text x="180" y="186" text-anchor="middle">all 90</text><text x="300" y="186" text-anchor="middle">all 120</text>
   </g>
-  <text x="60" y="100" text-anchor="middle" font-family="Lora, serif" font-size="11" fill="#9ca3af">documents</text>
+  <text x="180" y="40" text-anchor="middle" font-family="Lora, serif" font-size="11" fill="#9ca3af">the company's documents, growing</text>
   <text x="352" y="110" font-family="Lora, serif" font-size="12" fill="#e8e6e3">read per question:</text>
   <text x="352" y="128" font-family="Lora, serif" font-size="12" fill="#c9a96e">the whole pile,</text>
   <text x="352" y="146" font-family="Lora, serif" font-size="12" fill="#c9a96e">every time</text>
@@ -232,8 +232,8 @@
   <text x="64" y="264" font-family="Lora, serif" font-size="11" fill="#c0392b">wrong source</text>
   <text x="196" y="264" font-family="Lora, serif" font-size="11" fill="#9ca3af">acts on it</text>
   <text x="351" y="264" font-family="Lora, serif" font-size="11" fill="#9ca3af">acts on that</text>
-  <text x="30" y="296" font-family="Lora, serif" font-size="11" fill="#6b7280">an error at step 1 is invisible by step 3</text>
-</svg><h3>Context</h3><p>An agent starts every question from nothing. It reads the whole pile, or whatever someone pasted in, and the pile grows. In a chain of agents, one wrong source at the first step is carried into every step after it and is invisible by the end.</p></div>
+  <text x="30" y="296" font-family="Lora, serif" font-size="11" fill="#6b7280">step 3 cannot see where its mistake came from</text>
+</svg><h3>It reads everything, every time</h3><p>An agent starts every question from nothing, so it reads every document again, and next week there are more of them. When one agent's answer feeds the next, a wrong source at the first step is carried into every step after it.</p></div>
         <div class="pane"><svg viewBox="0 0 480 300" role="img" aria-label="An agent holding the user's full access opens documents including private ones; the answer it returns records no sources, and an auditor has nothing to check">
   <rect x="14" y="40" width="130" height="48" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)"/>
   <text x="79" y="60" text-anchor="middle" font-family="Lora, serif" font-size="12" fill="#e8e6e3">the agent</text>
@@ -243,7 +243,7 @@
   </g>
   <g fill="rgba(192,57,43,0.18)" stroke="#c0392b"><rect x="200" y="98" width="100" height="26" rx="3"/><rect x="200" y="166" width="100" height="26" rx="3"/></g>
   <g font-family="Lora, serif" font-size="11" fill="#9ca3af">
-    <text x="250" y="47" text-anchor="middle">contract</text><text x="250" y="81" text-anchor="middle">email</text><text x="250" y="115" text-anchor="middle" fill="#c0392b">personnel file</text><text x="250" y="149" text-anchor="middle">report</text><text x="250" y="183" text-anchor="middle" fill="#c0392b">board minutes</text>
+    <text x="250" y="47" text-anchor="middle">contract</text><text x="250" y="81" text-anchor="middle">email</text><text x="250" y="115" text-anchor="middle" fill="#c0392b">personnel file</text><text x="250" y="149" text-anchor="middle">report</text><text x="250" y="183" text-anchor="middle" fill="#c0392b">salary review</text>
   </g>
   <g stroke="#9ca3af" stroke-width="1"><path d="M144 64 L198 43 M144 64 L198 77 M144 64 L198 145"/></g>
   <g stroke="#c0392b" stroke-width="1.4"><path d="M144 64 L198 111 M144 64 L198 179"/></g>
@@ -256,7 +256,7 @@
   <text x="373" y="242" text-anchor="middle" font-family="Lora, serif" font-size="11" fill="#9ca3af">nothing to check it against</text>
   <g stroke="#9ca3af" stroke-width="1" stroke-dasharray="3 3"><path d="M224 227 L288 227"/></g>
   <text x="24" y="290" font-family="Lora, serif" font-size="11" fill="#6b7280">a file cannot be judged irrelevant, or kept private, without being opened</text>
-</svg><h3>Governance</h3><p>To find anything, an agent has to read everything. A question about a supplier reads the personnel files and the board minutes too, because there is no way to know a file is irrelevant, or private, without opening it. Nothing records which files were read, so the answer cannot be checked against them, by the user or by an auditor.</p></div>
+</svg><h3>Nobody can check the answer</h3><p>To find anything, an agent has to read everything. A question about a supplier reads the personnel files too, because there is no way to know a file is irrelevant, or private, without opening it. Nothing records which files were read, so nobody can check the answer against them.</p></div>
       </div>
     </div>
   </section>
@@ -266,9 +266,9 @@
       <span class="section-label fade-in">How Eigen works</span>
       <h2 class="section-title fade-in">A routing and permission system on a recursive graph</h2>
       <div class="ee-lede fade-in">
-        <p>Eigen reads the documents once and keeps them as a graph. Each passage is linked to the passages it shares a name, a date or a subject with; linked passages form a group; groups link to groups; and each node of the graph is itself a graph of what sits beneath it. A question is routed down that graph to the few passages it needs, through a permission check at every level, and the answer comes back with the route it took.</p>
+        <p>Eigen reads the documents once and stores every passage. Over the store it builds a map, a graph: each passage is linked to the passages it shares a name, a date or a subject with; linked passages form a group; groups link to groups. Zoom into any group and you find the same shape again, passages linked to passages, which is what makes the graph recursive. A question is matched against the top of the map, then against the groups underneath, with permission checked at each step, and the answer comes back with the passages it used.</p>
       </div>
-      <div class="ee-bigfig fade-in"><svg viewBox="0 0 1000 400" role="img" aria-label="Sources are stored once as the record; an index over the record is descended by a question, opening one branch, skipping one, and refusing one the agent may not read; evidence returns with the passages used and a fingerprint of each, and is refused if a source has changed">
+      <div class="ee-bigfig fade-in"><svg viewBox="0 0 1000 400" role="img" aria-label="Sources are stored once as the record; an index over the record is descended by a question, opening one branch, skipping one, and refusing one the agent may not read; evidence returns with the passages used and a fingerprint of each, and is flagged if a passage has changed">
   <defs>
     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/></marker>
     <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a96e"/></marker>
@@ -277,7 +277,7 @@
   <g font-family="Outfit, sans-serif" font-size="15" font-weight="600" fill="#e8e6e3">
     <text x="70" y="34">sources</text>
     <text x="300" y="34" fill="#c9a96e">the record</text>
-    <text x="560" y="34" fill="#7eb8da">the graph</text>
+    <text x="560" y="34" fill="#7eb8da">the map</text>
     <text x="830" y="34" fill="#7bd389">the answer</text>
   </g>
   <!-- sources: a stack of pages -->
@@ -318,8 +318,8 @@
   <text x="550" y="236" font-family="Lora, serif" font-size="11.5" fill="#7bd389" text-anchor="middle">opened</text>
   <text x="608" y="262" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">each group holds linked passages</text>
   <!-- question in, answer out -->
-  <path d="M760 60 L640 60" stroke="#c9a96e" stroke-width="1.5" marker-end="url(#ahg)"/>
-  <text x="700" y="50" font-family="Lora, serif" font-size="12.5" fill="#c9a96e" text-anchor="middle">a question</text>
+  <path d="M608 24 L608 46" stroke="#c9a96e" stroke-width="1.5" marker-end="url(#ahg)"/>
+  <text x="608" y="16" font-family="Lora, serif" font-size="12.5" fill="#c9a96e" text-anchor="middle">a question</text>
   <path d="M582 201 L760 201" stroke="#7bd389" stroke-width="1.5" marker-end="url(#ahe)"/>
   <!-- answer with provenance chain -->
   <g font-family="Lora, serif" font-size="12.5" fill="#e8e6e3">
@@ -337,18 +337,18 @@
   <g stroke="#2a3344" stroke-width="1"><path d="M258 318 L458 318 M522 318 L694 318 M768 318 L958 318"/></g>
 </svg></div>
       <div class="ee-ppp fade-in">
-        <div><h3>Persistence</h3><p>Documents are read once and kept as a record of passages: what each says, the names, dates and numbers in it, and its links to other passages. The next question starts from the graph instead of reading everything again.</p></div>
-        <div><h3>Permission</h3><p>An agent reaches the record only through the graph, and opens only the groups its question needs. A file the agent may not read is never opened for it; if a fact it needs sits in one, Eigen delivers that fact alone, transformed as the rights policy for that agent requires, with a name or a figure removed. The owner of the documents sets the policy.</p></div>
-        <div><h3>Provenance</h3><p>Every answer carries the passages it used and a fingerprint of each. Anyone with the sources can check each passage themselves, and if a passage has changed since, the answer is flagged as no longer backed.</p></div>
+        <div><h3>Persistence</h3><p>Documents are read once and kept as a record of passages: what each says, the names, dates and numbers in it, and its links to other passages. The next question starts from the map instead of reading everything again.</p></div>
+        <div><h3>Permission</h3><p>An agent reaches the record only through the map, and opens only the groups its question needs. A file the agent may not read is never opened for it; if a fact it needs sits in one, Eigen delivers that fact alone, transformed as the rights policy for that agent requires, with a name or a figure removed. The owner of the documents sets the policy.</p></div>
+        <div><h3>Provenance</h3><p>Every answer carries the passages it used and a fingerprint of each. Anyone with the sources can check each passage themselves, and if a passage has changed since, the answer is flagged as no longer supported by its sources.</p></div>
       </div>
     </div>
   </section>
   <section class="section" id="story">
     <div class="container">
-      <span class="section-label fade-in">In motion</span>
+      <span class="section-label fade-in">Walk through it</span>
       <h2 class="section-title fade-in">The same question, twice</h2>
       <div class="ee-lede fade-in">
-        <p>A company has 128 documents in eight kinds: contracts, emails, invoices, reports, meeting minutes, drafts, policies, and personnel files that most agents may not read. An agent is asked one question about the supplier, first on its own, then through Eigen.</p>
+        <p>A company has 128 documents in eight kinds: contracts, emails, invoices, reports, minutes, drafts, policies, and personnel files that this agent may not read. An agent is asked one question about the supplier, first on its own, then through Eigen.</p>
       </div>
       <div class="ee-story fade-in" id="story-box">
         <div class="bar">
@@ -370,7 +370,6 @@
 
   <section class="section" id="who">
     <div class="container">
-      <span class="section-label fade-in">Use</span>
       <h2 class="section-title fade-in">Who it is for</h2>
       <div class="ee-facts fade-in">
         <div class="ee-fact"><h3>Customers</h3><p>Companies whose AI products answer questions for lawyers, analysts, underwriters, doctors or researchers, where a wrong or unsupported answer is costly. Research groups will be the first users.</p></div>
@@ -387,7 +386,7 @@
       <span class="section-label fade-in">Early prototypes</span>
       <h2 class="section-title fade-in">Eigen as part of an integrated research environment</h2>
       <div class="ee-lede fade-in">
-        <p>The first use of Eigen has been as the record underneath a research environment: it holds a project's sources, plans and drafts; papers and talks are written from it. Eigen built the graph for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026. Each definition, claim, result and limitation in the paper is a dot; the lines are the links between them. Hover or tap a dot to read it.</p>
+        <p>Eigen's first job has been one research project: it holds the sources, plans and drafts, and writes the papers and talks from them. Eigen built the graph for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026, a different paper from the one below. Each definition, claim, result and limitation in the paper is a dot; the lines are the links between them. Hover or tap a dot to read it.</p>
       </div>
       <div class="ee-graph-wrap fade-in">
         <canvas id="ee-graph" width="1000" height="620" role="img" aria-label="The concept graph of one paper, coloured by kind"></canvas>
@@ -405,7 +404,7 @@
         <a class="ee-card" href="/unlisted/eigenengine/twinning/">
           <span class="kicker">Generated paper</span>
           <h3>Optical twinning trees</h3>
-          <p>In July 2026 a physicist gave Eigen one research question. Over two days Eigen produced a 14-page paper and a 15-slide talk, reviewed its own first draft, and produced a second version. The conversation, including the physicist's corrections, is kept.</p>
+          <p>In July 2026 a physicist gave Eigen one research question. Over two days Eigen wrote a 14-page paper and a 15-slide talk, reviewed its own draft, and rewrote it. The whole conversation, including the physicist's corrections, is on the linked page.</p>
           <span class="go">Open the paper and talk →</span>
         </a>
         <a class="ee-card" href="/talks/laws-of-learning-v3/">
@@ -447,7 +446,7 @@
     var SAY = {
       1: "The agent has the 128 documents in front of it. To find the answer it has to read every one, the personnel files included: nothing tells it which files matter without opening them. The answer names no source.",
       2: "Nothing was kept from last week, so the same question costs the same again: all 128 documents, the personnel files included.",
-      3: "Eigen reads the 128 documents once and keeps a graph of them: each document's passages, linked, gathered into groups by kind. Personnel files are a group this agent may not open.",
+      3: "Eigen reads the 128 documents once and keeps a map of them: each document's passages, linked, gathered into groups by what they are about. Personnel files are a group this agent may not open.",
       4: "The question is routed only to the groups it needs: contracts and emails, where three passages are opened. One fact it needs sits in a personnel file. Eigen does not open that file for the agent; it delivers the one line asked for, with the name and the pay figure removed, as the rights policy for this agent requires.",
       5: "Every passage has a fingerprint, a short code worked out from its exact words. The answer carries the four passages it rests on, including the filtered line from the personnel file, with the fingerprint of each. Edit one of those passages and its code changes, so the answer is flagged until it is redone."
     };
@@ -480,15 +479,15 @@
       });
     }
     function counters(opened, priv, names, filtered) {
-      return '<div class="box">documents opened by the agent<span class="n">' + opened + '</span></div><div class="box">private documents opened<span class="n ' + (priv ? "bad" : "good") + '">' + priv + '</span></div>' + (filtered !== undefined ? '<div class="box">lines delivered from private files, filtered<span class="n good">' + filtered + '</span></div>' : '') + '<div class="box">documents the answer names<span class="n ' + (names === "none" ? "bad" : "good") + '">' + names + '</span></div>';
+      return '<div class="box">opened by the agent<span class="n">' + opened + '</span></div><div class="box">private documents opened<span class="n ' + (priv ? "bad" : "good") + '">' + priv + '</span></div>' + (filtered !== undefined ? '<div class="box">lines delivered from private files, filtered<span class="n good">' + filtered + '</span></div>' : '') + '<div class="box">documents the answer names<span class="n ' + (names === "none" ? "bad" : "good") + '">' + names + '</span></div>';
     }
     function sweep(done) {
       var readSet = {}, badSet = {}, i = 0, bad = 0;
       side(counters(0, 0, "…"));
       timer = setInterval(function () {
-        if (i >= N) { clearInterval(timer); timer = null; side(counters(N, bad, "none") + '<div class="box">answer: delivery by 14 March. No source given.</div>'); if (done) done(); return; }
+        if (i >= N) { clearInterval(timer); timer = null; side(counters(N, bad, "none") + (step === 2 ? '<div class="box">opened across both questions<span class="n">256</span></div>' : '') + '<div class="box">answer: delivery by 14 March. No source given.</div>'); if (done) done(); return; }
         var p = pts[i++]; if (p.g === PRIV) { badSet[p.i] = 1; bad++; } else { readSet[p.i] = 1; }
-        draw(readSet, badSet); el("st-side").querySelector(".n").textContent = i;
+        draw(readSet, badSet); var ns = el("st-side").querySelectorAll(".n"); ns[0].textContent = i; ns[1].textContent = bad; ns[1].className = "n " + (bad ? "bad" : "good");
       }, 14);
     }
     function morph(done) {
@@ -502,15 +501,15 @@
       el("st-say").textContent = SAY[n];
       if (n === 1 || n === 2) { t = 0; draw(); sweep(); }
       if (n === 3) { t = 0; draw(); side('<h4>What the record holds for each passage</h4><div class="box">a passage of text</div><div class="box">what it says</div><div class="box">the names, dates and numbers in it</div><div class="box">links to other passages</div>'); morph(); }
-      if (n === 4) { t = 1; draw(); side(counters(3, 0, "4", 1) + '<div class="box">opened for the agent: contracts, emails</div><div class="box">from the personnel files: one line, with the name and the pay figure removed; the file itself is never shown to the agent</div><div class="box">not needed: invoices, reports, minutes, drafts, policies</div>'); }
+      if (n === 4) { t = 1; draw(); side(counters(3, 0, "—", 1) + '<div class="box">opened for the agent: three passages, from contracts and emails</div><div class="box">from the personnel files: one line, with the name and the pay figure removed; the file itself is never shown to the agent</div><div class="box">not needed: invoices, reports, minutes, drafts, policies</div>'); }
       if (n === 5) { t = 1; draw(); answer(); }
     }
     function answer() {
       var bad = changed;
       side('<h4>The answer</h4><div class="box">Delivery by 14 March; the price is fixed until June; our contact on their side is their account manager.</div><h4>Rests on</h4>' +
         NEED.concat([PRIVNEED]).map(function (i) { return '<div class="box">' + (i === PRIVNEED ? 'personnel file ' + (i + 1) + ', one line, transformed' : KINDS[pts[i].g].replace(/s$/, "") + ' ' + (i + 1)) + ' <span class="fp' + (bad && i === 20 ? ' bad' : '') + '">' + FP[i] + (bad && i === 20 ? ' no longer matches' : '') + '</span></div>'; }).join("") +
-        (bad ? '<div class="box flag">Flagged: a source changed after this answer was given.</div><button type="button" class="small" id="st-undo">Put email 21 back</button>'
-             : '<div class="box ok">Every fingerprint matches the sources.</div><button type="button" class="small" id="st-change">Change email 21</button>'));
+        (bad ? '<div class="box flag">Flagged: a source changed after this answer was given.</div><button type="button" class="small" id="st-undo">Undo the change</button>'
+             : '<div class="box ok">Every fingerprint matches the sources.</div><button type="button" class="small" id="st-change">Change the passage from email 21</button>'));
       var b = el("st-change"), u = el("st-undo");
       if (b) b.addEventListener("click", function () { changed = true; draw(); answer(); });
       if (u) u.addEventListener("click", function () { changed = false; draw(); answer(); });
