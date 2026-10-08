@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SuperARC run: freeze audit</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">SuperARC run: freeze audit</h1>
+</header>
+<h1 id="freeze-audit--the-standing-skeptic-before-the-run">FREEZE AUDIT
+— the standing skeptic, before the run</h1>
+<p><strong>Audited:</strong>
+<code>synthetics papers/superarc/frozen_run/preregistration.json</code>
+(self-hash
+<code>6ecc92ee32366ff635b77f14815cdd909142f7cadde761681f544633d76d6280</code>)
+and its reading <code>preregistration.md</code>, against the pilot
+preregistration, <code>preregistration/</code> (all), the frozen organs
+in <code>src/laplace/superarc/</code>, and the benchmark clone.
+<strong>Audited at:</strong> 2026-08-04, repo HEAD <code>3b7b89b</code>,
+before <code>items.jsonl</code> exists. <strong>Standing:</strong>
+adversarial. The job is to falsify the freeze, not to bless it.</p>
+<h2 id="verdict-freeze-defective">VERDICT:
+<strong>FREEZE-DEFECTIVE</strong></h2>
+<p>Two blocking defects, both semantic, both requiring an author ruling.
+Neither is a hash mismatch, a silent tuning, or a leak — the machinery
+is sound and every hash is clean. The defect is that the document
+asserts two things it cannot support, and a referee who finds either one
+after publication finds the freeze claiming the opposite.</p>
+<p>Blocking: <strong>D1</strong> (held-out overclaim),
+<strong>D2</strong> (correctness asymmetry absent from the symmetry
+commitment). Non-blocking: <strong>D3</strong>, <strong>D4</strong>,
+<strong>D5</strong>.</p>
+<p>Nothing was patched. Every defect found is semantic or is unpatchable
+by the freeze's own <code>voiding_conditions.operational[9]</code> —
+<em>"this preregistration is edited after it lands, in any byte, without
+the run being declared void and re-opened."</em> No hash was stale, so
+no hash-stale fix was owed.</p>
+<hr />
+<h2 id="1-hashes--clean">1. Hashes — CLEAN</h2>
+<p>Every recorded digest recomputed from the file on disk
+<strong>now</strong>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>group</th>
+<th style="text-align: right;">entries</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>hashes.harness_organs</code></td>
+<td style="text-align: right;">11</td>
+<td>all sha256 <strong>and</strong> byte counts match</td>
+</tr>
+<tr class="even">
+<td><code>hashes.inherited_documents</code></td>
+<td style="text-align: right;">5</td>
+<td>all sha256 and byte counts match</td>
+</tr>
+<tr class="odd">
+<td><code>hashes.self</code></td>
+<td style="text-align: right;">1</td>
+<td>recipe reproduces the recorded digest exactly</td>
+</tr>
+<tr class="even">
+<td><code>hashes.frozen_prompt</code></td>
+<td style="text-align: right;">3</td>
+<td>canonical / verbatim_raw / sibling all recompute from the stored
+strings</td>
+</tr>
+<tr class="odd">
+<td><code>hashes.bench_data</code></td>
+<td style="text-align: right;">2</td>
+<td>manifest and CSV match the session clone</td>
+</tr>
+</tbody>
+</table>
+<p>Beyond the recorded list, verified by running the frozen loader
+against the real clone:</p>
+<pre><code>items_digest            19ca42f905e55af0a5a48dab9002cca29c326b6b5dcf0bcdb5dbd37c12c216a7  reproduced
+sequences_only_digest   4f2408fb654367406c0ae2f3f48671a5ca02037aade274c21b900b0a9f2634d7  reproduced</code></pre>
+<p>100 items, <code>bin-000</code>…<code>bin-099</code>, all 12 symbols,
+all distinct. <code>items.jsonl</code> does <strong>not</strong> exist —
+the freeze did not open the run, as it claims.</p>
+<p>Test shard reproduces the §8 claim byte-for-byte:
+<code>395 passed, 21 skipped</code>.</p>
+<h2 id="2-classifier-version-and-threshold-first-discipline--clean">2.
+Classifier version and threshold-first discipline — CLEAN</h2>
+<ul>
+<li><code>CLASSIFIER_VERSION = "b11a-3"</code> on disk
+(<code>bin_classifier.py:109</code>) — the tag the freeze names.</li>
+<li>Module sha256 <code>688d8e2b…</code> is identical on disk, in
+<code>hashes.harness_organs</code>, and in
+<code>b11a3_agreement.json :: module_sha256</code>. The banked agreement
+was measured against these bytes.</li>
+<li>Label file md5 <code>e5db2ea05f1de0a735bff9fc48da31f5</code>
+verified against the clone.</li>
+<li><strong>Threshold-first is git-provable.</strong>
+<code>b11a_threshold.md</code> §6 fixes PRIMARY ≥ 0.90 per-bin recall
+(admissible EVAL) and SECONDARY ≥ 0.85 (full EVAL); it is
+<strong>committed at <code>eef0412</code></strong> and shows no diff
+against HEAD. The thresholds predate every agreement number by a commit
+boundary, not by an assertion. <code>s1_rule.md</code> §1.7 carries them
+unchanged into b11a-3.</li>
+<li><strong>The PRIMARY PASS verdict is true</strong>, recomputed from
+the hashed agreement JSON:</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>stratum</th>
+<th>per-bin recalls</th>
+<th style="text-align: right;">min</th>
+<th>gate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>eval_admissible</td>
+<td>0.9977 / 1.0000 / 0.9665 / 1.0000</td>
+<td style="text-align: right;">0.9665</td>
+<td>≥ 0.90 PASS</td>
+</tr>
+<tr class="even">
+<td>eval_full</td>
+<td>0.9888 / 0.9146 / 0.9665 / 1.0000</td>
+<td style="text-align: right;">0.9146</td>
+<td>≥ 0.85 PASS</td>
+</tr>
+</tbody>
+</table>
+<p>(See D3 — these are not the numbers the freeze displays.)</p>
+<h2
+id="3-s-1-symmetry--committed-for-form-broken-for-correctness-see-d2">3.
+S-1 symmetry — COMMITTED for form, BROKEN for correctness (see D2)</h2>
+<p><code>scoring.S1.active = true</code>, <code>from_the_start</code> =
+first classification of every answer, no rebin step, no before/after
+column. <code>scoring.symmetric_rescoring</code> commits to re-scoring
+the authors' released answers across three corpora and both sheets with
+the same classifier bytes, same S-1, same normalizer, same φ, same N,
+same seed; <code>s1_rule.md</code> §2 carries the identical commitment;
+disagreements with the authors' hand labels are published side by side
+and enumerated; the 13 <code>gemini_2.5_pro-program</code> label flips
+are preregistered as a benchmark-integrity finding about the released
+labels, not as a result of ours. The honest-disclosure paragraph (S-1
+cost A1 eight rows, A3 two, A2 none) is preregistered so it appears
+whatever the run returns.</p>
+<p>That half is sound. The correctness half is not —
+<strong>D2</strong>.</p>
+<h2 id="4-arm-definitions-vs-the-pilot--clean-no-silent-tuning">4. Arm
+definitions vs the pilot — CLEAN, no silent tuning</h2>
+<table>
+<thead>
+<tr class="header">
+<th>arm</th>
+<th><code>definition_verbatim</code> byte-identical to pilot</th>
+<th>recorded <code>definition_verbatim_sha256</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A1</td>
+<td>yes</td>
+<td><code>c04302704551c828…</code> matches</td>
+</tr>
+<tr class="even">
+<td>A2</td>
+<td>yes</td>
+<td><code>1d43a8c675bfc5a1…</code> matches</td>
+</tr>
+<tr class="odd">
+<td>A3</td>
+<td>yes</td>
+<td><code>bc7d4ea0025fcd85…</code> matches</td>
+</tr>
+</tbody>
+</table>
+<p>Field-by-field diff of every arm object found exactly one addition
+beyond the declared <code>carried_unchanged</code> /
+<code>scope_substitution</code> metadata: <code>A2.allocation</code>,
+which records AR-1 carried flat with a 400-round budget. No tool set,
+turn count, round cap, lens roster or gate differs.</p>
+<p>Document-level diffs against the pilot, all declared and all
+accounted for:</p>
+<ul>
+<li><code>prompt.canonical_frozen</code> — <strong>identical</strong>,
+same hash. The string every arm sends did not move.</li>
+<li><code>prompt.assembly</code> — N 20→100 and ordering
+<code>pilot_rank</code>→<code>row_index</code>, with the reason recorded
+(the pilot minted its own items and had no published order to
+honour).</li>
+<li><code>prompt.deviations</code> — DEV-1 carried with the pilot's
+binding quoted and the branch named; DEV-3/DEV-4 discharged; DEV-2/DEV-5
+carried.</li>
+<li><code>submission_rule</code> (SR-1) —
+<strong>byte-identical</strong> to the pilot.</li>
+<li><code>allocation_rule</code> (AR-1) — the pilot permitted an
+allocated rule <em>"preregistered from the pilot's MEASURED curve"</em>;
+the freeze <strong>declines</strong> it explicitly, on the ground that a
+closure prior which never observed a failure cannot calibrate an
+abandonment threshold, and carries flat. That is the conservative
+branch: flat spends more, never less, and cannot be accused of a
+threshold tuned to the run it scores. Correctly reasoned; budget 80→400
+follows from N.</li>
+</ul>
+<h2 id="5-answerlabel-isolation--clean-by-construction">5. Answer/label
+isolation — CLEAN by construction</h2>
+<ul>
+<li><code>frozen_items.load</code> re-hashes the CSV on
+<strong>every</strong> call and raises on mismatch; keeps the
+<code>sequence</code> column and nothing else.</li>
+<li><code>ALLOWED_KEYS = {item_id, row_index, sequence}</code> enforced
+on write <strong>and</strong> on read.</li>
+<li><code>read_run_items</code> takes the run directory, never the
+clone. No arm receives the clone path or
+<code>LAPLACE_SUPERARC_BENCH</code>.</li>
+<li><code>phi.read_released_csv</code> is the only reader of
+answer/label columns; it runs post-run, outside every arm's process.
+Grep of the frozen organs found no other opener of the published
+CSV.</li>
+<li><code>voiding_conditions.operational[3]</code> voids the run if any
+of this is breached.</li>
+</ul>
+<p>Enforcement is declarative, not mechanical — <strong>D5</strong>.</p>
+<h2 id="6-voiding-conditions--present-and-complete">6. Voiding
+conditions — PRESENT AND COMPLETE</h2>
+<p>Five memo-verbatim quotes with §-level sources; ten operational
+clauses; a governing clause; an explicit
+<code>what_is_still_permitted</code> list; and a
+<code>if_a_bug_is_found_mid_run</code> instruction that says STOP, bank,
+void — do not fix. Every operational clause traced to a field or
+constant that actually exists (<code>items_digest</code>,
+<code>ALLOWED_KEYS</code>, <code>sent_by_every_arm</code>,
+<code>b11a-3</code>, SR-1, AR-1-flat). The list closes over the real
+attack surface: organ bytes, prompt, item set, item keys, the one door,
+arm scope, submission rule, allocation rule, lens roster, classifier
+tag, S-1, double binning, asymmetric scoring, and the document itself. I
+could not construct a harness touch that escapes it.</p>
+<hr />
+<h1 id="defects">DEFECTS</h1>
+<h2
+id="d1--blocking-scopeheld_out_status-asserts-a-purity-the-campaigns-own-evidence-contradicts">D1
+— BLOCKING. <code>scope.held_out_status</code> asserts a purity the
+campaign's own evidence contradicts</h2>
+<p>The freeze says:</p>
+<blockquote>
+<p>these items have never been used to tune, select, threshold or
+iterate anything in this campaign … <strong>The only prior
+contact</strong> is <code>dev_suite.published_binary</code>'s in-memory
+exclusion subtraction, which reads the sequences to remove them from the
+dev pool and writes them nowhere.</p>
+</blockquote>
+<p>That sentence is false as written.</p>
+<p><code>b11a-3</code> is a <strong>frozen scorer organ of this
+run</strong>. It was developed and refined against a DEV stratum drawn
+from <code>seriesWithLLMs_ext.csv</code> — whose rows 0..99 I verified
+are <strong>byte-identical</strong> to the frozen 100 sequences (the
+clone's own manifest says so: <em>"the same 100 sequences are rows 0:100
+of the extended suite CSVs"</em>). <code>b11a_threshold.md</code> §4
+declares the DEV stratum <strong>burnt</strong>: <em>"Rule
+implementation may be inspected and refined against it."</em></p>
+<p>I reproduced the split
+(<code>sha1("{model}#{row}")[0] % 4 == 0</code>) over the 15 labelled
+models:</p>
+<pre><code>DEV  (burnt)  672 pairs — of which 359 sit on rows 0..99, the FROZEN items
+EVAL         2088 pairs — of which 1141 sit on rows 0..99</code></pre>
+<p>So the published answers to <strong>359 (model, frozen-item)
+pairs</strong> were inspected while the classifier's rules were being
+refined, and <code>s1_rule.md</code> §4.3 enumerates specific
+binary-slice rows by index (0, 1, 2, 3, 4, 12, 19, 24, …). Prior contact
+with the frozen items is therefore not limited to an in-memory
+subtraction that "writes them nowhere."</p>
+<p><strong>How bad is it, honestly.</strong> The channel is scorer-side
+and symmetric: the classifier bins <em>form</em> against the authors'
+hand labels, never against our arms' answers, and it is applied
+identically to both sides. It was not tuned toward any φ of ours. The
+residual risk is narrow — a PRINTS/ORDINAL predicate refined while
+looking at these exact sequences could be incidentally better-fitted to
+them — and it is not obviously arm-favourable. This is not a claim that
+the run is contaminated.</p>
+<p>It <strong>is</strong> a claim that the freeze's most referee-visible
+sentence overstates, and that the overlap must be disclosed and
+quantified rather than denied.</p>
+<p><strong>Not patched, deliberately.</strong> Correcting it changes
+what the freeze asserts about held-out status — a semantic change, not
+wording — and any byte edit after landing fires
+<code>voiding_conditions.operational[9]</code>. The freeze's own
+machinery says the move here is <strong>amend-and-reopen before the
+run</strong>, which is cheap right now (no arm has run,
+<code>items.jsonl</code> does not exist) and impossible afterwards.
+<strong>His ruling.</strong></p>
+<h2
+id="d2--blocking-the-symmetry-commitment-is-silent-on-correctness-and-correctness-is-not-symmetric">D2
+— BLOCKING. The symmetry commitment is silent on correctness, and
+correctness is not symmetric</h2>
+<p><code>scoring.symmetric_rescoring.commitment</code> enumerates what
+is shared with the authors' re-scoring:</p>
+<blockquote>
+<p>same <code>bin_classifier</code> b11a-3 bytes, same S-1, same
+normalizer, same <code>phi.py</code>, same N=100, same bootstrap
+seed</p>
+</blockquote>
+<p>and justifies it: <em>"Symmetry is what makes the delta attributable
+to the engine."</em> <strong>Correctness is not in that list</strong>,
+and DEV-5 states the opposite arrangement:</p>
+<blockquote>
+<p><strong>our arms:</strong> correctness decided MECHANICALLY —
+executed and byte-compared against the full 12-digit sequence; where an
+arm supplied no program, the formula is translated faithful-to-text by
+the scorer and executed. <strong>the authors:</strong> correctness read
+from their <code>-formula-correctness</code> column (their human
+graders).</p>
+</blockquote>
+<p>The instrument is symmetric in FORM and asymmetric in CORRECTNESS.
+DEV-5 does disclose it — credit where due, and its
+<code>direction_of_bias</code> is honestly marked unsigned — but §3.5
+never says so and never cross-references DEV-5, so the freeze reads as
+claiming a symmetry it does not have. A reader of §3.5 alone would be
+misled.</p>
+<p>Worse, the freeze does not commit to the move that would actually
+restore symmetry: a <strong>preregistered second correctness
+column</strong> in which the authors' released formula answers are put
+through the same B10 execute-and-byte-compare path our arms face,
+reported beside their hand labels as a sensitivity. The harness can do
+this (<code>sequence_exec</code> plus the same scorer-side translation
+DEV-5 already sanctions for our own answers), the ext CSV even ships
+<code>-formula-eval</code> columns, and the campaign already has
+evidence the released labels contain errors — <code>s1_rule.md</code>
+§4.3, 13 flips in one column. Without that column, every published Δ
+rests on our arms facing a grader that "neither forgives a near-miss the
+way a human might" while the baseline faces the human.</p>
+<p><strong>Not patched.</strong> Adding a scoring column is a design
+commitment, not a wording fix. <strong>His ruling</strong>, and it is
+the branch I would argue for: one extra preregistered column, declared
+now, converts the strongest remaining referee objection into a reported
+sensitivity.</p>
+<h2
+id="d3--non-blocking-the-gate-statistic-is-not-the-statistic-the-freeze-displays">D3
+— non-blocking. The gate statistic is not the statistic the freeze
+displays</h2>
+<p><code>scoring.classifier.agreement.thresholds</code> states the gate
+in <strong>per-bin recall</strong>. The <code>measured</code> block
+beneath it — and the §3.3 table in the reading — report
+<strong>aggregate agreement</strong> (0.9897, 0.9784) against those
+thresholds, then conclude <em>"PRIMARY PASS on every bin."</em></p>
+<p>The verdict is <strong>true</strong> (§2 above recomputes it: min
+per-bin recall 0.9665 admissible EVAL, 0.9146 full EVAL). But the
+numbers that decide the gate appear nowhere in the freeze; a referee
+must open <code>b11a3_agreement.json</code> to check a claim the freeze
+makes on its own face. Recoverable — that JSON is hashed into the freeze
+— so this voids nothing.</p>
+<p><strong>Not patched.</strong> The <code>.json</code> cannot be edited
+without voiding, and editing the <code>.md</code> alone would make the
+reading assert data its declared authority does not carry
+(<code>preregistration.md</code> line 3: <em>"this file is its reading,
+not its authority"</em>). Fold the per-bin table into the run
+report.</p>
+<h2 id="d4--non-blocking-nothing-external-timestamps-the-freeze">D4 —
+non-blocking. Nothing external timestamps the freeze</h2>
+<p><code>preregistration.json</code>, <code>preregistration.md</code>,
+<code>s1_rule.md</code>, the b11a-2/b11a-3 agreement files and
+<code>frozen_items.py</code> are <strong>all untracked</strong> in git
+at HEAD <code>3b7b89b</code>. The self-hash proves internal integrity
+but not anteriority — a self-hash can be recomputed after any edit,
+which is precisely the failure mode the recipe exists to detect for
+everyone except its author.</p>
+<p>The threshold-first claim survives this because
+<code>b11a_threshold.md</code> <strong>is</strong> committed
+(<code>eef0412</code>, no diff vs HEAD) and the pilot preregistration is
+committed (<code>3b7b89b</code>). The freeze itself has no such
+anchor.</p>
+<p><strong>Fix (orchestrator, not me — I am forbidden to
+commit):</strong> commit the freeze before <code>items.jsonl</code> is
+written, echoing the self-hash in the commit message. Then "frozen
+BEFORE" is checkable by a stranger instead of asserted by its
+author.</p>
+<h2 id="d5--non-blocking-the-one-door-prohibition-is-honour-system">D5 —
+non-blocking. The one-door prohibition is honour-system</h2>
+<p><code>voiding_conditions.operational[3]</code> forbids giving any arm
+the clone path or <code>LAPLACE_SUPERARC_BENCH</code>, but nothing
+mechanical enforces it: the clone sits at a readable scratchpad path and
+A2's lens agents are dispatched with tool access. There is no env-strip,
+no path guard, no committed transcript scan. This clause sits oddly
+beside the design's own standard elsewhere — <code>ALLOWED_KEYS</code>
+enforced on write <em>and</em> read, the CSV re-hashed on <em>every</em>
+load.</p>
+<p><strong>Fix is additive, not an edit, and does not touch a frozen
+organ or any arm:</strong> preregister a post-run transcript audit that
+greps every agent transcript for the clone path, the env-var name, and
+any released answer string, and bank its output as a run artefact. That
+converts an assertion into a check without a harness touch.</p>
+<hr />
+<h2 id="what-i-could-not-falsify">What I could not falsify</h2>
+<p>Stated plainly, because a skeptic who reports only hits is a skeptic
+who was not looking:</p>
+<ul>
+<li>No hash is stale. Not one, across 22 recorded digests plus two
+derived item digests.</li>
+<li>No arm definition moved. All three <code>definition_verbatim</code>
+strings are byte-identical to the pilot's, and the recorded hashes prove
+it mechanically rather than by eye.</li>
+<li>No answer or label column can reach an arm through any path in the
+frozen code.</li>
+<li>The voiding list has no hole I could construct a harness touch
+through.</li>
+<li>The declined allocated rule is the conservative branch, correctly
+argued.</li>
+<li>The pilot's priors, including the marginal A2 − A3 crossing and the
+sentence that shrinks the claim to <em>"execution, not recursion"</em>
+if the run returns A2 ≈ A3, are preregistered. So is the commitment to
+publish a null or inverted result.</li>
+</ul>
+<p>The freeze is a serious instrument. D1 and D2 are the two places
+where what it says about itself outruns what it does, and both are cheap
+to fix now and impossible to fix later.</p>
+<hr />
+<hr />
+<h1 id="v2-audit--the-same-skeptic-on-the-amended-freeze">V2 AUDIT — the
+same skeptic, on the amended freeze</h1>
+<p><strong>Audited:</strong> <code>preregistration.json</code>
+<strong>v2</strong> (self-hash
+<code>44b64bf95f3132f009c2a22ffe6605a10def95527e0fa7a494a49b13b44482f2</code>)
+and its reading <code>preregistration.md</code> v2, against the
+<strong>v1 bytes recovered whole</strong> (see §1), the frozen organs on
+disk, the benchmark clone, the banked <code>b11a3_agreement.json</code>,
+and the pilot preregistration. <strong>Audited at:</strong> 2026-08-05,
+repo HEAD <code>3b7b89b</code>, <code>items.jsonl</code> still absent,
+<code>arms/{A1,A2,A3}</code> still empty. <strong>Standing:</strong>
+adversarial, unchanged. The job this round is to falsify <strong>the
+amendment</strong> — to find a commitment quietly relaxed, a field
+changed and unlogged, a number transcribed rather than recomputed, or a
+new defect riding in on the fix.</p>
+<h2 id="verdict-freeze-sound">VERDICT:
+<strong>FREEZE-SOUND</strong></h2>
+<p><strong>D1, D2, D3, D5 discharged as specified.</strong> <strong>D4
+remains OUTSTANDING</strong> and is the orchestrator's, exactly as
+<code>AM-D4</code> records — the run must not open until it is
+discharged, and §7 below argues its scope is wider than
+<code>AM-D4</code> states. No commitment was removed or relaxed. The
+amendment log is <strong>provably</strong> exhaustive, not assertedly.
+No new defect.</p>
+<p><strong>On this file's own digest, recorded before it can become a
+mismatch.</strong> <code>AM-0.triggered_by.sha256</code> pins
+<code>freeze_audit.md</code> at
+<code>b3f7daaace40e5fd5b500095d90f38e2b31f6ec3cd754976de48c281ce5753f4</code>.
+That digest is this file <strong>as it stood before this
+section</strong>: 16052 bytes, ending at the horizontal rule above this
+heading. I confirmed the match before appending. Appending changes the
+file digest, so the document <code>AM-0</code> cites is bytes
+<code>0..16051</code> of this file and is recoverable by truncation.
+Stated here rather than left for a referee to find as an unexplained
+mismatch.</p>
+<hr />
+<h2
+id="1-the-amendment-log-is-exhaustive--mechanically-verified-not-believed">1.
+The amendment log is exhaustive — MECHANICALLY VERIFIED, not
+believed</h2>
+<p><code>AM-0</code> claims: <em>"the log below names EVERY field this
+amendment touched, including collateral. Any field not named is
+byte-identical to v1."</em> That claim is checkable only against real v1
+bytes, and they exist: the amendment banked
+<code>prereg_v1_backup.json</code> in the session scratchpad, and it
+re-serializes under the freeze's <strong>own</strong> recipe to
+self-hash
+<code>6ecc92ee32366ff635b77f14815cdd909142f7cadde761681f544633d76d6280</code>
+— the exact digest the v1 audit recorded and
+<code>AM-0.supersedes.self_sha256</code> names. It is v1, and it is
+byte-identical to its own canonical serialization. So the diff below is
+against the superseded document itself, not against a transcription of
+it.</p>
+<p>Leaf-by-leaf deep diff, v1 → v2:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">count</th>
+<th>every one accounted for in the log</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>fields <strong>added</strong></td>
+<td style="text-align: right;">11</td>
+<td>yes</td>
+</tr>
+<tr class="even">
+<td>fields <strong>removed</strong></td>
+<td style="text-align: right;"><strong>0</strong></td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>fields <strong>changed</strong></td>
+<td style="text-align: right;">3</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th>field</th>
+<th>v1→v2</th>
+<th>owning amendment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>scope.held_out_status</code></td>
+<td>changed</td>
+<td>AM-D1</td>
+</tr>
+<tr class="even">
+<td><code>scope.held_out_status_quantified</code></td>
+<td>added</td>
+<td>AM-D1</td>
+</tr>
+<tr class="odd">
+<td><code>scope.held_out_status_residual_risk</code></td>
+<td>added</td>
+<td>AM-D1</td>
+</tr>
+<tr class="even">
+<td><code>scoring.symmetric_correctness_sensitivity</code></td>
+<td>added</td>
+<td>AM-D2</td>
+</tr>
+<tr class="odd">
+<td><code>scoring.symmetric_rescoring.correctness_asymmetry</code></td>
+<td>added</td>
+<td>AM-D2</td>
+</tr>
+<tr class="even">
+<td><code>reporting.symmetric_correctness_sensitivity</code></td>
+<td>added</td>
+<td>AM-D2</td>
+</tr>
+<tr class="odd">
+<td><code>scoring.classifier.agreement.measured_per_bin_recall</code></td>
+<td>added</td>
+<td>AM-D3</td>
+</tr>
+<tr class="even">
+<td><code>scoring.classifier.agreement.measured_note</code></td>
+<td>added</td>
+<td>AM-D3</td>
+</tr>
+<tr class="odd">
+<td><code>voiding_conditions.audit</code></td>
+<td>added</td>
+<td>AM-D5</td>
+</tr>
+<tr class="even">
+<td><code>version</code></td>
+<td>added</td>
+<td>AM-C</td>
+</tr>
+<tr class="odd">
+<td><code>amended_utc</code></td>
+<td>added</td>
+<td>AM-C</td>
+</tr>
+<tr class="even">
+<td><code>amendments</code></td>
+<td>added</td>
+<td>AM-C</td>
+</tr>
+<tr class="odd">
+<td><code>status</code></td>
+<td>changed</td>
+<td>AM-C</td>
+</tr>
+<tr class="even">
+<td><code>hashes.self.sha256</code></td>
+<td>changed</td>
+<td>AM-C</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The reverse check also passes:</strong> every field the log
+<em>claims</em> to have touched did in fact change, and no field it
+claims untouched moved. No over-claim, no under-claim. This is the
+strongest single finding of this audit — the exhaustiveness discipline
+the amendment set for itself is met.</p>
+<p><strong>Nothing was removed and nothing was relaxed</strong>,
+verified as absence in the diff rather than asserted: all ten
+<code>voiding_conditions.operational</code> clauses (including
+<code>[9]</code>, the clause invoked),
+<code>the_governing_clause</code>, <code>what_is_still_permitted</code>
+(<strong>not</strong> widened to add "amend and reopen"),
+<code>hashes.inherited_documents</code> (<code>freeze_audit.md</code>
+<strong>not</strong> silently added to the hash contract),
+<code>prompt</code> entire including <code>canonical_frozen</code> and
+DEV-1..DEV-5 verbatim, all three arms entire, <code>item_source</code>
+entire including both item digests, SR-1, AR-1-flat and the 400-round
+budget, φ / N / bin weights / seed 20260804,
+<code>token_accounting</code>, and
+<code>reporting.the_pilot_priors_this_run_tests</code> with its
+publication commitment.</p>
+<p><code>written_utc</code> is left at v1's
+<code>2026-08-04T23:52:00Z</code> with <code>amended_utc</code> carrying
+<code>2026-08-05T00:12:00Z</code> — logged in <code>AM-C</code>, and the
+right call: the original authorship time survives instead of being
+overwritten by the fix.</p>
+<h2 id="2-hashes--clean-including-the-recomputed-self-hash">2. Hashes —
+CLEAN, including the recomputed self-hash</h2>
+<table>
+<thead>
+<tr class="header">
+<th>group</th>
+<th style="text-align: right;">entries</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>hashes.harness_organs</code></td>
+<td style="text-align: right;">11</td>
+<td>all sha256 <strong>and</strong> byte counts match disk</td>
+</tr>
+<tr class="even">
+<td><code>hashes.inherited_documents</code></td>
+<td style="text-align: right;">5</td>
+<td>all sha256 and byte counts match disk</td>
+</tr>
+<tr class="odd">
+<td><code>hashes.frozen_prompt</code></td>
+<td style="text-align: right;">3</td>
+<td>all recompute from the stored strings;
+<code>sent_by_every_arm</code> = canonical</td>
+</tr>
+<tr class="even">
+<td><code>hashes.bench_data</code></td>
+<td style="text-align: right;">2</td>
+<td>manifest and CSV match the session clone</td>
+</tr>
+<tr class="odd">
+<td><code>hashes.self</code></td>
+<td style="text-align: right;">1</td>
+<td><strong>recomputed under the unchanged recipe: matches</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The self-hash recipe, its verifier one-liner and its <code>why</code>
+are byte-identical to v1 — the digest moved because the document did,
+not because the recipe did. The file on disk is byte-identical to its
+own canonical serialization, so the recipe is not merely satisfiable but
+satisfied by these exact bytes. The same 22 recorded digests as v1,
+plus:</p>
+<pre><code>items_digest            19ca42f905e55af0a5a48dab9002cca29c326b6b5dcf0bcdb5dbd37c12c216a7  reproduced
+sequences_only_digest   4f2408fb654367406c0ae2f3f48671a5ca02037aade274c21b900b0a9f2634d7  reproduced</code></pre>
+<p>100 items, <code>bin-000</code>…<code>bin-099</code>, all 12 symbols,
+all distinct, loaded from the real clone. Beyond the recorded list: the
+arXiv HTML at <code>prompt.source.html_sha256</code> matches; the label
+file's md5 matches; <code>b11a3_agreement.json :: module_sha256</code>
+still equals <code>bin_classifier.py</code> on disk
+(<code>688d8e2b…</code>), so the banked agreement was measured against
+the bytes the freeze pins; each arm's <code>definition_verbatim</code>
+is still byte-identical to the pilot's and still recomputes its recorded
+sha256; <code>inherits.*_sha256</code> match the pilot preregistration
+and <code>s1_rule.md</code>.</p>
+<h2 id="3-d1--discharged">3. D1 — DISCHARGED</h2>
+<p>The false sentence is gone, and what replaced it is true, quantified
+and reproducible.</p>
+<p><strong>The 359 reproduces.</strong> Independently, from the clone at
+the recorded md5:</p>
+<pre><code>total labelled pairs  2760
+DEV   (burnt)          672   of which on rows 0..99:  359
+EVAL                  2088   of which on rows 0..99: 1141
+                             all pairs on rows 0..99: 1500</code></pre>
+<p>Every one of the six counts in
+<code>held_out_status_quantified.counts</code> matches. The freeze's own
+<code>reproduce</code> one-liner runs <strong>verbatim</strong> and
+prints <code>2760 672 359</code>.</p>
+<p><strong>The split rule is stated as implemented, not
+paraphrased.</strong>
+<code>sha1("{model}#{row}").digest()[0] % 4 == 0 → DEV</code> against
+<code>bin_classifier.py:883-895</code>:
+<code>row_id = f"{model}#{row}"</code>,
+<code>hashlib.sha1(row_id.encode()).digest()[0] % DEV_MODULUS</code>,
+<code>DEV_MODULUS = 4</code>. The <code>b11a_threshold.md</code> §4
+quote — <em>"Rule implementation may be inspected and refined against
+it."</em> — is verbatim at line 127, and that file is still committed at
+<code>eef0412</code> with no diff against HEAD, so threshold-first
+remains git-provable and the split rule still predates every measurement
+by a commit boundary.</p>
+<p><strong>The claim now matches the evidence.</strong> Both contacts
+are named; the scorer-side, form-only, arm-symmetric character is stated
+with its three bounds; the residual form-fit risk is stated plainly and
+left <strong>unsigned</strong>; and
+<code>what_this_does_not_license</code> explicitly refuses the claim the
+v1 sentence made. I grepped the whole v2 document for a surviving purity
+assertion — <code>never been used</code>,
+<code>only prior contact</code>, <code>untouched</code>,
+<code>never seen</code>, <code>no prior contact</code> — and found none
+that contradicts the amendment. The remaining "held-out" occurrences are
+the memo's verbatim post-freeze discipline, arm-side language, or
+explicitly qualified.</p>
+<h2 id="4-d2--discharged-on-the-branch-the-audit-argued-for">4. D2 —
+DISCHARGED, on the branch the audit argued for</h2>
+<p>Both halves landed.
+<code>symmetric_rescoring.correctness_asymmetry</code> names DEV-5
+explicitly and is placed to be read <strong>before</strong> the
+commitment, so §3.5 can no longer be read alone as claiming a symmetry
+the instrument lacks. And SCS-1 is the design commitment, not a wording
+patch: a second correctness column on the authors' side, every
+published-model φ reported <strong>both ways</strong>, every
+hand/mechanical disagreement enumerated by <code>(model, row)</code>
+with its failure mode, untranslatable rows named rather than
+dropped.</p>
+<p><strong>The harness can actually do it</strong>, checked rather than
+assumed: <code>run_candidate</code>, <code>verify_candidate</code> and
+<code>classify_divergence</code> all exist in
+<code>sequence_exec.py</code> at the hash the freeze pins;
+<code>seriesWithLLMs_ext.csv</code> carries 15
+<code>-formula-correctness</code> columns, 13 <code>-formula-eval</code>
+and 30 program columns, so the sheets SCS-1 names exist. DEV-5 is
+byte-identical to v1 — I checked, and SCS-1's quotation of it
+(<em>"neither forgives a near-miss the way a human might…"</em>) is
+accurate.</p>
+<p><strong>And it does not overreach.</strong> φ_hand remains the
+published baseline; φ_mechanical is declared a sensitivity, not a
+relabelling. The opposite fix — replacing the authors' labels with ours
+— would have been the more dangerous move, and the freeze declines it in
+terms.</p>
+<h2 id="5-d3--discharged">5. D3 — DISCHARGED</h2>
+<p><code>measured_per_bin_recall</code> sits immediately after
+<code>thresholds</code>, beside the gate it is judged against. All
+sixteen recall cells and all four minima match
+<code>b11a3_agreement.json :: strata.*.*.recall</code> to double
+precision; both gated verdicts follow from the minima and the stated
+thresholds; the two ungated strata are labelled as such.
+<code>measured_note</code> says in terms that aggregate agreement is not
+the gate statistic. The <code>verdict</code> string is unchanged,
+correctly — it was true.</p>
+<table>
+<thead>
+<tr class="header">
+<th>stratum</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">min per-bin recall</th>
+<th>gate</th>
+<th>verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>admissible EVAL (PRIMARY)</td>
+<td style="text-align: right;">1942</td>
+<td style="text-align: right;">0.9665</td>
+<td>≥ 0.90</td>
+<td>PASS</td>
+</tr>
+<tr class="even">
+<td>full EVAL (SECONDARY)</td>
+<td style="text-align: right;">2088</td>
+<td style="text-align: right;">0.9146</td>
+<td>≥ 0.85</td>
+<td>PASS</td>
+</tr>
+</tbody>
+</table>
+<p>The DEV/EVAL gap is reported in the direction that cannot be read as
+overfitting to DEV, as <code>b11a_threshold.md</code> §4 requires either
+way.</p>
+<h2 id="6-d5--discharged-as-specified">6. D5 — DISCHARGED as
+specified</h2>
+<p>AUD-1 is the additive check the audit asked for, with the three greps
+named, the normalization on both sides, the artefact path and its sha256
+in the report <strong>whether or not it finds anything</strong>. The one
+place this could have gone wrong is closed in terms:
+<code>relation_to_operational_3</code> states that a per-item void does
+<strong>not</strong> replace or soften <code>operational[3]</code>,
+which still voids the whole run for a harness touch. I checked
+<code>operational[3]</code> byte-for-byte against v1 — unchanged. A
+per-item void that displaced a run-void would have been a relaxation
+dressed as a fix; this is not that.</p>
+<h2
+id="7-d4--pending-and-its-remedy-as-written-is-narrower-than-the-defect">7.
+D4 — PENDING, and its remedy as written is narrower than the defect</h2>
+<p>Still outstanding, verified at HEAD <code>3b7b89b</code>:
+<code>preregistration.json</code>, <code>preregistration.md</code>,
+<code>frozen_items.py</code>, <code>s1_rule.md</code> and the
+b11a-2/b11a-3 agreement files are all untracked — <strong>and</strong>
+<code>bin_classifier.py</code> carries 417 uncommitted insertions
+against HEAD, so the b11a-3 bytes the freeze pins
+(<code>688d8e2b…</code>) are themselves not externally timestamped.</p>
+<p><code>AM-D4</code>'s remedy names <em>"a git commit of the freeze and
+its reading"</em>. A commit of only those two would leave the
+<strong>scorer's</strong> anteriority unproven — and the scorer is the
+organ D1 is about. The commit that discharges D4 should carry, at
+minimum:</p>
+<ul>
+<li><code>synthetics papers/superarc/frozen_run/preregistration.json</code>
++ <code>.md</code> (and this audit)</li>
+<li><code>src/laplace/superarc/bin_classifier.py</code> at
+<code>688d8e2b…</code> and
+<code>src/laplace/superarc/frozen_items.py</code> at
+<code>3d31a694…</code></li>
+<li><code>synthetics papers/superarc/preregistration/{s1_rule.md, b11a3_agreement.json, b11a3_agreement.md, b11a2_*}</code></li>
+<li><code>tests/test_superarc_frozen_items.py</code> and the
+<code>test_superarc_bin_classifier.py</code> changes</li>
+</ul>
+<p>with the v2 self-hash <code>44b64bf9…</code> echoed in the commit
+message, <strong>before</strong> <code>items.jsonl</code> is written.
+Orchestrator's call and orchestrator's act — I am forbidden to commit.
+Flagged because discharging <code>AM-D4</code> literally would leave
+half the anteriority claim unmade.</p>
+<h2 id="8-the-run-is-still-unopened">8. The run is still unopened</h2>
+<p><code>items.jsonl</code> does not exist. <code>arms/A1</code>,
+<code>arms/A2</code>, <code>arms/A3</code> are empty directories. No
+answer, bin or φ exists for any frozen item — so the amendment was, as
+<code>AM-0</code> claims, free, and the held-out claim is unspent. The
+§8 test shard reproduces byte-for-byte at v2: <strong>395 passed, 21
+skipped</strong>, same skip pattern.</p>
+<hr />
+<h2 id="what-i-could-not-falsify-second-time">What I could not falsify,
+second time</h2>
+<ul>
+<li><strong>No unlogged change.</strong> Zero fields moved outside the
+log, verified against real v1 bytes.</li>
+<li><strong>No commitment removed or relaxed.</strong> Zero removals in
+the diff; the governing clause, all ten operational clauses and the
+permission list are byte-identical.</li>
+<li><strong>No transcription.</strong> Every figure the amendment claims
+to have <em>recomputed</em> — the six overlap counts, all sixteen
+per-bin recalls, the self-hash — I recomputed from the same sources and
+got the same values.</li>
+<li><strong>No relabelling smuggled in as a sensitivity.</strong> φ_hand
+stays the baseline.</li>
+<li><strong>No run-void displaced by an item-void.</strong></li>
+<li><strong>No purity claim surviving elsewhere</strong> in the document
+after D1's replacement.</li>
+<li><strong>The reading asserts nothing its authority does not
+carry.</strong> I checked §1.1, §3.3, §3.5, §3.6, §6 and §9 of
+<code>preregistration.md</code> field-by-field against the JSON; every
+number, quote and commitment is present in the machine form, and it
+still says on line 3 that it is the reading and not the authority.</li>
+</ul>
+<h2 id="three-observations-none-of-them-a-defect">Three observations,
+none of them a defect</h2>
+<p><strong>N1 — this file's digest.</strong> Handled above:
+<code>AM-0</code> cites bytes <code>0..16051</code>. If the orchestrator
+prefers a clean pointer, the alternative is banking the v1 audit
+unmodified alongside; recorded so the choice is explicit rather than
+accidental.</p>
+<p><strong>N2 — SCS-1's "mirroring" glosses an inverted
+orientation.</strong> For our arms, DEV-5 has the arm's own program
+<em>decide</em> where supplied and the translation cross-check; for the
+authors, SCS-1 has the translation decide and the program sheet
+cross-check. That is defensible — the authors' program sheet is a
+different prompt condition, excluded by DEV-2, so importing it as the
+deciding artefact would mix conditions — but the word "mirroring" hides
+the inversion. Dischargeable in one sentence of the run report, which
+<code>what_is_still_permitted</code> allows; not worth a third cut of
+the freeze.</p>
+<p><strong>N3 — the reading is not hashed</strong> (pre-existing; v1 the
+same). Nothing normative rests on it, and the D4 commit would give it a
+git digest. Noted only so it is not mistaken for an oversight introduced
+at v2.</p>
+<hr />
+<p>The amendment did what an amendment is supposed to do and did it in
+the open: it named the defect, corrected it, quantified what the
+correction cost, logged every byte it touched, and weakened nothing. The
+one thing still standing between this freeze and the run is D4, and D4
+cannot be discharged by a document — only by a commit.</p>
+</body>
+</html>

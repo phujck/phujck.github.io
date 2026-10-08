@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 320" role="img" aria-label="Flat orientation cost at two dates vs the engine's capped start">
+<title>Flat orientation cost at two dates vs the engine's capped start</title>
+<desc>source: the 2026-07-28 benchmark run and its eight-week-earlier reading · asset key: deck_cost_history · generated from banked numbers, nothing illustrative</desc>
+<text x="40" y="34" font-family="Outfit,sans-serif" font-size="17" fill="#e8e6e3" font-weight="600">Reading the files costs more as the repository grows. Starting from the record does not.</text>
+<text x="40" y="56" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">the same twelve questions, priced at two dates eight weeks apart</text>
+<rect x="300" y="230" width="120" height="20" fill="#6b7280" rx="3" opacity="0.55"/>
+<text x="360" y="220" font-family="JetBrains Mono,monospace" font-size="12.5" fill="#a89a7a" text-anchor="middle">≈11,000</text>
+<text x="360" y="270" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af" text-anchor="middle">eight weeks before the run (measured)</text>
+<rect x="560" y="80" width="120" height="170" fill="#6b7280" rx="3" opacity="0.55"/>
+<text x="620" y="70" font-family="JetBrains Mono,monospace" font-size="12.5" fill="#a89a7a" text-anchor="middle">93,181</text>
+<text x="620" y="270" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af" text-anchor="middle">at the run, 2026-07-28 (measured)</text>
+<line x1="240" y1="235" x2="800" y2="235" stroke="#c9a96e" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="40" y="213" font-family="Lora,Georgia,serif" font-size="11.5" fill="#dfc599">Eigen's start: 8,408 tokens,</text>
+<text x="40" y="228" font-family="Lora,Georgia,serif" font-size="11.5" fill="#dfc599">a cap set by construction,</text>
+<text x="40" y="243" font-family="Lora,Georgia,serif" font-size="11.5" fill="#dfc599">re-checked at every build</text>
+<line x1="240" y1="250" x2="800" y2="250" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+<text x="40" y="292" font-family="Lora,Georgia,serif" font-size="11.5" fill="#6b7280">only the two measured dates are drawn; no curve between them is invented</text>
+<text x="12" y="310" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#a89a7a" opacity="0.85">source: the 2026-07-28 benchmark run and its eight-week-earlier reading</text>
+</svg>

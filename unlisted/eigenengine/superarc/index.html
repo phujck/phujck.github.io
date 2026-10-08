@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0e1a">
+  <title>SuperARC — EigenEngine</title>
+  <meta name="description" content="On SuperARC's one hundred binary sequences, Eigen answered 96 with a rule that regenerates the sequence when run and scored 0.485 out of 1; the best published model scored 0.042.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <style id="identity-tokens">:root{--bg-primary:#0a0e1a;--bg-secondary:#111827;--bg-card:rgba(255, 255, 255, 0.04);--bg-card-hover:rgba(255, 255, 255, 0.07);--bg-glass:rgba(255, 255, 255, 0.06);--border-glass:rgba(255, 255, 255, 0.08);--text-primary:#e8e6e3;--text-secondary:#9ca3af;--text-muted:#6b7280;--accent:#c9a96e;--accent-light:#dfc599;--accent-dim:rgba(201, 169, 110, 0.15);--accent-warm-1:#e6cc92;--accent-warm-2:#b8894a;--accent-warm-3:#8a6330;--link:#7eb8da;--link-hover:#a8d4f0;--refused:#c0392b;--refused-dim:rgba(192, 57, 43, 0.12);--evidence:#a89a7a;}</style>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .sa-top { position: sticky; top: 0; z-index: 5; background: rgba(10,14,26,0.92); border-bottom: 1px solid var(--border-glass); backdrop-filter: blur(10px); }
+    .sa-top .container { display: flex; align-items: baseline; gap: var(--space-lg); padding-top: 0.7rem; padding-bottom: 0.7rem; font-size: 0.85rem; }
+    .sa-top a { color: var(--text-secondary); text-decoration: none; }
+    .sa-top a:hover { color: var(--accent); }
+    .sa-top .here { color: var(--text-primary); }
+    .sa-hero { padding: calc(var(--space-3xl) + 1rem) 0 var(--space-2xl); }
+    .sa-hero h1 { font-size: clamp(1.8rem, 4.5vw, 2.8rem); margin-bottom: var(--space-md); }
+    .sa-hero p { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.75; max-width: 62ch; }
+    .sa-prose { max-width: 64ch; }
+    .sa-prose p, .sa-prose li { color: var(--text-secondary); line-height: 1.8; }
+    .sa-prose p { margin-bottom: var(--space-md); }
+    .sa-prose strong { color: var(--text-primary); }
+    .sa-prose code, .sa-code { font-family: var(--font-mono); font-size: 0.85em; color: var(--text-primary); }
+    .sa-example { display: grid; grid-template-columns: auto 1fr; gap: var(--space-xs) var(--space-lg); align-items: baseline; background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); margin: var(--space-lg) 0 var(--space-xl); max-width: 80ch; font-size: 0.9rem; }
+    .sa-example .k { color: var(--accent); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+    .sa-example .v { color: var(--text-secondary); }
+    .sa-example .v code { color: var(--text-primary); }
+    .sa-bits { font-family: var(--font-mono); letter-spacing: 0.12em; color: var(--text-primary); font-size: 1.05rem; }
+    .sa-fig { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); max-width: 80ch; margin: var(--space-lg) 0 var(--space-xl); }
+    .sa-fig svg { display: block; width: 100%; height: auto; }
+    .sa-taster { background: var(--bg-card); border: 1px solid var(--border-glass); border-left: 3px solid var(--accent); border-radius: var(--radius-lg); padding: var(--space-xl); max-width: 84ch; margin: var(--space-lg) 0 var(--space-2xl); }
+    .sa-taster .row { display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center; margin-bottom: var(--space-lg); }
+    .sa-taster select, .sa-taster button { font: 600 0.8rem/1 'Outfit', sans-serif; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
+    .sa-taster button.primary { background: var(--accent); color: #0a0e1a; border-color: var(--accent); }
+    .sa-taster .grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+    .sa-taster .cell h4 { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 var(--space-xs); }
+    .sa-taster .cell p { margin: 0 0 var(--space-sm); font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+    .sa-taster pre { margin: 0; white-space: pre-wrap; word-break: break-word; font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.5; color: var(--text-primary); background: rgba(0,0,0,0.25); border-radius: 8px; padding: var(--space-sm) var(--space-md); }
+    .sa-taster .ok { color: #7bd389; }
+    .sa-taster .form { display: inline-block; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border-glass); color: var(--text-secondary); }
+    .sa-taster .form.abstraction { color: var(--accent); border-color: var(--accent); }
+    .sa-callout { max-width: 84ch; margin: var(--space-lg) 0; padding: var(--space-md) var(--space-lg); border: 1px solid var(--accent); border-radius: var(--radius-lg); color: var(--text-primary); font-size: 0.95rem; line-height: 1.6; }
+    .sa-docs { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--space-md); max-width: 84ch; }
+    .sa-doc { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); }
+    .sa-doc h3 { font-size: 0.95rem; margin-bottom: var(--space-xs); }
+    .sa-doc h3 a { color: var(--accent); text-decoration: none; }
+    .sa-doc p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+    .sa-source { font-family: var(--font-mono); font-size: 0.72rem; color: var(--evidence); max-width: 84ch; margin-top: var(--space-sm); }
+    @media (max-width: 640px) { .sa-taster .grid { grid-template-columns: 1fr; } .sa-example { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="sa-top"><div class="container"><a href="/eigenengine.html">← EigenEngine</a><span class="here">SuperARC</span></div></div>
+
+  <header class="sa-hero">
+    <div class="container">
+      <span class="section-label">Benchmark</span>
+      <h1>SuperARC</h1>
+      <p>SuperARC gives a model one hundred binary sequences of twelve terms and asks, for each one, for the rule that generates it. It was published in <em>Nature Communications</em> in 2026 by Hernández-Espinosa, Ozelim, Abrahão and Zenil. Its score runs from 0 to 1. Eigen scored 0.485. Re-scoring the published models' released answers with the same rule, the best of them, ChatGPT-4.5, scored 0.042.</p>
+    </div>
+  </header>
+
+  <section class="section" id="scoring">
+    <div class="container">
+      <span class="section-label">How an answer is scored</span>
+      <h2 class="section-title">Three kinds of answer, scored one hundred to ten to one</h2>
+      <div class="sa-prose">
+        <p>Each answer is sorted by its form into one of three kinds. A genuine rule counts in full. A list of the positions where the sequence is 1 counts a tenth. The sequence written back out counts a hundredth. Within a kind, an answer scores higher the shorter it is compared with the sequence it explains, so a kind's weight is the most an answer of that kind can earn. An answer that does not reproduce the sequence when run scores nothing. A fixed program written before the run does the sorting; the model plays no part in it.</p>
+      </div>
+      <div class="sa-example">
+        <span class="k">Sequence 1</span><span class="v"><span class="sa-bits">1,1,0,0,0,1,0,0,0,0,1,0</span> &nbsp; positions numbered from 0</span>
+        <span class="k">A rule</span><span class="v"><code>a(n) = 1 if n is a multiple of 5 or n = 1, else 0</code>. Counts in full.</span>
+        <span class="k">A list</span><span class="v"><code>a(n) = 1 for n in {0, 1, 5, 10}, else 0</code>. Counts a tenth.</span>
+        <span class="k">A copy</span><span class="v"><code>a(n) = floor(1059 / 2^n) mod 2</code>. Counts a hundredth. Written in binary, 1059 is the sequence itself read backwards, so the answer contains the sequence rather than a rule for it. An answer whose constant, in binary, is as long as the sequence is sorted as a copy.</span>
+      </div>
+      <div class="sa-prose">
+        <p>Of the twenty-four published models, the best-scoring one answered every sequence with a list. The most rules any of them produced was six.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section highlights" id="method">
+    <div class="container">
+      <span class="section-label">What Eigen did</span>
+      <h2 class="section-title">Every candidate rule was run before it could be submitted</h2>
+      <div class="sa-prose">
+        <p>Eigen ran a language model, Claude Opus 5, with a sandbox. For each sequence the model proposed candidate rules. Each candidate was executed in the sandbox and its output compared with the sequence, digit by digit. A candidate that did not reproduce the sequence was sent back to the model with the first position where it disagreed, and the model tried again. A sequence was finished when a candidate reproduced it. Four attempts were allowed.</p>
+      </div>
+      <div class="sa-fig" aria-label="Attempts needed per sequence">
+        <svg viewBox="0 0 760 150" role="img" aria-labelledby="sa-att-title">
+          <title id="sa-att-title">Attempts needed: 69 sequences finished on the first attempt, 24 on the second, 6 on the third, 1 on the fourth</title>
+          <g font-family="Lora, Georgia, serif" font-size="14" fill="#9ca3af">
+            <text x="10" y="30">finished on attempt 1</text>
+            <text x="10" y="60">attempt 2</text>
+            <text x="10" y="90">attempt 3</text>
+            <text x="10" y="120">attempt 4</text>
+          </g>
+          <g fill="#c9a96e">
+            <rect x="200" y="16" width="483" height="18" rx="3"/>
+            <rect x="200" y="46" width="168" height="18" rx="3" opacity="0.85"/>
+            <rect x="200" y="76" width="42" height="18" rx="3" opacity="0.7"/>
+            <rect x="200" y="106" width="7" height="18" rx="3" opacity="0.6"/>
+          </g>
+          <g font-family="JetBrains Mono, monospace" font-size="13" fill="#e8e6e3">
+            <text x="690" y="30">69</text><text x="375" y="60">24</text><text x="249" y="90">6</text><text x="214" y="120">1</text>
+          </g>
+          <text x="200" y="143" font-family="Lora, Georgia, serif" font-size="11" fill="#6b7280">sequences, out of 100</text>
+        </svg>
+      </div>
+      <div class="sa-prose">
+        <p>The same model without the sandbox, prompted the way the benchmark's authors prompted the published models, also reproduced all one hundred sequences. Ninety-seven of its answers were the sequence packed into a single number, the copy shown above. So the sandbox did not make the answers correct. It guaranteed that every submitted rule runs and reproduces its sequence, and the difference in score comes from the form of the answers: 96 rules against 97 copies.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="try">
+    <div class="container">
+      <span class="section-label">The hundred answers</span>
+      <h2 class="section-title">Inspect a sequence</h2>
+      <div class="sa-taster" id="taster">
+        <div class="row">
+          <label for="sa-item" style="font-size:0.8rem;color:var(--text-secondary)">Sequence</label>
+          <select id="sa-item" aria-label="Choose a sequence"></select>
+          <button class="primary" id="sa-random" type="button">Pick one at random</button>
+          <span id="sa-meta" style="font-size:0.8rem;color:var(--text-muted)"></span>
+        </div>
+        <p style="margin:0 0 var(--space-lg)"><span class="sa-bits" id="sa-seq"></span></p>
+        <div class="grid">
+          <div class="cell">
+            <h4>Eigen's answer</h4>
+            <p id="sa-loop-answer"></p>
+            <p><span class="form" id="sa-loop-form"></span> <span id="sa-loop-rounds" style="font-size:0.8rem"></span></p>
+            <h4>The program run to check it</h4>
+            <pre id="sa-loop-program"></pre>
+            <p style="margin-top:var(--space-sm)">It printed <span class="sa-code" id="sa-loop-stdout"></span> <span class="ok" id="sa-loop-passed"></span></p>
+          </div>
+          <div class="cell">
+            <h4>The same model without the sandbox</h4>
+            <p id="sa-bare-answer"></p>
+            <p><span class="form" id="sa-bare-form"></span></p>
+            <p id="sa-bare-note" style="font-size:0.82rem"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section highlights" id="result">
+    <div class="container">
+      <span class="section-label">The scores</span>
+      <h2 class="section-title">What each system answered, out of one hundred</h2>
+      <div class="sa-fig" aria-label="What each system answered">
+        <svg viewBox="0 0 760 330" role="img" aria-labelledby="sa-res-title">
+          <title id="sa-res-title">Each row shows one hundred answers as squares, coloured rule, list or copy, with the score out of 1 beside it</title>
+          <g id="sa-grids"></g>
+          <g font-family="Lora, Georgia, serif" font-size="13" fill="#9ca3af">
+            <text x="10" y="318" fill="#e8e6e3">■</text><text x="26" y="318">rule</text><text x="70" y="318" fill="#c9a96e">■</text><text x="86" y="318">list</text><text x="130" y="318" fill="#6b7280">■</text><text x="146" y="318">copy</text>
+          </g>
+        </svg>
+      </div>
+      <p class="sa-source">Model: Claude Opus 5. Run scored 5 August 2026. The published models' answers were taken from the files released with the benchmark and all four rows were scored with one copy of the benchmark's scoring rule, written by Eigen. The best published model is ChatGPT-4.5.</p>
+      <div class="sa-prose" style="margin-top:var(--space-lg)">
+        <p>The published models could not run code, so the comparison is between a model with a sandbox and models without one. It says nothing about which model is stronger.</p>
+        <p>The one-attempt row scores lower than the four-attempt row, but the two were instructed differently about the form of the answer, and with that equalised the gap disappears.</p>
+        <p>Sorted by their form, Eigen's 96 rules are 42 arithmetic conditions on the position, 26 that give the sequence as the binary expansion of a fraction, 12 that use powers or digit tests, 3 recurrences and 13 other constructions.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="documents">
+    <div class="container">
+      <span class="section-label">The record</span>
+      <h2 class="section-title">The paper and the run's documents</h2>
+      <div class="sa-callout">Everything below was written by Eigen without human editing. Algorithmically generated; not fit for human consumption.</div>
+      <div class="sa-prose">
+        <p>The plan for the run, the scoring code and the sequence file were hashed before any sequence was read, and the hashes were checked again at scoring time. Afterwards a review by a separate agent attacked each claim in the run report. Two claims failed: that four attempts beat one, and a proportion that had been attributed to the retries. The others stand as stated above.</p>
+      </div>
+      <div class="sa-docs">
+        <div class="sa-doc"><h3><a href="checking-your-work.pdf">The paper (PDF)</a></h3><p>Method, scoring, results and limits.</p></div>
+        <div class="sa-doc"><h3><a href="run/preregistration.html">The plan, written before the run</a></h3><p>The three systems, the sorting program and its thresholds, the submission rule.</p></div>
+        <div class="sa-doc"><h3><a href="run/report.html">The run report</a></h3><p>The scores as frozen, and the changes made to the plan after it was written, with reasons.</p></div>
+        <div class="sa-doc"><h3><a href="run/skeptic_verdict.html">The review</a></h3><p>Five claims attacked, two failed.</p></div>
+        <div class="sa-doc"><h3><a href="run/freeze_audit.html">The audit</a></h3><p>Every hashed file re-checked, and 466 transcripts checked for any copy of the published answers.</p></div>
+        <div class="sa-doc"><h3>The full package</h3><p>Transcripts, scoring code and every answer. Private. Ask <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><div class="container"><div class="footer-inner"><p class="footer-text">© 2026 EigenEngine Ltd · <a href="/eigenengine.html" style="color:var(--text-secondary)">EigenEngine</a> · <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--text-secondary)">eigen@gmccaul.co.uk</a></p></div></div></footer>
+
+  <script src="superarc-data.js"></script>
+  <script>
+  (function () {
+    // the result grids: 100 squares per system (independent of the data file)
+    var rows = [
+      ["Eigen, up to four attempts", 0.485, 96, 1, 3],
+      ["Eigen, one attempt", 0.430, 96, 4, 0],
+      ["The same model, no sandbox", 0.017, 3, 0, 97],
+      ["Best published model", 0.042, 0, 100, 0]
+    ];
+    var COL = { rule: "#e8e6e3", list: "#c9a96e", copy: "#6b7280" };
+    var g = document.getElementById("sa-grids"), out = "";
+    rows.forEach(function (r, ri) {
+      var y0 = 14 + ri * 72, cells = [], k;
+      for (k = 0; k < r[2]; k++) cells.push(COL.rule);
+      for (k = 0; k < r[3]; k++) cells.push(COL.list);
+      for (k = 0; k < r[4]; k++) cells.push(COL.copy);
+      out += '<text x="10" y="' + (y0 + 14) + '" font-family="Lora, Georgia, serif" font-size="14" fill="#9ca3af">' + r[0] + '</text>';
+      cells.forEach(function (c, ci) { var cx = 300 + (ci % 25) * 13, cy = y0 + Math.floor(ci / 25) * 13; out += '<rect x="' + cx + '" y="' + cy + '" width="11" height="11" rx="2" fill="' + c + '"/>'; });
+      out += '<text x="640" y="' + (y0 + 20) + '" font-family="JetBrains Mono, monospace" font-size="15" fill="#e8e6e3">' + r[1].toFixed(3) + '</text>';
+      out += '<text x="640" y="' + (y0 + 38) + '" font-family="Lora, Georgia, serif" font-size="11" fill="#6b7280">out of 1</text>';
+      out += '<text x="10" y="' + (y0 + 34) + '" font-family="Lora, Georgia, serif" font-size="11" fill="#6b7280">' + r[2] + ' rules · ' + r[3] + ' lists · ' + r[4] + ' copies</text>';
+    });
+    if (g) g.innerHTML = out;
+  })();
+  (function () {
+    var D = window.SUPERARC; if (!D) return;
+    var sel = document.getElementById("sa-item");
+    function grouped(seq) { var b = seq.replace(/,/g, ""); return b.replace(/(.{4})/g, "$1 ").trim(); }
+    D.items.forEach(function (it, i) { var o = document.createElement("option"); o.value = i; o.textContent = (i + 1) + "  ·  " + grouped(it.seq); sel.appendChild(o); });
+    var FORM = { abstraction: "a rule", ordinal: "a list", prints: "a copy" };
+    function show(i) {
+      var it = D.items[i], L = it.loop, B = it.bare;
+      sel.value = i;
+      document.getElementById("sa-seq").textContent = it.seq;
+      document.getElementById("sa-meta").textContent = "sequence " + (i + 1) + " of 100";
+      document.getElementById("sa-loop-answer").textContent = L.answer;
+      var lf = document.getElementById("sa-loop-form"); lf.textContent = FORM[L.form] || L.form; lf.className = "form " + L.form;
+      document.getElementById("sa-loop-rounds").textContent = L.rounds ? ("finished on attempt " + L.rounds) : "";
+      document.getElementById("sa-loop-program").textContent = L.program || "(no program recorded)";
+      document.getElementById("sa-loop-stdout").textContent = L.stdout || "";
+      document.getElementById("sa-loop-passed").textContent = L.passed ? "✓ the same as the sequence" : "";
+      document.getElementById("sa-bare-answer").textContent = B.answer;
+      var bf = document.getElementById("sa-bare-form"); bf.textContent = FORM[B.form] || B.form; bf.className = "form " + B.form;
+      document.getElementById("sa-bare-note").textContent = (B.form === "prints" ? "The constant is the sequence packed into one number, so this is sorted as a copy. " : "") + "Run afterwards for scoring, it reproduces the sequence.";
+    }
+    sel.addEventListener("change", function () { show(parseInt(sel.value, 10)); });
+    document.getElementById("sa-random").addEventListener("click", function () { show(Math.floor(Math.random() * D.items.length)); });
+    show(0);
+
+  })();
+  </script>
+</body>
+</html>

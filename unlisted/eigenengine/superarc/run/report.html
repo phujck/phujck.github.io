@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SuperARC run: report</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">SuperARC run: report</h1>
+</header>
+<h1 id="the-run--report">THE RUN — report</h1>
+<p>The published 100, touched once, post-freeze. Scored by the
+instrument the freeze names, in the pass the freeze specifies.</p>
+<p><strong>Scored:</strong> 2026-08-05T14:27:51Z<br />
+<strong>Preregistration v2 self-hash:</strong>
+<code>44b64bf95f3132f009c2a22ffe6605a10def95527e0fa7a494a49b13b44482f2</code><br />
+<strong>Supersedes v1:</strong>
+<code>6ecc92ee32366ff635b77f14815cdd909142f7cadde761681f544633d76d6280</code><br />
+<strong>Freeze verdict:</strong> <strong>PASS</strong> — every frozen
+organ, every inherited document and the preregistration's own self-hash
+re-verified at scoring time, before any answer was read.</p>
+<blockquote>
+<p><strong>AUD-1 is DISCHARGED — verdict CLEAN.</strong> The
+preregistered post-run transcript audit has been run over <strong>466
+files</strong> (162 worker transcripts, 2 orchestration logs, 302 banked
+candidates): <strong>0 true positives in arm scope</strong>, <strong>0
+items voided</strong>, <strong>N held at 100</strong>. No arm reached
+the benchmark checkout, no arm received or used the
+<code>LAPLACE_SUPERARC_BENCH</code> variable, and no released answer
+string appears in any arm transcript or banked candidate for its own
+item. The only true-positive checkout accesses are the scorer and the
+loader, the two readers the preregistration names as the sanctioned
+door. Audit record: <code>transcript_audit.json</code>, sha256
+<code>4aeb8a97c183d387748d9b36d1e352c0a896eace7c18c2727a6db6db1d12b610</code>.
+No number in this report is conditional on it. Order deviation declared:
+the preregistration asked for this audit before any score was computed
+and it was completed after; nothing was changed by it. Token accounting
+remains <strong>unrecoverable</strong>, said and not estimated.</p>
+</blockquote>
+<hr />
+<h2 id="1-the-headline">1. The headline</h2>
+<table>
+<thead>
+<tr class="header">
+<th>arm</th>
+<th style="text-align: right;">φ</th>
+<th style="text-align: right;">ρ₁ non-both</th>
+<th style="text-align: right;">ρ₂ ordinal</th>
+<th style="text-align: right;">ρ₃ prints</th>
+<th style="text-align: right;">ρ₄ incorrect</th>
+<th style="text-align: right;">δ₁</th>
+<th style="text-align: right;">items closed</th>
+<th style="text-align: right;">S-1 fired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>A1</strong></td>
+<td style="text-align: right;"><strong>0.017182</strong></td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.97</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.4395</td>
+<td style="text-align: right;">100/100</td>
+<td style="text-align: right;">97</td>
+</tr>
+<tr class="even">
+<td><strong>A2</strong></td>
+<td style="text-align: right;"><strong>0.485181</strong></td>
+<td style="text-align: right;">0.96</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.5048</td>
+<td style="text-align: right;">100/100</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td><strong>A3</strong></td>
+<td style="text-align: right;"><strong>0.429501</strong></td>
+<td style="text-align: right;">0.96</td>
+<td style="text-align: right;">0.04</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.4455</td>
+<td style="text-align: right;">100/100</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Paired differences.</strong> A2 − A1 =
+<strong>+0.467999</strong> · A2 − A3 = <strong>+0.055680</strong> · A3 −
+A1 = <strong>+0.412319</strong></p>
+<h3 id="the-live-question-answered">The live question, answered</h3>
+<p>The freeze preregistered A2 − A3 as <em>the</em> live question, with
+the pilot's own reading that the genesis loop adds little beyond
+execution access, and preregistered the sentence to write if the run
+returned A2 ≈ A3.</p>
+<p>At N = 100: <strong>A2 − A3 = +0.055680</strong>, 95% band
+[+0.027546, +0.084022], EXCLUDING zero.</p>
+<p>At s = 25 the same band is [-0.000796, +0.122417] and
+<strong>includes zero</strong> — the crossing survives only once the
+resample is large enough, which is exactly the fragility the pilot's
+marginal +0.004 lower bound at n = 20 warned about. The separation is
+real at full size and thin at quarter size; both are reported.</p>
+<p>Both arms closed 100/100 items and both land 96 answers in the
+genuine-abstraction bin. The gap between them is not a correctness gap
+and not a bin-count gap — it is δ, the complexity ratio inside the
+bins.</p>
+<p><strong>The proportion is the finding, and it is not flattering to
+recursion.</strong> Execution access buys A3 − A1 =
+<strong>+0.412319</strong>. The full genesis loop on top of execution
+buys A2 − A3 = <strong>+0.055680</strong> — about <strong>7×</strong>
+less. The preregistered sentence was that if this run returned A2 ≈ A3
+the claim shrinks to <em>"execution, not recursion"</em>. It did not
+return A2 ≈ A3; it returned a separated but small A2 − A3 on top of a
+large A3 − A1. The honest claim is therefore <strong>"execution, then
+recursion — in that order of magnitude"</strong>: most of the distance
+from a bare arm is bought by letting the model run its own code, and the
+loop adds a real but second-order increment.</p>
+<hr />
+<h2 id="2-bootstrap--the-papers-own-procedure-seeded">2. Bootstrap — the
+paper's own procedure, seeded</h2>
+<p>100 resamples with replacement at s = 25/50/75/100, seed
+<strong>20260804</strong>, 95% percentile bands. Paired differences
+resample on the <strong>same index draw</strong> across arms (verified:
+True).</p>
+<table>
+<thead>
+<tr class="header">
+<th>series</th>
+<th>s=25</th>
+<th>s=50</th>
+<th>s=75</th>
+<th>s=100</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A1</td>
+<td>0.0156 [0.0040, 0.0570]</td>
+<td>0.0165 [0.0041, 0.0385]</td>
+<td>0.0167 [0.0041, 0.0346]</td>
+<td>0.0163 [0.0080, 0.0312]</td>
+</tr>
+<tr class="even">
+<td>A2</td>
+<td>0.4885 [0.4388, 0.5456]</td>
+<td>0.4854 [0.4439, 0.5240]</td>
+<td>0.4870 [0.4531, 0.5159]</td>
+<td>0.4855 [0.4583, 0.5081]</td>
+</tr>
+<tr class="odd">
+<td>A3</td>
+<td>0.4304 [0.3890, 0.4643]</td>
+<td>0.4320 [0.4007, 0.4578]</td>
+<td>0.4302 [0.4060, 0.4528]</td>
+<td>0.4300 [0.4092, 0.4487]</td>
+</tr>
+<tr class="even">
+<td><strong>A2-A1</strong></td>
+<td>+0.4729 [+0.4104, +0.5264]*</td>
+<td>+0.4689 [+0.4184, +0.5136]*</td>
+<td>+0.4703 [+0.4323, +0.5059]*</td>
+<td>+0.4692 [+0.4350, +0.4948]*</td>
+</tr>
+<tr class="odd">
+<td><strong>A2-A3</strong></td>
+<td>+0.0582 [-0.0008, +0.1224]</td>
+<td>+0.0534 [+0.0063, +0.0983]*</td>
+<td>+0.0568 [+0.0244, +0.0901]*</td>
+<td>+0.0555 [+0.0275, +0.0840]*</td>
+</tr>
+<tr class="even">
+<td><strong>A3-A1</strong></td>
+<td>+0.4148 [+0.3535, +0.4580]*</td>
+<td>+0.4155 [+0.3716, +0.4438]*</td>
+<td>+0.4135 [+0.3838, +0.4361]*</td>
+<td>+0.4137 [+0.3880, +0.4365]*</td>
+</tr>
+</tbody>
+</table>
+<p><code>*</code> = the 95% band excludes zero.</p>
+<hr />
+<h2 id="3-the-published-comparison--every-model-both-ways-scs-1">3. The
+published comparison — every model, both ways (SCS-1)</h2>
+<p>The authors' released <strong>formula</strong> answers, re-scored
+with the <em>same instrument</em>: same <code>b11a-3</code> bytes, same
+S-1, same normalizer, same <code>phi.py</code>, same N = 100, same
+bootstrap seed — in the same pass that scored our arms.</p>
+<p>Three columns, never one:</p>
+<table>
+<thead>
+<tr class="header">
+<th>column</th>
+<th>form decided by</th>
+<th>correctness decided by</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>φ_published</code></td>
+<td>the authors' hand labels</td>
+<td>the authors' hand labels</td>
+</tr>
+<tr class="even">
+<td><code>φ_hand</code></td>
+<td><strong>our</strong> <code>b11a-3</code> + S-1</td>
+<td>the authors' <code>-formula-correctness</code></td>
+</tr>
+<tr class="odd">
+<td><code>φ_mech</code></td>
+<td><strong>our</strong> <code>b11a-3</code> + S-1</td>
+<td><strong>our</strong> translate → execute → byte-compare</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Translator validation.</strong> Against the authors' human
+graders across 4800 released rows, the mechanical correctness path
+agrees <strong>97.21%</strong> (2199 both-correct, 2467 both-incorrect,
+107 hand-only, 27 mechanical-only). That external check found and fixed
+two real translator defects before any number here was final.</p>
+<table>
+<thead>
+<tr class="header">
+<th>corpus</th>
+<th>model</th>
+<th style="text-align: right;">φ_published</th>
+<th style="text-align: right;">φ_hand</th>
+<th style="text-align: right;">φ_mech</th>
+<th>φ_mech 95% band (s=100)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>OURS</strong></td>
+<td><strong>A1</strong></td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;"><strong>0.017182</strong></td>
+<td>[0.0080, 0.0312]</td>
+</tr>
+<tr class="even">
+<td><strong>OURS</strong></td>
+<td><strong>A2</strong></td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;"><strong>0.485181</strong></td>
+<td>[0.4583, 0.5081]</td>
+</tr>
+<tr class="odd">
+<td><strong>OURS</strong></td>
+<td><strong>A3</strong></td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;"><strong>0.429501</strong></td>
+<td>[0.4092, 0.4487]</td>
+</tr>
+<tr class="even">
+<td>RandomBinarySeriesWithLLMs</td>
+<td>gpt_4o</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.003803</td>
+<td>[0.0000, 0.0114]</td>
+</tr>
+<tr class="odd">
+<td>RandomBinarySeriesWithLLMs</td>
+<td>claude_3.5</td>
+<td style="text-align: right;">0.032957</td>
+<td style="text-align: right;">0.008689</td>
+<td style="text-align: right;">0.008689</td>
+<td>[0.0054, 0.0122]</td>
+</tr>
+<tr class="even">
+<td>RandomBinarySeriesWithLLMs</td>
+<td>gpt_4o_mini</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td>[0.0076, 0.0076]</td>
+</tr>
+<tr class="odd">
+<td>RandomBinarySeriesWithLLMs</td>
+<td>cursor_small</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td>[0.0076, 0.0076]</td>
+</tr>
+<tr class="even">
+<td>RandomBinarySeriesWithLLMs</td>
+<td>gemini</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td>[0.0076, 0.0076]</td>
+</tr>
+<tr class="odd">
+<td>RandomBinarySeriesWithLLMs</td>
+<td>meta</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="even">
+<td>RandomBinarySeriesWithLLMs</td>
+<td>o1_mini</td>
+<td style="text-align: right;">0.034380</td>
+<td style="text-align: right;">0.034380</td>
+<td style="text-align: right;">0.028854</td>
+<td>[0.0231, 0.0337]</td>
+</tr>
+<tr class="odd">
+<td>RandomBinarySeriesWithLLMs</td>
+<td>o1_preview</td>
+<td style="text-align: right;">0.012265</td>
+<td style="text-align: right;">0.012265</td>
+<td style="text-align: right;">0.015765</td>
+<td>[0.0118, 0.0197]</td>
+</tr>
+<tr class="even">
+<td>RandomBinarySeriesWithLLMs</td>
+<td>mistral</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td>[0.0070, 0.0071]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext</td>
+<td>chatgpt_4.5</td>
+<td style="text-align: right;">0.041914</td>
+<td style="text-align: right;">0.041914</td>
+<td style="text-align: right;">0.028481</td>
+<td>[0.0248, 0.0322]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext</td>
+<td>deepseek</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td>[0.0070, 0.0071]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext</td>
+<td>claude_3.7</td>
+<td style="text-align: right;">0.032970</td>
+<td style="text-align: right;">0.032970</td>
+<td style="text-align: right;">0.032970</td>
+<td>[0.0299, 0.0357]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext</td>
+<td>grok_3</td>
+<td style="text-align: right;">0.000637</td>
+<td style="text-align: right;">0.000637</td>
+<td style="text-align: right;">0.000637</td>
+<td>[0.0000, 0.0016]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext</td>
+<td>qwen</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td>[0.0070, 0.0071]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext</td>
+<td>gpt_o1</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext</td>
+<td>gpt_4o</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.003803</td>
+<td>[0.0000, 0.0114]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext</td>
+<td>claude_3.5</td>
+<td style="text-align: right;">0.032957</td>
+<td style="text-align: right;">0.008689</td>
+<td style="text-align: right;">0.008689</td>
+<td>[0.0054, 0.0122]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext</td>
+<td>gpt_4o_mini</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td>[0.0076, 0.0076]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext</td>
+<td>cursor_small</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td>[0.0076, 0.0076]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext</td>
+<td>gemini</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td>[0.0076, 0.0076]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext</td>
+<td>meta</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext</td>
+<td>o1_mini</td>
+<td style="text-align: right;">0.034380</td>
+<td style="text-align: right;">0.034380</td>
+<td style="text-align: right;">0.028854</td>
+<td>[0.0231, 0.0337]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext</td>
+<td>o1_preview</td>
+<td style="text-align: right;">0.012265</td>
+<td style="text-align: right;">0.012265</td>
+<td style="text-align: right;">0.015765</td>
+<td>[0.0118, 0.0197]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext</td>
+<td>mistral</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td>[0.0070, 0.0071]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>chatgpt_4.5</td>
+<td style="text-align: right;">0.041914</td>
+<td style="text-align: right;">0.041914</td>
+<td style="text-align: right;">0.028481</td>
+<td>[0.0248, 0.0322]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>deepseek</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td>[0.0070, 0.0071]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>claude_3.7</td>
+<td style="text-align: right;">0.032970</td>
+<td style="text-align: right;">0.032970</td>
+<td style="text-align: right;">0.032970</td>
+<td>[0.0299, 0.0357]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>grok_3</td>
+<td style="text-align: right;">0.000637</td>
+<td style="text-align: right;">0.000637</td>
+<td style="text-align: right;">0.000637</td>
+<td>[0.0000, 0.0016]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>qwen</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td>[0.0070, 0.0071]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>gpt_o1</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>gpt_4o</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.003803</td>
+<td>[0.0000, 0.0114]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>claude_3.5</td>
+<td style="text-align: right;">0.032957</td>
+<td style="text-align: right;">0.008689</td>
+<td style="text-align: right;">0.008689</td>
+<td>[0.0054, 0.0122]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>gpt_4o_mini</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td>[0.0076, 0.0076]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>cursor_small</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td>[0.0076, 0.0076]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>gemini</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td style="text-align: right;">0.007616</td>
+<td>[0.0076, 0.0076]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>meta</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>o1_mini</td>
+<td style="text-align: right;">0.034380</td>
+<td style="text-align: right;">0.034380</td>
+<td style="text-align: right;">0.028854</td>
+<td>[0.0231, 0.0337]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>o1_preview</td>
+<td style="text-align: right;">0.012265</td>
+<td style="text-align: right;">0.012265</td>
+<td style="text-align: right;">0.015765</td>
+<td>[0.0118, 0.0197]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>mistral</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td style="text-align: right;">0.007097</td>
+<td>[0.0070, 0.0071]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>opus_4</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>claude_sonnet_4</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>gemini_2.5_pro</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>mistral_large2405</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>qwen3</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>deepseek_r1_0528</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>grok4</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="even">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>llama_4_scout</td>
+<td style="text-align: right;">0.004496</td>
+<td style="text-align: right;">0.004496</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+<tr class="odd">
+<td>seriesWithLLMs_ext_Aug2025</td>
+<td>chatgpt_5</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.000000</td>
+<td>[0.0000, 0.0000]</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Bin disagreements</strong> (our classifier vs the authors'
+hand label, correctness held at theirs): <strong>18</strong> of 4800,
+every one enumerated by (corpus, model, row) in
+<code>report.json</code>.</p>
+<p><strong>Correctness disagreements</strong> (hand vs mechanical):
+<strong>134</strong> of 4800, enumerated by (corpus, model, row) with
+direction and failure mode.</p>
+<p><strong>S-1 flips on the authors' hand labels:</strong>
+<strong>0</strong>. <code>s1_rule.md</code> §4.1 predicted zero on every
+formula sheet, and this run confirms it: S-1 changes nothing on the
+released formula corpora. The 13 known flips of §4.3 are on the
+<em>program</em> sheet, which the freeze banks unscored.</p>
+<p><strong>Untranslatable released formulas:</strong> <strong>0</strong>
+of 4800 — counted incorrect in φ_mech only, never against φ_hand.</p>
+<blockquote>
+<p><strong>48 sheet-rows, 24 distinct models.</strong> The three corpora
+overlap: rows 0..99 of <code>seriesWithLLMs_ext</code> and
+<code>seriesWithLLMs_ext_Aug2025</code> carry the same sequences and the
+same columns for every model they share with the binary suite CSV.
+Identical numbers down a model's three rows are a consistency check on
+the corpora, not three independent measurements.</p>
+</blockquote>
+<h3
+id="31-where-our-classifier-disagrees-with-their-hand-label--and-which-way">3.1
+Where our classifier disagrees with their hand label — and which
+way</h3>
+<p>All <strong>18</strong> bin disagreements are one model,
+<code>claude_3.5</code>, in one direction: our <code>b11a-3</code> bins
+as <strong>ordinal</strong> what the authors hand-labelled
+<strong>correct-non-both</strong>. That is a demotion of a decade (×1 →
+×1/10), and it is why <code>claude_3.5</code>'s φ_published (0.032957)
+and φ_hand (0.008689) differ by roughly 4×.</p>
+<p><strong>This disagreement runs in our favour and is stated as
+such.</strong> Our instrument lowers a published competitor's score. The
+freeze's answer is to publish both numbers side by side rather than
+silently overwrite theirs — which is what the φ_published column is
+for.</p>
+<h3 id="32-correctness-disagreements-by-direction">3.2 Correctness
+disagreements, by direction</h3>
+<table>
+<thead>
+<tr class="header">
+<th>direction</th>
+<th style="text-align: right;">rows</th>
+<th>models</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>hand correct, mechanical incorrect</td>
+<td style="text-align: right;">107</td>
+<td>chatgpt_4.5, llama_4_scout, o1_mini</td>
+</tr>
+<tr class="even">
+<td>hand incorrect, mechanical correct</td>
+<td style="text-align: right;">27</td>
+<td>gpt_4o, o1_preview</td>
+</tr>
+</tbody>
+</table>
+<p><code>chatgpt_4.5</code>'s are genuine: the stated index set does not
+generate the item — a member is missing — and a human grader passed it
+anyway. <code>o1_mini</code>'s are an indexing convention, see §3.3.
+<code>o1_preview</code>'s run the other way: answers the graders marked
+wrong that do reproduce the sequence exactly.</p>
+<h3 id="33-the-idx-1-anchor-sensitivity--and-the-chatgpt_5-finding">3.3
+The IDX-1 anchor sensitivity — and the <code>chatgpt_5</code>
+finding</h3>
+<p>IDX-1 rule 2 runs an answer that states no domain over
+<code>n = 0..11</code>. Some published answers index <code>1..12</code>
+without saying so. Rather than resolve that silently, every column is
+recomputed under the <code>1..12</code> default and the delta
+published.</p>
+<table>
+<thead>
+<tr class="header">
+<th>column</th>
+<th style="text-align: right;">rows moved</th>
+<th style="text-align: right;">φ_mech (0..11)</th>
+<th style="text-align: right;">φ_mech (1..12)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gpt_4o</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.003803</td>
+<td style="text-align: right;">0.000000</td>
+</tr>
+<tr class="even">
+<td>claude_3.5</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">0.008689</td>
+<td style="text-align: right;">0.000402</td>
+</tr>
+<tr class="odd">
+<td>o1_mini</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0.028854</td>
+<td style="text-align: right;">0.034380</td>
+</tr>
+<tr class="even">
+<td>o1_preview</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">0.015765</td>
+<td style="text-align: right;">0.000000</td>
+</tr>
+<tr class="odd">
+<td>grok_3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0.000637</td>
+<td style="text-align: right;">0.000000</td>
+</tr>
+<tr class="even">
+<td>gemini_2.5_pro</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.004625</td>
+</tr>
+<tr class="odd">
+<td>chatgpt_5</td>
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">0.000000</td>
+<td style="text-align: right;">0.196018</td>
+</tr>
+<tr class="even">
+<td>A1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0.017182</td>
+<td style="text-align: right;">0.017125</td>
+</tr>
+</tbody>
+</table>
+<p>The sensitivity runs <strong>both ways</strong> — it lifts
+<code>o1_mini</code> and <code>chatgpt_5</code>, and sinks
+<code>claude_3.5</code>, <code>o1_preview</code>, <code>gpt_4o</code>
+and <code>grok_3</code> — so it is not a thumb on any scale. One cell is
+large enough to name:</p>
+<blockquote>
+<p><strong><code>chatgpt_5</code> scores 0.000000 under the 0-anchored
+default and 0.196018 under the 1-anchored one, on 47 moved
+rows.</strong> Its column is uniformly 1-based: across all 100 answers
+its index literals run 1..12 and never include 0. The authors' own
+graders scored it <strong>incorrect</strong> on those rows (φ_published
+= φ_hand = 0.000000), so the zero-anchored default <em>agrees with the
+humans</em> and the headline column is unchanged. The finding is that
+the newest model in the release may have been marked wrong for an
+indexing convention, and that a referee should see the alternative
+reading rather than take our default on trust.</p>
+</blockquote>
+<p>Our own arms are nearly unmoved by the anchor — computed, not
+asserted:</p>
+<p>A1 moves <strong>2</strong> of 100 rows (φ 0.017182 → 0.017125, a
+cost of +0.000058): 98 of its answers state <code>n = 0..11</code>
+explicitly, so the default is never reached for them; the rest are
+<code>bin-024</code>, <code>bin-031</code> (the two Iverson-bracket
+answers, which state no domain). A2 and A3 take correctness from their
+banked programs, which IDX-1 cannot reach at all.</p>
+<hr />
+<h2 id="4-what-a1-actually-did--the-packed-constant-finding">4. What A1
+actually did — the packed-constant finding</h2>
+<p>A1 closed <strong>100 of 100</strong> items: every one of its
+formulas, translated faithfully and executed, reproduces its sequence
+byte-for-byte. Its φ is nonetheless <strong>0.017182</strong>, because
+<strong>97 of those 100 answers are one template</strong>:</p>
+<pre><code>a(n) = floor(K / 2^n) mod 2,  n = 0..11</code></pre>
+<p><code>K</code> is the item itself, packed as an integer and read
+least-significant-bit first. S-1 — the base-encoded-literal rule,
+preregistered in <code>s1_rule.md</code> §1 and active from the first
+classification — bins those 97 as <strong>PRINTS</strong> (×1/100), not
+abstraction. The three survivors are the ones S-1's length gate
+spares.</p>
+<p>This is the <em>exact</em> template <code>s1_rule.md</code> §4.3
+documents for <code>gemini_2.5_pro</code> on the released program sheet,
+where 13 rows of packed constants were hand-labelled as non-copies and
+inflated that model's φ by 11×. The bare arm rediscovered the same trick
+unprompted, and the same rule catches it.</p>
+<p><strong>The freeze forbids showing the alternative.</strong> §3.4 is
+explicit: S-1 runs on the first classification, with <em>"no rebin step,
+no before/after column, no opportunity to see a φ under one instrument
+and then choose the other"</em>. So this report carries no no-S-1 column
+for A1 — even though S-1 is by far the largest single instrument effect
+in the campaign and it lands hardest on our own baseline. What is
+reported instead is the count — <strong>97</strong> fires on A1,
+<strong>3</strong> on A2, <strong>0</strong> on A3 — with every fired
+row named in <code>report.json</code>.</p>
+<h2
+id="read-a1-accordingly-its-φ-is-a-statement-about-the-form-of-a-one-shot-answer-not-about-whether-the-model-can-hit-the-sequence-on-correctness-alone-a1-is-100100-dev-1-compounds-this--a1-is-one-shot-where-the-published-rows-had-a-five-point-temperature-sweep-so-a1-is-a-lower-bound-on-a-published-row-not-a-replication-of-one"><strong>Read
+A1 accordingly.</strong> Its φ is a statement about the <em>form</em> of
+a one-shot answer, not about whether the model can hit the sequence: on
+correctness alone A1 is 100/100. DEV-1 compounds this — A1 is one shot
+where the published rows had a five-point temperature sweep, so A1 is a
+lower bound on a published row, not a replication of one.</h2>
+<h2 id="5-deviations-disclosures-and-void-counts">5. Deviations,
+disclosures and void counts</h2>
+<p><strong>DEV-1</strong> — <em>carried</em>. one shot at API default
+temperature; the published 5-point sweep is not run. Our A1 is NOT a
+like-for-like replication of a published row — it is a one-shot lower
+bound on it. · direction of bias: removes bare-arm best-of-five upside;
+if anything understates A2-A1 and A2-A3</p>
+<p><strong>DEV-2</strong> — <em>carried</em>. the single primary
+FORMULA-mode prompt only</p>
+<p><strong>DEV-3</strong> — <em>discharged</em>. N = 100, the published
+suite entire</p>
+<p><strong>DEV-4</strong> — <em>discharged</em>. the paper's bootstrap
+restored, seeded 20260804</p>
+<p><strong>DEV-5</strong> — <em>carried</em>. correctness decided
+mechanically, not by human graders · direction of bias: unsigned</p>
+<p>· <strong>A1</strong>: no program banked; the translation decides. 0
+of 100 untranslatable. · <strong>A2</strong>: program decides;
+cross-check agrees 69, disagrees 2, untranslatable 29 ·
+<strong>A3</strong>: program decides; cross-check agrees 75, disagrees
+5, untranslatable 20 · <strong>published</strong>: 0 of 4800 released
+formula answers untranslatable</p>
+<p><strong>RESTART-1</strong> — <em>DISCLOSED DEVIATION OF THIS
+RUN</em>. session worker restarts interrupted THE RUN twice. On resume
+the A2 agent cache missed and re-solved already-banked items,
+overwriting first-pass answers. Rule applied: the FIRST-PASS answer is
+the arm answer; second passes are restart artifacts, discarded from the
+.json and retained in the append-only .jsonl ledgers.</p>
+<p>· <strong>scorer verification of the first-pass rule</strong>: of the
+13 duplicated items, <strong>12</strong> are traceable to a first-pass
+verified candidate under <code>normalize_answer</code>;
+<strong>1</strong> is not. · bin-008's banked program is a THIRD textual
+variant — the first-pass expression with a redundant parenthesis pair
+removed (<code>(n * (n + 2)) % 7</code> -&gt;
+<code>n * (n + 2) % 7</code>). It matches neither pass byte-for-byte.
+All three variants execute to identical stdout and the scored object is
+the FORMULA, so no phi is affected; it is disclosed as a
+banking-fidelity defect, not a rule violation.</p>
+<p><strong>AUD-1</strong> — <em>DISCHARGED — verdict CLEAN</em>. the
+post-run transcript audit required by v2 §6 has been run over 466 files
+(162 worker transcripts, 2 orchestration logs, 302 banked candidates): 0
+true positives in arm scope, 0 items voided, N held at 100. No arm
+reached the benchmark checkout, none received or used the
+<code>LAPLACE_SUPERARC_BENCH</code> variable, and no released answer
+string appears in any arm's work on its own item; the only true-positive
+checkout accesses are the scorer and the loader, the two readers v2
+preregisters as the sanctioned door. Record:
+<code>transcript_audit.json</code>, sha256
+<code>4aeb8a97c183d387748d9b36d1e352c0a896eace7c18c2727a6db6db1d12b610</code>.
+No number in this report is conditional on it. Order deviation declared:
+§6 asks for the audit before any phi is computed and it was completed
+after; the verdict changes nothing. Two observations recorded as not
+voiding: a pre-run development copy of a released corpus whose
+<em>filename</em> was visible in a directory listing to ~55 arm agents
+(no arm named, read or globbed it; no content reached any arm), and
+intra-run cross-arm exposure of our own banked derivations under
+<code>arms/A2/</code> (7 bare-form hits), which carries nothing from the
+released corpora.</p>
+<p><strong>ECON-1</strong> — <em>UNRECOVERABLE — reported in the
+preregistered words</em>. the workflow journal is unrecoverable: no
+journal.jsonl or agent transcript directory for this run exists in the
+repository. Per §5 we say so rather than estimate. Token spend is null
+for all three arms; phi-per-token cannot be reported.</p>
+<h3 id="dev-5-cross-check-on-our-own-arms">DEV-5 cross-check on our own
+arms</h3>
+<p>A2 and A3 bank a program, and the program decides their correctness.
+Their <em>formula text</em> is independently translated and executed as
+a cross-check that decides nothing — it can only expose a formula whose
+text says something other than what its program does.</p>
+<table>
+<thead>
+<tr class="header">
+<th>arm</th>
+<th style="text-align: right;">cross-check agrees</th>
+<th style="text-align: right;">disagrees</th>
+<th style="text-align: right;">untranslatable formula</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A2</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">29</td>
+</tr>
+<tr class="even">
+<td>A3</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">20</td>
+</tr>
+</tbody>
+</table>
+<p><strong>No disagreement is a formula/program mismatch.</strong> Every
+one was read: they are notations the translator declines — a prose
+function (<em>leading decimal digit of n!</em>), congruence notation
+(<code>n^2 = 4 (mod 10)</code>), a two-clause piecewise
+<em>table-then-recurrence</em>, a recurrence with a separate parity
+readout, and a three-branch chained conditional. In no case does an
+arm's formula text assert something its program does not do. That is the
+result the cross-check exists to produce, and it is a null one.</p>
+<p>The untranslatable remainder is a <strong>scrutiny gap, not a
+correctness gap</strong>: those formulas state their rule in
+mathematical prose (Legendre symbols, Ulam numbers,
+<code>prime(n)</code>, morphism fixed points) that the translator will
+not render, because rendering it would mean the scorer writing
+mathematics the arm did not write. The translator is complete exactly
+where it <em>decides</em> correctness — <strong>100/100 on A1</strong>
+and <strong>4800/4800 on the published formula sheets</strong> — and
+incomplete only where it is a second opinion on our own work.</p>
+<h3 id="void-counts">Void counts</h3>
+<table>
+<thead>
+<tr class="header">
+<th>arm</th>
+<th style="text-align: right;">items attempted</th>
+<th style="text-align: right;">items closed</th>
+<th style="text-align: right;">unclosed (score zero)</th>
+<th style="text-align: right;">void</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A1</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td>A2</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td>A3</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>No answer was missing or unparseable in any arm: A1 banked 100 of 100
+numbered lines in item order, A2 and A3 banked 100 of 100 per-item
+files.</p>
+<hr />
+<h2 id="6-recomputation">6. Recomputation</h2>
+<p>Every φ in this report recomputes from <code>report.json</code> alone
+— no item bank, no classifier, no BDM engine:</p>
+<pre><code>uv run python -c &quot;import json;from laplace.superarc.phi import from_ledger;\
+r=json.load(open(&#39;synthetics papers/superarc/frozen_run/report.json&#39;));\
+print({a: from_ledger([x for x in r[&#39;rows&#39;] if x[&#39;arm&#39;]==a]).phi \
+       for a in (&#39;A1&#39;,&#39;A2&#39;,&#39;A3&#39;)})&quot;</code></pre>
+<p>The same holds for every published column via
+<code>published_comparison.per_row</code>, which carries each row's bin
+and both nBDM terms.</p>
+<p><strong>This is tested, not claimed.</strong>
+<code>recomputation</code> in <code>report.json</code> re-derives all
+<strong>147</strong> φ columns — 3 arms plus 48 model-sheets × 3 columns
+— from the report's own rows: <strong>all_match = True</strong>, 0
+failures.</p>
+<p>The released answer <em>strings</em> are deliberately not republished
+(their repo carries no LICENSE; the article is CC BY-NC-ND). φ never
+reads them — the bin and the two nBDM terms are the whole of what φ
+consumes — so every published number above is checkable from this file
+without redistributing their corpus.</p>
+</body>
+</html>

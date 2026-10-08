@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 280">
+<title>What Eigen holds</title>
+<text x="40" y="34" font-family="Outfit,sans-serif" font-size="17" fill="#e8e6e3" font-weight="600">What Eigen keeps</text>
+<rect x="40" y="70" width="220" height="120" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" rx="10"/>
+<text x="58" y="102" font-family="Outfit,sans-serif" font-size="14.5" fill="#dfc599" font-weight="600">the work as it happens</text>
+<text x="58" y="128" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">conversations, drafts, decisions:</text>
+<text x="58" y="147" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">the material that usually evaporates</text>
+<rect x="330" y="70" width="220" height="120" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" rx="10"/>
+<text x="348" y="102" font-family="Outfit,sans-serif" font-size="14.5" fill="#dfc599" font-weight="600">the record</text>
+<text x="348" y="128" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">every claim carries its receipt;</text>
+<text x="348" y="147" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">corrections stay visible, never erased</text>
+<rect x="620" y="70" width="220" height="120" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" rx="10"/>
+<text x="638" y="102" font-family="Outfit,sans-serif" font-size="14.5" fill="#dfc599" font-weight="600">finished documents</text>
+<text x="638" y="128" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">reports, briefs, papers ;</text>
+<text x="638" y="147" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">grown from the record</text>
+<line x1="262" y1="130" x2="328" y2="130" stroke="#c9a96e" stroke-width="1.5"/>
+<path d="M 328 130 l -7 -4 v 8 z" fill="#c9a96e"/>
+<line x1="552" y1="130" x2="618" y2="130" stroke="#c9a96e" stroke-width="1.5"/>
+<path d="M 618 130 l -7 -4 v 8 z" fill="#c9a96e"/>
+<rect x="330" y="200" width="220" height="30" fill="none" stroke="rgba(201, 169, 110, 0.15)" stroke-width="1" rx="6"/>
+<text x="440" y="220" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#a89a7a" text-anchor="middle">append-only · re-checked at every rebuild</text>
+<text x="40" y="250" font-family="Lora,Georgia,serif" font-size="11.5" fill="#6b7280">a sketch; nothing in it is measured</text>
+<text x="12" y="270" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#a89a7a" opacity="0.85">source: the three parts of Eigen's record</text>
+</svg>

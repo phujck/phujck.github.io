@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0e1a">
+  <title>Optical twinning trees — EigenEngine</title>
+  <meta name="description" content="In July 2026 a physicist gave Eigen one research question. Over two days Eigen produced a 14-page paper and a 15-slide talk, reviewed its own first draft, and produced a second version.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <style id="identity-tokens">:root{--bg-primary:#0a0e1a;--bg-secondary:#111827;--bg-card:rgba(255, 255, 255, 0.04);--bg-card-hover:rgba(255, 255, 255, 0.07);--bg-glass:rgba(255, 255, 255, 0.06);--border-glass:rgba(255, 255, 255, 0.08);--text-primary:#e8e6e3;--text-secondary:#9ca3af;--text-muted:#6b7280;--accent:#c9a96e;--accent-light:#dfc599;--accent-dim:rgba(201, 169, 110, 0.15);--accent-warm-1:#e6cc92;--accent-warm-2:#b8894a;--accent-warm-3:#8a6330;--link:#7eb8da;--link-hover:#a8d4f0;--refused:#c0392b;--refused-dim:rgba(192, 57, 43, 0.12);--evidence:#a89a7a;}</style>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .tw-top { position: sticky; top: 0; z-index: 5; background: rgba(10,14,26,0.92); border-bottom: 1px solid var(--border-glass); backdrop-filter: blur(10px); }
+    .tw-top .container { display: flex; align-items: baseline; gap: var(--space-lg); padding-top: 0.7rem; padding-bottom: 0.7rem; font-size: 0.85rem; }
+    .tw-top a { color: var(--text-secondary); text-decoration: none; }
+    .tw-top .here { color: var(--text-primary); }
+    .tw-hero { padding: calc(var(--space-3xl) + 1rem) 0 var(--space-xl); }
+    .tw-hero h1 { font-size: clamp(1.8rem, 4.5vw, 2.8rem); margin-bottom: var(--space-md); }
+    .tw-hero p { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.75; max-width: 62ch; }
+    .tw-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-xl); align-items: start; max-width: 100ch; }
+    .tw-grid img { width: 100%; height: auto; border-radius: var(--radius-lg); border: 1px solid var(--border-glass); }
+    .tw-steps { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+    .tw-steps li { counter-increment: s; display: grid; grid-template-columns: 2.2rem 1fr; gap: var(--space-sm); padding: var(--space-md) 0; border-bottom: 1px solid var(--border-glass); color: var(--text-secondary); line-height: 1.65; font-size: 0.95rem; }
+    .tw-steps li::before { content: counter(s); font-family: var(--font-mono); color: var(--accent); font-size: 0.9rem; padding-top: 2px; }
+    .tw-steps b { color: var(--text-primary); }
+    .tw-callout { max-width: 100ch; margin: var(--space-xl) 0; padding: var(--space-md) var(--space-lg); border: 1px solid var(--accent); border-radius: var(--radius-lg); color: var(--text-primary); font-size: 0.95rem; line-height: 1.6; }
+    .tw-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-md); max-width: 100ch; }
+    .tw-link { display: block; background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); text-decoration: none; }
+    .tw-link:hover { background: var(--bg-card-hover); }
+    .tw-link h3 { font-size: 0.95rem; color: var(--accent); margin-bottom: var(--space-xs); }
+    .tw-link p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+    @media (max-width: 760px) { .tw-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="tw-top"><div class="container"><a href="/eigenengine.html">← EigenEngine</a><span class="here">Optical twinning trees</span></div></div>
+
+  <header class="tw-hero">
+    <div class="container">
+      <span class="section-label">Generated paper</span>
+      <h1>Optical twinning trees</h1>
+      <p>In July 2026 a physicist, Denys Bondar of Tulane University, gave Eigen one research question: could two different materials be driven by feedback to give the same optical response, and could that be used to compute? Over two days Eigen produced a paper and a talk. The paper's subject is a loop in which the measured difference between two materials' responses is fed back into the light that drives them, until the difference vanishes.</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="tw-grid">
+        <div>
+          <ol class="tw-steps">
+            <li><span><b>The question.</b> Given as a short prompt on 24 July 2026, with the physicist's own notes on twinning fields.</span></li>
+            <li><span><b>The first paper.</b> Eigen searched the literature, wrote the numerical experiments, ran them, and wrote a first version with its figures.</span></li>
+            <li><span><b>The review.</b> Eigen reviewed its own first version and found four weak steps in the argument.</span></li>
+            <li><span><b>The second paper.</b> 14 pages, 8 figures, 29 references, answering the four problems the review found. The physicist's corrections were applied along the way.</span></li>
+            <li><span><b>The talk.</b> 15 slides generated from the paper.</span></li>
+            <li><span><b>The conversation.</b> Every exchange between the physicist and Eigen is kept, so each decision in the paper can be traced to where it was made.</span></li>
+          </ol>
+        </div>
+        <a href="/talks/optical-twinning-trees/"><img src="/talks/optical-twinning-trees/slides/slide-1.png" alt="Opening slide of the talk: Nonlinear Computing with Optical Twinning Trees" width="1600" height="900"></a>
+      </div>
+      <div class="tw-callout">The paper, the talk and the conversation below were algorithmically generated; not fit for human consumption.</div>
+      <div class="tw-links">
+        <a class="tw-link" href="/assets/docs/nonlinear-computing-with-optical-twinning-trees.pdf"><h3>The paper (PDF)</h3><p>Version 2. Nonlinear Computing with Optical Twinning Trees.</p></a>
+        <a class="tw-link" href="/assets/docs/nonlinear-computing-with-optical-twinning-trees-v1.pdf"><h3>The first version (PDF)</h3><p>Before the review.</p></a>
+        <a class="tw-link" href="/talks/optical-twinning-trees/"><h3>The talk</h3><p>15 slides, in the browser.</p></a>
+        <a class="tw-link" href="/demo/generation.html"><h3>The conversation</h3><p>Every exchange that produced the paper.</p></a>
+        <a class="tw-link" href="/demo/"><h3>The original page</h3><p>Eigen's own account of the paper, written at the time, in its own vocabulary.</p></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><div class="container"><div class="footer-inner"><p class="footer-text">© 2026 EigenEngine Ltd · <a href="/eigenengine.html" style="color:var(--text-secondary)">EigenEngine</a> · <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--text-secondary)">eigen@gmccaul.co.uk</a></p></div></div></footer>
+</body>
+</html>

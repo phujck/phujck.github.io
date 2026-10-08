@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SuperARC run: skeptic verdict</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">SuperARC run: skeptic verdict</h1>
+</header>
+<h1 id="the-run--adversarial-calibration-verdict">THE RUN — adversarial
+calibration verdict</h1>
+<p><strong>Standing adversarial skeptic</strong>
+(WO-20260803-adversarial-calibration-skeptic). The job is to FALSIFY,
+not to confirm. Everything below recomputes from
+<code>report.json</code>, the frozen organs in
+<code>src/laplace/superarc/</code>, the banked arm answers under
+<code>arms/</code>, and the raw agent transcripts — never from the prose
+of <code>report.md</code>.</p>
+<p><strong>Scored artefact under attack:</strong>
+<code>report.json</code> @ <code>scored_utc</code> 2026-08-05T14:27:51Z,
+preregistration v2 self-hash <code>44b64bf9…4482f2</code>.</p>
+<p><strong>Nothing here amends the freeze.</strong> Every recomputation
+in this file is a SENSITIVITY. The headline φ values stay exactly as
+scored: A1 = 0.017182, A2 = 0.485181, A3 = 0.429501. What changes is
+which <em>sentences</em> those numbers license.</p>
+<hr />
+<h2 id="verdict-summary">Verdict summary</h2>
+<table>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>claim as THE RUN states it</th>
+<th>verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>A2 φ = 0.485 vs best published 0.042 — <strong>11.6×</strong></td>
+<td><strong>SUSTAINED</strong> (qualified: the honest floor is ~9.6×,
+and the number to print is a bin-decade fact, not a ratio of φ)</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>A2 &gt; A3, A2 − A3 = <strong>+0.056</strong>, band excludes zero at
+s = 100</td>
+<td><strong>REFUTED</strong> — the gap is a confounded answer-FORMAT
+artifact; controlled, it is <strong>−0.002</strong> and the band
+includes zero at every resample size</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>A1 collapses to 0.017 via <strong>97 S-1 prints</strong></td>
+<td><strong>SUSTAINED</strong> — S-1 is the whole of the collapse (no-S1
+A1 = 0.412897) and S-1 is right; the asymmetry must be disclosed</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><strong>"execution, then recursion — in that order of
+magnitude"</strong> (7× proportion)</td>
+<td><strong>REFUTED as stated</strong> — robust to the 13 restart items,
+NOT robust to either instrument axis; the proportion ranges 0.23× to
+62×</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>pilot φ 0.45 → run φ 0.485 (generalization)</td>
+<td><strong>SUSTAINED, but reframed</strong> — the stability is EXPECTED
+and near-vacuous; the +0.035 is fully explained and is not evidence of
+generalization</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="the-finding-that-drives-three-of-the-five-verdicts">The finding
+that drives three of the five verdicts</h2>
+<p><strong>φ scores the answer STRING through nBDM, and A2's banked
+answers carry an appended prose commentary that A3's and A1's and the
+published corpus's mostly do not.</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>arm</th>
+<th style="text-align: right;">answers carrying an appended
+<code>--</code> commentary</th>
+<th style="text-align: right;">mean answer length</th>
+<th style="text-align: right;">mean nBDM(answer)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A1</td>
+<td style="text-align: right;"><strong>0</strong> / 100</td>
+<td style="text-align: right;">41.7 chars</td>
+<td style="text-align: right;">0.8151</td>
+</tr>
+<tr class="even">
+<td>A2</td>
+<td style="text-align: right;"><strong>49</strong> / 100</td>
+<td style="text-align: right;">254.3 chars</td>
+<td style="text-align: right;">0.6348</td>
+</tr>
+<tr class="odd">
+<td>A3</td>
+<td style="text-align: right;"><strong>12</strong> / 100</td>
+<td style="text-align: right;">95.0 chars</td>
+<td style="text-align: right;">0.7442</td>
+</tr>
+</tbody>
+</table>
+<p>nBDM is <em>normalized</em> block-decomposition complexity,
+<code>(BDM − minBDM) / (maxBDM − minBDM)</code>. It falls as a string
+lengthens:</p>
+<ul>
+<li><p>across all 300 scored rows,
+<code>corr(len(answer), nBDM(answer)) = −0.854</code>; against log
+length, <strong>−0.915</strong>.</p></li>
+<li><p>direct probe, content held exactly fixed, the same 39-char
+formula repeated:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">repetitions</th>
+<th style="text-align: right;">length</th>
+<th style="text-align: right;">nBDM(answer)</th>
+<th style="text-align: right;">ratio = tanh(nBDM_in/nBDM_ans)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">×1</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">0.7455</td>
+<td style="text-align: right;">0.4874</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">×2</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">0.6473</td>
+<td style="text-align: right;">0.5466</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">×4</td>
+<td style="text-align: right;">162</td>
+<td style="text-align: right;">0.4420</td>
+<td style="text-align: right;">0.7155</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">×8</td>
+<td style="text-align: right;">326</td>
+<td style="text-align: right;">0.2283</td>
+<td style="text-align: right;">0.9402</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">×16</td>
+<td style="text-align: right;">654</td>
+<td style="text-align: right;">0.1180</td>
+<td style="text-align: right;"><strong>0.9976</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Zero added information doubles the item's contribution to φ.</p></li>
+<li><p>and the regression that decides it — over the <strong>92</strong>
+items where A2 and A3 both land in the abstraction bin:
+<code>corr(A2−A3 extra length, A2−A3 extra ratio) = **+0.898**</code>,
+<strong>R² = 0.806</strong>. <strong>Length alone explains 81% of A2's
+per-item advantage over A3.</strong></p></li>
+</ul>
+<p>This does <em>not</em> attack the bins (see Attack 3 — they hold). It
+attacks δ, and δ is the only term separating A2 from A3.</p>
+<hr />
+<h2 id="attack-1--is-116-a-cross-classifier-fiction">Attack 1 — is 11.6×
+a cross-classifier fiction?</h2>
+<p><strong>Every defensible denominator, computed:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>denominator</th>
+<th style="text-align: right;">value</th>
+<th>model</th>
+<th style="text-align: right;">A2 / x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>best <code>φ_published</code> (their form, their correctness)</td>
+<td style="text-align: right;">0.041914</td>
+<td>chatgpt_4.5</td>
+<td style="text-align: right;"><strong>11.58×</strong></td>
+</tr>
+<tr class="even">
+<td>best <code>φ_hand</code> (our form, their correctness)</td>
+<td style="text-align: right;">0.041914</td>
+<td>chatgpt_4.5</td>
+<td style="text-align: right;"><strong>11.58×</strong></td>
+</tr>
+<tr class="odd">
+<td>best <code>φ_mech</code> (our form, our correctness)</td>
+<td style="text-align: right;">0.032970</td>
+<td>claude_3.7</td>
+<td style="text-align: right;"><strong>14.72×</strong></td>
+</tr>
+<tr class="even">
+<td>best <code>φ_mech</code> under the IDX-1
+<strong>alternative</strong> 1..12 anchor</td>
+<td style="text-align: right;">0.196018</td>
+<td>chatgpt_5</td>
+<td style="text-align: right;"><strong>2.48×</strong></td>
+</tr>
+<tr class="odd">
+<td>A2 bootstrap lo(s=100) ÷ best-mech hi(s=100)</td>
+<td style="text-align: right;">0.4583 / 0.0357</td>
+<td>—</td>
+<td style="text-align: right;"><strong>12.82×</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Three things a referee will say, and the answers:</p>
+<ol type="1">
+<li><p><strong>"11.6× mixes instruments."</strong> It does — our φ_mech
+on our arms against their hand labels on theirs. But it mixes them in
+the <em>conservative</em> direction:
+<code>φ_published ≥ φ_hand ≥ φ_mech</code> at the top of the table, so
+their own instrument is the most generous denominator available and
+11.58× is the <em>smallest</em> of the three like-for-like candidates.
+<strong>14.7× is the apples-to-apples number and the paper should not
+print it as the headline</strong>, because it requires the referee to
+trust our translator on their answers.</p></li>
+<li><p><strong>"Your own IDX-1 sensitivity destroys it."</strong>
+Partly. Under the 1..12 anchor the best mechanical competitor is
+chatgpt_5 at 0.196018 and the multiplier falls to
+<strong>2.48×</strong>. This is the single largest threat in the
+campaign and the paper must print it. It does <strong>not</strong> touch
+the headline, because the headline denominator is
+<code>φ_published</code>, which is the authors' own column and is
+anchor-invariant — and because the authors' graders scored those 47
+chatgpt_5 rows incorrect, so the 0-anchored default <em>agrees with the
+humans</em>. The printable consequence: <strong>the mechanical column is
+anchor-sensitive and may never be headlined; the published column is
+not.</strong></p></li>
+<li><p><strong>"Your δ is inflated by verbosity."</strong> Here the
+confound does NOT bite, and the decomposition shows why. The best
+published model, <code>chatgpt_4.5</code>, has bin counts
+<code>[0, 100, 0, 0]</code> — <strong>every one of its 100 answers is
+ORDINAL (×1/10); none is abstraction.</strong> A2 is
+<code>[96, 1, 3, 0]</code>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>factor</th>
+<th style="text-align: right;">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A2 φ if A2 carried chatgpt_4.5's δ (0.41914) in every bin</td>
+<td style="text-align: right;">0.402918</td>
+</tr>
+<tr class="even">
+<td><strong>bin-decade factor</strong></td>
+<td style="text-align: right;"><strong>9.61×</strong></td>
+</tr>
+<tr class="odd">
+<td>δ factor, A2 as scored</td>
+<td style="text-align: right;">1.20×</td>
+</tr>
+<tr class="even">
+<td>δ factor, A2 with commentary stripped</td>
+<td style="text-align: right;">1.05–1.08×</td>
+</tr>
+<tr class="odd">
+<td>product (as scored)</td>
+<td style="text-align: right;">11.58×</td>
+</tr>
+<tr class="even">
+<td>product (commentary stripped)</td>
+<td style="text-align: right;"><strong>10.14× – 10.35×</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>The multiplier is ≥ 9.6× under any format control at
+all</strong>, because it is overwhelmingly a bin-decade statement and
+only marginally a δ statement.</p></li>
+</ol>
+<p><strong>VERDICT: SUSTAINED.</strong> But 11.6× is the wrong sentence
+to lead with — it is a ratio of a ratio, and it invites exactly the
+three objections above. Lead with the bin decade.</p>
+<blockquote>
+<p><strong>The sentence the paper may print:</strong> "On the 100
+published binary items, A2 places <strong>96 answers in the
+genuine-abstraction bin (×1)</strong>; the best-scoring published model,
+<code>chatgpt_4.5</code>, places <strong>none</strong> — all 100 of its
+answers are index-mapped (×1/10). That one-decade difference is worth
+<strong>9.6×</strong> on its own; with the measured δ terms it is
+<strong>11.6×</strong> against the authors' own published column
+(0.485181 vs 0.041914), and <strong>10.1×</strong> if A2's answers are
+first reduced to their bare formula statements. Scored with our
+instrument on both sides the figure is 14.7×; we do not headline it,
+because the mechanical correctness column is sensitive to the
+index-anchor convention — under the alternative 1..12 anchor
+<code>chatgpt_5</code> rises from 0.000000 to 0.196018 and the
+mechanical multiplier falls to 2.5×. The published column is
+anchor-invariant; the mechanical column is not, and both are
+printed."</p>
+</blockquote>
+<hr />
+<h2 id="attack-2--did-s-1-manufacture-a1s-collapse">Attack 2 — did S-1
+manufacture A1's collapse?</h2>
+<p><strong>Yes, entirely — and that is not the same as S-1 being
+wrong.</strong></p>
+<p>Recomputed by disabling
+<code>bin_classifier.base_encoded_literal</code> and re-binning; the
+re-derivation reproduces all 300 reported bins exactly under S-1 ON, so
+the control is sound.</p>
+<table>
+<thead>
+<tr class="header">
+<th>arm</th>
+<th style="text-align: right;">φ, S-1 ON (as scored)</th>
+<th style="text-align: right;">φ, <strong>S-1 OFF</strong>
+(sensitivity)</th>
+<th style="text-align: right;">rows moved</th>
+<th>counts ON → OFF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A1</td>
+<td style="text-align: right;">0.017182</td>
+<td style="text-align: right;"><strong>0.412897</strong></td>
+<td style="text-align: right;">97</td>
+<td><code>[3,0,97,0]</code> → <code>[100,0,0,0]</code></td>
+</tr>
+<tr class="even">
+<td>A2</td>
+<td style="text-align: right;">0.485181</td>
+<td style="text-align: right;">0.501910</td>
+<td style="text-align: right;">3</td>
+<td><code>[96,1,3,0]</code> → <code>[99,1,0,0]</code></td>
+</tr>
+<tr class="odd">
+<td>A3</td>
+<td style="text-align: right;">0.429501</td>
+<td style="text-align: right;">0.429501</td>
+<td style="text-align: right;">0</td>
+<td>unchanged</td>
+</tr>
+</tbody>
+</table>
+<p><strong>S-1 costs A1 −0.395715, i.e. 96% of its score.</strong> A1's
+collapse is S-1 and nothing else.</p>
+<p><strong>Is the symmetry there? NO — and the asymmetry is
+total.</strong></p>
+<ul>
+<li>S-1 fires on <strong>11 of 4800</strong> published rows, in
+<strong>1 of 48</strong> sheet-columns
+(<code>seriesWithLLMs_ext_Aug2025 :: gemini_2.5_pro</code>).</li>
+<li><strong>All 11 are rows that are INCORRECT under both hand and
+mechanical correctness.</strong> An incorrect row bins
+<code>incorrect</code> regardless of form, so S-1's verdict is never
+consulted. <strong>Disabling S-1 changes exactly zero of the 48
+published φ columns, in any of the three columns.</strong></li>
+</ul>
+<p>So the no-S1 sensitivity is a purely one-sided lever: it lifts our
+own baseline by +0.3957 and our own best arm by +0.0167, and leaves
+every competitor untouched. <strong>The instrument's largest single
+effect lands only on us.</strong> That is a point of integrity, and it
+is also a fact a referee will find, so the paper must state it
+first.</p>
+<p><strong>Is S-1 right?</strong> Yes. The 97 answers are the template
+<code>a(n) = floor(K / 2^n) mod 2, n = 0..11</code> where <code>K</code>
+<strong>is the item</strong>, packed LSB-first. <code>s1_rule.md</code>
+§4.3 documents the identical template on the released program sheet,
+where 13 hand-labelled non-copies inflated a published model's φ by 11×.
+Under no-S1 those 97 answers are binned as <em>genuine abstraction</em>
+— the least abstract possible answer taking the highest possible bin,
+which is the precise defect <code>b11a-2</code> was corrected to close.
+<strong>No-S1 is a known-broken instrument, not a neutral
+alternative</strong>, and the paper must say so when it prints the
+number.</p>
+<p><strong>VERDICT: SUSTAINED.</strong> The collapse is real <em>as a
+statement about form</em>. The freeze's ban on a headline no-S1 column
+stands. The number must nonetheless appear as a disclosed sensitivity,
+because it is 96% of a reported figure and concealment is
+indefensible.</p>
+<blockquote>
+<p><strong>The sentence the paper may print:</strong> "A1's φ of
+0.017182 is produced entirely by rule S-1: 97 of its 100 answers pack
+the item into a single constant and read it back bit by bit
+(<code>a(n) = floor(K / 2^n) mod 2</code>), and S-1 bins those as
+literal reproduction (×1/100). On correctness alone A1 is
+<strong>100/100</strong>. With S-1 disabled — a sensitivity, not an
+alternative reading, and never the headline — A1 scores
+<strong>0.412897</strong>. We report that figure because S-1 is the
+largest single instrument effect in the campaign and it falls almost
+entirely on our own baseline: S-1 fires on 11 of 4800 published rows,
+all 11 already incorrect, so disabling it moves <strong>no</strong>
+published column by any amount. The rule is nonetheless correct —
+without it the least abstract answer available takes the highest bin,
+which is the defect <code>b11a-2</code> was corrected to close."</p>
+</blockquote>
+<hr />
+<h2
+id="attack-3--do-a2s-96-non-both-bins-survive-spot-re-derivation">Attack
+3 — do A2's 96 non-both bins survive spot re-derivation?</h2>
+<p>Ten A2 abstraction-bin answers drawn at random (seed 7):
+<code>bin-042</code>, <code>bin-020</code>, <code>bin-051</code>,
+<code>bin-087</code>, <code>bin-006</code>, <code>bin-009</code>,
+<code>bin-069</code>, <code>bin-012</code>, <code>bin-047</code>,
+<code>bin-075</code>. Each banked program was <strong>re-executed in a
+fresh interpreter</strong>, its stdout byte-compared to the item, and
+the answer re-binned both as banked and with the commentary
+stripped.</p>
+<ul>
+<li><strong>10 / 10 programs reproduce their item exactly.</strong></li>
+<li><strong>10 / 10 re-bin to <code>correct_non_both</code>, same rule
+(<code>R4:default</code>), both with and without the
+commentary.</strong> No bin depends on the prose.</li>
+<li>Read by hand, all ten are genuine generators:
+<code>1 if n mod 6 in {0,2}</code>, <code>1 if n mod 8 &gt;= 2</code>,
+<code>floor(85·2^n/47) mod 2</code> (the binary expansion of a rational
+— a real 12-bit→2-small-integer compression),
+<code>1 if n mod 9 in {1,3}</code>, <code>floor(13·2^n/29) mod 2</code>,
+<code>leading decimal digit of n! mod 2</code>,
+<code>floor((n²−5n+19)/15) mod 2</code>,
+<code>floor(53·2^n/41) mod 2</code>,
+<code>1 if (4·6^n mod 11) ≥ 4</code>,
+<code>floor(27·2^n/40) mod 2</code>. <strong>None is a disguised print,
+none is a lookup table, none is S-1-evadable.</strong></li>
+</ul>
+<p><strong>Independent confirmation of the bins from a second
+direction:</strong> the whole-run re-binning done for Attack 2
+reproduces <strong>300/300</strong> reported bins from the answer
+strings alone.</p>
+<p><strong>VERDICT: SUSTAINED, without qualification.</strong> A2's bin
+counts are real. The whole of the A2 problem is δ, not ρ.</p>
+<blockquote>
+<p><strong>The sentence the paper may print:</strong> "Ten A2
+abstraction-bin answers drawn at random were re-executed in a fresh
+interpreter and re-classified by hand: ten of ten reproduce their item
+byte-for-byte and ten of ten re-bin identically. Re-binning the full
+campaign from the banked answer strings alone reproduces <strong>300 of
+300</strong> bins. A2's ρ₁ = 0.96 is not an artifact of the
+classifier."</p>
+</blockquote>
+<hr />
+<h2 id="attack-4--the-execution-then-recursion-proportion">Attack 4 —
+the execution-then-recursion proportion</h2>
+<h3 id="4a-robust-to-the-13-restart-disclosed-items-yes">4a. Robust to
+the 13 restart-disclosed items? YES.</h3>
+<table>
+<thead>
+<tr class="header">
+<th>basis</th>
+<th style="text-align: right;">A2</th>
+<th style="text-align: right;">A3</th>
+<th style="text-align: right;">A2 − A3</th>
+<th>95% band</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>full N = 100 (as reported)</td>
+<td style="text-align: right;">0.485181</td>
+<td style="text-align: right;">0.429501</td>
+<td style="text-align: right;"><strong>+0.055680</strong></td>
+<td>[+0.027546, +0.084022]</td>
+</tr>
+<tr class="even">
+<td>excluding the 13 restart items, N = 87</td>
+<td style="text-align: right;">0.480383</td>
+<td style="text-align: right;">0.425620</td>
+<td style="text-align: right;"><strong>+0.054763</strong></td>
+<td>[+0.021205, +0.087755]</td>
+</tr>
+</tbody>
+</table>
+<p>Also recomputed: A2 − A1 = +0.466473, A3 − A1 = +0.411709 on the 87.
+The paired bootstrap on the same index draw reproduces the report's
+bands exactly on the full 100 (control passes). <strong>The restarts are
+not the problem.</strong> (Commentary rate on the restart items is 9/13
+vs 40/87 on the clean ones — slightly higher, and it still does not move
+the gap.)</p>
+<h3
+id="4b-robust-to-the-instrument-no-the-proportion-is-not-a-finding">4b.
+Robust to the instrument? NO. The proportion is not a finding.</h3>
+<p>The full 2 × 2 — both binary instrument/format choices, all arms
+treated identically in every cell:</p>
+<table>
+<thead>
+<tr class="header">
+<th>cell</th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">A2</th>
+<th style="text-align: right;">A3</th>
+<th style="text-align: right;">A2 − A3</th>
+<th style="text-align: right;">A3 − A1</th>
+<th style="text-align: right;">"execution buys N× recursion"</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>S-1 on, commentary kept</strong> — <em>as reported</em></td>
+<td style="text-align: right;">0.017182</td>
+<td style="text-align: right;">0.485181</td>
+<td style="text-align: right;">0.429501</td>
+<td style="text-align: right;">+0.055680</td>
+<td style="text-align: right;">+0.412319</td>
+<td style="text-align: right;"><strong>7.41×</strong></td>
+</tr>
+<tr class="even">
+<td>S-1 on, commentary stripped</td>
+<td style="text-align: right;">0.017182</td>
+<td style="text-align: right;">0.433885</td>
+<td style="text-align: right;">0.427280</td>
+<td style="text-align: right;">+0.006605</td>
+<td style="text-align: right;">+0.410098</td>
+<td style="text-align: right;">62.09×</td>
+</tr>
+<tr class="odd">
+<td>S-1 off, commentary kept</td>
+<td style="text-align: right;">0.412897</td>
+<td style="text-align: right;">0.501910</td>
+<td style="text-align: right;">0.429501</td>
+<td style="text-align: right;">+0.072409</td>
+<td style="text-align: right;">+0.016604</td>
+<td style="text-align: right;"><strong>0.23×</strong></td>
+</tr>
+<tr class="even">
+<td>S-1 off, commentary stripped</td>
+<td style="text-align: right;">0.412897</td>
+<td style="text-align: right;">0.436729</td>
+<td style="text-align: right;">0.427280</td>
+<td style="text-align: right;">+0.009448</td>
+<td style="text-align: right;">+0.014383</td>
+<td style="text-align: right;">1.52×</td>
+</tr>
+</tbody>
+</table>
+<p>The claimed proportion ranges over <strong>more than two orders of
+magnitude</strong> across four defensible cells, and
+<strong>inverts</strong> in one of them: with S-1 off, recursion buys
+4.4× <em>more</em> than execution, the exact opposite of the printed
+sentence.</p>
+<p><strong>VERDICT: REFUTED as stated.</strong> "Execution, then
+recursion — in that order of magnitude" is a property of the instrument
+configuration, not of the arms. The one thing stable across all four
+cells is that A2 − A3 is <em>small</em>.</p>
+<blockquote>
+<p><strong>The sentence the paper may print:</strong> "Under the frozen
+instrument, A3 − A1 = +0.412319 and A2 − A3 = +0.055680. We do not draw
+a proportion from these. The A3 − A1 term is created by rule S-1 — with
+S-1 disabled it falls to +0.016604 — and the A2 − A3 term does not
+survive the answer-format control of §[Attack 2 above]. Across the four
+combinations of {S-1 on/off} × {A2 commentary kept/stripped} the ratio
+of the two increments ranges from 0.23× to 62× and changes sign. The
+honest statement is the negative one: <strong>this run does not measure
+how much of the gain is execution and how much is
+recursion.</strong>"</p>
+</blockquote>
+<hr />
+<h2 id="attack-2-the-live-question--does-a2--a3-survive-at-all">Attack
+2′ (the live question) — does A2 &gt; A3 survive at all?</h2>
+<p><strong>This is the claim that fails.</strong></p>
+<p>The A2 − A3 gap is not a correctness gap (both 100/100) and not a bin
+gap (both ρ₁ = 0.96). Decomposed:</p>
+<blockquote>
+<p>A2's bins carrying A3's δ terms → φ = 0.428120, against A3's actual
+0.429501. <strong>102.5% of the A2 − A3 gap is δ. Zero of it is
+ρ.</strong></p>
+</blockquote>
+<p>And δ is the term that answer length moves (R² = 0.806, above). Strip
+the commentary from every arm identically and re-score:</p>
+<table>
+<thead>
+<tr class="header">
+<th>basis</th>
+<th style="text-align: right;">A2</th>
+<th style="text-align: right;">A3</th>
+<th style="text-align: right;">A2 − A3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>as reported</td>
+<td style="text-align: right;">0.485181</td>
+<td style="text-align: right;">0.429501</td>
+<td style="text-align: right;"><strong>+0.055680</strong></td>
+</tr>
+<tr class="even">
+<td>commentary stripped, bins held</td>
+<td style="text-align: right;">0.425043</td>
+<td style="text-align: right;">0.427280</td>
+<td style="text-align: right;"><strong>−0.002238</strong></td>
+</tr>
+<tr class="odd">
+<td>commentary stripped, re-binned (2 bins move)</td>
+<td style="text-align: right;">0.433885</td>
+<td style="text-align: right;">0.427280</td>
+<td style="text-align: right;"><strong>+0.006605</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Paired bootstrap on the same index draw, seed 20260804, commentary
+stripped:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">s</th>
+<th style="text-align: right;">A2 − A3</th>
+<th>95% band</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">−0.002623</td>
+<td>[−0.056643, +0.040154]</td>
+<td><strong>includes zero</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">−0.004561</td>
+<td>[−0.040012, +0.030514]</td>
+<td><strong>includes zero</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">−0.000877</td>
+<td>[−0.024418, +0.026056]</td>
+<td><strong>includes zero</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><strong>100</strong></td>
+<td style="text-align: right;"><strong>−0.002135</strong></td>
+<td><strong>[−0.028784, +0.023162]</strong></td>
+<td><strong>INCLUDES ZERO</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Excluding the 13 restart items as well: A2 − A3 =
+<strong>−0.002563</strong>, band [−0.026356, +0.018166], includes
+zero.</p>
+<p><strong>The confound is traceable to the dispatch packets, not to
+chance.</strong> Read out of the raw transcripts (162 agent transcripts,
+117 A2, 40 A3):</p>
+<ul>
+<li>Every one of the <strong>117 A2 packets</strong> carries a
+formula-statement discipline: <em>"derive the matching FORMULA
+statement; semantics-preserving parsimony ONLY (fold constants, remove
+dead branches, re-verify after every rewrite). NEVER optimize against
+nBDM and NEVER pad."</em></li>
+<li><strong>The 40 A3 packets carry no formula-statement clause at
+all</strong> — no parsimony instruction, no gate check, no mention of
+answer form.</li>
+</ul>
+<p>So the two arms differ in <strong>two</strong> ways, not one: the
+intended manipulation (4 genesis rounds vs 1 pass) and an unintended
+asymmetry in how each was told to write its answer down — an asymmetry
+that lands on the <em>only</em> term that separates them.</p>
+<p><strong>VERDICT: REFUTED.</strong> The preregistration's own
+contingency now fires. It reads: <em>"If the frozen run returns A2 ≈ A3,
+the honest claim shrinks to 'execution, not recursion', and §7 says so.
+That sentence is preregistered."</em> Under the format-controlled
+comparison the run returns A2 ≈ A3.</p>
+<p>This is <strong>not</strong> post-hoc instrument shopping, and the
+freeze does not forbid it: a freeze protects against choosing an
+instrument after seeing the score. It cannot bless a <em>design
+confound</em> between two arms, because a confounded comparison licenses
+no causal claim under any instrument.</p>
+<blockquote>
+<p><strong>The sentence the paper may print:</strong> "Under the frozen
+instrument A2 − A3 = +0.055680, 95% band [+0.027546, +0.084022],
+excluding zero at s = 100. <strong>We do not claim it as a
+result.</strong> Both arms close 100/100 and both place 96 answers in
+the abstraction bin, so the entire gap is δ, the answer-complexity term
+— a counterfactual giving A2's bins A3's δ values accounts for 102.5% of
+it. δ is driven by answer length (across 300 rows, corr(length, nBDM) =
+−0.854; over the 92 items where both arms reach the abstraction bin,
+extra length explains R² = 0.806 of A2's extra ratio), and the two arms
+wrote in different formats: <strong>49 of A2's 100 answers append a
+prose commentary to the formula, against 12 of A3's</strong>, because
+the A2 dispatch packet carried a formula-statement and parsimony clause
+that the A3 packet did not. Reducing every arm's answers to the bare
+formula statement, identically, gives <strong>A2 − A3 =
+−0.002238</strong> with a 95% band of <strong>[−0.028784,
++0.023162]</strong> — including zero at every resample size, and
+unchanged when the 13 restart-disclosed items are also removed. The
+preregistered contingency therefore applies and we print it: on this
+evidence the claim is <strong>'execution, not recursion'</strong>.
+Whether the genesis loop adds anything beyond execution access is
+<strong>not resolved by this run</strong>, and resolving it requires a
+rerun with the two arms' answer-format instructions equalized."</p>
+</blockquote>
+<hr />
+<h2 id="attack-5--dev-suite--published-generalization">Attack 5 —
+dev-suite → published generalization</h2>
+<p>Preregistered pilot priors (dev suite, N = 20, b11a-3): A1 = 0.07953,
+A2 = 0.450115, A3 = 0.380041. THE RUN (published 100): A1 = 0.017182, A2
+= 0.485181, A3 = 0.429501.</p>
+<p><strong>The stability is expected, and it is close to
+vacuous.</strong> Two reasons:</p>
+<ol type="1">
+<li><p><strong>δ₁ is nearly a constant of the item format.</strong>
+Across all six arm×suite pairs measured in this campaign, δ₁ ∈ [0.4193,
+0.5048] — a total range of 0.0854 on a quantity that is bounded in
+[0,1]. Once an arm is all-correct and all-abstraction-binned, φ ≈ δ₁ ≈
+0.42–0.50 <strong>almost automatically</strong>, because both suites are
+12-term binary sequences and every short formula answer sits in the same
+nBDM band. A1 with S-1 disabled scores 0.412897 and A3 scores 0.429501 —
+arms of very different quality landing 0.017 apart. <strong>φ's
+discriminating power in this campaign is ρ (bin share), not
+δ.</strong></p></li>
+<li><p><strong>The +0.035 A2 rise is fully accounted for, and it is not
+generalization.</strong> The pilot's A2 wrote <strong>0/20</strong>
+commented answers (mean length 85.3 chars); the run's A2 wrote
+<strong>49/100</strong> (mean length 254.3). Format-matched — pilot A2
+(0.450115) against run A2 with commentary stripped
+(<strong>0.433885</strong>) — the run is <em>slightly lower</em>, not
+higher. The apparent improvement on the harder, external suite is the
+commentary.</p></li>
+</ol>
+<p><strong>VERDICT: SUSTAINED, reframed.</strong> There is nothing
+suspicious here and no evidence of leakage — AUD-1 is discharged CLEAN
+with zero true positives across 466 files, and it joined items by
+normalized sequence rather than row index, so mis-attribution is
+excluded. But the stability is not a generalization result.</p>
+<blockquote>
+<p><strong>The sentence the paper may print:</strong> "A2's φ moves from
+0.450115 on the 20-item dev suite to 0.485181 on the 100 published
+items. This is not evidence of generalization and we do not present it
+as such. δ₁ is nearly a constant of the item format — across all six
+arm×suite pairs in this campaign it lies in [0.4193, 0.5048] — so any
+arm that is all-correct and abstraction-binned scores φ ≈ 0.42–0.50 on
+12-term binary items almost by construction. The +0.035 is accounted for
+by answer format: the pilot's A2 appended commentary to 0 of 20 answers
+and the run's to 49 of 100, and format-matched the run scores 0.433885,
+marginally <em>below</em> the pilot. <strong>What generalizes from pilot
+to run is ρ — the bin share — not φ.</strong> A2 held ρ₁ at 1.00 on the
+dev suite and 0.96 on the published suite, closing 100/100 items in
+both."</p>
+</blockquote>
+<hr />
+<h2
+id="secondary-findings-the-paper-must-fix-before-printing-anything">Secondary
+findings the paper must fix before printing anything</h2>
+<ol type="1">
+<li><p><strong><code>report.md</code> and <code>report.json</code> are
+STALE on AUD-1.</strong> Both carry AUD-1 as <em>"OUTSTANDING —
+preregistered obligation NOT discharged"</em> and declare every number
+conditional on it. <code>transcript_audit.json</code> (written 14:41Z,
+13 minutes after the report) records <code>status: COMPLETE</code>,
+verdict <strong>CLEAN</strong>, 0 true positives in arm scope, 0 items
+voided, N held at 100. <strong>The conditional banner must be replaced
+by the discharge before publication</strong>, or the paper states as
+outstanding an obligation it has met.</p></li>
+<li><p><strong>AUD-2 does not exist and should.</strong> AUD-1 audited
+contamination by the released <em>answers</em> (P1 clone path, P2 env
+name, P3 released answers, P4 sequence forms). It did
+<strong>not</strong> audit contamination by the <em>metric</em>. Run
+here with the same true-positive discipline, by provenance:</p>
+<table>
+<thead>
+<tr class="header">
+<th>provenance</th>
+<th>metric words found</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>inbound packet</td>
+<td><code>nbdm</code>×118, <code>phi</code>×4, <code>bdm</code>×1</td>
+</tr>
+<tr class="even">
+<td>tool results the agent read</td>
+<td><code>nbdm</code>×265, <code>phi</code>×166, <code>delta</code>×136,
+<code>bdm</code>×99, φ-symbol×152, δ-symbol×129, <code>tanh</code>×8,
+harmonic-mean×7, bin-names×51</td>
+</tr>
+<tr class="odd">
+<td>the agent's own writing</td>
+<td><code>phi</code>×290, <code>delta</code>×96,
+<code>nbdm</code>×29</td>
+</tr>
+<tr class="even">
+<td>harness ambient attachments</td>
+<td>none</td>
+</tr>
+</tbody>
+</table>
+<p>The 118 packet hits are the single clause <em>"NEVER optimize against
+nBDM and NEVER pad"</em> in each of the 117 A2 packets.
+<code>genesis_loop._METRIC_MENTIONS</code> exists precisely to forbid
+this — <em>"The scorer is never named to the worker. A packet that
+mentions the metric invites optimization against it"</em> — and
+<code>metric_mentions()</code> returns <code>['bdm','nbdm']</code> on
+the frozen A2 packet. <strong>The A2 packet violates the engine's own
+metric-blindness rule, and only A2's.</strong> A prohibition still
+discloses the target. This is disclosure-grade even though the
+tool-result hits are the arms reading repo documents rather than the
+scorer being handed to them; it should be preregistered as AUD-2 and run
+before the next campaign.</p></li>
+<li><p><strong><code>report.md</code> §1 asserts a causal proportion the
+data do not carry.</strong> The sentence <em>"most of the distance from
+a bare arm is bought by letting the model run its own code, and the loop
+adds a real but second-order increment"</em> must be withdrawn (Attack
+4b).</p></li>
+<li><p><strong>Cross-arm exposure, already logged in the audit's
+non-voiding observations</strong>: arms read prior arms' banked ledgers
+under <code>arms/A2/</code> to copy the output JSON format, exposing
+another item's sequence and that arm's derived formula (7 bare-form
+hits). It carries nothing from the released corpora and voids nothing,
+but it belongs in the deviations table on the face of the paper, not
+only in the audit file.</p></li>
+</ol>
+<hr />
+<h2 id="what-survives-in-one-paragraph">What survives, in one
+paragraph</h2>
+<p>A2 closes 100 of 100 published items and places 96 answers in the
+genuine-abstraction bin, where the best-scoring published model places
+none — one full decade of the benchmark's own weighting, worth 9.6×
+before any complexity term is consulted and 10–12× after, against the
+authors' own published column. That claim is robust to every attack run
+here: to the choice of comparison column, to the answer-format control,
+to the removal of the restart-disclosed items, and to hand re-derivation
+of the bins. What does <strong>not</strong> survive is every claim about
+the <em>internal</em> ordering of the arms — A2 over A3, and the
+execution-versus-recursion proportion — because A1's separation is
+manufactured by a single classifier rule that touches no competitor, and
+A2's separation from A3 is manufactured by a prompt asymmetry that only
+A2's answers were written under.</p>
+<hr />
+<p><em>Recomputation scripts:
+<code>/home/user/skeptic/{s1_sens,attacks,delta_confound,commentary,twobytwo,aud2,metric_leak}.py</code>.
+Every number above re-derives from <code>report.json</code> plus the
+frozen organs; the 300/300 bin re-derivation is the control that all of
+them passed.</em></p>
+</body>
+</html>

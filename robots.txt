@@ -5,5 +5,8 @@ Disallow: /unlisted/
 Disallow: /review/
 Disallow: /memories/
 Disallow: /registers/
+Disallow: /eigenengine.html
+Disallow: /talks/optical-twinning-trees/
+Disallow: /demo/
 
 Sitemap: https://gmccaul.co.uk/sitemap.xml

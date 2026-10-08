@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SuperARC run: preregistration</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">SuperARC run: preregistration</h1>
+</header>
+<h1
+id="the-freeze--preregistration-for-the-one-run-on-the-published-100">THE
+FREEZE — preregistration for the one run on the published 100</h1>
+<p><strong>Machine form:</strong> <code>preregistration.json</code>
+(this file is its reading, not its authority). <strong>Version:</strong>
+<strong>v2</strong> — amended and re-opened before the run.
+<strong>Self-hash (v2):</strong>
+<code>44b64bf95f3132f009c2a22ffe6605a10def95527e0fa7a494a49b13b44482f2</code>
+<strong>Supersedes (v1):</strong>
+<code>6ecc92ee32366ff635b77f14815cdd909142f7cadde761681f544633d76d6280</code>
+<strong>Written:</strong> 2026-08-04T23:52:00Z ·
+<strong>Amended:</strong> 2026-08-05T00:12:00Z
+<strong>Authority:</strong>
+<code>DESIGN_2026-08-04_synthetics-genesis-superarc-strategy.md</code>
+§5, §6, §11.</p>
+<p><strong>Status.</strong> Still frozen before the published 100 were
+touched by any arm. No arm output exists; <code>arms/{A1,A2,A3}</code>
+are empty; <code>items.jsonl</code> does not yet exist — the same
+conditions v1 recorded, re-checked at the amendment. This is the ONE
+run. It happens once.</p>
+<p><strong>Why there is a v2.</strong> The pre-run adversarial audit
+(<code>freeze_audit.md</code>, sha256 <code>b3f7daaa…</code>) returned
+<strong>FREEZE-DEFECTIVE</strong>: two blocking defects (D1, D2) and
+three non-blocking (D3, D4, D5). Because <strong>no arm had run</strong>
+— <code>items.jsonl</code> did not exist, no answer, bin or φ existed
+for any frozen item — there was no run to void, and
+<code>voiding_conditions.operational[9]</code> permits an edit exactly
+when the run is declared void and re-opened. So the freeze was
+<strong>amended and re-opened</strong> rather than quietly patched or
+shipped defective. Every report of this run cites <strong>both</strong>
+digests and the amendment log in §9. No commitment was removed or
+relaxed; two were added; one false sentence was corrected. All ten
+operational voiding clauses and the governing clause are carried
+byte-identical.</p>
+<hr />
+<h2 id="0-what-this-file-is-for">0. What this file is for</h2>
+<p>The pilot ran on a self-generated dev suite because the published 100
+are the only held-out set this campaign will ever have, and a harness
+tuned on the items it publishes has no held-out number to report.
+Everything that could be tuned has now been tuned — on the dev suite.
+This file records what the harness IS, at this instant, in hashes, so
+that the run which follows can be checked against it rather than
+trusted.</p>
+<p>The clause it exists to answer is the one a referee asks first:
+<em>what is your held-out φ?</em></p>
+<hr />
+<h2 id="1-item-source--the-one-door">1. Item source — the one door</h2>
+<p><strong>The rule: the published 100, entire, by row index 0..99. No
+selection.</strong> There is nothing to choose, so there is no choice
+anyone can question.</p>
+<table>
+<tbody>
+<tr class="odd">
+<td>CSV</td>
+<td><code>data/RandomBinarySeriesWithLLMs.csv</code>, named by
+<code>manifest.json :: key_files.binary_suite_csv</code></td>
+</tr>
+<tr class="even">
+<td>sha256</td>
+<td><code>fcc08553c1b4d6c104a3d1ca7e72c2b885be6168ee64c95f99adf5f7dea86ccb</code></td>
+</tr>
+<tr class="odd">
+<td>source</td>
+<td><code>AlgoDynLab/SuperintelligenceTest</code> @
+<code>0e6cb65a6575ba4d543fcf2c05d76f20180065ab</code></td>
+</tr>
+<tr class="even">
+<td>rows</td>
+<td>100 data rows, 70 columns</td>
+</tr>
+<tr class="odd">
+<td>kept</td>
+<td>the <code>sequence</code> column</td>
+</tr>
+<tr class="even">
+<td>discarded</td>
+<td>all remaining 69 columns</td>
+</tr>
+</tbody>
+</table>
+<p>The 69 discarded columns are the per-model <strong>answers</strong>
+and the authors' hand <strong>labels</strong>
+(<code>&lt;model&gt;-formula</code>, <code>-formula-correctness</code>,
+<code>-formula-ordinal</code>, <code>-formula-copy_seq</code>,
+<code>-program</code>, <code>-program-print</code>,
+<code>-program-correctness</code>). They are not withheld out of
+caution. An arm that can see a released answer can copy it, and the copy
+would bin as genuine abstraction — they are the exact thing this
+benchmark's integrity turns on.</p>
+<p><strong>The loader is the only code permitted to open that file
+during the run.</strong>
+<code>src/laplace/superarc/frozen_items.py</code>, sha256
+<code>3d31a694422215447e287744ee07d4c35b1dbe19a0c441366fe92bf287910f72</code>.</p>
+<ul>
+<li><code>load(clone)</code> re-hashes the CSV against the manifest on
+every call and raises on any mismatch, takes rows 0..99, keeps
+<code>sequence</code> and nothing else.</li>
+<li><code>write_run_items(run_dir, clone)</code> materializes
+<code>items.jsonl</code> with exactly three keys per record —
+<code>item_id</code>, <code>row_index</code>, <code>sequence</code> —
+and returns <code>{path, n, items_digest, file_sha256}</code>.</li>
+<li><code>read_run_items(run_dir)</code> is what an <strong>arm</strong>
+calls. It takes the run directory. No arm is given the clone path or the
+<code>LAPLACE_SUPERARC_BENCH</code> variable.</li>
+</ul>
+<p><code>ALLOWED_KEYS</code> is enforced on write <em>and</em> on read;
+a widened record raises rather than passing a label through.
+<code>tests/test_superarc_frozen_items.py</code> asserts the written
+file contains no answer column name, no hand label and no answer
+string.</p>
+<p>This is deliberately <strong>not</strong>
+<code>dev_suite.published_binary</code>, whose docstring forbids writing
+the published items anywhere — that function serves the dev suite's
+exclusion subtraction, where materializing the frozen set would break
+the held-out discipline. Here the run directory <em>is</em> the run and
+materializing is the point. Two functions, two disciplines, not
+merged.</p>
+<p>The one sanctioned reader of the answer/label columns is
+<code>phi.read_released_csv</code>, and it runs
+<strong>post-run</strong>, in the symmetric re-scoring (§3.5), outside
+every arm's process.</p>
+<p><strong>Item ids</strong> are positional and stable:
+<code>bin-000</code> … <code>bin-099</code>, where item <em>N</em> is
+row <em>N</em>, always.</p>
+<p><strong>The item set is bound by digest, not by
+transcription.</strong></p>
+<pre><code>items_digest            19ca42f905e55af0a5a48dab9002cca29c326b6b5dcf0bcdb5dbd37c12c216a7
+sequences_only_digest   4f2408fb654367406c0ae2f3f48671a5ca02037aade274c21b900b0a9f2634d7</code></pre>
+<p>Provable, not invertible — the published items are not copied into
+this repo. The loader was run against the real clone at freeze time and
+returned exactly 100 items, all 12 symbols, all distinct: it is known to
+work on the real file, not only on a fixture.
+<strong><code>items.jsonl</code> was not written by this act.</strong>
+Writing it is the run's first step.</p>
+<p><strong>On the loader's timing.</strong> It was authored
+<em>inside</em> this freeze act, before this file's hash was computed. A
+preregistration naming a loader still to be written would require a
+post-freeze harness touch in order to run at all, and would therefore
+void itself on its own voiding condition. It is hashed as a frozen organ
+like every other.</p>
+<h3
+id="11-held-out-status--what-the-frozen-100-have-and-have-not-touched">1.1
+Held-out status — what the frozen 100 have and have not touched</h3>
+<p><em>Amended at v2 (AM-D1). The v1 text claimed a purity the
+campaign's own evidence contradicts and is superseded. This is the true
+statement.</em></p>
+<p><strong>No arm, prompt, lens roster, allocation rule or submission
+rule has ever seen these items.</strong> All arm-side iteration ran on
+the self-generated dev suite (seed 20260804, 120 items, published-set
+subtracted). No answer of ours, no bin of ours and no φ of ours has ever
+been computed against a frozen item, because no arm output for them
+exists.</p>
+<p>The frozen 100 have had <strong>exactly two prior contacts, both
+scorer-side, both form-only, both arm-symmetric</strong>:</p>
+<ol type="1">
+<li><strong><code>dev_suite.published_binary</code>'s in-memory
+exclusion subtraction</strong> — reads the sequences to remove them from
+the dev pool, writes them nowhere.</li>
+<li><strong>The b11a threshold validation's burnt DEV stratum.</strong>
+<code>b11a-3</code> is a frozen <em>scorer</em> organ of this run, and
+it was implemented and refined against a DEV stratum of the
+<strong>authors' label set</strong> — <code>b11a_threshold.md</code> §4:
+<em>"Rule implementation may be inspected and refined against it."</em>
+Rows 0..99 of <code>seriesWithLLMs_ext.csv</code> are byte-identical to
+the frozen 100 sequences (the clone's own manifest says so), and
+<strong>359 of that stratum's 672 pairs sit on those rows</strong>. So
+the authors' published answers for 359 (model, frozen-item) pairs, and
+their hand labels for them, were inspected while the classifier's form
+predicates were being written; <code>s1_rule.md</code> §4.3 enumerates
+specific binary-slice rows by index.</li>
+</ol>
+<p>Quantified, recomputed at the amendment from the label file at md5
+<code>e5db2ea0…</code> — not transcribed. Split rule
+<code>sha1("{model}#{row}").digest()[0] % 4 == 0 → DEV</code>, fixed in
+<code>b11a_threshold.md</code> §4 (committed at <code>eef0412</code>)
+before any measurement:</p>
+<table>
+<thead>
+<tr class="header">
+<th>stratum</th>
+<th style="text-align: right;">pairs</th>
+<th style="text-align: right;">of which on frozen rows 0..99</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DEV (burnt)</td>
+<td style="text-align: right;">672</td>
+<td style="text-align: right;"><strong>359</strong></td>
+</tr>
+<tr class="even">
+<td>EVAL (read once)</td>
+<td style="text-align: right;">2088</td>
+<td style="text-align: right;">1141</td>
+</tr>
+<tr class="odd">
+<td>all labelled</td>
+<td style="text-align: right;">2760</td>
+<td style="text-align: right;">1500</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The classifier was validated on the authors' LABELS for those
+rows — never on any arm's answers to them.</strong> No arm's answers
+existed.</p>
+<p><strong>The residual risk, plainly.</strong> A form predicate of
+<code>b11a-3</code> — the PRINTS/ORDINAL discriminations, or the S-1
+constant-decode gate — refined while looking at the authors' answers to
+these exact 100 sequences could be incidentally better fitted to the
+answer dialects those sequences provoke than to dialects they do not.
+That is a real, if narrow, form-fit to the published answer dialects. It
+is not nothing.</p>
+<p><strong>Why it is symmetric across arms, and why that is the
+load-bearing defence.</strong> <code>b11a-3</code> is applied
+<strong>byte-identically</strong> to A1, A2, A3 and to the authors'
+released answers, in one pass (§3.5). Any residual form-fit therefore
+moves every arm's φ in the same direction on the same items and
+<strong>cancels in the difference</strong> — and every claim this run
+makes is a difference (A2 − A1, A2 − A3, A3 − A1, and our arms against
+the published baseline). For the form-fit to bias a reported number it
+would have to favour one arm's answer dialect over another's, and the
+classifier never saw any arm's dialect: it was refined against fifteen
+<em>published</em> models' dialects, none of them ours. The channel is
+also <strong>form-only</strong> — the classifier picks a bin, never
+correctness (that is <code>sequence_exec</code>, byte-compare) — and the
+acceptance gate was measured on the EVAL stratum, disjoint from the
+burnt DEV stratum by construction. The direction of the residual effect
+is <strong>unsigned</strong>; no claim is made that it favours us.</p>
+<p><strong>What this does not license.</strong> Reporting the frozen 100
+as untouched by every part of this campaign. It licenses reporting them
+as untouched by every <strong>arm-side</strong> choice, with a
+quantified, form-only, arm-symmetric <strong>scorer-side</strong>
+contact disclosed on the face of the freeze and in the paper.</p>
+<hr />
+<h2 id="2-the-three-arms--verbatim-unchanged">2. The three arms —
+verbatim, unchanged</h2>
+<p>Every <code>definition_verbatim</code> is
+<strong>byte-identical</strong> to the pilot's, and each carries a
+<code>definition_verbatim_sha256</code> so a referee can diff the two
+files mechanically rather than by eye. No word of any arm's mechanics
+was rewritten for this run.</p>
+<p><strong>A1 — Opus 5 bare, the published protocol replicated
+faithfully.</strong> Bare batched published prompt, no tools, one shot,
+API default temperature. No system prompt, no execution, no retry, no
+self-check, no revision, no second turn. Whatever that single response
+contains is the submission.</p>
+<p><strong>A3 — ablation: Opus 5 plus a single execute-verify-fix
+pass.</strong> Propose → one executor run → at most one fix → submit.
+Every item whose candidate diverged, timed out, errored or produced no
+trace gets exactly ONE fix turn carrying its typed residue; the post-fix
+answer is submitted whether or not it now verifies. No second fix, no
+lens roster, no minimization.</p>
+<p><strong>A2 — Eigen-on-Opus, the genesis loop.</strong> The full §4
+item-level loop. P0 = the sequence, verbatim, never edited. The frozen
+five-lens roster (difference-table/recurrence · closed-form ·
+automaton/bit-rule · number-theoretic · self-referential) dispatched as
+sealed hypothesis-builders returning candidate models, not prose. Verify
+is mechanical, no model in the path, with the anti-vacuity rule.
+<strong>At most 4 rounds per item.</strong> Per-item ledger required:
+append-only, round-stamped, six-field spine, <code>supersedes</code>
+carried on withdrawals. δ and nBDM are measured and reported, never
+steered.</p>
+<p><strong>The only substitution is the item set.</strong> Where the
+pilot text says "the 20 pilot sequences in pilot_rank order", read "the
+100 frozen items in <code>row_index</code> order, ids
+<code>bin-000</code>..<code>bin-099</code>". Batch size follows: 100,
+one batched call per arm-shot. Nothing else differs.</p>
+<p>Ordering by <code>row_index</code> rather than by ascending nBDM is a
+change from the pilot and is deliberate: it is the authors' own order,
+it is not a function of any harness quantity, and it cannot be accused
+of arranging the batch to our advantage.</p>
+<p><strong>Allocation (AR-1) is carried FLAT</strong> — 4 rounds per
+item, no reallocation, no early abandonment, budget 400. The pilot bound
+the full run to preregister an allocated rule <em>from the measured
+curve</em>. That curve is: 20/20 closed, 34 of 80 rounds used, max 3 on
+any item, no item exhausting its budget. A closure prior that never
+observed a failure cannot calibrate an abandonment threshold. So the
+allocated rule is <strong>declined, explicitly</strong>. Flat spends
+more, never less, and cannot be accused of a threshold tuned to the run
+it scores.</p>
+<p><strong>Submission (SR-1) carried verbatim</strong>: submit for every
+item, always, best available bin, no selection. Abstention is not
+permitted and is not conservative — the incorrect bin never enters φ, so
+abstaining and answering wrongly both score 0. Unclosed items score zero
+and are named.</p>
+<h3 id="deviations">Deviations</h3>
+<table>
+<thead>
+<tr class="header">
+<th>id</th>
+<th>status</th>
+<th>what</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DEV-1</td>
+<td><strong>carried</strong></td>
+<td>one shot at API default temperature; the published 5-point sweep is
+not run</td>
+</tr>
+<tr class="even">
+<td>DEV-2</td>
+<td><strong>carried</strong></td>
+<td>the single primary FORMULA-mode prompt only</td>
+</tr>
+<tr class="odd">
+<td>DEV-3</td>
+<td>discharged</td>
+<td>N = 100 now, not 20</td>
+</tr>
+<tr class="even">
+<td>DEV-4</td>
+<td>discharged</td>
+<td>the paper's bootstrap is restored</td>
+</tr>
+<tr class="odd">
+<td>DEV-5</td>
+<td><strong>carried</strong></td>
+<td>correctness decided mechanically, not by human graders — the
+asymmetry §3.6 (SCS-1) answers</td>
+</tr>
+</tbody>
+</table>
+<p>DEV-1 is the deviation the pilot's own binding demanded be recorded
+here — the pilot wrote <em>"the FULL run MUST restore the sweep or
+record its own deviation"</em>, and this is that branch, taken for cost,
+with cost stated as the reason rather than dressed as method.
+<strong>The direction of bias is not in our favour:</strong> the sweep
+gives the bare arms A1 and A3 five draws per item and gives the loop arm
+A2 none, so collapsing it removes bare-arm best-of-five upside. The
+consequence must appear in the results section and not only in a
+limitations list: our A1 is <strong>not</strong> a like-for-like
+replication of a published row, it is a one-shot lower bound on it.</p>
+<p>DEV-5 cuts both ways: a mechanical grader neither forgives a
+near-miss the way a human might, nor credits a formula whose intent is
+right but whose text is unexecutable.</p>
+<hr />
+<h2 id="3-scoring">3. Scoring</h2>
+<h3 id="31-φ">3.1 φ</h3>
+<p><code>src/laplace/superarc/phi.py</code>, <strong>N = 100</strong>,
+binary suite only, incorrect bin <strong>included</strong> in N — so ρ
+is a share of 100 and an item we fail to close costs us ρ mass rather
+than vanishing. Bins
+<code>[correct_nonboth, correct_ordinal, correct_prints, incorrect]</code>,
+decade weights <code>[1, 0.1, 0.01]</code>, δ per bin the harmonic mean
+of <code>tanh(nbdm_input / nbdm_answer)</code> — the released
+<code>tst_calc</code>, reproduced exactly. <strong>FORMULA mode
+only</strong>; verified programs are banked unscored.</p>
+<h3 id="32-bootstrap--the-papers-own-procedure">3.2 Bootstrap — the
+paper's own procedure</h3>
+<p>100 resamples with replacement at s = 25/50/75/100, φ recomputed per
+draw, <strong>seed 20260804</strong>, 95% percentile bands, on each arm
+and on the paired differences A2−A1, A2−A3, A3−A1. Paired differences
+resample on the <em>same</em> index draw across arms, so the band prices
+item difficulty rather than re-randomizing it away.</p>
+<p>The released cell calls <code>np.random.seed(42)</code> and then
+<code>np.random.default_rng()</code>, which ignores that seed — their
+curve is unseeded and unreproducible. Ours is seeded, and the seed is
+fixed here before the run. <strong>These are preregistered
+intervals</strong>, unlike the pilot's DEV-4 descriptive bands.</p>
+<h3 id="33-classifier--b11a-3">3.3 Classifier — <code>b11a-3</code></h3>
+<p><code>src/laplace/superarc/bin_classifier.py</code>,
+<code>CLASSIFIER_VERSION = "b11a-3"</code>, sha256
+<code>688d8e2b5751154afcb27bd49a2f22aa90b043b76ba7e59002fb3fd045ece476</code>
+— <strong>identical to the <code>module_sha256</code> recorded in
+<code>b11a3_agreement.json</code></strong>, so the banked agreement was
+measured against these exact bytes and not an earlier build. Authored by
+the skeptic (<code>WO-20260803-adversarial-calibration-skeptic</code>),
+not by the loop's builder. Applied identically to all three arms and to
+the authors' published answers. Never the optimization target.</p>
+<p>Agreement against the authors' released hand labels (2760 labelled
+pairs, <code>seriesWithLLMs_ext.csv</code>, md5
+<code>e5db2ea05f1de0a735bff9fc48da31f5</code>), thresholds fixed before
+looking:</p>
+<p><strong>The gate statistic is PER-BIN RECALL</strong> — of the pairs
+the authors put in bin B, the fraction the classifier also puts in B
+(<code>b11a_threshold.md</code> §6). <em>Folded into the freeze at v2
+(AM-D3): v1 stated the gate in per-bin recall and then displayed only
+aggregate agreement beneath it, so the numbers that decide the gate
+appeared nowhere in the freeze.</em> Recomputed from
+<code>b11a3_agreement.json</code> (sha256 <code>bad00c80…</code>), not
+transcribed:</p>
+<table>
+<thead>
+<tr class="header">
+<th>stratum</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;"><code>correct_non_both</code></th>
+<th style="text-align: right;"><code>correct_ordinal</code></th>
+<th style="text-align: right;"><code>correct_prints</code></th>
+<th style="text-align: right;"><code>incorrect</code></th>
+<th style="text-align: right;">min</th>
+<th>gate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>admissible EVAL (PRIMARY)</td>
+<td style="text-align: right;">1942</td>
+<td style="text-align: right;">0.9977</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.9665</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;"><strong>0.9665</strong></td>
+<td>≥ 0.90 <strong>PASS</strong></td>
+</tr>
+<tr class="even">
+<td>full EVAL (SECONDARY)</td>
+<td style="text-align: right;">2088</td>
+<td style="text-align: right;">0.9888</td>
+<td style="text-align: right;">0.9146</td>
+<td style="text-align: right;">0.9665</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;"><strong>0.9146</strong></td>
+<td>≥ 0.85 <strong>PASS</strong></td>
+</tr>
+<tr class="odd">
+<td>DEV (burnt)</td>
+<td style="text-align: right;">672</td>
+<td style="text-align: right;">0.9860</td>
+<td style="text-align: right;">0.8228</td>
+<td style="text-align: right;">0.9733</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.8228</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>all pairs</td>
+<td style="text-align: right;">2760</td>
+<td style="text-align: right;">0.9881</td>
+<td style="text-align: right;">0.8923</td>
+<td style="text-align: right;">0.9682</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.8923</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><code>INCORRECT</code> recall is 1.0 by construction
+(<code>b11a_threshold.md</code> §1) and is excluded from any claim of
+merit. The burnt DEV stratum's worst bin is <em>below</em> both EVAL
+strata's — the gap runs in the direction that cannot be read as
+overfitting to DEV, and §4 requires it be stated either way.</p>
+<p>Aggregate agreement, reported beside it and <strong>not</strong> the
+gate statistic:</p>
+<table>
+<thead>
+<tr class="header">
+<th>stratum</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">agreement</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>admissible EVAL</td>
+<td style="text-align: right;">1942</td>
+<td style="text-align: right;">0.9897</td>
+</tr>
+<tr class="even">
+<td>full EVAL</td>
+<td style="text-align: right;">2088</td>
+<td style="text-align: right;">0.9784</td>
+</tr>
+<tr class="odd">
+<td>DEV (burnt)</td>
+<td style="text-align: right;">672</td>
+<td style="text-align: right;">0.9688</td>
+</tr>
+<tr class="even">
+<td>all pairs</td>
+<td style="text-align: right;">2760</td>
+<td style="text-align: right;">0.9761</td>
+</tr>
+</tbody>
+</table>
+<p><strong>PRIMARY PASS on every bin.</strong> All 66 disagreements are
+enumerated in the banked report.</p>
+<h3 id="34-s-1-active-from-the-start">3.4 S-1, active from the
+start</h3>
+<p>S-1 — <em>an answer whose load-bearing content is a constant whose
+digit expansion IS the sequence bins PRINTS (×1/100), not
+abstraction</em> — runs on the <strong>first</strong> classification of
+every frozen-run answer. There is no rebin step, no before/after column,
+no opportunity to see a φ under one instrument and then choose the
+other. Preregistered in <code>preregistration/s1_rule.md</code> §1,
+written before this file. Gate 0 at <code>L &gt;= 8</code>; the
+generative-marker escape survives decode excision; fixtures frozen with
+the tag.</p>
+<p>The honest disclosure is preregistered here so it appears in the
+paper <strong>whatever this run returns</strong>: S-1 cost the pilot's
+A1 eight rows, A3 two, and A2 none. It is the largest single instrument
+effect in the campaign and every part of it ran toward the campaign's
+own claim. The defences are procedural and are the only ones available —
+one predicate, one threshold, fixed on the §1.3 argument before any φ
+was computed; two nearest-miss cases spared and enumerated; and applied
+unchanged to a corpus we did not write, where it reproduces the authors'
+own copy labels on every row they judged.</p>
+<h3 id="35-symmetric-re-scoring">3.5 Symmetric re-scoring</h3>
+<p>The authors' released answers are re-scored with the <strong>same
+instrument</strong> — same classifier bytes, same S-1, same normalizer,
+same <code>phi.py</code>, same N = 100, same bootstrap seed — in the
+same pass that scores our arms. A comparison in which our answers meet a
+rule the baseline's answers never met is not a comparison.</p>
+<blockquote>
+<p><strong>Read this before reading that paragraph</strong> <em>(amended
+at v2, AM-D2).</em> The commitment above is <strong>FORM symmetry and
+nothing else. Correctness is not in it</strong>, and as v1 stood
+correctness was <strong>not</strong> symmetric: <strong>DEV-5</strong>
+states plainly that our arms' correctness is decided
+<em>mechanically</em> — translate, execute, byte-compare against the
+full 12-digit sequence — while the authors' correctness is read from
+their <code>-formula-correctness</code> column, i.e. their human
+graders. v1 never said so here and never cross-referenced DEV-5, so §3.5
+read alone claimed a symmetry the instrument did not have. The remedy is
+<strong>§3.6 (SCS-1)</strong>. DEV-5's <code>direction_of_bias</code>
+remains unsigned and is not restated as favourable.</p>
+</blockquote>
+<p>Corpora: <code>RandomBinarySeriesWithLLMs.csv</code>, and rows 0:100
+of both <code>seriesWithLLMs_ext.csv</code> and
+<code>seriesWithLLMs_ext_Aug2025.csv</code>. Formula sheets scored;
+program sheets banked unscored for integrity. The authors' own
+hand-label columns are read to reproduce their published φ as a control,
+and <strong>where our classifier disagrees with their hand label, both
+numbers are published side by side</strong> with every disagreement
+enumerated. We do not silently overwrite their labels with ours.</p>
+<p><code>s1_rule.md</code> §4.3's 13 label flips (all in one column,
+<code>gemini_2.5_pro-program</code>) are a finding about the
+<strong>released labels</strong>, not a result of ours, and are
+preregistered here so they cannot be read as post-hoc.</p>
+<p>Normalization — <code>sequence_exec.normalize_answer</code>, strip
+comments and non-semantic whitespace, canonicalize formatting — is
+applied identically to every arm and to every released answer.</p>
+<h3 id="36-symmetric-correctness-sensitivity--scs-1">3.6
+Symmetric-correctness sensitivity — SCS-1</h3>
+<p><em>Added at v2 (AM-D2), before any arm ran. This is the correctness
+half §3.5 was missing.</em></p>
+<p><strong>The commitment.</strong> The authors' released
+<strong>formula</strong> answers are put through the <strong>same
+mechanical correctness path our arms face</strong>: the same
+faithful-to-text scorer-side translation DEV-5 already sanctions for our
+own arms' formula answers, then <code>sequence_exec.run_candidate</code>
+execution, then byte-comparison of the normalized stdout against the
+full 12-digit sequence literal via
+<code>sequence_exec.verify_candidate</code>. Same organ bytes, same
+timeout, same normalizer, same pass.</p>
+<p>Two columns on the authors' side, never one:</p>
+<table>
+<thead>
+<tr class="header">
+<th>column</th>
+<th>what decides it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>correctness_hand</code></td>
+<td>the authors' own <code>-formula-correctness</code> cell — their
+human graders. Unchanged, never overwritten.</td>
+</tr>
+<tr class="even">
+<td><code>correctness_mechanical</code></td>
+<td>translate → execute → byte-compare, the path our arms face.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The run report shows every published-model φ BOTH
+ways</strong> — φ_hand beside φ_mechanical, in one table, for every
+published model on every corpus in §3.5, with our three arms' φ in the
+same table so the like-for-like column can be read down a single rule.
+φ_hand remains the published baseline the paper quotes;
+<strong>φ_mechanical is a preregistered sensitivity, not a replacement
+and not a relabelling</strong>. Where a published φ and its sensitivity
+disagree, the paper reports the delta <em>between them</em> beside the
+delta between arms, so a referee can see how much of any claimed gap is
+instrument.</p>
+<p>Every <code>(model, row)</code> where the two columns differ is
+enumerated individually with the direction of the flip and the failure
+mode from <code>sequence_exec.classify_divergence</code>. A released
+formula whose text cannot be translated at all is reported
+<strong>UNTRANSLATABLE</strong>, named, and counted incorrect in
+φ_mechanical <em>only</em> — never silently dropped, and never counted
+against φ_hand. Every translation source is banked verbatim, exactly as
+DEV-5 already requires for our own arms; where the authors' program
+sheet supplies a program for the same row it is also run as a
+cross-check, mirroring the A2/A3 cross-check DEV-5 specifies for us.</p>
+<p><strong>Why.</strong> <code>s1_rule.md</code> §4.3 already records
+<strong>13 errors in one released label column</strong>
+(<code>gemini_2.5_pro-program</code> — the sequence packed as an integer
+and read LSB-first, hand-labelled correct with <code>print</code>
+FALSE). The released labels are <em>known</em> to be imperfect. Without
+this column every published Δ in this paper rests on our arms facing a
+grader that, in DEV-5's own words, <em>"neither forgives a near-miss the
+way a human might, nor credits a formula whose intent is right but whose
+text is unexecutable"</em>, while the baseline faces the human.</p>
+<p>This changes nothing else: not our arms' correctness column, not the
+authors' released labels, not the classifier, S-1, φ, N or the bootstrap
+seed. It <strong>adds one preregistered column on the authors'
+side</strong> so both sides can be read under one rule.</p>
+<hr />
+<h2 id="4-hashes">4. Hashes</h2>
+<p>Frozen organs (authoritative values in
+<code>hashes.harness_organs</code>): <code>phi.py</code>,
+<code>bin_classifier.py</code>, <code>submission_gate.py</code>,
+<code>sequence_exec.py</code>, <code>bdm.py</code>,
+<code>frozen_items.py</code>, <code>genesis_loop.py</code>,
+<code>dev_suite.py</code>, <code>superarc/__init__.py</code>,
+<code>models/ctm/MANIFEST.json</code>,
+<code>scripts/workflow_economics.py</code>. Every arm is run and scored
+by these exact bytes.</p>
+<p>The frozen prompt is hashed three ways — the canonical single-space
+form every arm sends (<code>824309bf…</code>), the raw form with the
+LaTeX line break preserved, and the sibling <em>update</em> prompt we
+did <strong>not</strong> use, so a referee can verify we took the
+primary published form rather than shopping for the wording most
+favourable to us.</p>
+<p>Inherited documents are hashed too: the pilot preregistration,
+<code>s1_rule.md</code>, the b11a-3 agreement report, and the design
+memo.</p>
+<p><strong>This file hashes itself.</strong>
+<code>hashes.self.sha256</code> is the sha256 of the whole document
+serialized with
+<code>json.dumps(obj, indent=2, ensure_ascii=False)</code> plus a
+trailing newline, with that one field set to the empty string. To
+verify:</p>
+<pre><code>uv run python -c &quot;import json,hashlib;d=json.load(open(&#39;synthetics papers/superarc/frozen_run/preregistration.json&#39;));h=d[&#39;hashes&#39;][&#39;self&#39;][&#39;sha256&#39;];d[&#39;hashes&#39;][&#39;self&#39;][&#39;sha256&#39;]=&#39;&#39;;print(h==hashlib.sha256((json.dumps(d,indent=2,ensure_ascii=False)+chr(10)).encode()).hexdigest())&quot;</code></pre>
+<p>Round-trip verified at write time. The preregistration must be able
+to prove it is the document that was frozen, not one edited after a
+number came back.</p>
+<hr />
+<h2 id="5-token-accounting--named-before-the-run-not-after">5. Token
+accounting — named before the run, not after</h2>
+<p>The pilot recorded <code>null</code> for all three arms and wrote
+<em>"NOT RECORDED by the arm harness; the FULL run must emit it."</em>
+This is that debt paid, and it is paid <strong>before</strong> the run
+so the source cannot be chosen after seeing which arm looks
+expensive.</p>
+<p><strong>Source:</strong> the orchestrator's <strong>workflow
+journal</strong> — <code>journal.jsonl</code> in the run's harness
+transcript directory, one line per <code>agent()</code> invocation
+carrying <code>{label, phase, model, effort, agentType, agent id}</code>
+— joined to the per-agent SDK transcripts
+<code>agent-&lt;id&gt;.jsonl</code>, whose assistant messages carry
+<code>message.usage</code> and whose terminal <code>result</code>
+message carries the cumulative usage, <code>duration_ms</code> and
+<code>total_cost_usd</code>. The journal alone knows the stage; the
+transcript alone knows the tokens; the artifact is the join, keyed on
+agent id.</p>
+<p><strong>Reader:</strong> <code>scripts/workflow_economics.py</code>
+(hashed as a frozen organ), invoked as</p>
+<pre><code>uv run python scripts/workflow_economics.py &lt;run_transcript_dir&gt; \
+    --out &#39;synthetics papers/superarc/frozen_run/economics&#39;</code></pre>
+<p>emitting <code>economics.json</code> + <code>economics.md</code>.
+Prefer the <code>result</code> cumulative; else sum the assistant turns.
+A missing or garbled transcript is a per-agent WARNING with
+<code>source="none"</code> — counted and flagged, never silently
+dropped.</p>
+<p><strong>Banking:</strong> post-run into
+<code>report.json :: process.&lt;arm&gt;.token_spend</code>, with input
+/ output / cache-creation / cache-read / total tokens, cost when priced,
+wall duration, agent count and the count of agents with no recoverable
+usage. A2's total is the sum over every journal line whose phase is an
+A2 round — <strong>the loop's full cost, including lens dispatches that
+returned nothing usable. No discount for discarded
+candidates.</strong></p>
+<p><strong>Budget asymmetry, disclosed:</strong> the bare arms get no
+cap, so any claim that they lost on spend is answerable from this table.
+A2's spend is reported, not hidden and not normalized away. φ-per-token
+is reported alongside φ for all three arms — a loop that buys a 0.07 φ
+gain with 40× the tokens has said something different from one that buys
+it with 3×.</p>
+<p><strong>If the journal is unrecoverable:</strong> say so, in the
+report and in the paper, in those words. Do not estimate, do not
+reconstruct from message counts, do not substitute a proxy. An
+unrecoverable token column is a disclosed gap; a fabricated one is a
+fabrication.</p>
+<hr />
+<h2 id="6-voiding-conditions">6. Voiding conditions</h2>
+<h3 id="from-the-memo-verbatim">From the memo, verbatim</h3>
+<blockquote>
+<p><strong>The frozen-set discipline is a hard law.</strong> After the
+freeze: no lens-roster change, no threshold tune, no prompt edit, no
+gate fix, no scorer touch. The frozen 100 are read once — this is the
+clause that answers "what is your held-out φ?".</p>
+<p>— §6, bullet 3</p>
+</blockquote>
+<blockquote>
+<p><strong>Grade 1 — across the campaign</strong>: after each dev run, a
+seam judgement over the banked ledger (which lenses earn their keep per
+tier; which residue classes recur; where bin promotion stalls; where the
+estimator disagrees with intuition), emitting lens-roster changes,
+B-item fixes and genesis rows on the superarc conceptric. <strong>Every
+one is a dev-suite operation.</strong></p>
+<p>— §6, bullet 2</p>
+</blockquote>
+<blockquote>
+<p>Then <strong>the freeze</strong>: scorer, classifier, thresholds,
+lens roster, prompts, budget policy and submission rule recorded as a
+preregistration hash. Then <strong>the one run</strong>: the published
+100 are touched ONCE, post-freeze, and no result from it may change the
+harness — a change after the freeze voids the run and re-opens it. If
+this proves impossible, the §7 number is labelled
+<strong>in-sample</strong> and T2 is dropped.</p>
+<p>— §5, "The held-out design"</p>
+</blockquote>
+<blockquote>
+<p>or the harness is touched after the freeze (the run is void)</p>
+<p>— §11, NO-GO clause</p>
+</blockquote>
+<h3 id="operational--this-run-is-void-if">Operational — this run is void
+if</h3>
+<ol type="1">
+<li>any frozen harness-organ sha256 differs at run time or scoring time
+from <code>hashes.harness_organs</code>;</li>
+<li>the prompt actually sent differs from
+<code>hashes.frozen_prompt.sent_by_every_arm</code>;</li>
+<li>the run's <code>items.jsonl</code> does not reproduce
+<code>items_digest</code>, or does not hold exactly 100 records, or any
+record carries a key outside <code>ALLOWED_KEYS</code>;</li>
+<li>any code other than <code>frozen_items</code> opens the published
+CSV during the run, or any arm is given the clone path or
+<code>LAPLACE_SUPERARC_BENCH</code>;</li>
+<li>an arm is run against any item outside rows 0..99 of the named
+CSV;</li>
+<li>a submission rule other than SR-1, or an allocation rule other than
+AR-1-flat, is applied;</li>
+<li>the lens roster is changed mid-run;</li>
+<li>the classifier tag at scoring time is not <code>b11a-3</code>, or
+S-1 is disabled, or any answer is binned twice under two instruments and
+the better φ kept;</li>
+<li>the authors' released answers are scored with any instrument other
+than the one that scored our arms;</li>
+<li>this preregistration is edited after it lands, in any byte, without
+the run being declared void and re-opened.</li>
+</ol>
+<h3 id="the-governing-clause">The governing clause</h3>
+<p><strong>Any harness touch after this file lands voids the
+run.</strong> Not "invalidates a number" — voids the run, which must
+then be re-opened under a new freeze against items this harness has now
+seen, which is to say it cannot be re-run honestly at all on this suite.
+That is the price, and it is the price that makes the held-out claim
+worth anything.</p>
+<p><strong>Still permitted:</strong> reading, quoting and reporting the
+run's outputs; writing the report, the economics artifact and the paper;
+fixing a defect in a NON-frozen organ that no arm and no scorer invokes
+— with the diff stated explicitly, since the burden of proving
+irrelevance is ours; and declaring the run void, which is always
+permitted and is the honest move whenever the alternative is a quiet
+edit.</p>
+<p><strong>If a bug is found mid-run: STOP. Do not fix it.</strong> Bank
+the defect, the item it hit and the run state, declare the run void, and
+take it to him for a scope ruling. A bug fixed mid-run converts a
+held-out measurement into an in-sample one, and the §7 number then
+carries the in-sample label the memo names.</p>
+<h3 id="the-post-run-transcript-audit--aud-1">The post-run transcript
+audit — AUD-1</h3>
+<p><em>Added at v2 (AM-D5). Additive: it touches no frozen organ, no
+arm, no prompt and no scorer, and changes no number this run
+reports.</em></p>
+<p>Clause 4 above forbids giving any arm the clone path or
+<code>LAPLACE_SUPERARC_BENCH</code> — but nothing mechanical enforced
+it. The clone sits at a readable scratchpad path and A2's lens agents
+are dispatched with tool access. That clause sat as honour-system beside
+a design that enforces <code>ALLOWED_KEYS</code> on write <em>and</em>
+read and re-hashes the CSV on <em>every</em> load. So:</p>
+<p><strong>After every arm has finished and before any φ is
+computed</strong>, every agent transcript the run produced — A1's, A3's,
+A2's orchestrator transcript and every dispatched lens-agent transcript
+— together with every banked candidate source, every per-item ledger and
+every tool-call record, is grepped for:</p>
+<ol type="1">
+<li><strong>the clone path</strong> — the absolute path in
+<code>item_source.bench_manifest.path</code>, its parent, and the bare
+directory name <code>superarc_bench</code>;</li>
+<li><strong>the env name</strong> — the literal string
+<code>LAPLACE_SUPERARC_BENCH</code>;</li>
+<li><strong>any released answer string</strong> — every answer in the
+<code>-formula</code> and <code>-program</code> columns of all three
+corpora in §3.5, normalized by
+<code>sequence_exec.normalize_answer</code> on both sides so whitespace
+and comment reformatting cannot hide a copy; plus any frozen item's
+12-digit sequence appearing in a form other than the one the frozen
+prompt supplies.</li>
+</ol>
+<p>Result banked as a run artefact at
+<code>frozen_run/transcript_audit.json</code>, its sha256 echoed in the
+run report <strong>whether or not it finds anything</strong> — a clean
+audit is a reported result, not a silence.</p>
+<p><strong>A hit voids the affected item.</strong> That item is scored
+as unclosed for the arm whose transcript carried it — incorrect bin, its
+ρ mass forfeited, N held at 100 — named individually with the matched
+string, and the void count appears on the face of the results table, not
+in a footnote. A hit does not by itself void the whole run: clause 4 is
+unchanged and still voids everything for a harness touch that
+<em>gives</em> an arm the path or the variable. This is detection, not
+prevention; it is the strongest check available without touching a
+frozen organ, which is forbidden.</p>
+<hr />
+<h2 id="7-what-this-run-is-testing">7. What this run is testing</h2>
+<p>Recorded here so the frozen run cannot afterwards be reported as
+confirming whatever it happens to show. The pilot's dev-suite numbers
+under <code>b11a-3</code>, n = 20:</p>
+<table>
+<thead>
+<tr class="header">
+<th>arm</th>
+<th style="text-align: right;">φ</th>
+<th>paired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A1</td>
+<td style="text-align: right;">0.079530</td>
+<td>A2 − A1 = +0.370585</td>
+</tr>
+<tr class="even">
+<td>A3</td>
+<td style="text-align: right;">0.380041</td>
+<td>A3 − A1 = +0.300511</td>
+</tr>
+<tr class="odd">
+<td>A2</td>
+<td style="text-align: right;">0.450115</td>
+<td>A2 − A3 = <strong>+0.070073</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>The live question is A2 − A3.</strong> Its pilot band's lower
+bound was +0.004 at n = 20 — a marginal crossing, and the pilot's own
+reading was that the genesis loop adds little beyond execution access.
+<strong>If the frozen run returns A2 ≈ A3, the honest claim shrinks to
+"execution, not recursion", and §7 of the paper says so.</strong> That
+sentence is preregistered.</p>
+<p><strong>This run is reported whatever it returns</strong>, including
+a null or an inverted result, with this preregistration's self-hash
+cited. A frozen run reported only on success is not a frozen run.</p>
+<hr />
+<h2 id="8-test-shard--green-at-the-freeze">8. Test shard — green at the
+freeze</h2>
+<pre><code>$ uv run pytest tests/test_superarc_*.py tests/test_pour_generalization.py \
+                tests/test_model_floor_audit.py -q
+.................sssss.................................................. [ 17%]
+........................................................................ [ 34%]
+........s............................................................... [ 51%]
+.....................................sssssssssssssss.................... [ 69%]
+........................................................................ [ 86%]
+........................................................                 [100%]
+395 passed, 21 skipped in 17.77s</code></pre>
+<p>416 collected. Per file:</p>
+<table>
+<thead>
+<tr class="header">
+<th>file</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>test_superarc_bdm.py</code></td>
+<td>17 passed, 5 skipped</td>
+</tr>
+<tr class="even">
+<td><code>test_superarc_bin_classifier.py</code></td>
+<td>110 passed</td>
+</tr>
+<tr class="odd">
+<td><code>test_superarc_dev_suite.py</code></td>
+<td>20 passed, 1 skipped</td>
+</tr>
+<tr class="even">
+<td><code>test_superarc_door.py</code></td>
+<td>27 passed</td>
+</tr>
+<tr class="odd">
+<td><code>test_superarc_frozen_items.py</code></td>
+<td><strong>10 passed</strong> (new — the loader's contamination
+gate)</td>
+</tr>
+<tr class="even">
+<td><code>test_superarc_genesis_loop.py</code></td>
+<td>42 passed</td>
+</tr>
+<tr class="odd">
+<td><code>test_superarc_phi.py</code></td>
+<td>21 passed, 15 skipped</td>
+</tr>
+<tr class="even">
+<td><code>test_superarc_sequence_exec.py</code></td>
+<td>46 passed</td>
+</tr>
+<tr class="odd">
+<td><code>test_superarc_submission_gate.py</code></td>
+<td>60 passed</td>
+</tr>
+<tr class="even">
+<td><code>test_pour_generalization.py</code></td>
+<td>22 passed</td>
+</tr>
+<tr class="odd">
+<td><code>test_model_floor_audit.py</code></td>
+<td>20 passed</td>
+</tr>
+</tbody>
+</table>
+<p>The 21 skips are the tests requiring the session-scoped benchmark
+data, absent from a bare shard run and named in the skip reason rather
+than silenced: 15 + 5 need the released CSV
+(<code>LAPLACE_SUPERARC_CSV</code>), 1 needs the clone
+(<code>LAPLACE_SUPERARC_BENCH</code>). None is a failure, and none is in
+the loader's own file — <code>test_superarc_frozen_items.py</code> runs
+entirely on a fixture and is 10/10 green with no environment at all. The
+loader was <em>separately</em> exercised against the real clone at
+freeze time (§1).</p>
+<hr />
+<h2 id="9-amendment-log--v1--v2">9. Amendment log — v1 → v2</h2>
+<p>The machine form is <code>preregistration.json :: amendments</code>.
+This is its reading.</p>
+<p><strong>v1</strong> — self-hash
+<code>6ecc92ee32366ff635b77f14815cdd909142f7cadde761681f544633d76d6280</code>,
+written 2026-08-04T23:52:00Z. <strong>v2</strong> — self-hash
+<code>44b64bf95f3132f009c2a22ffe6605a10def95527e0fa7a494a49b13b44482f2</code>,
+amended 2026-08-05T00:12:00Z.</p>
+<h3 id="am-0--the-reopen">AM-0 — the reopen</h3>
+<p>Triggered by <code>frozen_run/freeze_audit.md</code> (sha256
+<code>b3f7daaace40e5fd5b500095d90f38e2b31f6ec3cd754976de48c281ce5753f4</code>),
+verdict <strong>FREEZE-DEFECTIVE</strong>, adversarial and pre-run.</p>
+<p>The authority is <code>voiding_conditions.operational[9]</code>
+itself — <em>"this preregistration is edited after it lands, in any
+byte, <strong>without the run being declared void and
+re-opened</strong>."</em> The clause forbids a <em>quiet</em> edit; it
+permits an edit exactly when the run is declared void and re-opened.
+This is that path, taken openly. <strong>It is free here and only
+here:</strong> no arm has run, <code>items.jsonl</code> does not exist,
+<code>arms/{A1,A2,A3}</code> are empty, and no answer, bin or φ exists
+for any frozen item — so there is no run to void, re-opening costs
+nothing, and the held-out claim is unspent. This is the last instant at
+which any of these defects can be fixed honestly; once
+<code>items.jsonl</code> is written the governing clause makes them
+permanent.</p>
+<p><strong>Nothing was weakened.</strong> The governing clause and all
+ten operational clauses are byte-identical to v1. Two commitments were
+<strong>added</strong> (SCS-1, AUD-1), one false statement was
+<strong>corrected</strong>, and one gate statistic was
+<strong>surfaced</strong>. No commitment was removed or relaxed. Every
+report of this run cites <strong>both</strong> digests plus this
+log.</p>
+<p><strong>What did not change</strong>, byte-identical to v1: the
+frozen prompt and all three prompt hashes; all three arms'
+<code>definition_verbatim</code> and their sha256s; the item source in
+full, including both item digests; SR-1; AR-1-flat and the 400-round
+budget; the classifier bytes, tag <code>b11a-3</code> and its measured
+agreement; S-1 and its honest-disclosure paragraph; φ, N = 100, the bin
+weights, the bootstrap seed; every recorded organ, prompt,
+inherited-document and bench-data hash; all five deviations DEV-1..DEV-5
+verbatim; token accounting; the pilot priors and the publication
+commitment.</p>
+<h3 id="the-defects-and-their-remedies">The defects and their
+remedies</h3>
+<table>
+<thead>
+<tr class="header">
+<th>id</th>
+<th>defect</th>
+<th>remedy</th>
+<th>fields</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>AM-D1</strong></td>
+<td><strong>D1 blocking</strong> — <code>scope.held_out_status</code>
+asserted a purity the campaign's own evidence contradicts: it named the
+exclusion subtraction as <em>the only</em> prior contact, while
+<code>b11a-3</code>, a frozen scorer organ of this run, was refined
+against a burnt DEV stratum 359 of whose 672 pairs sit on the frozen
+rows.</td>
+<td>Replaced with the true statement (§1.1): two scorer-side, form-only,
+arm-symmetric contacts, both named; no arm-side choice ever saw the
+items; the classifier validated on the authors' <strong>labels</strong>,
+never on any arm's answers. Overlap <strong>quantified</strong> (359/672
+DEV, 1141/2088 EVAL, 1500/2760 total) with the split rule and a
+reproduction one-liner, recomputed here rather than transcribed.
+Residual risk — form-fit to the published answer dialects — stated
+plainly, with its three bounds and the reason it is arm-symmetric and
+therefore cancels in every difference this run claims.</td>
+<td><code>scope.held_out_status</code> replaced;
+<code>…_quantified</code>, <code>…_residual_risk</code> added</td>
+</tr>
+<tr class="even">
+<td><strong>AM-D2</strong></td>
+<td><strong>D2 blocking</strong> — the symmetry commitment enumerated
+form and was silent on correctness, which is <em>not</em> symmetric
+(DEV-5); §3.5 never cross-referenced DEV-5, so it read as claiming a
+symmetry the instrument lacks.</td>
+<td>(1) <strong>SCS-1</strong> added (§3.6): the authors' released
+formula answers go through the same translate-execute-byte-compare path
+as our arms, and the report shows every published-model φ <strong>both
+ways</strong>, with disagreements enumerated and untranslatable rows
+named; the 13 known released-label errors (<code>s1_rule.md</code> §4.3)
+cited as motivation. (2) <strong>DEV-5 cross-referenced
+explicitly</strong> in <code>scoring.symmetric_rescoring</code>.</td>
+<td><code>scoring.symmetric_correctness_sensitivity</code>,
+<code>scoring.symmetric_rescoring.correctness_asymmetry</code>,
+<code>reporting.symmetric_correctness_sensitivity</code> added</td>
+</tr>
+<tr class="odd">
+<td><strong>AM-D3</strong></td>
+<td><strong>D3</strong> — the gate is per-bin recall; the freeze
+displayed aggregate agreement against it, so the deciding numbers
+appeared nowhere in the freeze.</td>
+<td>Per-bin recall table folded in beside the thresholds (§3.3), all
+four bins × four strata, each with its minimum, threshold and verdict,
+recomputed from the hashed agreement JSON. A note says in terms that
+aggregate agreement is <strong>not</strong> the gate statistic. The
+verdict string is unchanged — it was true.</td>
+<td><code>scoring.classifier.agreement.measured_per_bin_recall</code>,
+<code>.measured_note</code> added</td>
+</tr>
+<tr class="even">
+<td><strong>AM-D4</strong></td>
+<td><strong>D4</strong> — nothing external timestamps the freeze; a
+self-hash proves integrity, not anteriority.</td>
+<td><strong>Not amendable by this document and not attempted
+here</strong> — a document cannot timestamp itself by writing about
+timestamping. The remedy is a <strong>git commit</strong> of the freeze
+and its reading <em>before</em> <code>items.jsonl</code> is written,
+echoing the v2 self-hash in the commit message. Owner: the orchestrator;
+this amendment was produced by a worker forbidden to commit.
+<strong>OUTSTANDING — the run must not open until it is
+discharged.</strong></td>
+<td>none</td>
+</tr>
+<tr class="odd">
+<td><strong>AM-D5</strong></td>
+<td><strong>D5</strong> — the one-door prohibition was honour-system: no
+env-strip, no path guard, no transcript scan.</td>
+<td><strong>AUD-1</strong> added (§6): a preregistered post-run
+transcript audit over every arm and lens-agent transcript, grepping for
+the clone path, the env name and any released answer string; banked as a
+run artefact with its sha256 in the report either way. <strong>A hit
+voids the affected item</strong>; clause 4 still voids the whole run for
+a harness touch.</td>
+<td><code>voiding_conditions.audit</code> added</td>
+</tr>
+</tbody>
+</table>
+<h3 id="am-c--collateral-listed-for-exhaustiveness">AM-C — collateral,
+listed for exhaustiveness</h3>
+<p><code>version</code> added (v1 carried none — it is v1 by implication
+and by its self-hash); <code>amended_utc</code> added, with
+<code>written_utc</code> left at v1's value so the original authorship
+time survives; <code>status</code> rewritten to say this is v2 and to
+restate that <code>items.jsonl</code> still does not exist and
+<code>arms/</code> are still empty; <code>amendments</code> added;
+<code>hashes.self.sha256</code> recomputed <strong>by the freeze's own
+recipe, unchanged</strong> (blank the field,
+<code>json.dumps(indent=2, ensure_ascii=False)</code> + trailing
+newline, sha256 the utf-8 bytes, substitute back — the recipe, verifier
+one-liner and rationale are byte-identical); and this reading updated to
+match, still the reading and not the authority.</p>
+<p><strong>Deliberately not touched.</strong>
+<code>voiding_conditions.operational</code> — all ten clauses, including
+[9], the clause this amendment <em>invoked</em> rather than edited.
+<code>what_is_still_permitted</code> — <strong>not</strong> widened to
+add "amend and reopen"; the permission already lives in [9]'s own
+wording and in the memo's <em>"a change after the freeze voids the run
+and re-opens it"</em>, and widening a permission list in the same act
+that uses it would be the quiet edit this file exists to forbid.
+<code>hashes.inherited_documents</code> — <code>freeze_audit.md</code>
+was <strong>not</strong> added as an inherited document; its sha256 is
+recorded inside AM-0 instead, giving provenance without silently
+expanding the hash contract the run is checked against.
+<strong>DEV-5</strong> — left verbatim, including its unsigned
+<code>direction_of_bias</code>. It disclosed the asymmetry correctly;
+the defect was that §3.5 did not point at it, and editing an honest
+disclosure to make it read better after the fact is precisely the move
+this freeze exists to prevent.</p>
+<hr />
+<p><em>The freeze is the act of writing this file. Everything hashed
+above was hashed at that instant. From here the harness is read-only. v2
+re-cut it once, before any arm ran, under AM-0; the run has still not
+been opened.</em></p>
+</body>
+</html>

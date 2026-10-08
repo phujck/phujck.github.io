@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 330" role="img" aria-label="The review method: find, separately verify, apply, separately certify">
+<title>The review method: find, separately verify, apply, separately certify</title>
+<desc>source: the August 2026 audit record · asset key: progress_method_strip · generated from banked numbers, nothing illustrative</desc>
+<text x="30" y="32" font-family="Outfit,sans-serif" font-size="17.5" fill="#e8e6e3" font-weight="600">How the work was checked</text>
+<text x="30" y="55" font-family="Lora,Georgia,serif" font-size="12.5" fill="#9ca3af">the agent that writes a change is never the agent that certifies it; a standing rule</text>
+<rect x="30" y="92" width="262" height="150" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" rx="10"/>
+<text x="48" y="122" font-family="JetBrains Mono,monospace" font-size="12" fill="#dfc599" letter-spacing="0.14em">FIND</text>
+<text x="48" y="148" font-family="Outfit,sans-serif" font-size="13.5" fill="#e8e6e3" font-weight="600">12 separate agents</text>
+<text x="48" y="176" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">46 candidate problems raised</text>
+<text x="48" y="195" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">each naming the command that would test it</text>
+<line x1="296" y1="167" x2="312" y2="167" stroke="#c9a96e" stroke-width="1.5"/>
+<path d="M 312 167 l -7 -4 v 8 z" fill="#c9a96e"/>
+<rect x="316" y="92" width="262" height="150" fill="rgba(255, 255, 255, 0.04)" stroke="#c9a96e" stroke-width="1.5" rx="10"/>
+<text x="334" y="122" font-family="JetBrains Mono,monospace" font-size="12" fill="#dfc599" letter-spacing="0.14em">VERIFY</text>
+<text x="334" y="148" font-family="Outfit,sans-serif" font-size="13.5" fill="#e8e6e3" font-weight="600">every candidate re-run</text>
+<text x="334" y="176" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">40 confirmed · 3 disproved</text>
+<text x="334" y="195" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">2 unsettled · 1 left alone</text>
+<line x1="582" y1="167" x2="598" y2="167" stroke="#c9a96e" stroke-width="1.5"/>
+<path d="M 598 167 l -7 -4 v 8 z" fill="#c9a96e"/>
+<rect x="602" y="92" width="262" height="150" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" rx="10"/>
+<text x="620" y="122" font-family="JetBrains Mono,monospace" font-size="12" fill="#dfc599" letter-spacing="0.14em">APPLY</text>
+<text x="620" y="148" font-family="Outfit,sans-serif" font-size="13.5" fill="#e8e6e3" font-weight="600">13 separate agents</text>
+<text x="620" y="176" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">each change gated on its own</text>
+<text x="620" y="195" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">measurement before the old form retired</text>
+<line x1="868" y1="167" x2="884" y2="167" stroke="#c9a96e" stroke-width="1.5"/>
+<path d="M 884 167 l -7 -4 v 8 z" fill="#c9a96e"/>
+<rect x="888" y="92" width="262" height="150" fill="rgba(255, 255, 255, 0.04)" stroke="#c9a96e" stroke-width="1.5" rx="10"/>
+<text x="906" y="122" font-family="JetBrains Mono,monospace" font-size="12" fill="#dfc599" letter-spacing="0.14em">CERTIFY</text>
+<text x="906" y="148" font-family="Outfit,sans-serif" font-size="13.5" fill="#e8e6e3" font-weight="600">a certifier that wrote none of it</text>
+<text x="906" y="176" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">2 changes reported complete that</text>
+<text x="906" y="195" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">had not landed, caught · 1 reverted</text>
+<text x="30" y="278" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">all 25 are Eigen's own agents and none is an outside party. The separation is between the agent that</text>
+<text x="30" y="296" font-family="Lora,Georgia,serif" font-size="12" fill="#9ca3af">writes a change and the agent that decides whether it landed, and it is that separation every count above rests on.</text>
+<text x="12" y="320" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#a89a7a" opacity="0.85">source: the August 2026 audit record</text>
+</svg>
