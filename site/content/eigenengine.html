@@ -34,6 +34,24 @@
     .ee-bigfig { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); max-width: 100ch; }
     .ee-bigfig svg { display: block; width: 100%; height: auto; }
     @media (max-width: 760px) { .ee-ppp { grid-template-columns: 1fr; } }
+    .ee-attic { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); max-width: 100ch; margin-top: var(--space-lg); }
+    .ee-attic .bar { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-md); }
+    .ee-attic button { font: 600 0.8rem/1 'Outfit', sans-serif; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
+    .ee-attic button.on { background: var(--accent); color: #0a0e1a; border-color: var(--accent); }
+    .ee-attic .q { font-size: 0.9rem; color: var(--text-secondary); margin-left: auto; }
+    .ee-attic .grid { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; }
+    .ee-attic .d { aspect-ratio: 1; border-radius: 3px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); position: relative; transition: background 120ms, border-color 120ms; }
+    .ee-attic .d.lock { border-color: rgba(192,57,43,0.6); }
+    .ee-attic .d.lock::after { content: ''; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; background: rgba(192,57,43,0.8); }
+    .ee-attic .d.read { background: rgba(201,169,110,0.55); border-color: var(--accent); }
+    .ee-attic .d.used { background: rgba(123,211,137,0.6); border-color: #7bd389; }
+    .ee-attic .d.broke { background: rgba(192,57,43,0.55); border-color: #c0392b; }
+    .ee-attic .out { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-md); margin-top: var(--space-md); }
+    .ee-attic .out div { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+    .ee-attic .out b { display: block; font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-primary); }
+    .ee-attic .out b.bad { color: #c0392b; }
+    .ee-attic .out b.good { color: #7bd389; }
+    .ee-attic .note { margin-top: var(--space-sm); font-size: 0.8rem; color: var(--text-muted); }
   </style>
 
   <!-- Page Header -->
@@ -51,7 +69,24 @@
       <span class="section-label fade-in">The problem</span>
       <h2 class="section-title fade-in">What goes wrong without Eigen</h2>
       <div class="ee-lede fade-in">
-        <p>An AI agent sent into an organisation's documents is a stranger in an attic. It forgets everything between visits, so each visit starts from nothing. It can open any document, including ones it should not. It answers whether or not what it found supports the answer, and leaves no record of which documents it opened.</p>
+        <p>An AI agent sent into an organisation's documents is a stranger in an attic. It forgets everything between visits, it can open any box, and it leaves no record of what it opened. The attic below has 128 documents; the ten with a red dot are private. Watch what one question costs, then ask it with Eigen in the way.</p>
+      </div>
+      <div class="ee-attic fade-in" id="attic">
+        <div class="bar">
+          <button type="button" id="at-without" class="on">Without Eigen</button>
+          <button type="button" id="at-with">With Eigen</button>
+          <button type="button" id="at-ask">Ask: what did we agree with the supplier?</button>
+          <button type="button" id="at-again">Then ask: what has changed since?</button>
+          <span class="q" id="at-q"></span>
+        </div>
+        <div class="grid" id="at-grid" aria-label="The attic: 128 documents, 10 of them private"></div>
+        <div class="out">
+          <div>documents opened for this question<b id="at-n">0</b></div>
+          <div>opened so far, all questions<b id="at-total">0</b></div>
+          <div>private documents opened<b id="at-bad">0</b></div>
+          <div>which documents the answer names<b id="at-src">none yet</b></div>
+        </div>
+        <p class="note" id="at-note"></p>
       </div>
     </div>
   </section>
@@ -183,8 +218,55 @@
           <p>A talk Eigen generated from a paper on why things that learn, from brains to companies, organise themselves in layers. The diagrams in the slides move.</p>
           <span class="go">Open the talk →</span>
         </a>
+        <a class="ee-card" href="/trip.html">
+          <span class="kicker">Generated page</span>
+          <h3>The long way round</h3>
+          <p>Ninety-five days around the United States, reconstructed from a phone's location history: days, places and photos cross-linked on one map. Built with Eigen, for fun.</p>
+          <span class="go">Open the map →</span>
+        </a>
       </div>
-      <p class="ee-disclaimer">The paper and the talks were algorithmically generated; not fit for human consumption.</p>
+      <p class="ee-disclaimer">The paper, the talks and the map were algorithmically generated; not fit for human consumption.</p>
     </div>
   </section>
 
+  <script>
+  (function () {
+    var N = 128, LOCK = [5, 19, 33, 47, 61, 75, 89, 103, 117, 124], NEED = [[14, 37, 58, 71], [37, 90]];
+    var grid = document.getElementById("at-grid"); if (!grid) return;
+    var cells = [];
+    for (var i = 0; i < N; i++) { var d = document.createElement("div"); d.className = "d" + (LOCK.indexOf(i) >= 0 ? " lock" : ""); grid.appendChild(d); cells.push(d); }
+    var mode = "without", total = 0, asked = 0, timer = null, remembered = false;
+    var el = function (id) { return document.getElementById(id); };
+    function reset() { cells.forEach(function (c) { c.className = "d" + (c.classList.contains("lock") ? " lock" : ""); }); }
+    function setMode(m) { mode = m; el("at-without").className = m === "without" ? "on" : ""; el("at-with").className = m === "with" ? "on" : ""; total = 0; asked = 0; remembered = false; reset(); el("at-n").textContent = "0"; el("at-total").textContent = "0"; el("at-bad").textContent = "0"; el("at-bad").className = ""; el("at-src").textContent = "none yet"; el("at-src").className = ""; el("at-note").textContent = ""; el("at-q").textContent = ""; }
+    function ask(second) {
+      if (timer) clearInterval(timer); reset();
+      var q = second ? "second question: what changed since?" : "question: what did we agree with the supplier?";
+      el("at-q").textContent = q;
+      var order, used, bad = 0, i = 0;
+      if (mode === "without") { order = cells.map(function (_, k) { return k; }); used = []; }
+      else { used = second ? (remembered ? [NEED[1][1]] : NEED[1]) : NEED[0]; order = used.slice(); }
+      el("at-n").textContent = "0";
+      timer = setInterval(function () {
+        if (i >= order.length) {
+          clearInterval(timer); timer = null;
+          el("at-total").textContent = String(total);
+          el("at-bad").textContent = String(bad); el("at-bad").className = bad ? "bad" : "good";
+          if (mode === "without") { el("at-src").textContent = "no record"; el("at-src").className = "bad"; el("at-note").textContent = second ? "The second question read the whole attic again: nothing was kept from the first." : "Every document was opened, the private ones included, and the answer names none of them."; }
+          else { el("at-src").textContent = used.map(function (k) { return "document " + (k + 1); }).join(", "); el("at-src").className = "good"; el("at-note").textContent = second ? "The second question opened one new document; the rest was already in the record from the first." : "Four documents were opened, none of them private, and the answer names each one."; remembered = true; }
+          return;
+        }
+        var k = order[i++]; var c = cells[k];
+        if (mode === "without") { if (c.classList.contains("lock")) { c.classList.add("broke"); bad++; } else { c.classList.add("read"); } }
+        else { c.classList.add("used"); }
+        total++; el("at-n").textContent = String(i);
+      }, mode === "without" ? 18 : 260);
+    }
+    var ran = false, io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && !ran) { ran = true; asked = 1; ask(false); io.disconnect(); } }); }, { threshold: 0.6 }) : null;
+    if (io) io.observe(grid); else { ran = true; asked = 1; ask(false); }
+    el("at-without").addEventListener("click", function () { setMode("without"); });
+    el("at-with").addEventListener("click", function () { setMode("with"); });
+    el("at-ask").addEventListener("click", function () { asked = 1; ask(false); });
+    el("at-again").addEventListener("click", function () { if (!asked) { ask(false); setTimeout(function () { ask(true); }, mode === "without" ? 18 * N + 400 : 260 * 4 + 400); } else { ask(true); } });
+  })();
+  </script>
