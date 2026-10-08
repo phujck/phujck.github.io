@@ -133,12 +133,22 @@
     <div class="container" style="position: relative;">
       <h1 class="page-hero-title fade-in">EigenEngine</h1>
       <p class="page-hero-subtitle fade-in fade-in-delay-1">
-        Eigen is a store that AI agents, the programs that answer questions and do tasks on a person's behalf, work through instead of reading documents directly. It keeps what they read, limits what each agent may open, and attaches to every answer the passages it came from. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
+        Eigen is software that sits between an organisation's documents and the AI agents that work on them. The agents read through Eigen instead of reading the documents directly, so what they read is remembered, what they may open is controlled, and every answer comes with the passages it was built from. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
       </p>
     </div>
   </header>
 
-  <section class="section" id="how">
+  <section class="section" id="problem">
+    <div class="container">
+      <span class="section-label fade-in">The problem</span>
+      <h2 class="section-title fade-in">A brilliant stranger in the attic</h2>
+      <div class="ee-lede fade-in">
+        <p>Picture an organisation's knowledge as a large, untidy attic, and an AI as a brilliant stranger sent up the ladder with a question. The stranger forgets everything between visits, so each visit starts from nothing. It can open any box, including ones it should not. And it answers confidently whether or not what it found supports the answer, and leaves no note of which boxes it opened. Those are the three gaps Eigen closes: memory, permission and provenance.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section highlights" id="how">
     <div class="container">
       <span class="section-label fade-in">How it works</span>
       <h2 class="section-title fade-in">Persistence, permission, provenance</h2>
@@ -224,12 +234,26 @@
       </div>
     </div>
   </section>
+  <section class="section" id="who">
+    <div class="container">
+      <span class="section-label fade-in">In practice</span>
+      <h2 class="section-title fade-in">Who it is for and how it is used</h2>
+      <div class="ee-facts fade-in">
+        <div class="ee-fact"><h3>Who</h3><p>Companies whose AI products answer questions for lawyers, analysts, underwriters, doctors or researchers, where a wrong or unsupported answer is costly. Research groups are the first users.</p></div>
+        <div class="ee-fact"><h3>How it is delivered</h3><p>As software the customer runs inside their own systems. The documents never leave; only the text of each request goes to the customer's own AI provider.</p></div>
+        <div class="ee-fact"><h3>Who sets the rules</h3><p>The owner of the documents decides, document by document, which agents may read what. Eigen enforces it on every request.</p></div>
+        <div class="ee-fact"><h3>Compared with today's tools</h3><p>Today an AI's answer is usually judged by another AI, which gives a score. Eigen gives a record that the customer, or their auditor, can re-run themselves.</p></div>
+        <div class="ee-fact"><h3>When</h3><p>Pre-release. The first pilots are planned for early 2027.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="see">
     <div class="container">
-      <span class="section-label fade-in">Early tests and examples</span>
-      <h2 class="section-title fade-in">Eigen forms the basis for an integrated research environment</h2>
+      <span class="section-label fade-in">Early prototypes</span>
+      <h2 class="section-title fade-in">Eigen as part of an integrated research environment</h2>
       <div class="ee-lede fade-in">
-        <p>Everything in this section is a prototype test. Below: the index Eigen built for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026. Each definition, claim, result and limitation in the paper is a node; the lines are the links between them. Hover or tap a node to read it.</p>
+        <p>The first use of Eigen has been as the memory and record underneath a research environment: it holds a project's sources, plans and drafts, and papers and talks are written from what it holds. The examples below are early prototype tests of that use. First, the index Eigen built for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026. Each definition, claim, result and limitation in the paper is a node; the lines are the links between them. Hover or tap a node to read it.</p>
       </div>
       <div class="ee-graph-wrap fade-in">
         <canvas id="ee-graph" width="1000" height="620" role="img" aria-label="The concept graph of one paper, coloured by kind"></canvas>
