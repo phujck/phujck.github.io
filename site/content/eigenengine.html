@@ -53,6 +53,48 @@
     .ee-attic .out b.good { color: #7bd389; }
     .ee-attic .say { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 var(--space-md); min-height: 2.6em; }
     .ee-attic .note { margin-top: var(--space-sm); font-size: 0.8rem; color: var(--text-muted); }
+    .ee-walk { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); max-width: 100ch; margin-top: var(--space-lg); }
+    .ee-walk .bar { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-md); }
+    .ee-walk button { font: 600 0.8rem/1 'Outfit', sans-serif; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
+    .ee-walk button.on { background: var(--accent); color: #0a0e1a; border-color: var(--accent); }
+    .ee-walk button.small { font-size: 0.72rem; padding: 0.4rem 0.6rem; }
+    .ee-walk .say { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 var(--space-md); min-height: 2.6em; }
+    .ee-walk .stage { display: grid; grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr); gap: var(--space-md); align-items: start; }
+    .ee-walk svg { display: block; width: 100%; height: auto; background: rgba(0,0,0,0.18); border-radius: 8px; }
+    .ee-walk .side { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+    .ee-walk .side h4 { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 var(--space-xs); }
+    .ee-walk .side .box { border: 1px solid var(--border-glass); border-radius: 8px; padding: var(--space-sm) var(--space-md); margin-bottom: var(--space-sm); }
+    .ee-walk .side .fp { font-family: var(--font-mono); font-size: 0.75rem; color: var(--evidence); }
+    .ee-walk .side .fp.bad { color: #c0392b; }
+    .ee-walk .side .flag { color: #c0392b; font-weight: 600; }
+    .ee-walk .side .ok { color: #7bd389; font-weight: 600; }
+    .ee-walk .g { cursor: pointer; }
+    @media (max-width: 760px) { .ee-walk .stage { grid-template-columns: 1fr; } }
+    .ee-story { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); max-width: 100ch; margin-top: var(--space-lg); }
+    .ee-story .bar { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-md); }
+    .ee-story button { font: 600 0.8rem/1 'Outfit', sans-serif; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
+    .ee-story button.on { background: var(--accent); color: #0a0e1a; border-color: var(--accent); }
+    .ee-story button.small { font-size: 0.72rem; padding: 0.4rem 0.6rem; }
+    .ee-story .say { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 var(--space-md); min-height: 2.6em; }
+    .ee-story .stage { display: grid; grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr); gap: var(--space-md); align-items: start; }
+    .ee-story svg { display: block; width: 100%; height: auto; background: rgba(0,0,0,0.18); border-radius: 8px; }
+    .ee-story .side { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+    .ee-story .side h4 { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 var(--space-xs); }
+    .ee-story .side .box { border: 1px solid var(--border-glass); border-radius: 8px; padding: var(--space-sm) var(--space-md); margin-bottom: var(--space-sm); }
+    .ee-story .side .n { font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-primary); display: block; }
+    .ee-story .side .n.bad { color: #c0392b; } .ee-story .side .n.good { color: #7bd389; }
+    .ee-story .side .fp { font-family: var(--font-mono); font-size: 0.75rem; color: var(--evidence); }
+    .ee-story .side .fp.bad { color: #c0392b; }
+    .ee-story .side .flag { color: #c0392b; font-weight: 600; } .ee-story .side .ok { color: #7bd389; font-weight: 600; }
+    @media (max-width: 760px) { .ee-story .stage { grid-template-columns: 1fr; } }
+    .ee-problem { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); max-width: 100ch; }
+    .ee-problem .pane { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); }
+    .ee-problem svg { display: block; width: 100%; height: auto; }
+    .ee-problem h3 { font-size: 1rem; margin: var(--space-sm) 0 var(--space-xs); }
+    .ee-problem p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.65; margin: 0; }
+    .ee-bigfig { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); max-width: 100ch; }
+    .ee-bigfig svg { display: block; width: 100%; height: auto; }
+    @media (max-width: 760px) { .ee-problem { grid-template-columns: 1fr; } }
   </style>
 
   <!-- Page Header -->
@@ -60,7 +102,7 @@
     <div class="container" style="position: relative;">
       <h1 class="page-hero-title fade-in">EigenEngine</h1>
       <p class="page-hero-subtitle fade-in fade-in-delay-1">
-        An AI put to work on a company's documents has three faults. It forgets everything between questions, so each question costs a full re-read. It can open any document, including ones it should not. And it cannot show which documents its answer came from. Eigen is software that sits between the documents and the AI and removes all three: it keeps a record of what was read, it enforces who may read what, and it attaches the sources to every answer. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
+        Eigen is a routing and permission system for AI agents working on an organisation's documents. It keeps the documents as a graph, routes each question to the few passages it needs, enforces who may read what, and returns every answer with its sources. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
       </p>
     </div>
   </header>
@@ -68,33 +110,72 @@
   <section class="section" id="problem">
     <div class="container">
       <span class="section-label fade-in">The problem</span>
-      <h2 class="section-title fade-in">The attic</h2>
-      <div class="ee-lede fade-in">
-        <p>Think of the documents as boxes in an attic and the AI as a stranger sent up the ladder with a question. The attic has 128 documents; the ten with a red dot are private.</p>
-      </div>
-      <div class="ee-attic fade-in" id="attic">
-        <div class="bar">
-          <button type="button" id="at-s1" class="on">1 · A question, without Eigen</button>
-          <button type="button" id="at-s2">2 · The same question, with Eigen</button>
-          <button type="button" id="at-s3">3 · A second question</button>
-          <button type="button" id="at-replay">Replay</button>
-        </div>
-        <p class="say" id="at-say"></p>
-        <div class="grid" id="at-grid" aria-label="The attic: 128 documents, ten of them private"></div>
-        <div class="out">
-          <div>documents opened<b id="at-n">0</b></div>
-          <div>private documents opened<b id="at-bad">0</b></div>
-          <div>which documents the answer names<b id="at-src">none</b></div>
-        </div>
-        <p class="note" id="at-note"></p>
+      <h2 class="section-title fade-in">What goes wrong with agents today</h2>
+      <div class="ee-problem fade-in">
+        <div class="pane"><svg viewBox="0 0 480 300" role="img" aria-label="Three days, the document pile growing each day, and the agent reading the whole pile for every question; below, a chain of three agent steps where an error at the first step is carried to the third">
+  <g font-family="Lora, serif" font-size="12" fill="#9ca3af">
+    <text x="60" y="22" text-anchor="middle">Monday</text><text x="180" y="22" text-anchor="middle">Tuesday</text><text x="300" y="22" text-anchor="middle">Wednesday</text>
+  </g>
+  <g fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.18)">
+    <rect x="30" y="110" width="60" height="60" rx="3"/><rect x="150" y="80" width="60" height="90" rx="3"/><rect x="270" y="50" width="60" height="120" rx="3"/>
+  </g>
+  <g fill="#c9a96e" opacity="0.85">
+    <rect x="30" y="110" width="60" height="60" rx="3"/><rect x="150" y="80" width="60" height="90" rx="3"/><rect x="270" y="50" width="60" height="120" rx="3"/>
+  </g>
+  <g font-family="JetBrains Mono, monospace" font-size="11" fill="#e8e6e3">
+    <text x="60" y="186" text-anchor="middle">all 60</text><text x="180" y="186" text-anchor="middle">all 90</text><text x="300" y="186" text-anchor="middle">all 120</text>
+  </g>
+  <text x="60" y="100" text-anchor="middle" font-family="Lora, serif" font-size="11" fill="#9ca3af">documents</text>
+  <text x="352" y="110" font-family="Lora, serif" font-size="12" fill="#e8e6e3">read per question:</text>
+  <text x="352" y="128" font-family="Lora, serif" font-size="12" fill="#c9a96e">the whole pile,</text>
+  <text x="352" y="146" font-family="Lora, serif" font-size="12" fill="#c9a96e">every time</text>
+  <g font-family="Lora, serif" font-size="12" fill="#9ca3af">
+    <text x="30" y="232">step 1</text><text x="185" y="232">step 2</text><text x="340" y="232">step 3</text>
+  </g>
+  <g fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)">
+    <rect x="30" y="242" width="125" height="36" rx="4"/><rect x="185" y="242" width="125" height="36" rx="4"/><rect x="340" y="242" width="125" height="36" rx="4"/>
+  </g>
+  <g stroke="#c0392b" stroke-width="2"><path d="M42 252 L54 268 M54 252 L42 268"/></g>
+  <g stroke="#9ca3af" stroke-width="1.2"><path d="M155 260 L183 260 M310 260 L338 260"/></g>
+  <text x="64" y="264" font-family="Lora, serif" font-size="11" fill="#c0392b">wrong source</text>
+  <text x="196" y="264" font-family="Lora, serif" font-size="11" fill="#9ca3af">acts on it</text>
+  <text x="351" y="264" font-family="Lora, serif" font-size="11" fill="#9ca3af">acts on that</text>
+  <text x="30" y="296" font-family="Lora, serif" font-size="11" fill="#6b7280">an error at step 1 is invisible by step 3</text>
+</svg><h3>Context</h3><p>An agent starts every question from nothing. It reads the whole pile, or whatever someone pasted in, and the pile grows. In a chain of agents, one wrong source at the first step is carried into every step after it and is invisible by the end.</p></div>
+        <div class="pane"><svg viewBox="0 0 480 300" role="img" aria-label="An agent holding the user's full access opens documents including private ones; the answer it returns records no sources, and an auditor has nothing to check">
+  <rect x="14" y="40" width="130" height="48" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)"/>
+  <text x="79" y="60" text-anchor="middle" font-family="Lora, serif" font-size="12" fill="#e8e6e3">the agent</text>
+  <text x="79" y="78" text-anchor="middle" font-family="Lora, serif" font-size="11" fill="#9ca3af">must read every file</text>
+  <g fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.18)">
+    <rect x="200" y="30" width="100" height="26" rx="3"/><rect x="200" y="64" width="100" height="26" rx="3"/><rect x="200" y="98" width="100" height="26" rx="3"/><rect x="200" y="132" width="100" height="26" rx="3"/><rect x="200" y="166" width="100" height="26" rx="3"/>
+  </g>
+  <g fill="rgba(192,57,43,0.18)" stroke="#c0392b"><rect x="200" y="98" width="100" height="26" rx="3"/><rect x="200" y="166" width="100" height="26" rx="3"/></g>
+  <g font-family="Lora, serif" font-size="11" fill="#9ca3af">
+    <text x="250" y="47" text-anchor="middle">contract</text><text x="250" y="81" text-anchor="middle">email</text><text x="250" y="115" text-anchor="middle" fill="#c0392b">personnel file</text><text x="250" y="149" text-anchor="middle">report</text><text x="250" y="183" text-anchor="middle" fill="#c0392b">board minutes</text>
+  </g>
+  <g stroke="#9ca3af" stroke-width="1"><path d="M144 64 L198 43 M144 64 L198 77 M144 64 L198 145"/></g>
+  <g stroke="#c0392b" stroke-width="1.4"><path d="M144 64 L198 111 M144 64 L198 179"/></g>
+  <text x="310" y="112" font-family="Lora, serif" font-size="11" fill="#c0392b">read, then found not needed</text>
+  <rect x="24" y="200" width="200" height="54" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)"/>
+  <text x="36" y="222" font-family="Lora, serif" font-size="12" fill="#e8e6e3">answer: delivery by 14 March</text>
+  <text x="36" y="242" font-family="Lora, serif" font-size="11" fill="#c0392b">sources recorded: none</text>
+  <rect x="290" y="200" width="166" height="54" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)"/>
+  <text x="373" y="222" text-anchor="middle" font-family="Lora, serif" font-size="12" fill="#e8e6e3">the auditor</text>
+  <text x="373" y="242" text-anchor="middle" font-family="Lora, serif" font-size="11" fill="#9ca3af">nothing to check it against</text>
+  <g stroke="#9ca3af" stroke-width="1" stroke-dasharray="3 3"><path d="M224 227 L288 227"/></g>
+  <text x="24" y="290" font-family="Lora, serif" font-size="11" fill="#6b7280">a file cannot be judged irrelevant, or kept private, without being opened</text>
+</svg><h3>Governance</h3><p>To find anything, an agent has to read everything. A question about a supplier reads the personnel files and the board minutes too, because there is no way to know a file is irrelevant, or private, without opening it. Nothing records which files were read, so the answer cannot be checked against them, by the user or by an auditor.</p></div>
       </div>
     </div>
   </section>
 
   <section class="section highlights" id="how">
     <div class="container">
-      <span class="section-label fade-in">How it works</span>
-      <h2 class="section-title fade-in">How Eigen works</h2>
+      <span class="section-label fade-in">How Eigen works</span>
+      <h2 class="section-title fade-in">A routing and permission system on a recursive graph</h2>
+      <div class="ee-lede fade-in">
+        <p>Eigen reads the documents once and keeps them as a graph. Each passage is linked to the passages it shares a name, a date or a subject with; linked passages form a group; groups link to groups; and each node of the graph is itself a graph of what sits beneath it. A question is routed down that graph to the few passages it needs, through a permission check at every level, and the answer comes back with the route it took.</p>
+      </div>
       <div class="ee-bigfig fade-in"><svg viewBox="0 0 1000 400" role="img" aria-label="Sources are stored once as the record; an index over the record is descended by a question, opening one branch, skipping one, and refusing one the agent may not read; evidence returns with the passages used and a fingerprint of each, and is refused if a source has changed">
   <defs>
     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/></marker>
@@ -104,7 +185,7 @@
   <g font-family="Outfit, sans-serif" font-size="15" font-weight="600" fill="#e8e6e3">
     <text x="70" y="34">sources</text>
     <text x="300" y="34" fill="#c9a96e">the record</text>
-    <text x="560" y="34" fill="#7eb8da">the index</text>
+    <text x="560" y="34" fill="#7eb8da">the graph</text>
     <text x="830" y="34" fill="#7bd389">the answer</text>
   </g>
   <!-- sources: a stack of pages -->
@@ -127,7 +208,7 @@
   </g>
   <!-- index -->
   <path d="M466 108 L512 108" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ah)"/>
-  <text x="489" y="98" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">indexed</text>
+  <text x="489" y="98" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">mapped</text>
   <g stroke="#7eb8da" fill="#0f172a" stroke-width="1.3">
     <rect x="580" y="52" width="56" height="34" rx="4"/>
     <rect x="522" y="118" width="56" height="34" rx="4" stroke="#7bd389" fill="rgba(123,211,137,0.16)"/>
@@ -141,7 +222,7 @@
   <g fill="#9ca3af"><circle cx="596" cy="69" r="2.5"/><circle cx="608" cy="62" r="2.5"/><circle cx="620" cy="72" r="2.5"/><circle cx="538" cy="135" r="2.5"/><circle cx="550" cy="128" r="2.5"/><circle cx="562" cy="138" r="2.5"/><circle cx="538" cy="201" r="2.5"/><circle cx="550" cy="194" r="2.5"/><circle cx="562" cy="204" r="2.5"/></g>
   <g stroke="#9ca3af" stroke-width="0.8"><path d="M596 69 L608 62 L620 72 M538 135 L550 128 L562 138 M538 201 L550 194 L562 204"/></g>
   <g stroke="#c0392b" stroke-width="2"><path d="M654 126 L678 144 M678 126 L654 144"/></g>
-  <text x="666" y="108" font-family="Lora, serif" font-size="11.5" fill="#c0392b" text-anchor="middle">not permitted</text>
+  <text x="666" y="108" font-family="Lora, serif" font-size="11.5" fill="#c0392b" text-anchor="middle">private: filtered by policy</text>
   <text x="608" y="170" font-family="Lora, serif" font-size="11.5" fill="#6b7280" text-anchor="middle">not needed</text>
   <text x="550" y="236" font-family="Lora, serif" font-size="11.5" fill="#7bd389" text-anchor="middle">opened</text>
   <text x="608" y="262" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">each group holds linked passages</text>
@@ -165,12 +246,36 @@
   <g stroke="#2a3344" stroke-width="1"><path d="M258 318 L458 318 M522 318 L694 318 M768 318 L958 318"/></g>
 </svg></div>
       <div class="ee-ppp fade-in">
-        <div><h3>Persistence</h3><p>Documents are stored once, as a record of passages: what each says, the names, dates and numbers in it, and its links to other passages. The next question starts from the record instead of reading everything again.</p></div>
-        <div><h3>Permission</h3><p>An agent reaches the record only through the index, and opens only the groups its question needs. Groups it is not permitted to read are never opened.</p></div>
+        <div><h3>Persistence</h3><p>Documents are read once and kept as a record of passages: what each says, the names, dates and numbers in it, and its links to other passages. The next question starts from the graph instead of reading everything again.</p></div>
+        <div><h3>Permission</h3><p>An agent reaches the record only through the graph, and opens only the groups its question needs. A file the agent may not read is never opened for it; if a fact it needs sits in one, Eigen delivers that fact alone, transformed as the rights policy for that agent requires, with a name or a figure removed. The owner of the documents sets the policy.</p></div>
         <div><h3>Provenance</h3><p>Every answer carries the passages it used and a fingerprint of each. Anyone with the sources can check each passage themselves, and if a passage has changed since, the answer is flagged as no longer backed.</p></div>
       </div>
     </div>
   </section>
+  <section class="section" id="story">
+    <div class="container">
+      <span class="section-label fade-in">In motion</span>
+      <h2 class="section-title fade-in">One question, with and without Eigen</h2>
+      <div class="ee-lede fade-in">
+        <p>A company has 128 documents in eight kinds: contracts, emails, invoices, reports, meeting minutes, drafts, policies, and personnel files that most agents may not read. An agent is asked one question about the supplier, first on its own, then through Eigen.</p>
+      </div>
+      <div class="ee-story fade-in" id="story-box">
+        <div class="bar">
+          <button type="button" id="st-1" class="on">1 · Today</button>
+          <button type="button" id="st-2">2 · Asked again next week</button>
+          <button type="button" id="st-3">3 · Eigen reads once</button>
+          <button type="button" id="st-4">4 · The same question, through Eigen</button>
+          <button type="button" id="st-5">5 · The answer, checked</button>
+        </div>
+        <p class="say" id="st-say"></p>
+        <div class="stage">
+          <svg id="st-svg" viewBox="0 0 640 420" role="img" aria-label="128 documents in eight rows by kind; then the same documents as a map of linked passages in groups"></svg>
+          <div class="side" id="st-side"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="who">
     <div class="container">
       <span class="section-label fade-in">Use</span>
@@ -190,7 +295,7 @@
       <span class="section-label fade-in">Early prototypes</span>
       <h2 class="section-title fade-in">Eigen as part of an integrated research environment</h2>
       <div class="ee-lede fade-in">
-        <p>The first use of Eigen has been as the record underneath a research environment: it holds a project's sources, plans and drafts; papers and talks are written from it. Eigen built the index for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026. Each definition, claim, result and limitation in the paper is a node; the lines are the links between them. Hover or tap a node to read it.</p>
+        <p>The first use of Eigen has been as the record underneath a research environment: it holds a project's sources, plans and drafts; papers and talks are written from it. Eigen built the graph for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026. Each definition, claim, result and limitation in the paper is a node; the lines are the links between them. Hover or tap a node to read it.</p>
       </div>
       <div class="ee-graph-wrap fade-in">
         <canvas id="ee-graph" width="1000" height="620" role="img" aria-label="The concept graph of one paper, coloured by kind"></canvas>
@@ -230,50 +335,97 @@
 
   <script>
   (function () {
-    var N = 128, LOCK = [5, 19, 33, 47, 61, 75, 89, 103, 117, 124], NEED1 = [14, 37, 58, 71], NEED2 = [90];
-    var grid = document.getElementById("at-grid"); if (!grid) return;
-    var cells = [];
-    for (var i = 0; i < N; i++) { var d = document.createElement("div"); d.className = "d" + (LOCK.indexOf(i) >= 0 ? " lock" : ""); grid.appendChild(d); cells.push(d); }
-    var el = function (id) { return document.getElementById(id); };
-    var timer = null, step = 1;
-    var STEPS = {
-      1: { say: "The agent is asked: what did we agree with the supplier? Without Eigen it reads every document in the attic.",
-           order: cells.map(function (_, k) { return k; }), speed: 16, eigen: false,
-           note: "Nothing is kept for next time." },
-      2: { say: "The same question, through Eigen. The index points the agent to the four documents that matter; the private ones stay shut.",
-           order: NEED1, speed: 320, eigen: true,
-           note: "What was read is now in the record." },
-      3: { say: "A second question: what has changed since?",
-           order: NEED1.concat(NEED2), speed: 220, eigen: true, keep: NEED1,
-           note: "Without Eigen this question would open all 128 again. With Eigen: the four from before, already in the record, plus one new one." }
-    };
-    function reset(keep) { cells.forEach(function (c, k) { c.className = "d" + (c.classList.contains("lock") ? " lock" : "") + (keep && keep.indexOf(k) >= 0 ? " used" : ""); }); }
-    function play(n) {
-      step = n; if (timer) { clearInterval(timer); timer = null; }
-      [1, 2, 3].forEach(function (k) { el("at-s" + k).className = k === n ? "on" : ""; });
-      var S = STEPS[n]; reset(S.keep); el("at-say").textContent = S.say; el("at-note").textContent = "";
-      el("at-n").textContent = S.keep ? String(S.keep.length) : "0"; el("at-bad").textContent = "0"; el("at-bad").className = ""; el("at-src").textContent = "none"; el("at-src").className = "";
-      var order = S.keep ? S.order.filter(function (k) { return S.keep.indexOf(k) < 0; }) : S.order, i = 0, bad = 0, opened = S.keep ? S.keep.length : 0;
-      timer = setInterval(function () {
-        if (i >= order.length) {
-          clearInterval(timer); timer = null;
-          el("at-bad").textContent = String(bad); el("at-bad").className = bad ? "bad" : "good";
-          if (S.eigen) { el("at-src").textContent = S.order.map(function (k) { return "document " + (k + 1); }).join(", "); el("at-src").className = "good"; }
-          else { el("at-src").textContent = "none"; el("at-src").className = "bad"; }
-          el("at-note").textContent = S.note; return;
-        }
-        var c = cells[order[i++]];
-        if (!S.eigen && c.classList.contains("lock")) { c.classList.add("broke"); bad++; } else { c.classList.add(S.eigen ? "used" : "read"); }
-        opened++; el("at-n").textContent = String(opened);
-      }, S.speed);
+    var svg = document.getElementById("st-svg"); if (!svg) return;
+    var NS = "http://www.w3.org/2000/svg", N = 128;
+    var KINDS = ["contracts", "emails", "invoices", "reports", "minutes", "drafts", "policies", "personnel files"], PRIV = 7;
+    var seed = 11; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    var centers = [[120, 125], [290, 100], [450, 130], [560, 265], [120, 300], [290, 330], [450, 325], [545, 110]];
+    var pts = [];
+    for (var i = 0; i < N; i++) {
+      var row = Math.floor(i / 16), col = i % 16, a = rnd() * Math.PI * 2, r = 14 + rnd() * 40;
+      pts.push({ i: i, g: row, gx: 112 + col * 32, gy: 36 + row * 46, mx: centers[row][0] + Math.cos(a) * r, my: centers[row][1] + Math.sin(a) * r * 0.7, x: 0, y: 0 });
     }
-    var ran = false;
-    var io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && !ran) { ran = true; play(1); io.disconnect(); } }); }, { threshold: 0.25 }) : null;
-    if (io) io.observe(grid); else { ran = true; play(1); }
-    el("at-s1").addEventListener("click", function () { play(1); });
-    el("at-s2").addEventListener("click", function () { play(2); });
-    el("at-s3").addEventListener("click", function () { play(3); });
-    el("at-replay").addEventListener("click", function () { play(step); });
-    reset(); el("at-say").textContent = STEPS[1].say;
+    var links = [];
+    for (i = 0; i < N; i++) { var j = i + 1, k = i + 3; if (j < N && j % 16 !== 0) links.push([i, j]); if (k < N && Math.floor(k / 16) === Math.floor(i / 16) && rnd() < 0.3) links.push([i, k]); }
+    [[2, 20], [20, 25], [9, 37], [21, 68], [40, 80], [50, 70], [66, 99], [85, 100]].forEach(function (l) { links.push(l); });
+    var NEED = [2, 20, 25], NEEDG = [0, 1], PRIVNEED = 118; // contracts and emails, plus one line from a personnel file
+    var el = function (id) { return document.getElementById(id); };
+    function mk(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var a in attrs) e.setAttribute(a, attrs[a]); (parent || svg).appendChild(e); return e; }
+    var step = 1, timer = null, anim = null, changed = false, t = 0; // t: 0 grid, 1 map
+    var SAY = {
+      1: "The agent has the 128 documents in front of it. To find the answer it has to read every one, the personnel files included: nothing tells it which files matter without opening them. The answer names no source.",
+      2: "Nothing was kept from last week, so the same question costs the same again: all 128 documents, the personnel files included.",
+      3: "Eigen reads the 128 documents once and keeps a graph of them: each document's passages, linked where they share a name, a date or a subject, gathered into groups by kind. Personnel files are a group this agent may not open.",
+      4: "The question is routed only to the groups it needs: contracts and emails, where three passages are opened. One fact it needs sits in a personnel file. Eigen does not open that file for the agent; it delivers the one line asked for, with the name and the pay figure removed, as the rights policy for this agent requires.",
+      5: "The answer carries the four passages it rests on, including the transformed line from the personnel file, and a fingerprint of each. Change one of those passages and its fingerprint no longer matches: the answer is flagged until it is redone."
+    };
+    var FP = { 2: "a1f3…", 20: "7c0e…", 25: "e94d…", 118: "52b7…" };
+    function side(html) { el("st-side").innerHTML = html; }
+    function pos() { pts.forEach(function (p) { p.x = p.gx + (p.mx - p.gx) * t; p.y = p.gy + (p.my - p.gy) * t; }); }
+    function draw(readSet, badSet) {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      pos();
+      if (t < 0.5) {
+        KINDS.forEach(function (k, r) { mk("text", { x: 100, y: 40 + r * 46, "text-anchor": "end", "font-family": "Lora, serif", "font-size": 11, fill: r === PRIV ? "#c0392b" : "#9ca3af" }).textContent = k + (r === PRIV ? " · private" : ""); });
+      }
+      if (t > 0.5) {
+        centers.forEach(function (c, gi) {
+          var on = step >= 4 && NEEDG.indexOf(gi) >= 0, priv = gi === PRIV;
+          mk("ellipse", { cx: c[0], cy: c[1], rx: 62, ry: 50, fill: on ? "rgba(123,211,137,0.10)" : (priv ? "rgba(192,57,43,0.10)" : "rgba(255,255,255,0.03)"), stroke: on ? "#7bd389" : (priv ? "#c0392b" : "rgba(255,255,255,0.15)"), "stroke-dasharray": on || priv ? "" : "4 4" });
+          var lab = (priv ? "personnel" : KINDS[gi]), col = priv ? "#c0392b" : (on ? "#7bd389" : "#9ca3af");
+          if (step >= 4) lab += priv ? " · filtered" : (on ? " · opened" : " · not needed"); else if (priv) lab += " · private";
+          mk("text", { x: c[0], y: c[1] - 56, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 11, fill: col }).textContent = lab;
+        });
+        links.forEach(function (l) { var a = pts[l[0]], b = pts[l[1]], lit = step >= 4 && NEED.indexOf(l[0]) >= 0 && NEED.indexOf(l[1]) >= 0; mk("line", { x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: lit ? "#c9a96e" : "rgba(255,255,255,0.10)", "stroke-width": lit ? 1.4 : 1, opacity: t }); });
+        if (step >= 4) { mk("text", { x: 320, y: 16, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 12, fill: "#c9a96e" }).textContent = "what did we agree with the supplier?"; NEEDG.forEach(function (gi) { mk("line", { x1: 320, y1: 22, x2: centers[gi][0], y2: centers[gi][1] - 50, stroke: "#c9a96e", "stroke-width": 1.2, "stroke-dasharray": "3 3" }); }); mk("line", { x1: 320, y1: 22, x2: centers[PRIV][0], y2: centers[PRIV][1] - 50, stroke: "#c0392b", "stroke-width": 1.2, "stroke-dasharray": "3 3" }); var pp = pts[PRIVNEED]; mk("circle", { cx: pp.x, cy: pp.y, r: 7, fill: "none", stroke: "#c9a96e", "stroke-width": 1.5 }); mk("text", { x: pp.x, y: pp.y + 20, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 10, fill: "#c9a96e" }).textContent = "one line; name, pay removed"; }
+      }
+      pts.forEach(function (p) {
+        var priv = p.g === PRIV, read = readSet && readSet[p.i], bad = badSet && badSet[p.i], need = step >= 4 && NEED.indexOf(p.i) >= 0;
+        var fill = need ? "#7bd389" : bad ? "#c0392b" : read ? "#c9a96e" : (priv ? "rgba(192,57,43,0.55)" : (t > 0.5 ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.12)"));
+        if (step === 5 && changed && p.i === 20) fill = "#c0392b";
+        if (t < 0.5) mk("rect", { x: p.x - 11, y: p.y - 11, width: 22, height: 22, rx: 3, fill: fill, stroke: priv ? "rgba(192,57,43,0.6)" : "rgba(255,255,255,0.12)" });
+        else mk("circle", { cx: p.x, cy: p.y, r: need ? 5 : 3, fill: fill });
+      });
+    }
+    function counters(opened, priv, names) {
+      return '<div class="box">documents opened<span class="n">' + opened + '</span></div><div class="box">private documents opened<span class="n ' + (priv ? "bad" : "good") + '">' + priv + '</span></div><div class="box">documents the answer names<span class="n ' + (names === "none" ? "bad" : "good") + '">' + names + '</span></div>';
+    }
+    function sweep(done) {
+      var readSet = {}, badSet = {}, i = 0, bad = 0;
+      side(counters(0, 0, "…"));
+      timer = setInterval(function () {
+        if (i >= N) { clearInterval(timer); timer = null; side(counters(N, bad, "none") + '<div class="box">answer: delivery by 14 March. No source given.</div>'); if (done) done(); return; }
+        var p = pts[i++]; if (p.g === PRIV) { badSet[p.i] = 1; bad++; } else { readSet[p.i] = 1; }
+        draw(readSet, badSet); el("st-side").querySelector(".n").textContent = i;
+      }, 14);
+    }
+    function morph(done) {
+      var t0 = null;
+      anim = function (ts) { if (!t0) t0 = ts; t = Math.min(1, (ts - t0) / 1400); draw(); if (t < 1) requestAnimationFrame(anim); else if (done) done(); };
+      requestAnimationFrame(anim);
+    }
+    function go(n) {
+      if (timer) { clearInterval(timer); timer = null; } anim = null; step = n; changed = false;
+      [1, 2, 3, 4, 5].forEach(function (k) { el("st-" + k).className = k === n ? "on" : ""; });
+      el("st-say").textContent = SAY[n];
+      if (n === 1 || n === 2) { t = 0; draw(); sweep(); }
+      if (n === 3) { t = 0; draw(); side('<h4>What the record holds for each passage</h4><div class="box">a passage of text</div><div class="box">what it says</div><div class="box">the names, dates and numbers in it</div><div class="box">links to other passages</div>'); morph(); }
+      if (n === 4) { t = 1; draw(); side(counters(3, 0, "4") + '<div class="box">opened for the agent: contracts, emails</div><div class="box">from the personnel files: one line, with the name and the pay figure removed; the file itself is never shown to the agent</div><div class="box">not needed: invoices, reports, minutes, drafts, policies</div>'); }
+      if (n === 5) { t = 1; draw(); answer(); }
+    }
+    function answer() {
+      var bad = changed;
+      side('<h4>The answer</h4><div class="box">Delivery by 14 March; the price is fixed until June; our contact on their side is their account manager.</div><h4>Rests on</h4>' +
+        NEED.concat([PRIVNEED]).map(function (i) { return '<div class="box">' + (i === PRIVNEED ? 'personnel file ' + (i + 1) + ', one line, transformed' : KINDS[pts[i].g].replace(/s$/, "") + ' ' + (i + 1)) + ' <span class="fp' + (bad && i === 20 ? ' bad' : '') + '">' + FP[i] + (bad && i === 20 ? ' no longer matches' : '') + '</span></div>'; }).join("") +
+        (bad ? '<div class="box flag">Flagged: a source changed after this answer was given.</div><button type="button" class="small" id="st-undo">Put email 21 back</button>'
+             : '<div class="box ok">Every fingerprint matches the sources.</div><button type="button" class="small" id="st-change">Change email 21</button>'));
+      var b = el("st-change"), u = el("st-undo");
+      if (b) b.addEventListener("click", function () { changed = true; draw(); answer(); });
+      if (u) u.addEventListener("click", function () { changed = false; draw(); answer(); });
+    }
+    [1, 2, 3, 4, 5].forEach(function (k) { el("st-" + k).addEventListener("click", function () { go(k); }); });
+    var ran = false, io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && !ran) { ran = true; go(1); io.disconnect(); } }); }, { threshold: 0.25 }) : null;
+    t = 0; draw(); side(counters(0, 0, "…"));
+    if (io) io.observe(svg); else go(1);
   })();
   </script>
