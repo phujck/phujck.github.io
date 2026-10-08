@@ -156,5 +156,10 @@
     "url": "/registers/",
     "kind": "page",
     "note": "gated register shelf; unlisted, noindex, robots-disallowed (kept up 2026-08-03)"
+  },
+  {
+    "url": "/eigenengine.html",
+    "kind": "page",
+    "note": "EigenEngine Ltd company page, added 2026-10-08"
   }
 ]

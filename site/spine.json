@@ -197,6 +197,25 @@
       "body_scripts": "  <script src=\"/assets/js/trip.js\" defer></script>"
     },
     {
+      "path": "eigenengine.html",
+      "layout": "full",
+      "nav_active": "eigenengine",
+      "title": "EigenEngine Ltd — a document store that makes an AI agent's work checkable",
+      "description": "A document store that the customer runs in their own environment and that AI agents can reach only through tools. The tools enforce permissions, write down every call, and let an answer be checked against the sources it came from.",
+      "canonical": "https://gmccaul.co.uk/eigenengine.html",
+      "og_type": "website",
+      "og_title": "EigenEngine Ltd",
+      "og_description": "A document store that the customer runs in their own environment and that AI agents can reach only through tools. The tools enforce permissions, write down every call, and let an answer be checked against the sources it came from.",
+      "og_image": "https://gmccaul.co.uk/assets/img/og-eigenengine.png",
+      "twitter_card": "summary_large_image",
+      "twitter_title": "EigenEngine Ltd",
+      "twitter_description": "A document store that the customer runs in their own environment and that AI agents can reach only through tools. The tools enforce permissions, write down every call, and let an answer be checked against the sources it came from.",
+      "extra_css": [],
+      "og_image_width": "1200",
+      "og_image_height": "630",
+      "jsonld": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Organization\",\n  \"name\": \"EigenEngine Ltd\",\n  \"url\": \"https://gmccaul.co.uk/eigenengine.html\",\n  \"foundingDate\": \"2026-08-06\",\n  \"foundingLocation\": {\n    \"@type\": \"Country\",\n    \"name\": \"United Kingdom\"\n  },\n  \"founder\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n    \"name\": \"Gerard McCaul\"\n  },\n  \"description\": \"A document store that the customer runs in their own environment and that AI agents can reach only through tools. The tools enforce permissions, write down every call, and let an answer be checked against the sources it came from.\",\n  \"email\": \"gerard.mccaul@gmail.com\"\n}"
+    },
+    {
       "path": "404.html",
       "layout": "bare",
       "title": "404 — Page Not Found"
