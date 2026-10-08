@@ -143,6 +143,7 @@
     .ee-attic .out b { display: block; font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-primary); }
     .ee-attic .out b.bad { color: #c0392b; }
     .ee-attic .out b.good { color: #7bd389; }
+    .ee-attic .say { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 var(--space-md); min-height: 2.6em; }
     .ee-attic .note { margin-top: var(--space-sm); font-size: 0.8rem; color: var(--text-muted); }
   </style>
 
@@ -151,7 +152,7 @@
     <div class="container" style="position: relative;">
       <h1 class="page-hero-title fade-in">EigenEngine</h1>
       <p class="page-hero-subtitle fade-in fade-in-delay-1">
-        Eigen is software that sits between an organisation's documents and the AI agents that work on them. Agents read through Eigen instead of reading the documents directly. Eigen records what each agent read, controls which documents it may open, and returns the passages each answer was built from. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
+        Eigen is software that sits between an organisation's documents and the AI agents that work on them. Eigen records what each agent read, controls which documents it may open, and returns the passages each answer was built from. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
       </p>
     </div>
   </header>
@@ -161,22 +162,21 @@
       <span class="section-label fade-in">The problem</span>
       <h2 class="section-title fade-in">What goes wrong without Eigen</h2>
       <div class="ee-lede fade-in">
-        <p>An AI agent sent into an organisation's documents is a stranger in an attic. It forgets everything between visits, it can open any box, and it leaves no record of what it opened. The attic below has 128 documents; the ten with a red dot are private. Watch what one question costs, then ask it with Eigen in the way.</p>
+        <p>An AI agent sent into an organisation's documents is a stranger in an attic. It forgets everything between visits, it can open any box, and it leaves no record of what it opened. The attic has 128 documents; the ten with a red dot are private.</p>
       </div>
       <div class="ee-attic fade-in" id="attic">
         <div class="bar">
-          <button type="button" id="at-without" class="on">Without Eigen</button>
-          <button type="button" id="at-with">With Eigen</button>
-          <button type="button" id="at-ask">Ask: what did we agree with the supplier?</button>
-          <button type="button" id="at-again">Then ask: what has changed since?</button>
-          <span class="q" id="at-q"></span>
+          <button type="button" id="at-s1" class="on">1 · A question, without Eigen</button>
+          <button type="button" id="at-s2">2 · The same question, with Eigen</button>
+          <button type="button" id="at-s3">3 · A second question</button>
+          <button type="button" id="at-replay">Replay</button>
         </div>
-        <div class="grid" id="at-grid" aria-label="The attic: 128 documents, 10 of them private"></div>
+        <p class="say" id="at-say"></p>
+        <div class="grid" id="at-grid" aria-label="The attic: 128 documents, ten of them private"></div>
         <div class="out">
-          <div>documents opened for this question<b id="at-n">0</b></div>
-          <div>opened so far, all questions<b id="at-total">0</b></div>
+          <div>documents opened<b id="at-n">0</b></div>
           <div>private documents opened<b id="at-bad">0</b></div>
-          <div>which documents the answer names<b id="at-src">none yet</b></div>
+          <div>which documents the answer names<b id="at-src">none</b></div>
         </div>
         <p class="note" id="at-note"></p>
       </div>
@@ -186,7 +186,7 @@
   <section class="section highlights" id="how">
     <div class="container">
       <span class="section-label fade-in">How it works</span>
-      <h2 class="section-title fade-in">One record, read through an index, with every answer traced</h2>
+      <h2 class="section-title fade-in">How Eigen works</h2>
       <div class="ee-bigfig fade-in"><svg viewBox="0 0 1000 400" role="img" aria-label="Sources are stored once as the record; an index over the record is descended by a question, opening one branch, skipping one, and refusing one the agent may not read; evidence returns with the passages used and a fingerprint of each, and is refused if a source has changed">
   <defs>
     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/></marker>
@@ -213,11 +213,10 @@
   <!-- the record: spans -->
   <g font-family="Lora, serif" font-size="12.5" fill="#e8e6e3">
     <rect x="258" y="50" width="200" height="30" rx="4" fill="rgba(201,169,110,0.18)" stroke="#c9a96e"/><text x="358" y="70" text-anchor="middle">a passage of text</text>
-    <rect x="258" y="88" width="200" height="30" rx="4" fill="none" stroke="#c9a96e"/><text x="358" y="108" text-anchor="middle">what it means</text>
+    <rect x="258" y="88" width="200" height="30" rx="4" fill="none" stroke="#c9a96e"/><text x="358" y="108" text-anchor="middle">what it says</text>
     <rect x="258" y="126" width="200" height="30" rx="4" fill="none" stroke="#c9a96e"/><text x="358" y="146" text-anchor="middle">the names, dates, numbers in it</text>
     <rect x="258" y="164" width="200" height="30" rx="4" fill="none" stroke="#c9a96e"/><text x="358" y="184" text-anchor="middle">links to other passages</text>
   </g>
-  <text x="358" y="218" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">the next question starts from the record</text>
   <!-- index -->
   <path d="M466 108 L512 108" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ah)"/>
   <text x="489" y="98" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">indexed</text>
@@ -237,7 +236,7 @@
   <text x="666" y="108" font-family="Lora, serif" font-size="11.5" fill="#c0392b" text-anchor="middle">not permitted</text>
   <text x="608" y="170" font-family="Lora, serif" font-size="11.5" fill="#6b7280" text-anchor="middle">not needed</text>
   <text x="550" y="236" font-family="Lora, serif" font-size="11.5" fill="#7bd389" text-anchor="middle">opened</text>
-  <text x="608" y="262" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">each box is a group of linked passages</text>
+  <text x="608" y="262" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">each group holds linked passages</text>
   <!-- question in, answer out -->
   <path d="M760 60 L640 60" stroke="#c9a96e" stroke-width="1.5" marker-end="url(#ahg)"/>
   <text x="700" y="50" font-family="Lora, serif" font-size="12.5" fill="#c9a96e" text-anchor="middle">a question</text>
@@ -259,8 +258,8 @@
 </svg></div>
       <div class="ee-ppp fade-in">
         <div><h3>Persistence</h3><p>Documents are stored once, as a record of passages: what each says, the names, dates and numbers in it, and its links to other passages. The next question starts from the record instead of reading everything again.</p></div>
-        <div><h3>Permission</h3><p>An agent reaches the record only through the index, and opens only the branches its question needs. Branches it is not permitted to read are never opened.</p></div>
-        <div><h3>Provenance</h3><p>Every answer carries the passages it used and a fingerprint of each. Anyone with the sources can follow the chain back, and if a passage has changed since, the answer is flagged as no longer backed.</p></div>
+        <div><h3>Permission</h3><p>An agent reaches the record only through the index, and opens only the groups its question needs. Groups it is not permitted to read are never opened.</p></div>
+        <div><h3>Provenance</h3><p>Every answer carries the passages it used and a fingerprint of each. Anyone with the sources can check each passage themselves, and if a passage has changed since, the answer is flagged as no longer backed.</p></div>
       </div>
     </div>
   </section>
@@ -269,10 +268,10 @@
       <span class="section-label fade-in">Use</span>
       <h2 class="section-title fade-in">Who it is for</h2>
       <div class="ee-facts fade-in">
-        <div class="ee-fact"><h3>Who</h3><p>Companies whose AI products answer questions for lawyers, analysts, underwriters, doctors or researchers, where a wrong or unsupported answer is costly. Research groups are the first users.</p></div>
-        <div class="ee-fact"><h3>How it is delivered</h3><p>As software the customer runs inside their own systems. The documents never leave; only the text of each request goes to the customer's own AI provider.</p></div>
+        <div class="ee-fact"><h3>Customers</h3><p>Companies whose AI products answer questions for lawyers, analysts, underwriters, doctors or researchers, where a wrong or unsupported answer is costly. Research groups will be the first users.</p></div>
+        <div class="ee-fact"><h3>How it is delivered</h3><p>As software the customer runs inside their own systems. Only the text of each request leaves, to the customer's own AI provider.</p></div>
         <div class="ee-fact"><h3>Who sets the rules</h3><p>The owner of the documents decides, document by document, which agents may read what. Eigen enforces it on every request.</p></div>
-        <div class="ee-fact"><h3>Compared with today's tools</h3><p>Today an AI's answer is judged by another AI, which gives a score. Eigen gives a record that the customer, or their auditor, can re-run themselves.</p></div>
+        <div class="ee-fact"><h3>Compared with today's tools</h3><p>Today an AI's answer is judged by another AI, which gives a score. Eigen gives a record that the customer, or their auditor, can check against the sources.</p></div>
         <div class="ee-fact"><h3>When</h3><p>The first pilots are planned for early 2027.</p></div>
       </div>
     </div>
@@ -283,7 +282,7 @@
       <span class="section-label fade-in">Early prototypes</span>
       <h2 class="section-title fade-in">Eigen as part of an integrated research environment</h2>
       <div class="ee-lede fade-in">
-        <p>The first use of Eigen has been as the record underneath a research environment: it holds a project's sources, plans and drafts, and papers and talks are written from it. Eigen built this index for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026. Each definition, claim, result and limitation in the paper is a node; the lines are the links between them. Hover or tap a node to read it.</p>
+        <p>The first use of Eigen has been as the record underneath a research environment: it holds a project's sources, plans and drafts; papers and talks are written from it. Eigen built the index for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026. Each definition, claim, result and limitation in the paper is a node; the lines are the links between them. Hover or tap a node to read it.</p>
       </div>
       <div class="ee-graph-wrap fade-in">
         <canvas id="ee-graph" width="1000" height="620" role="img" aria-label="The concept graph of one paper, coloured by kind"></canvas>
@@ -295,7 +294,7 @@
         <a class="ee-card" href="/unlisted/eigenengine/superarc/">
           <span class="kicker">Benchmark</span>
           <h3>SuperARC</h3>
-          <p>A published test gives a model one hundred short sequences of ones and zeros and asks for the rule behind each. Eigen ran every proposed rule before answering with it. 96 of its 100 answers were real rules; most of the models in the published results wrote the sequence back out.</p>
+          <p>A published test gives a model 100 short sequences of ones and zeros and asks for the rule behind each. Eigen ran every proposed rule before answering with it. 96 of its 100 answers were real rules; most of the models in the published results wrote the sequence back out.</p>
           <span class="go">Open the benchmark →</span>
         </a>
         <a class="ee-card" href="/unlisted/eigenengine/twinning/">
@@ -313,7 +312,7 @@
         <a class="ee-card" href="/trip.html">
           <span class="kicker">Generated page</span>
           <h3>The long way round</h3>
-          <p>Ninety-five days around the United States, reconstructed from a phone's location history: days, places and photos cross-linked on one map. Built with Eigen, for fun.</p>
+          <p>95 days around the United States, reconstructed from a phone's location history: days, places and photos cross-linked on one map.</p>
           <span class="go">Open the map →</span>
         </a>
       </div>
@@ -323,43 +322,51 @@
 
   <script>
   (function () {
-    var N = 128, LOCK = [5, 19, 33, 47, 61, 75, 89, 103, 117, 124], NEED = [[14, 37, 58, 71], [37, 90]];
+    var N = 128, LOCK = [5, 19, 33, 47, 61, 75, 89, 103, 117, 124], NEED1 = [14, 37, 58, 71], NEED2 = [90];
     var grid = document.getElementById("at-grid"); if (!grid) return;
     var cells = [];
     for (var i = 0; i < N; i++) { var d = document.createElement("div"); d.className = "d" + (LOCK.indexOf(i) >= 0 ? " lock" : ""); grid.appendChild(d); cells.push(d); }
-    var mode = "without", total = 0, asked = 0, timer = null, remembered = false;
     var el = function (id) { return document.getElementById(id); };
-    function reset() { cells.forEach(function (c) { c.className = "d" + (c.classList.contains("lock") ? " lock" : ""); }); }
-    function setMode(m) { mode = m; el("at-without").className = m === "without" ? "on" : ""; el("at-with").className = m === "with" ? "on" : ""; total = 0; asked = 0; remembered = false; reset(); el("at-n").textContent = "0"; el("at-total").textContent = "0"; el("at-bad").textContent = "0"; el("at-bad").className = ""; el("at-src").textContent = "none yet"; el("at-src").className = ""; el("at-note").textContent = ""; el("at-q").textContent = ""; }
-    function ask(second) {
-      if (timer) clearInterval(timer); reset();
-      var q = second ? "second question: what changed since?" : "question: what did we agree with the supplier?";
-      el("at-q").textContent = q;
-      var order, used, bad = 0, i = 0;
-      if (mode === "without") { order = cells.map(function (_, k) { return k; }); used = []; }
-      else { used = second ? (remembered ? [NEED[1][1]] : NEED[1]) : NEED[0]; order = used.slice(); }
-      el("at-n").textContent = "0";
+    var timer = null, step = 1;
+    var STEPS = {
+      1: { say: "The agent is asked: what did we agree with the supplier? Without Eigen it reads every document in the attic.",
+           order: cells.map(function (_, k) { return k; }), speed: 16, eigen: false,
+           note: "Nothing is kept for next time." },
+      2: { say: "The same question, through Eigen. The index points the agent to the four documents that matter; the private ones stay shut.",
+           order: NEED1, speed: 320, eigen: true,
+           note: "What was read is now in the record." },
+      3: { say: "A second question: what has changed since?",
+           order: NEED1.concat(NEED2), speed: 220, eigen: true, keep: NEED1,
+           note: "Without Eigen this question would open all 128 again. With Eigen: the four from before, already in the record, plus one new one." }
+    };
+    function reset(keep) { cells.forEach(function (c, k) { c.className = "d" + (c.classList.contains("lock") ? " lock" : "") + (keep && keep.indexOf(k) >= 0 ? " used" : ""); }); }
+    function play(n) {
+      step = n; if (timer) { clearInterval(timer); timer = null; }
+      [1, 2, 3].forEach(function (k) { el("at-s" + k).className = k === n ? "on" : ""; });
+      var S = STEPS[n]; reset(S.keep); el("at-say").textContent = S.say; el("at-note").textContent = "";
+      el("at-n").textContent = S.keep ? String(S.keep.length) : "0"; el("at-bad").textContent = "0"; el("at-bad").className = ""; el("at-src").textContent = "none"; el("at-src").className = "";
+      var order = S.keep ? S.order.filter(function (k) { return S.keep.indexOf(k) < 0; }) : S.order, i = 0, bad = 0, opened = S.keep ? S.keep.length : 0;
       timer = setInterval(function () {
         if (i >= order.length) {
           clearInterval(timer); timer = null;
-          el("at-total").textContent = String(total);
           el("at-bad").textContent = String(bad); el("at-bad").className = bad ? "bad" : "good";
-          if (mode === "without") { el("at-src").textContent = "no record"; el("at-src").className = "bad"; el("at-note").textContent = second ? "The second question read the whole attic again: nothing was kept from the first." : "Every document was opened, the private ones included, and the answer names none of them."; }
-          else { el("at-src").textContent = used.map(function (k) { return "document " + (k + 1); }).join(", "); el("at-src").className = "good"; el("at-note").textContent = second ? "The second question opened one new document; the rest was already in the record from the first." : "Four documents were opened, none of them private, and the answer names each one."; remembered = true; }
-          return;
+          if (S.eigen) { el("at-src").textContent = S.order.map(function (k) { return "document " + (k + 1); }).join(", "); el("at-src").className = "good"; }
+          else { el("at-src").textContent = "none"; el("at-src").className = "bad"; }
+          el("at-note").textContent = S.note; return;
         }
-        var k = order[i++]; var c = cells[k];
-        if (mode === "without") { if (c.classList.contains("lock")) { c.classList.add("broke"); bad++; } else { c.classList.add("read"); } }
-        else { c.classList.add("used"); }
-        total++; el("at-n").textContent = String(i);
-      }, mode === "without" ? 18 : 260);
+        var c = cells[order[i++]];
+        if (!S.eigen && c.classList.contains("lock")) { c.classList.add("broke"); bad++; } else { c.classList.add(S.eigen ? "used" : "read"); }
+        opened++; el("at-n").textContent = String(opened);
+      }, S.speed);
     }
-    var ran = false, io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && !ran) { ran = true; asked = 1; ask(false); io.disconnect(); } }); }, { threshold: 0.6 }) : null;
-    if (io) io.observe(grid); else { ran = true; asked = 1; ask(false); }
-    el("at-without").addEventListener("click", function () { setMode("without"); });
-    el("at-with").addEventListener("click", function () { setMode("with"); });
-    el("at-ask").addEventListener("click", function () { asked = 1; ask(false); });
-    el("at-again").addEventListener("click", function () { if (!asked) { ask(false); setTimeout(function () { ask(true); }, mode === "without" ? 18 * N + 400 : 260 * 4 + 400); } else { ask(true); } });
+    var ran = false;
+    var io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && !ran) { ran = true; play(1); io.disconnect(); } }); }, { threshold: 0.25 }) : null;
+    if (io) io.observe(grid); else { ran = true; play(1); }
+    el("at-s1").addEventListener("click", function () { play(1); });
+    el("at-s2").addEventListener("click", function () { play(2); });
+    el("at-s3").addEventListener("click", function () { play(3); });
+    el("at-replay").addEventListener("click", function () { play(step); });
+    reset(); el("at-say").textContent = STEPS[1].say;
   })();
   </script>
 
