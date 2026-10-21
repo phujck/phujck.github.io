@@ -238,7 +238,9 @@ function ladder(x, y, w, h, k) {
 /* ---------- the applet ---------- */
 function draw(t) {
   ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
-  const tt = Math.max(0, Math.min(MODEL.TEND, t)), k = Math.min(MD.snaps.length - 1, Math.round(tt / MODEL.SNAP));
+  // the relaxation replays: hold the settled cloud for a few seconds, then release a fresh cloud from the same start
+  const HOLD = 3.0, period = MODEL.TEND + HOLD;
+  const tt = Math.max(0, Math.min(MODEL.TEND, t % period)), k = Math.min(MD.snaps.length - 1, Math.round(tt / MODEL.SNAP));
   const pad = 8, gap = 10, lw = Math.round((W - 2 * pad - gap) * 0.54), ph = H - 2 * pad;
   landscape(pad, pad, lw, ph, k, k * MODEL.SNAP);
   ladder(pad + lw + gap, pad, W - 2 * pad - gap - lw, ph, k);
