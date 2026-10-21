@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>law-form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet: law-form. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 11;
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ================= the model (every drawn number derives from here) ================= */
+/* Stage 1. Eq. law-functional / effective-law of the briefing (loss-dynamics-and-the-choice-of-scale.tex:7-24):
+   p*(y,xi) = q e^{-K/M} / Z, and K_eff(y) = -M log sum_xi q(xi|y) e^{-K(y,xi)/M}.
+   The cost K below is an illustrative choice (the source gives the construction, not a particular K):
+   a double-welled retained cost plus a hidden coordinate whose spread depends on y, so that summing out xi
+   adds an entropic term to the effective cost. q is uniform; M = 1. */
+const M = 1, NY = 24, NXI = 10;
+const Ys = Array.from({ length: NY }, (_, i) => -2 + 4 * i / (NY - 1));
+const XIs = Array.from({ length: NXI }, (_, j) => -2 + 4 * j / (NXI - 1));
+const Kfine = (y, xi) => 0.6 * (y * y - 1) ** 2 + 0.5 * (xi - 0.5 * y) ** 2 * (1 + y * y);
+const pFine = [], pCoarse = new Array(NY).fill(0), Keff = new Array(NY).fill(0);
+let Zf = 0;
+for (let i = 0; i < NY; i++) { pFine.push([]); let s = 0;
+  for (let j = 0; j < NXI; j++) { const w = (1 / NXI) * Math.exp(-Kfine(Ys[i], XIs[j]) / M); pFine[i].push(w); s += w; Zf += w; }
+  Keff[i] = -M * Math.log(s); }                         // q(xi|y) = 1/NXI
+for (let i = 0; i < NY; i++) { for (let j = 0; j < NXI; j++) { pFine[i][j] /= Zf; pCoarse[i] += pFine[i][j]; } }
+const pFineMax = Math.max(...pFine.flat()), pCoarseMax = Math.max(...pCoarse);
+const KeffMin = Math.min(...Keff), KeffMax = Math.max(...Keff);
+
+/* Stage 2. Ising decimation (same source, :26): x = tanh(J/M), eliminating alternate spins gives x' = x^2.
+   The chain is a sample of the 1-d Ising law with x0: neighbours agree with probability (1+x0)/2; the
+   retained spins after k decimations are the sites i = 0 mod 2^k of that same sample. */
+const NSPIN = 32, X0 = 0.9, NSTEP = 5;
+const spins = [1]; for (let i = 1; i < NSPIN; i++) spins.push(rand() < (1 + X0) / 2 ? spins[i - 1] : -spins[i - 1]);
+const xs = [X0]; for (let k = 0; k < NSTEP; k++) xs.push(xs[k] * xs[k]);
+
+/* Stage 3. The update ensemble (shared_spine.tex:204-215; coupled-evaluators 04:497-541):
+   P(dM|M) ∝ exp[beta*DeltaF_M(dM) - C_R(dM)], threshold L_eff = C_R - beta*DeltaF = 0 (the diagonal).
+   The six candidates a..f are the source figure's own points, read from fig_yba_update_ensemble.pdf by
+   tools/producers/law-applets/extract_update_ensemble.py (update_ensemble.json). */
+const CAND = [
+  { l: "a", c: 0.55, g: 0.65 }, { l: "b", c: 0.90, g: 1.50 }, { l: "c", c: 1.40, g: 1.10 },
+  { l: "d", c: 1.85, g: 2.60 }, { l: "e", c: 2.35, g: 1.95 }, { l: "f", c: 2.70, g: 3.30 } ];
+for (const p of CAND) p.w = Math.exp(p.g - p.c);
+const WMAX = Math.max(...CAND.map(p => p.w));
+const TOP = CAND.reduce((a, b) => (b.w > a.w ? b : a));
+
+/* ---------- timeline ---------- */
+const T1 = [0.0, 3.4], T2 = [3.4, 7.4], T3 = [7.4, 10.4];
+const clamp01 = v => Math.max(0, Math.min(1, v));
+const ease = u => u * u * (3 - 2 * u);
+const phase = (t, a, b) => clamp01((t - a) / (b - a));
+function activeStage(t) { if (t >= SETTLE_AT) return 0; if (t < T1[1]) return 1; if (t < T2[1]) return 2; return 3; }
+
+/* ---------- drawing helpers ---------- */
+function text(s, x, y, o = {}) {
+  ctx.font = `${o.italic ? "italic " : ""}${o.weight || 400} ${o.size || 15}px ${o.font || FONT.sans}`;
+  ctx.fillStyle = o.color || C.ink; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+  ctx.fillText(s, x, y);
+}
+/* Script notation: "K_{eff}" and "e^{βΔF − C_R}" draw their sub- and superscripts as smaller raised or lowered
+   glyphs (never below 15 px); a multi-letter subscript such as "eff" is upright, as in the sources' \rm. */
+const SCRIPT_PX = 15;
+function richRuns(s) {
+  const runs = []; let i = 0;
+  (function group(depth, dy) {
+    let buf = ""; const flush = () => { if (buf) { runs.push({ s: buf, depth, dy }); buf = ""; } };
+    while (i < s.length) {
+      const ch = s[i];
+      if (ch === "}") { i++; break; }
+      if (ch === "_" || ch === "^") {
+        flush(); i++; const ndy = dy + (ch === "_" ? 0.28 : -0.42);
+        if (s[i] === "{") { i++; group(depth + 1, ndy); } else { runs.push({ s: s[i], depth: depth + 1, dy: ndy }); i++; }
+        continue;
+      }
+      buf += ch; i++;
+    }
+    flush();
+  })(0, 0);
+  return runs;
+}
+function richFont(run, o) {
+  const size = run.depth ? SCRIPT_PX : o.size, upright = run.depth && /^[a-z]{2,}$/i.test(run.s);
+  return `${o.italic && !upright ? "italic " : ""}${o.weight || 400} ${size}px ${o.font || FONT.sans}`;
+}
+function rich(s, x, y, o = {}) {   // returns the drawn box {x0, y0, x1, y1}
+  o = Object.assign({ size: 18 }, o);
+  const runs = richRuns(s); let wsum = 0;
+  for (const r of runs) { ctx.font = richFont(r, o); r.w = ctx.measureText(r.s).width; wsum += r.w; }
+  let cx = o.align === "center" ? x - wsum / 2 : o.align === "right" ? x - wsum : x;
+  const box = { x0: cx, x1: cx + wsum, y0: Infinity, y1: -Infinity };
+  ctx.fillStyle = o.color || C.ink; ctx.textAlign = "left"; ctx.textBaseline = o.base || "alphabetic";
+  for (const r of runs) {
+    ctx.font = richFont(r, o); const yy = y + r.dy * o.size; ctx.fillText(r.s, cx, yy);
+    const m = ctx.measureText(r.s); box.y0 = Math.min(box.y0, yy - m.actualBoundingBoxAscent); box.y1 = Math.max(box.y1, yy + m.actualBoundingBoxDescent);
+    cx += r.w;
+  }
+  return box;
+}
+function richWidth(s, o) { let w = 0; for (const r of richRuns(s)) { ctx.font = richFont(r, o); w += ctx.measureText(r.s).width; } return w; }
+function fitText(options, x, y, maxW, o) {   // first option that fits; the base stays above the 15 px script size
+  for (const s of options) for (const sz of [19, 18, 17]) {
+    const oo = Object.assign({}, o, { size: sz });
+    if (richWidth(s, oo) <= maxW) return rich(s, x, y, oo);
+  }
+  return rich(options[options.length - 1], x, y, Object.assign({}, o, { size: 17 }));
+}
+function panel(x, y, w, h, n, label, active) {
+  ctx.fillStyle = C.card; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+  text(`${n}`, x + 12, y + 26, { font: FONT.mono, size: 15, color: C.muted });
+  text(label, x + 32, y + 26, { size: 16, weight: 600, color: active ? C.ink : C.muted });
+}
+
+/* ---------- stage 1: contraction keeps the form ---------- */
+function stage1(x, y, w, h, t, act) {
+  panel(x, y, w, h, 1, "contract ξ", act === 1);
+  const fIn = ease(phase(t, 0.0, 0.6)), uCol = ease(phase(t, 0.6, 2.0)), uK = phase(t, 2.0, 3.0);
+  const gl = x + 30, gw = w - 44, cw = gw / NY;
+  const fy = y + 54, gt = y + 66, gh = Math.max(80, h * 0.25), ch = gh / NXI;
+  const ay = gt + gh + 10;                                 // arrow band
+  const cfy = ay + 46, bt = cfy + 10, bh = Math.max(50, h * 0.15), bb = bt + bh;
+  const kt = bb + 18, kh = Math.max(56, h * 0.17), kb = kt + kh;
+  fitText(["F = ⟨K⟩ + μ D(p‖q)", "⟨K⟩ + μ D(p‖q)"], x + w / 2, fy, w - 16, { font: FONT.serif, italic: true, align: "center", color: C.ink });
+  text("ξ", x + 16, gt + gh / 2 + 5, { font: FONT.serif, italic: true, size: 17, color: C.muted, align: "center" });
+  // fine law p*(y, xi): stays on the grid; a copy falls onto the coarse bars as xi is summed out
+  for (let i = 0; i < NY; i++) for (let j = 0; j < NXI; j++) {
+    const a0 = Math.sqrt(pFine[i][j] / pFineMax); if (a0 < 0.02) continue;
+    const cy = gt + (NXI - 1 - j) * ch, ty = bb - ch;
+    ctx.fillStyle = `rgba(126,184,218,${(fIn * a0).toFixed(3)})`;
+    ctx.fillRect(gl + i * cw + 0.5, cy + 0.5, cw - 1, ch - 1);
+    if (uCol > 0 && uCol < 1) {
+      ctx.fillStyle = `rgba(126,184,218,${(0.6 * a0 * (1 - uCol)).toFixed(3)})`;
+      ctx.fillRect(gl + i * cw + 0.5, cy + (ty - cy) * uCol + 0.5, cw - 1, ch - 1);
+    }
+  }
+  ctx.strokeStyle = C.rule; ctx.strokeRect(gl + 0.5, gt + 0.5, gw - 1, gh - 1);
+  // the contraction arrow
+  const sumGold = act === 1 && uCol > 0 && uCol < 1;
+  ctx.strokeStyle = sumGold ? C.gold : C.muted; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(x + w / 2, ay + 2); ctx.lineTo(x + w / 2, ay + 24); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x + w / 2 - 5, ay + 18); ctx.lineTo(x + w / 2, ay + 25); ctx.lineTo(x + w / 2 + 5, ay + 18); ctx.stroke();
+  text("Σ over ξ", x + w / 2 + 10, ay + 19, { size: 15, color: sumGold ? C.gold : C.muted });
+  // coarse law over y
+  if (uCol > 0) {
+    ctx.globalAlpha = phase(t, 1.5, 2.0);
+    fitText(["F = ⟨K_{eff}⟩ + μ D(p‖q)", "⟨K_{eff}⟩ + μ D(p‖q)"], x + w / 2, cfy, w - 16, { font: FONT.serif, italic: true, align: "center", color: C.ink });
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = C.blue;
+    for (let i = 0; i < NY; i++) { const bhh = uCol * bh * pCoarse[i] / pCoarseMax; ctx.fillRect(gl + i * cw + 1, bb - bhh, cw - 2, bhh); }
+  }
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(gl, bb + 0.5); ctx.lineTo(gl + gw, bb + 0.5); ctx.stroke();
+  // K_eff(y) beneath the coarse law
+  if (uK > 0) {
+    const kGold = act === 1 || act === 0;
+    ctx.strokeStyle = kGold ? C.gold : C.blue; ctx.lineWidth = 2.5; ctx.beginPath();
+    const nUp = Math.max(1, Math.round(uK * (NY - 1)));
+    for (let i = 0; i <= nUp; i++) {
+      const px = gl + (i + 0.5) * cw, py = kb - 4 - (kh - 8) * (Keff[i] - KeffMin) / (KeffMax - KeffMin);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    rich("K_{eff}(y)", gl + gw / 2, kt + 6, { font: FONT.serif, italic: true, size: 19, color: kGold ? C.gold : C.blue, align: "center" });
+  }
+  text("y", x + w / 2, Math.min(y + h - 8, kb + 22), { font: FONT.serif, italic: true, size: 17, color: C.muted, align: "center" });
+}
+
+/* ---------- stage 2: Ising decimation, x -> x^2 ---------- */
+function stage2(x, y, w, h, t, act) {
+  panel(x, y, w, h, 2, "decimate", act === 2);
+  const l = x + 14, r = x + w - 14, dx = (r - l) / (NSPIN - 1);
+  const rowH = Math.min(46, (h * 0.56) / (NSTEP + 1)), top = y + 56;
+  const kShown = t < T2[0] ? -1 : Math.min(NSTEP, Math.floor((t - T2[0] - 0.2) / 0.62));
+  for (let k = 0; k <= NSTEP; k++) {
+    const tk = T2[0] + 0.2 + 0.62 * k; const a = act === 0 || t >= SETTLE_AT ? 1 : phase(t, tk, tk + 0.3);
+    if (a <= 0) continue;
+    const by = top + k * rowH + rowH / 2, step = 1 << k, nextStep = step << 1;
+    ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(l - 4, by + 0.5); ctx.lineTo(r + 4, by + 0.5); ctx.stroke();
+    for (let i = 0; i < NSPIN; i += step) {
+      const removed = k < NSTEP && i % nextStep !== 0 && kShown > k;
+      ctx.globalAlpha = a; ctx.strokeStyle = removed ? "rgba(156,163,175,0.45)" : C.blue; ctx.lineWidth = Math.max(2, Math.min(3, dx * 0.45));
+      const sx = l + i * dx; ctx.beginPath(); ctx.moveTo(sx, by + spins[i] * 1); ctx.lineTo(sx, by - spins[i] * (rowH * 0.36)); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+  }
+  // number line for x = tanh(J/M)
+  const ny = Math.max(top + (NSTEP + 1) * rowH + 70, y + h - 96), nl = x + 26, nr = x + w - 26, X = v => nl + (nr - nl) * v;
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(nl, ny); ctx.lineTo(nr, ny); ctx.stroke();
+  for (const v of [0, 1]) { ctx.beginPath(); ctx.moveTo(X(v), ny - 5); ctx.lineTo(X(v), ny + 5); ctx.stroke();
+    text(String(v), X(v), ny + 24, { font: FONT.mono, size: 15, color: C.muted, align: "center" }); }
+  text("x = tanh(J/μ)", (nl + nr) / 2, ny + 24, { font: FONT.serif, italic: true, size: 16, color: C.muted, align: "center" });
+  const kc = act === 0 ? NSTEP : Math.max(-1, kShown);
+  for (let k = 0; k < kc; k++) {      // hops x_k -> x_{k+1}
+    const a = X(xs[k]), b = X(xs[k + 1]), m = (a + b) / 2, hgt = Math.min(34, (a - b) * 0.5 + 8);
+    ctx.strokeStyle = "rgba(156,163,175,0.6)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a, ny - 4); ctx.quadraticCurveTo(m, ny - 4 - hgt * 2, b, ny - 4); ctx.stroke();
+  }
+  if (kc >= 1) text("x → x²", (nl + nr) / 2, ny - 52, { font: FONT.serif, italic: true, size: 17, color: C.ink, align: "center" });
+  for (let k = 0; k <= Math.max(0, kc); k++) {
+    if (kc < 0) break;
+    const cur = k === kc; const gold = cur && act === 2;
+    ctx.fillStyle = gold ? C.gold : C.blue; ctx.beginPath(); ctx.arc(X(xs[k]), ny, cur ? 6 : 3.5, 0, 2 * Math.PI); ctx.fill();
+  }
+  if (kc >= 0) text(`x = ${xs[kc].toFixed(3)}`, (nl + nr) / 2, ny + 50, { font: FONT.mono, size: 15, color: act === 2 ? C.gold : C.ink, align: "center" });
+}
+
+/* ---------- stage 3: the update ensemble as a cost-gain ledger ---------- */
+function stage3(x, y, w, h, t, act) {
+  panel(x, y, w, h, 3, "update ledger", act === 3);
+  const uD = ease(phase(t, T3[0], T3[0] + 0.6));
+  const pl = x + 42, pr = x + w - 14, pt = y + 80, side = h - 80 - 62, pb = pt + side;
+  const R = 3.5, X = v => pl + (pr - pl) * v / R, Y = v => pb - side * v / R;
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pl, pt); ctx.lineTo(pl, pb); ctx.lineTo(pr, pb); ctx.stroke();
+  for (const v of [1, 2, 3]) {
+    ctx.strokeStyle = C.rule; ctx.beginPath(); ctx.moveTo(X(v), pt); ctx.lineTo(X(v), pb); ctx.moveTo(pl, Y(v)); ctx.lineTo(pr, Y(v)); ctx.stroke();
+    text(String(v), X(v), pb + 20, { font: FONT.mono, size: 15, color: C.muted, align: "center" });
+    text(String(v), pl - 8, Y(v) + 5, { font: FONT.mono, size: 15, color: C.muted, align: "right" });
+  }
+  rich("cost C_R", (pl + pr) / 2, pb + 44, { font: FONT.serif, italic: true, size: 19, color: C.muted, align: "center" });
+  ctx.save(); ctx.translate(x + 15, (pt + pb) / 2); ctx.rotate(-Math.PI / 2);
+  text("gain βΔF", 0, 0, { font: FONT.serif, italic: true, size: 16, color: C.muted, align: "center", base: "middle" }); ctx.restore();
+  const LAY = { diagonal: [X(0), Y(0), X(R), Y(R)], markers: [], labels: [], threshold_label: null, caption: null, ticks: [] };
+  window.__applet.layout = LAY;
+  if (uD > 0) {   // the threshold L_eff = 0
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(R * uD), Y(R * uD)); ctx.stroke(); ctx.setLineDash([]);
+    if (uD >= 1) {   // label rides along the diagonal, just below it
+      const ang = Math.atan2(Y(1) - Y(0), X(1) - X(0)); ctx.save(); ctx.translate(X(3.05), Y(3.05)); ctx.rotate(ang);
+      const lb = rich("L_{eff} = 0", 0, 20, { font: FONT.serif, italic: true, size: 18, color: C.ink, align: "center" });
+      const tr = ctx.getTransform(); LAY.threshold_label = [[lb.x0, lb.y0], [lb.x1, lb.y0], [lb.x1, lb.y1], [lb.x0, lb.y1]].map(([u, v]) => [tr.a * u + tr.c * v + tr.e, tr.b * u + tr.d * v + tr.f]);
+      ctx.restore(); }
+  }
+  const rMax = Math.max(9, Math.min(16, side * 0.06));
+  CAND.forEach((p, k) => {
+    const ta = T3[0] + 0.7 + 0.38 * k; const u = act === 0 ? 1 : ease(phase(t, ta, ta + 0.35));
+    if (u <= 0) return;
+    const r = u * rMax * Math.sqrt(p.w / WMAX);           // marker area proportional to the Gibbs weight
+    const gold = act === 3 && p === TOP;
+    ctx.fillStyle = gold ? C.gold : (p.g > p.c ? C.blue : C.orange); ctx.globalAlpha = 0.9;
+    ctx.beginPath(); ctx.arc(X(p.c), Y(p.g), r, 0, 2 * Math.PI); ctx.fill(); ctx.globalAlpha = 1;
+    // the label sits on the side away from the L_eff = 0 diagonal: up-left above it, down-right below it
+    const up = p.g > p.c, lo = { font: FONT.serif, italic: true, size: 17, color: C.ink, align: up ? "right" : "left" };
+    const lbx = rich(p.l, up ? X(p.c) - r - 3 : X(p.c) + r + 3, up ? Y(p.g) - r + 4 : Y(p.g) + r + 11, lo);
+    LAY.markers.push({ l: p.l, x: X(p.c), y: Y(p.g), r }); LAY.labels.push(Object.assign({ l: p.l }, lbx));
+  });
+  LAY.caption = rich("size ∝ e^{βΔF − C_R}", (pl + pr) / 2, pt - 14, { font: FONT.serif, italic: true, size: 19, color: C.muted, align: "center" });
+}
+
+/* ---------- the applet ---------- */
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const pad = 8, gap = 10, pw = (W - 2 * pad - 2 * gap) / 3, ph = H - 2 * pad, act = activeStage(t);
+  stage1(pad, pad, pw, ph, t, act);
+  stage2(pad + pw + gap, pad, pw, ph, t, act);
+  stage3(pad + 2 * (pw + gap), pad, pw, ph, t, act);
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused) requestAnimationFrame(frame);
+}
+window.__applet = { id: "law-form", ready: false, settled: false,
+  numbers: { x: xs, weights: CAND.map(p => [p.l, p.w]), Keff: Keff } };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

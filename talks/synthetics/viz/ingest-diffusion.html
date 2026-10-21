@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ingest-diffusion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .caption { flex: 0 0 auto; text-align: center; font-family: Lora, Georgia, serif; font-size: 20px;
+    color: #e8e6e3; padding: 4px 12px 8px; white-space: nowrap; overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+if (reduced) clock = SETTLE_AT;
+
+/* =====================================================================================
+   THE MODEL (computed live; every drawn number comes from here)
+   Source: briefing chapter memory-as-a-retained-and-reconstructable-object.tex
+   (eq. memory-generator-construction, eq. memory-object, "Choosing what a local memory
+   must retain") and skein.tex sec. 2-3 (lift, whitening, demand matrix E, fibred upfold).
+   Sizes used here: N = 36 cards, k = 5 neighbours (the paper keeps 16), 4 proposed groups,
+   2 internal modes per group. Field vectors: card position (x, y) lifted to the unit
+   vector v = (1.5x, 1.5y, 1)/|.|, so cosine similarity falls with distance on the page.
+   ===================================================================================== */
+const N = 36, K = 5, K_PAPER = 16, M = 4, RANK = 2, LIFT = 1.5, DYN_SCALE = 0.1;
+function gauss() { let u = 0; while (u === 0) u = rand(); const v = rand();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+const dot = (a, b) => a.reduce((s, x, i) => s + x * b[i], 0);
+const zeros = (r, c) => Array.from({ length: r }, () => new Array(c).fill(0));
+
+function jacobi(Ain) {           // symmetric eigendecomposition, cyclic Jacobi
+  const n = Ain.length, A = Ain.map(r => r.slice()), V = zeros(n, n);
+  for (let i = 0; i < n; i++) V[i][i] = 1;
+  for (let sweep = 0; sweep < 80; sweep++) {
+    let off = 0; for (let p = 0; p < n; p++) for (let q = p + 1; q < n; q++) off += A[p][q] * A[p][q];
+    if (off < 1e-26) break;
+    for (let p = 0; p < n; p++) for (let q = p + 1; q < n; q++) {
+      if (Math.abs(A[p][q]) < 1e-300) continue;
+      const th = (A[q][q] - A[p][p]) / (2 * A[p][q]);
+      const t = (th >= 0 ? 1 : -1) / (Math.abs(th) + Math.sqrt(th * th + 1));
+      const c = 1 / Math.sqrt(t * t + 1), s = t * c;
+      for (let k = 0; k < n; k++) { const kp = A[k][p], kq = A[k][q]; A[k][p] = c * kp - s * kq; A[k][q] = s * kp + c * kq; }
+      for (let k = 0; k < n; k++) { const pk = A[p][k], qk = A[q][k]; A[p][k] = c * pk - s * qk; A[q][k] = s * pk + c * qk; }
+      for (let k = 0; k < n; k++) { const vp = V[k][p], vq = V[k][q]; V[k][p] = c * vp - s * vq; V[k][q] = s * vp + c * vq; }
+    }
+  }
+  const idx = [...Array(n).keys()].sort((a, b) => A[b][b] - A[a][a]);     // descending
+  return { vals: idx.map(i => A[i][i]), vecs: idx.map(i => V.map(r => r[i])) };   // vecs[k] = k-th eigenvector
+}
+
+const MODEL = (function build() {
+  // 1. seeded card positions (four seeded clumps) and their field vectors
+  const centres = [];
+  for (let c = 0; c < M; c++) { const a = Math.PI / 4 + c * Math.PI / 2 + 0.35 * (rand() - 0.5);
+    centres.push([0.5 * Math.cos(a), 0.5 * Math.sin(a)]); }
+  const pos = [], vec = [];
+  for (let i = 0; i < N; i++) { const c = centres[i % M];
+    const x = c[0] + 0.2 * gauss(), y = c[1] + 0.2 * gauss(); pos.push([x, y]);
+    const w = [LIFT * x, LIFT * y, 1], nn = Math.hypot(...w); vec.push(w.map(z => z / nn)); }
+  const marks = pos.map(() => [rand(), rand(), rand(), rand()]);       // the four field marks (display only)
+  // 2. k nearest neighbours by cosine, directed weight h = ((1+cos)/2)^2, symmetrised by max
+  const h = c => ((1 + c) / 2) ** 2;
+  const a = zeros(N, N);
+  for (let i = 0; i < N; i++) {
+    const order = [...Array(N).keys()].filter(j => j !== i).sort((p, q) => dot(vec[i], vec[q]) - dot(vec[i], vec[p]));
+    for (const j of order.slice(0, K)) { const w = h(dot(vec[i], vec[j])); a[i][j] = Math.max(a[i][j], w); a[j][i] = Math.max(a[j][i], w); }
+  }
+  // 3. generator with the paper's normalisation
+  const pi = new Array(N).fill(1 / N);
+  const r = [...Array(N).keys()].map(j => a.reduce((s, row, i) => s + (i === j ? 0 : row[j] / pi[j]), 0));
+  const kappa = Math.max(1, ...r);
+  const G = zeros(N, N);
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) G[i][j] = i === j ? -r[j] / kappa : a[i][j] / (kappa * pi[j]);
+  let colsum = 0, balance = 0, maxExit = 0, edges = 0, gmax = 0;
+  for (let j = 0; j < N; j++) { let s = 0; for (let i = 0; i < N; i++) { s += G[i][j];
+      balance = Math.max(balance, Math.abs(G[i][j] * pi[j] - G[j][i] * pi[i]));
+      if (i !== j && G[i][j] > 0) { if (i < j) edges++; gmax = Math.max(gmax, G[i][j]); } }
+    colsum = Math.max(colsum, Math.abs(s)); maxExit = Math.max(maxExit, -G[j][j]); }
+  // 4. whitened generator L = W^{-1/2} G W^{1/2} and its spectrum
+  const L = zeros(N, N);
+  for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) L[i][j] = G[i][j] * Math.sqrt(pi[j] / pi[i]);
+  const eig = jacobi(L);
+  let eigres = 0;
+  for (let k = 0; k < N; k++) for (let i = 0; i < N; i++) { let s = 0; for (let j = 0; j < N; j++) s += L[i][j] * eig.vecs[k][j];
+    eigres = Math.max(eigres, Math.abs(s - eig.vals[k] * eig.vecs[k][i])); }
+  // 5. diffusion from a point mass: p(tau) = W^{1/2} V e^{Lambda tau} V^T W^{-1/2} p0  (exact matrix exponential)
+  const start = 0;
+  const c0 = eig.vecs.map(v => v[start] / Math.sqrt(pi[start]));
+  function p(tau) { const out = new Array(N).fill(0);
+    for (let k = 0; k < N; k++) { const w = c0[k] * Math.exp(eig.vals[k] * tau);
+      for (let i = 0; i < N; i++) out[i] += Math.sqrt(pi[i]) * eig.vecs[k][i] * w; } return out; }
+  const TAU_END = 1.0 / Math.abs(eig.vals[1]);
+  const pEnd = p(TAU_END);
+  // 6. proposed groups: k-means on the leading diffusion eigenvectors (farthest-point start from card 0)
+  const phi = [...Array(N).keys()].map(i => [1, 2, 3].map(k => eig.vecs[k][i] / Math.sqrt(pi[i])));
+  const d2 = (u, v) => u.reduce((s, x, i) => s + (x - v[i]) ** 2, 0);
+  const cen = [phi[start].slice()];
+  while (cen.length < M) { let best = -1, bi = 0;
+    for (let i = 0; i < N; i++) { const m = Math.min(...cen.map(c => d2(phi[i], c))); if (m > best) { best = m; bi = i; } }
+    cen.push(phi[bi].slice()); }
+  let lab = new Array(N).fill(0);
+  for (let it = 0; it < 50; it++) {
+    lab = phi.map(x => { let b = 0; for (let c = 1; c < M; c++) if (d2(x, cen[c]) < d2(x, cen[b])) b = c; return b; });
+    for (let c = 0; c < M; c++) { const mem = phi.filter((_, i) => lab[i] === c); if (mem.length) cen[c] = mem[0].map((_, d) => mem.reduce((s, x) => s + x[d], 0) / mem.length); }
+  }
+  const groups = [...Array(M).keys()].map(c => [...Array(N).keys()].filter(i => lab[i] === c)).filter(g => g.length);
+  const Mg = groups.length;
+  // 7. lift columns U0 = W^{1/2} C^T diag(pi_c)^{-1/2}
+  const pic = groups.map(g => g.reduce((s, i) => s + pi[i], 0));
+  const U0 = zeros(N, Mg);
+  groups.forEach((g, aI) => g.forEach(i => { U0[i][aI] = Math.sqrt(pi[i] / pic[aI]); }));
+  const projQ = x => { const out = x.slice();          // (I - P0) x
+    for (let aI = 0; aI < Mg; aI++) { let s = 0; for (let i = 0; i < N; i++) s += U0[i][aI] * x[i];
+      for (let i = 0; i < N; i++) out[i] -= s * U0[i][aI]; } return out; };
+  // 8. demand: two task columns (field-direction tests f = v . e_x, f = v . e_y, weighted W^{1/2} f) and the
+  //    law-boundary columns (I - P0) L U0; equal family weights (unit Frobenius norm each), dynamics scaled by 0.1
+  const tasks = [0, 1].map(d => projQ([...Array(N).keys()].map(i => Math.sqrt(pi[i]) * vec[i][d])));
+  const laws = [...Array(Mg).keys()].map(aI => projQ([...Array(N).keys()].map(i => { let s = 0; for (let j = 0; j < N; j++) s += L[i][j] * U0[j][aI]; return s; })));
+  const fro = cols => Math.sqrt(cols.reduce((s, c) => s + dot(c, c), 0));
+  const tn = fro(tasks), ln = fro(laws);
+  const Ecols = tasks.map(c => c.map(x => x / tn)).concat(laws.map(c => c.map(x => DYN_SCALE * x / ln)));
+  // 9. per group: leading left singular vectors of the local demand E_a (eigenvectors of E_a E_a^T)
+  const objects = groups.map((g, aI) => {
+    const n = g.length, S = zeros(n, n);
+    for (let u = 0; u < n; u++) for (let w = 0; w < n; w++) S[u][w] = Ecols.reduce((s, col) => s + col[g[u]] * col[g[w]], 0);
+    const e = jacobi(S), sig2 = e.vals.map(x => Math.max(0, x)), tot = sig2.reduce((s, x) => s + x, 0);
+    const rk = Math.min(RANK, n - 1);
+    const kept = sig2.slice(0, rk).reduce((s, x) => s + x, 0);
+    const cx = g.reduce((s, i) => s + pos[i][0], 0) / n, cy = g.reduce((s, i) => s + pos[i][1], 0) / n;
+    const modes = [...Array(rk).keys()].map(k => { let b = e.vecs[k].slice();
+      let big = 0; b.forEach((x, u) => { if (Math.abs(x) > Math.abs(b[big])) big = u; }); if (b[big] < 0) b = b.map(x => -x);
+      let dx = 0, dy = 0; b.forEach((x, u) => { dx += x * (pos[g[u]][0] - cx); dy += x * (pos[g[u]][1] - cy); });
+      const dn = Math.hypot(dx, dy) || 1;
+      return { sigma: Math.sqrt(sig2[k]), dir: [dx / dn, dy / dn], b }; });
+    // task residual e_f = (I - P) W^{1/2} f restricted to the group, relative to its internal part (I - P0) W^{1/2} f
+    let tin = 0, tout = 0;
+    tasks.forEach(col => { const loc = g.map(i => col[i]); const n2 = dot(loc, loc); let proj = 0;
+      modes.forEach(m => { const c = dot(m.b, loc); proj += c * c; }); tin += n2; tout += Math.max(0, n2 - proj); });
+    return { members: g, centroid: [cx, cy], mass: g.reduce((s, i) => s + pEnd[i], 0), refMass: pic[aI],
+      sigmas: sig2.map(Math.sqrt), modes, residual: Math.sqrt(Math.max(0, tot - kept) / tot),
+      taskResidual: Math.sqrt(tout / tin) };
+  });
+  return { pos, vec, marks, a, G, pi, kappa, colsum, balance, maxExit, edges, gmax, eigVals: eig.vals, eigres,
+    start, p, TAU_END, pEnd, groups, objects, lab };
+})();
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ---------- drawing helpers (logical units) ---------- */
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const ease = u => u * u * (3 - 2 * u);
+const lerp = (a, b, u) => a + (b - a) * u;
+function text(s, x, y, size, color, font = FONT.sans, align = "left", base = "alphabetic") {
+  ctx.font = `${size}px ${font}`; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = base; ctx.fillText(s, x, y);
+  return ctx.measureText(s).width; }
+function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function arrow(x0, y0, x1, y1, color, lw) {
+  const a = Math.atan2(y1 - y0, x1 - x0), hl = 7;
+  ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+  ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x1, y1);
+  ctx.lineTo(x1 - hl * Math.cos(a - 0.45), y1 - hl * Math.sin(a - 0.45));
+  ctx.lineTo(x1 - hl * Math.cos(a + 0.45), y1 - hl * Math.sin(a + 0.45)); ctx.closePath(); ctx.fill(); }
+const alpha = (hex, al) => { const v = parseInt(hex.slice(1), 16); return `rgba(${v >> 16},${(v >> 8) & 255},${v & 255},${al})`; };
+const fmt = (x, d = 2) => x.toFixed(d);
+
+/* ---------- timeline ---------- */
+const T = { cards: [-0.6, 1.6], edges: [1.6, 2.8], rates: [2.8, 4.2], diff: [4.2, 7.4], coal: [7.4, 9.8], lift: [9.8, 11.8] };
+const STAGES = [["cards", "source cards"], ["edges", "neighbour graph"], ["rates", "generator G"], ["diff", "diffusion"],
+                ["coal", "coarse objects"], ["lift", "up one level"]];
+function stageAt(t) { let s = 0; STAGES.forEach(([k], i) => { if (t >= T[k][0]) s = i; }); return s; }
+const R_MASS = 30;          // radius of unit probability; every gold disc has area proportional to its mass
+const RES_FULL = 0.25;      // residual bar full scale (the printed number is the value)
+
+function draw(t) {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const s = Math.min(W / 600, H / 430), LW = W / s, LH = H / s;
+  ctx.setTransform(DPR * s, 0, 0, DPR * s, 0, 0);
+  const M_ = MODEL, st = stageAt(t);
+
+  // geometry: the level-0 graph fills the frame, then makes room for level 1 during the lift
+  const uLift = ease(seg(t, T.lift[0], T.lift[0] + 1.2));
+  const top0 = lerp(46, 172, uLift), bot = LH - 14;
+  const gh = bot - top0, gw = Math.min(LW - 120, gh * 1.9);
+  const gx0 = (LW - gw) / 2 + 24, gcx = gx0 + gw / 2, gcy = top0 + gh / 2;
+  const xs_ = M_.pos.map(q => q[0]), ys_ = M_.pos.map(q => q[1]);
+  const mx = (Math.max(...xs_) + Math.min(...xs_)) / 2, my = (Math.max(...ys_) + Math.min(...ys_)) / 2;
+  const hx = (Math.max(...xs_) - Math.min(...xs_)) / 2, hy = (Math.max(...ys_) - Math.min(...ys_)) / 2;
+  const sc = 0.9 * Math.min(gw / (2 * hx), gh / (2 * hy));     // one scale for both axes: the layout keeps its shape
+  const P = ([x, y]) => [gcx + (x - mx) * sc, gcy - (y - my) * sc];
+
+  // header: stage label + one line of live numbers
+  ctx.font = `600 18px ${FONT.sans}`; ctx.fillStyle = C.ink; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText(STAGES[st][1], 16, 28);
+  let info = "";
+  if (st <= 1) info = `N = ${N} cards · k = ${K} (paper: k = ${K_PAPER})`;
+  else if (st === 2) info = `column sums 0 · max exit rate ${fmt(M_.maxExit)}`;
+  else if (st === 3) info = `p(τ) = exp(τG) p(0) · τ = ${fmt(M_.TAU_END * seg(t, T.diff[0], T.diff[1] - 0.3) ** 2, 1)}`;
+  if (info) text(info, LW - 16, 28, 16, C.muted, FONT.mono, "right");
+  if (st >= 4) {     // legend for the coarse-object glyph
+    let x = LW - 16; ctx.textBaseline = "alphabetic";
+    const items = [["residual", C.orange, "bar"], ["internal modes", C.ink, "arrow"], ["mass", C.gold, "disc"]];
+    for (const [lbl, col, kind] of items) {
+      const w = text(lbl, x, 28, 16, C.muted, FONT.sans, "right"); x -= w + 8;
+      if (kind === "bar") { ctx.fillStyle = col; ctx.fillRect(x - 16, 18, 16, 6); x -= 16; }
+      if (kind === "arrow") { arrow(x - 18, 26, x - 2, 16, col, 2); x -= 18; }
+      if (kind === "disc") { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x - 6, 22, 6, 0, 2 * Math.PI); ctx.fill(); x -= 12; }
+      x -= 20; }
+  }
+  if (uLift > 0.6) {
+    ctx.globalAlpha = ease(seg(uLift, 0.6, 1));
+    text("level 1", 16, 112, 16, C.muted); text("level 0", 16, top0 + 22, 16, C.muted);
+    ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(16, top0 - 8); ctx.lineTo(LW - 16, top0 - 8); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  // coalescence and lift parameters
+  const uPull = ease(seg(t, T.coal[0], T.coal[0] + 1.0));       // cards pull towards their group
+  const uBack = ease(seg(t, T.lift[0], T.lift[0] + 1.2));        // cards return to their places, dimmed
+  const pullAmt = 0.72 * uPull * (1 - uBack);
+  const cardAlpha = lerp(1, 0.18, uPull) + (0.45 - 0.18) * uBack;
+  const groupOf = M_.lab;
+  const objIdx = []; M_.objects.forEach((o, k) => o.members.forEach(i => { objIdx[i] = k; }));
+  const cardPos = M_.pos.map((q, i) => { const c = M_.objects[objIdx[i]].centroid;
+    return P([lerp(q[0], c[0], pullAmt), lerp(q[1], c[1], pullAmt)]); });
+
+  // edges (neighbour graph), widths proportional to the rate G_ij
+  const uE = seg(t, T.edges[0], T.edges[1]);
+  if (uE > 0) {
+    const edgeFade = (st >= 3 ? 0.35 : 1) * (1 - 0.8 * uPull) * (1 - uBack);
+    let e = 0;
+    for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) if (M_.a[i][j] > 0) {
+      e++; const show = clamp(uE * M_.edges - e + 1);
+      if (show <= 0 || edgeFade <= 0) continue;
+      const [x0, y0] = cardPos[i], [x1, y1] = cardPos[j], w = M_.G[i][j] / M_.gmax;
+      ctx.strokeStyle = alpha(C.blue, 0.55 * edgeFade); ctx.lineWidth = 0.6 + 2.6 * w;
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(lerp(x0, x1, show), lerp(y0, y1, show)); ctx.stroke();
+      if (st === 2) {     // rates along edges: dashes moving at a speed proportional to G_ij
+        const uR = seg(t, T.rates[0], T.rates[0] + 0.5);
+        ctx.setLineDash([3, 9]); ctx.lineDashOffset = -t * 30 * w;
+        ctx.strokeStyle = alpha(C.ink, 0.8 * uR); ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); ctx.setLineDash([]);
+      }
+    }
+  }
+
+  // source cards with four field marks
+  const uC = seg(t, T.cards[0], T.cards[1]);
+  for (let i = 0; i < N; i++) {
+    const appear = clamp(uC * (N + 6) / 6 - i / 6);
+    if (appear <= 0) continue;
+    const [x, y] = cardPos[i], cw = 22, ch = 15;
+    ctx.globalAlpha = appear * cardAlpha;
+    rrect(x - cw / 2, y - ch / 2, cw, ch, 3); ctx.fillStyle = "#16203a"; ctx.fill();
+    ctx.strokeStyle = C.blue; ctx.lineWidth = 1.2; ctx.stroke();
+    for (let f = 0; f < 4; f++) { const mh = 3 + 6 * M_.marks[i][f];
+      ctx.fillStyle = C.ink; ctx.fillRect(x - 7.5 + f * 4.5, y + 4.5 - mh, 2.4, mh); }
+    ctx.globalAlpha = 1;
+  }
+  if (st <= 1 && uC > 0.5) {     // label one card: the label goes in clear space, joined by a short leader line
+    const [x, y] = cardPos[M_.start], lbl = "source card";
+    ctx.font = `16px ${FONT.sans}`; const tw = ctx.measureText(lbl).width, th = 16, pad = 5;
+    const hits = (bx, by, bw, bh) => cardPos.some(([cx, cy]) =>
+      cx + 11 + pad > bx && cx - 11 - pad < bx + bw && cy + 7.5 + pad > by && cy - 7.5 - pad < by + bh);
+    const segHits = (bx, by, bw, bh) => { let n = 0;     // neighbour edges crossing the box (soft cost)
+      for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) if (M_.a[i][j] > 0) {
+        const [x0, y0] = cardPos[i], [x1, y1] = cardPos[j];
+        for (let q = 0; q <= 8; q++) { const u = q / 8, px = lerp(x0, x1, u), py = lerp(y0, y1, u);
+          if (px > bx && px < bx + bw && py > by && py < by + bh) { n++; break; } } }
+      return n; };
+    let best = null;
+    for (let rad = 26; rad <= 150; rad += 8) for (let a = 0; a < 24; a++) {
+      const ang = a * Math.PI / 12, ax = x + rad * Math.cos(ang), ay = y + rad * Math.sin(ang);
+      const bx = Math.cos(ang) >= 0 ? ax : ax - tw, by = ay - th / 2;     // box grows away from the card
+      if (bx < 8 || bx + tw > LW - 8 || by < 44 || by + th > LH - 8) continue;
+      if (hits(bx, by, tw, th)) continue;
+      const score = rad + 40 * segHits(bx, by, tw, th);
+      if (!best || score < best.score) best = { score, bx, by };
+    }
+    ctx.globalAlpha = seg(uC, 0.5, 0.7);
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 2; rrect(x - 14, y - 10.5, 28, 21, 4); ctx.stroke();     // the pointed card
+    if (best) {
+      const lx = clamp(x, best.bx, best.bx + tw), ly = clamp(y, best.by, best.by + th);     // nearest point of the label box
+      const d = Math.hypot(lx - x, ly - y), ux = (lx - x) / d, uy = (ly - y) / d;
+      const tEdge = Math.min(14 / Math.abs(ux || 1e-9), 10.5 / Math.abs(uy || 1e-9));     // leave the card at its outline
+      ctx.strokeStyle = alpha(C.ink, 0.8); ctx.lineWidth = 1.2; ctx.beginPath();
+      ctx.moveTo(x + ux * tEdge, y + uy * tEdge); ctx.lineTo(lx - ux * 3, ly - uy * 3); ctx.stroke();
+      text(lbl, best.bx, best.by + th / 2, 16, C.ink, FONT.sans, "left", "middle");
+    }
+    ctx.globalAlpha = 1; }
+
+  // diffusion: gold disc on each card, area proportional to p_i(tau)
+  const uD = seg(t, T.diff[0], T.diff[1] - 0.3);
+  const diffFade = 1 - ease(seg(t, T.coal[0] + 0.6, T.coal[0] + 1.4));
+  if (t >= T.diff[0] && diffFade > 0) {
+    const pp = M_.p(M_.TAU_END * uD * uD);
+    ctx.globalAlpha = diffFade * ease(seg(t, T.diff[0], T.diff[0] + 0.3));
+    for (let i = 0; i < N; i++) { const r = R_MASS * Math.sqrt(Math.max(0, pp[i]));
+      if (r < 0.3) continue; const [x, y] = cardPos[i];
+      ctx.fillStyle = alpha(C.gold, 0.8); ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  }
+
+  // coarse objects: a glyph carrying mass (gold disc), internal modes (arrows) and residual (orange bar)
+  const uObj = ease(seg(t, T.coal[0] + 0.8, T.coal[0] + 1.6));
+  if (uObj > 0) {
+    const order = M_.objects.map((o, k) => k).sort((p, q) => M_.objects[p].centroid[0] - M_.objects[q].centroid[0] || M_.objects[q].centroid[1] - M_.objects[p].centroid[1]);
+    const gw_ = 108, gh_ = 82, gap = Math.min(40, (LW - 120 - Mg() * gw_) / (Mg() - 1 || 1));
+    const rowW = Mg() * gw_ + (Mg() - 1) * gap, rx0 = (LW - rowW) / 2 + 30;
+    const uM = ease(seg(t, T.coal[0] + 1.4, T.coal[0] + 2.0)), uRb = ease(seg(t, T.coal[0] + 1.8, T.coal[1]));
+    const uUp = ease(seg(t, T.lift[0] + 0.2, T.lift[1]));
+    order.forEach((k, slot) => {
+      const o = M_.objects[k];
+      const [cx0, cy0] = P(o.centroid);
+      const cx = lerp(cx0, rx0 + slot * (gw_ + gap) + gw_ / 2, uUp), cy = lerp(cy0, 104, uUp);
+      // incidence: level-1 object to its source cards
+      if (uUp > 0) { ctx.strokeStyle = alpha(C.muted, 0.35 * uUp); ctx.lineWidth = 1;
+        o.members.forEach(i => { const [x, y] = cardPos[i]; ctx.beginPath(); ctx.moveTo(cx, cy + gh_ / 2); ctx.lineTo(x, y - 8); ctx.stroke(); }); }
+      ctx.globalAlpha = uObj;
+      rrect(cx - gw_ / 2, cy - gh_ / 2, gw_, gh_, 8); ctx.fillStyle = "#121a2e"; ctx.fill();
+      ctx.strokeStyle = alpha(C.muted, 0.7); ctx.lineWidth = 1.2; ctx.stroke();
+      // mass
+      const r = R_MASS * Math.sqrt(o.mass), dx = cx - 26, dy = cy - 10;
+      ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(dx, dy, Math.max(1.5, r), 0, 2 * Math.PI); ctx.fill();
+      // internal modes: direction = the mode's weighted displacement of member positions, length ~ singular value
+      if (uM > 0) o.modes.forEach(m => { const len = 26 * uM * m.sigma / o.modes[0].sigma;
+        const ax = cx + 24, ay = cy - 10, ux = m.dir[0], uy = -m.dir[1];
+        ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(ax, ay, 2, 0, 2 * Math.PI); ctx.fill();
+        arrow(ax, ay, ax + ux * len * 0.85, ay + uy * len * 0.85, C.ink, 2); });
+      // residual: omitted fraction of the local demand
+      ctx.fillStyle = C.rule; ctx.fillRect(cx - gw_ / 2 + 10, cy + 25, 50, 7);
+      ctx.fillStyle = C.orange; ctx.fillRect(cx - gw_ / 2 + 10, cy + 25, 50 * Math.min(1, o.residual / RES_FULL) * uRb, 7);
+      if (uRb > 0.5) text(fmt(o.residual), cx + gw_ / 2 - 8, cy + 33, 15, C.muted, FONT.mono, "right");
+      ctx.globalAlpha = 1;
+    });
+  }
+}
+function Mg() { return MODEL.objects.length; }
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock = Math.min(SETTLE_AT, clock + dt);
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+}
+window.__applet = { id: "ingest-diffusion", ready: false, settled: false,
+  data: { N, k: K, k_paper: K_PAPER, groups: MODEL.objects.length, rank: RANK, lift: LIFT, dyn_scale: DYN_SCALE,
+    kappa: MODEL.kappa, max_exit_rate: MODEL.maxExit, max_abs_column_sum: MODEL.colsum, max_detailed_balance_gap: MODEL.balance,
+    undirected_edges: MODEL.edges, eig_residual: MODEL.eigres, eigenvalues_top6: MODEL.eigVals.slice(0, 6),
+    tau_end: MODEL.TAU_END, start_card: MODEL.start, total_mass_end: MODEL.pEnd.reduce((s, x) => s + x, 0),
+    min_p_end: Math.min(...MODEL.pEnd),
+    objects: MODEL.objects.map(o => ({ size: o.members.length, mass: o.mass, ref_mass: o.refMass, sigmas: o.sigmas,
+      residual: o.residual, task_residual: o.taskResidual })) } };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (!paused && !reduced && !settled(clock)) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

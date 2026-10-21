@@ -1,0 +1,268 @@
+{
+ "figures": [
+  {
+   "caption_source": "writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/the-backend-objects-authority-and-revision.tex:18",
+   "colour_map": {
+    "#0072b2": "#7eb8da",
+    "#009e73": "#5cbf9a",
+    "#222222": "#e8e6e3",
+    "#526776": "#e8e6e3",
+    "#5d7180": "#9ca3af",
+    "#aeb8bf": "#9ca3af",
+    "#c5ccd1": "#9ca3af",
+    "#cce3f0": "#27486a",
+    "#d55e00": "#e0875a",
+    "#e0eef6": "#27486a",
+    "#e3e7e9": "#9ca3af",
+    "#f0f7fa": "#27486a",
+    "#f7fbfd": "#0a0e1a",
+    "#fff": "#0a0e1a"
+   },
+   "fallback": "none: re-rendered from the briefing's own vector SVG (its TikZ producer's output), not rasterised from PDF",
+   "id": "conceptric-envelope",
+   "numbers": {
+    "energy_error_after": "0.02826",
+    "energy_error_before": "0.33363",
+    "slide_quotes": "none (slide 34 line quotes no number)",
+    "where": "dd-conceptric-envelope.tikz: node '$0.33363\\rightarrow0.02826$' under 'energy error'"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/conceptric-envelope.png",
+   "port": {
+    "crop": "0,0.115,1,0.905",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "port_command": "talks/synthetics/tools/port_figure.py talks/synthetics/tools/producers/envelope-assets/premapped/dd-conceptric-envelope.svg conceptric-envelope --out-dir talks/synthetics/deck/public/figs --width 1400 --crop 0,0.115,1,0.905",
+   "pre_map": {
+    "map": {
+     "#183449": "#222222",
+     "#243039": "#222222"
+    },
+    "occurrences": {
+     "#183449": 4,
+     "#243039": 10
+    },
+    "premapped_sha256": "7847f2f3b23a4784ad63d93e354e3ce1fd4a7c487587fe8dd26a651c740b9468",
+    "premapped_svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/envelope-assets/premapped/dd-conceptric-envelope.svg",
+    "reason": "the briefing's ink #183449 is saturated enough that port_figure.py maps it to house blue; neutralised first so text and the robots' eyes become house ink"
+   },
+   "producer": "talks/synthetics/tools/producers/envelope-assets/make_figures.py",
+   "shows": "The briefing's gap-aware trial-space claim drawn as a conceptric envelope: an exterior band (scope, identity, revision) above an interior holding its sources and calculation and the energy error comparison; the agent or containing task writes inward through a checked port, observations read outward to a readable summary and standing, and a typed support link joins a related object. Blue marks the object and its operations, green (the briefing's teal) the outward flow, orange (the briefing's amber) the link port.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-conceptric-envelope.svg",
+     "sha256": "8c314857e05febc506d510491a3560c0fd14daa3592c4b076260c91b57e4ecb2"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-conceptric-envelope.tikz",
+     "sha256": "7da7d9bc71e13c42efd7152875d397041b7c6804847d8bcb02fc502033be6f77"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/figures/robot-run-c4d4b3872a904ec0.result/dd-conceptric-envelope.pdf",
+     "sha256": "c557be0648bb8a74309c5a2a1f5dc8f9f03cb9e3fd074dc5802ed4e678bd514d"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/the-backend-objects-authority-and-revision.tex",
+     "sha256": "bea05186b5922b664ec75969149185eaccd43c2a93e0c685d8edcbd12798d686"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/calculations/publish_robot_figures.py",
+     "sha256": "852b0f37a9a98eb725a8ff937a4e030beb95966fcd35a7c9bf5c752b8add04ae"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/conceptric-envelope.svg",
+   "width": "half"
+  },
+  {
+   "caption_source": "writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/from-a-working-core-to-an-extensible-sdk.tex:13",
+   "colour_map": {
+    "#0072b2": "#7eb8da",
+    "#009e73": "#5cbf9a",
+    "#222222": "#e8e6e3",
+    "#5d7180": "#9ca3af",
+    "#aeb8bf": "#9ca3af",
+    "#cce3f0": "#27486a",
+    "#d55e00": "#e0875a",
+    "#e0eef6": "#27486a",
+    "#e3e7e9": "#9ca3af",
+    "#f0f7fa": "#27486a",
+    "#f5f9fc": "#0a0e1a",
+    "#f7fbfd": "#0a0e1a",
+    "#fcf5f0": "#6a3a26",
+    "#fff": "#0a0e1a"
+   },
+   "fallback": "none: re-rendered from the briefing's own vector SVG (its TikZ producer's output), not rasterised from PDF",
+   "id": "nested-work",
+   "numbers": {
+    "displayed": "none",
+    "slide_quotes": "none (slide 36 line quotes no number)"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/nested-work.png",
+   "port": {
+    "crop": "0,0.095,1,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "port_command": "talks/synthetics/tools/port_figure.py talks/synthetics/tools/producers/envelope-assets/premapped/dd-nested-work-sdk.svg nested-work --out-dir talks/synthetics/deck/public/figs --width 1400 --crop 0,0.095,1,1",
+   "pre_map": {
+    "map": {
+     "#183449": "#222222",
+     "#243039": "#222222"
+    },
+    "occurrences": {
+     "#183449": 6,
+     "#243039": 11
+    },
+    "premapped_sha256": "b4d811ebe1223312645d683c442c941812e8aeeb608d2470b93ee29a931573e0",
+    "premapped_svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/envelope-assets/premapped/dd-nested-work-sdk.svg",
+    "reason": "the briefing's ink #183449 is saturated enough that port_figure.py maps it to house blue; neutralised first so text and the robots' eyes become house ink"
+   },
+   "producer": "talks/synthetics/tools/producers/envelope-assets/make_figures.py",
+   "retype": {
+    "map": {
+     "\\scriptsize": "\\footnotesize"
+    },
+    "occurrences": {
+     "\\scriptsize": 4
+    },
+    "reason": "TikZ \\scriptsize (7 pt) labels display at 14.4 px at the nominal 430 px figure height, under STYLE.md's 15 px floor; \\footnotesize (8 pt) displays at 16.5 px",
+    "renderer": "src/laplace/pipeline/tikz_render.py",
+    "renderer_sha256": "57985afff5a83a6bf06c75741e6cec33e51a0319a5568c992b87957901734ca3",
+    "reproduction_check": "the unmodified .tikz rendered with this renderer and style is byte-identical to the pinned SVG",
+    "retyped_svg": "talks/synthetics/tools/producers/envelope-assets/retyped/dd-nested-work-sdk/diagram.svg",
+    "retyped_svg_sha256": "4e775e07e6df609ea5b1763388e4ce7b65716daeecf80d69f5d658b2c4263e10",
+    "retyped_tikz": "talks/synthetics/tools/producers/envelope-assets/retyped/dd-nested-work-sdk/diagram.tikz",
+    "retyped_tikz_sha256": "c310fc8cec431c54eb44b3f2a0df0ffca702041f98359488f868cf9f0d42a32c",
+    "style": {
+     "diagram_border": "#477363",
+     "diagram_fill": "#f1f5f3",
+     "font_size": 9,
+     "ink": "#243039",
+     "line_width": 1.5,
+     "palette": [
+      "#0072B2",
+      "#D55E00",
+      "#009E73",
+      "#CC79A7",
+      "#E69F00",
+      "#56B4E9"
+     ]
+    },
+    "style_profile": "profiles/visual_style.json",
+    "style_profile_sha256": "affb3c753536104dfe1fa687e8cef5c5db0fd26d8b5e95c3481de51d95ab230e"
+   },
+   "shows": "Composition across task altitudes, the briefing's own diagram: a project / parent task sends scope inward to a worker task holding its source-and-result object and its own agent; findings return outward; a review of the exact return feeds 'parent accepts'; the orange (briefing amber) marker on the neighbouring object shows a dependent view that needs attention; the dashed panel names the next SDK capabilities (code, extension instructions + checks, configurable tools, roles and task topology).",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-nested-work-sdk.svg",
+     "sha256": "07a1572ec570ecce823f5a0dd1b8e46010a5459fa278c989d55ebcc2cb8390a0"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-nested-work-sdk.tikz",
+     "sha256": "940cc2fc05329c1762421df04db2937e27d099b7a29577af74bbfb6b179e150f"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/figures/robot-run-c4d4b3872a904ec0.result/dd-nested-work-sdk.pdf",
+     "sha256": "953a1ffa0171bcafd1d87f05c6c470e9e2474e83eca79699aacdcbe190feb5ca"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/from-a-working-core-to-an-extensible-sdk.tex",
+     "sha256": "08b71fcb6066d640f0fb6e8d91d8fbb76329b68c0ea7ed23ea5c83d4a3008bb7"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/calculations/publish_robot_figures.py",
+     "sha256": "852b0f37a9a98eb725a8ff937a4e030beb95966fcd35a7c9bf5c752b8add04ae"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/src/laplace/pipeline/tikz_render.py",
+     "sha256": "57985afff5a83a6bf06c75741e6cec33e51a0319a5568c992b87957901734ca3"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/profiles/visual_style.json",
+     "sha256": "affb3c753536104dfe1fa687e8cef5c5db0fd26d8b5e95c3481de51d95ab230e"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/nested-work.svg",
+   "width": "half"
+  },
+  {
+   "caption_source": "writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/the-backend-objects-authority-and-revision.tex:34",
+   "colour_map": {
+    "#0072b2": "#7eb8da",
+    "#009e73": "#5cbf9a",
+    "#222222": "#e8e6e3",
+    "#5d7180": "#9ca3af",
+    "#aeb8bf": "#9ca3af",
+    "#cce3f0": "#27486a",
+    "#d55e00": "#e0875a",
+    "#e0eef6": "#27486a",
+    "#e3e7e9": "#9ca3af",
+    "#f0f7fa": "#27486a",
+    "#f0f9f7": "#245a48",
+    "#f2f8fb": "#27486a",
+    "#f3f5f6": "#0a0e1a",
+    "#faece0": "#6a3a26",
+    "#fff": "#0a0e1a"
+   },
+   "fallback": "none: re-rendered from the briefing's own vector SVG (its TikZ producer's output), not rasterised from PDF",
+   "id": "tool-harness",
+   "numbers": {
+    "displayed": "none",
+    "slide_quotes": "none (slide 37 line quotes no number)"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/tool-harness.png",
+   "port": {
+    "crop": "0,0.09,1,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "port_command": "talks/synthetics/tools/port_figure.py talks/synthetics/tools/producers/envelope-assets/premapped/dd-ai-tool-harness.svg tool-harness --out-dir talks/synthetics/deck/public/figs --width 1400 --crop 0,0.09,1,1",
+   "pre_map": {
+    "map": {
+     "#183449": "#222222",
+     "#243039": "#222222"
+    },
+    "occurrences": {
+     "#183449": 3,
+     "#243039": 8
+    },
+    "premapped_sha256": "667ce818f481c7526eb22a287707dfda9acf514d5138df8f40efcc141de9326f",
+    "premapped_svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/envelope-assets/premapped/dd-ai-tool-harness.svg",
+    "reason": "the briefing's ink #183449 is saturated enough that port_figure.py maps it to house blue; neutralised first so text and the robots' eyes become house ink"
+   },
+   "producer": "talks/synthetics/tools/producers/envelope-assets/make_figures.py",
+   "shows": "From a model request to an inspectable result, the briefing's own diagram: a bounded context feeds the agent, which chooses a tool; the request passes a role and scope gate to the owner, which checks and changes the object; the result and receipt return to human / parent judgement, which can inspect and revise (orange, the briefing's amber).",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-ai-tool-harness.svg",
+     "sha256": "bfc8da4c2c8bf5b0120f13a10ec566f3fe47e2ea100139b7c183e7138302a8ef"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-ai-tool-harness.tikz",
+     "sha256": "4022bbd6315b337d7e6bd8a494d16a44bc2409e32de05d1de843344066231d10"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/figures/robot-run-c4d4b3872a904ec0.result/dd-ai-tool-harness.pdf",
+     "sha256": "27de7270a4073688a3a60f944c24f1b6f7936e9193e7b1fec764c38e82abcf3a"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/the-backend-objects-authority-and-revision.tex",
+     "sha256": "bea05186b5922b664ec75969149185eaccd43c2a93e0c685d8edcbd12798d686"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/calculations/publish_robot_figures.py",
+     "sha256": "852b0f37a9a98eb725a8ff937a4e030beb95966fcd35a7c9bf5c752b8add04ae"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/tool-harness.svg",
+   "width": "half"
+  }
+ ],
+ "packet": "envelope-assets"
+}

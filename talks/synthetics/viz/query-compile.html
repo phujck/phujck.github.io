@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>query-compile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet template. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .caption { flex: 0 0 auto; text-align: center; font-family: Lora, Georgia, serif; font-size: 20px;
+    color: #e8e6e3; padding: 6px 12px 10px; }
+  .caption b { color: #c9a96e; font-weight: 600; }
+  .controls { flex: 0 0 auto; display: flex; justify-content: center; align-items: center; gap: 18px;
+    padding: 6px 10px 10px; font-size: 15px; color: #9ca3af; }
+  .controls input[type=range] { width: 160px; accent-color: #7eb8da; }
+  .controls .val { font-family: "JetBrains Mono", monospace; color: #e8e6e3; min-width: 3.2em; text-align: right; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+  <div class="caption" id="caption">purchases approved before March, by the same firm</div>
+  <!-- optional: <div class="controls">...</div> -->
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+/* mulberry32 lives in the compute block below; the field seed is QSEED */
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);           // animation time in seconds
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;                          // reduced motion jumps here (past the stop)
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ---------- the computation (pure; tools/producers/memory-applets-b/compute.mjs runs this same block) ---------- */
+/*COMPUTE-BEGIN*/
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function computeQuery(seed) {
+  const rand = mulberry32(seed);
+  const D = 6, R = 2, NSRC = 12, K = 3, CUT = 2;            // CUT: month index < 2 means before March
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr"];
+  const FIELDS = ["object", "mechanism", "conditions", "consequences"];
+  const SEL = [0, 2];                                       // facets land on object and conditions
+  const gauss = () => { const u = Math.max(1e-12, rand()), v = rand(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+  const dot = (a, b) => a.reduce((s, x, i) => s + x * b[i], 0);
+  const norm = a => Math.sqrt(dot(a, a));
+  const unit = a => { const n = norm(a); return a.map(x => x / n); };
+  const sub = (a, b) => a.map((x, i) => x - b[i]);
+  const axpy = (s, a, b) => b.map((x, i) => x + s * a[i]);
+  const randv = () => Array.from({ length: D }, gauss);
+  const orth = (v, basis) => { let w = v.slice(); for (const b of basis) w = axpy(-dot(w, b), b, w); return unit(w); };
+  // field geometry: a common direction g and two spread directions per field
+  const geo = FIELDS.map(() => { const g = unit(randv()); const u1 = orth(randv(), [g]); const u2 = orth(randv(), [g, u1]); return { g, u1, u2 }; });
+  const src = [];
+  for (let i = 0; i < NSRC; i++) {
+    const date = Math.floor(rand() * MONTHS.length);
+    const v = [];                                           // per field: spread coordinates a, b plus small isotropic noise
+    for (let f = 0; f < FIELDS.length; f++) {
+      const { g, u1, u2 } = geo[f]; const a = 0.75 * gauss(), b = 0.75 * gauss();
+      v[f] = unit(g.map((x, k) => 0.9 * x + a * u1[k] + b * u2[k] + 0.06 * gauss()));
+    }
+    src.push({ id: "s" + String(i + 1).padStart(2, "0"), date, month: MONTHS[date], v });
+  }
+  const q = {};
+  for (const f of SEL) { const { g, u1, u2 } = geo[f]; q[f] = unit(g.map((x, k) => 0.9 * x + 0.8 * u1[k] + 0.3 * u2[k] + 0.06 * gauss())); }
+  const section = src.filter(s => s.date < CUT);
+  // a local frame per selected field, built on the section: mean and top-R principal directions
+  const frames = {};
+  for (const f of SEL) {
+    const X = section.map(s => s.v[f]);
+    const mu = X[0].map((_, k) => X.reduce((s, x) => s + x[k], 0) / X.length);
+    const C = Array.from({ length: D }, (_, a) => Array.from({ length: D }, (_, b) => X.reduce((s, x) => s + (x[a] - mu[a]) * (x[b] - mu[b]), 0)));
+    const B = [];
+    for (let r = 0; r < R; r++) {
+      let w = unit(Array.from({ length: D }, (_, k) => 1 + k * 0.1));
+      for (let it = 0; it < 500; it++) { let y = C.map(row => dot(row, w)); for (const b of B) y = axpy(-dot(y, b), b, y); w = unit(y); }
+      B.push(w);
+    }
+    const qf = q[f]; let qperp = qf.slice(); for (const b of B) qperp = axpy(-dot(qf, b), b, qperp);
+    frames[f] = { mu, B, qperpNorm: norm(qperp) };
+  }
+  const fac = c => { const x = Math.max(-1, Math.min(1, c)); return ((1 + x) / 2) ** 2; };
+  for (const s of src) {
+    s.in = s.date < CUT;
+    if (!s.in) continue;
+    s.f = SEL.map(f => {
+      const { mu, B, qperpNorm } = frames[f]; const d = sub(s.v[f], mu);
+      const c = B.map(b => dot(b, d)); let r = d.slice(); B.forEach((b, j) => { r = axpy(-c[j], b, r); });
+      const resolved = dot(mu, q[f]) + B.reduce((acc, b, j) => acc + c[j] * dot(b, q[f]), 0);
+      const e = norm(r) * qperpNorm, exact = dot(s.v[f], q[f]);
+      return { field: FIELDS[f], cosExact: exact, cosLo: resolved - e, cosHi: resolved + e, rNorm: norm(r),
+               lo: fac(resolved - e), hi: fac(resolved + e), exact: fac(exact) };
+    });
+    s.lo = s.f.reduce((p, x) => p * x.lo, 1); s.hi = s.f.reduce((p, x) => p * x.hi, 1); s.exact = s.f.reduce((p, x) => p * x.exact, 1);
+  }
+  // certified top-k: resolve in order of upper bound; stop when every omitted upper bound is below the kth accepted lower bound
+  const order = section.slice().sort((a, b) => b.hi - a.hi);
+  const steps = []; const accepted = []; let stopAt = order.length, Lk = null;
+  for (let n = 0; n < order.length; n++) {
+    if (accepted.length >= K) {
+      Lk = accepted.map(s => s.exact).sort((a, b) => b - a)[K - 1];
+      if (order[n].hi < Lk) { stopAt = n; break; }
+    }
+    accepted.push(order[n]); steps.push(order[n].id);
+  }
+  if (accepted.length >= K) Lk = accepted.map(s => s.exact).sort((a, b) => b - a)[K - 1];
+  const topk = accepted.slice().sort((a, b) => b.exact - a.exact).slice(0, K).map(s => s.id);
+  const trueTop = section.slice().sort((a, b) => b.exact - a.exact).slice(0, K).map(s => s.id);
+  return { D, R, K, NSRC, CUT, MONTHS, FIELDS, SEL, src, order: order.map(s => s.id), steps, stopAt, Lk, topk, trueTop,
+           qperp: SEL.map(f => frames[f].qperpNorm) };
+}
+/*COMPUTE-END*/
+const QSEED = 20261153;
+const R = computeQuery(QSEED);
+const SEC = R.src.filter(s => s.in);
+const byId = Object.fromEntries(R.src.map(s => [s.id, s]));
+const NRES = R.steps.length;
+/* ---------- timeline (seconds) ---------- */
+const T = { facet0: 0.2, facetDur: 0.45, date0: 1.8, date1: 2.6, bars0: 2.8, bars1: 4.4, sort0: 4.6, sort1: 5.4, res0: 5.8, resStep: 1.0 };
+T.stop = T.res0 + NRES * T.resStep + 0.1;
+const SETTLE = T.stop + 0.6;
+const ease = x => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+const ramp = (t, a, b) => ease((t - a) / (b - a));
+const resolvedAt = id => { const n = R.steps.indexOf(id); return n < 0 ? Infinity : T.res0 + n * T.resStep; };
+function acceptedAt(t) { return R.steps.filter(id => t >= resolvedAt(id) + 0.5).map(id => byId[id]); }
+function rowText(txt, x, y, col, font, align) { ctx.fillStyle = col; ctx.font = font; ctx.textAlign = align || "left"; ctx.fillText(txt, x, y); }
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function alpha(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
+
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  ctx.textBaseline = "middle";
+  const CW = Math.min(W - 32, 860), x0 = Math.round((W - CW) / 2);
+  const F15 = `15px ${FONT.sans}`, M15 = `15px ${FONT.mono}`;
+  /* ----- the tensor diagram: register row + four legs, each with its effect and witness slots ----- */
+  const rh = 26, y0 = 16;
+  const rowsY = [0, 1, 2, 3, 4].map(k => y0 + rh * k + rh / 2);
+  const xN = x0 + 22, xL = x0 + 64, xB = x0 + 176, bw = 56, xF = xB + bw + 14, xW = x0 + CW - 3 * 50;
+  const legY = rowsY.slice(1), nodeY = (legY[0] + legY[3]) / 2;
+  const accepted = acceptedAt(t);
+  const top = accepted.slice().sort((a, b) => b.exact - a.exact).slice(0, R.K);
+  // legs
+  ctx.lineWidth = 1.5;
+  const legNames = ["source i", ...R.FIELDS];
+  ctx.font = `15px ${FONT.sans}`;
+  const tail = k => xL + ctx.measureText(legNames[k]).width + 8;   // the leg resumes after its label
+  legY.forEach((y, j) => { ctx.strokeStyle = C.ink; ctx.beginPath(); ctx.moveTo(xN, nodeY); ctx.lineTo(xN + 26, y); ctx.lineTo(xL - 6, y);
+    ctx.moveTo(tail(j + 1), y); ctx.lineTo(xB, y); ctx.stroke(); });
+  ctx.setLineDash([4, 4]); ctx.strokeStyle = C.muted; ctx.beginPath(); ctx.moveTo(xN, nodeY); ctx.lineTo(xN, rowsY[0]); ctx.lineTo(xL - 6, rowsY[0]);
+  ctx.moveTo(tail(0), rowsY[0]); ctx.lineTo(xB, rowsY[0]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = C.ground; ctx.strokeStyle = C.ink; ctx.beginPath(); ctx.arc(xN, nodeY, 17, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+  rowText("τ", xN - 3, nodeY + 1, C.ink, `italic 17px ${FONT.serif}`, "center"); rowText("i", xN + 5, nodeY + 6, C.ink, `italic 15px ${FONT.serif}`, "left");
+  // facets: row index, effect label, facet text
+  const facets = { 0: { box: "< Mar", text: "before March" }, 1: { box: "q", text: "purchases" }, 3: { box: "q", text: "approved, same firm" } };
+  let fi = 0;
+  for (let k = 0; k < 5; k++) {
+    const y = rowsY[k];
+    rowText(legNames[k], xL, y + 1, k === 0 ? C.muted : C.ink, F15);
+    const fct = facets[k];
+    const land = fct ? ramp(t, T.facet0 + fi * 0.45, T.facet0 + fi * 0.45 + T.facetDur) : 1;
+    // effect box
+    rr(xB, y - 11, bw, 22, 4);
+    if (fct) { ctx.fillStyle = k === 0 ? alpha(C.green, 0.18 * land) : alpha(C.blue, 0.28 * land); ctx.fill();
+      ctx.strokeStyle = k === 0 ? alpha(C.green, 0.4 + 0.6 * land) : alpha(C.blue, 0.4 + 0.6 * land); ctx.stroke();
+      rowText(fct.box, xB + bw / 2, y + 1, alpha("#e8e6e3", 0.25 + 0.75 * land), M15, "center");
+      // facet text slides in from the right
+      ctx.globalAlpha = land; rowText(fct.text, xF + (1 - land) * 40, y + 1, C.ink, F15); ctx.globalAlpha = 1;
+      // witness slots
+      for (let j = 0; j < R.K; j++) {
+        const sx = xW + j * 50; rr(sx, y - 11, 44, 22, 4);
+        const w = top[j];
+        ctx.fillStyle = C.card; ctx.fill(); ctx.strokeStyle = w ? C.green : C.rule; ctx.stroke();
+        if (w) rowText(k === 0 ? w.month : w.id, sx + 22, y + 1, C.ink, M15, "center");
+      }
+      fi++;
+    } else { ctx.strokeStyle = C.muted; ctx.stroke(); rowText("I", xB + bw / 2, y + 1, C.muted, M15, "center"); }
+  }
+  rowText("witnesses", xW + 72, rowsY[2] + 1, C.muted, F15, "center");
+  /* ----- the sources: date section, per-field factors, product interval, certified stop ----- */
+  const yH = y0 + rh * 5 + 26, nR = R.NSRC;
+  const rowH = Math.min(26, (H - yH - 22 - 6) / nR);
+  const xId = x0, xDate = x0 + 44, f1 = x0 + 92, fw = Math.min(110, Math.max(66, CW * 0.12)), f2 = f1 + fw + 22, xP = f2 + fw + 26, xEnd = x0 + CW - 74, pw = xEnd - xP;
+  rowText("src", xId, yH, C.muted, F15); rowText("date", xDate, yH, C.muted, F15);
+  rowText("object", f1, yH, C.muted, F15); rowText("cond.", f2, yH, C.muted, F15);
+  rowText("product", xP, yH, C.muted, F15);
+  const nRead = accepted.length + R.steps.filter(id => t >= resolvedAt(id) && t < resolvedAt(id) + 0.5).length;
+  if (t >= T.res0) rowText(`read ${Math.min(nRead, NRES)} of ${SEC.length}`, x0 + CW, yH, C.ink, M15, "right");
+  else if (t >= T.date0) rowText(`${SEC.length} of ${nR} in section`, x0 + CW, yH, C.ink, M15, "right");
+  // row order: id order, then section by upper bound with the rest below
+  const sorted = R.order.concat(R.src.filter(s => !s.in).map(s => s.id));
+  const pSort = ramp(t, T.sort0, T.sort1);
+  const dateDim = ramp(t, T.date0, T.date1), barsIn = ramp(t, T.bars0, T.bars1), stopped = t >= T.stop;
+  const yRow = id => { const a = R.src.findIndex(s => s.id === id), b = sorted.indexOf(id); return yH + 22 + rowH * ((1 - pSort) * a + pSort * b) + rowH / 2; };
+  const bar = (x, w, y, lo, hi, ex, res, col, a) => {
+    const h = Math.max(8, rowH - 10);
+    rr(x, y - h / 2, w, h, 2); ctx.fillStyle = C.card; ctx.fill();
+    if (res > 0) { // collapse the interval onto the exact value
+      const L = lo + (ex - lo) * res, U = hi + (ex - hi) * res;
+      ctx.fillStyle = alpha(C.green, a); ctx.fillRect(x, y - h / 2, w * L, h);
+      if (U > L) { ctx.fillStyle = alpha(C.blue, 0.35 * a); ctx.fillRect(x + w * L, y - h / 2, w * (U - L), h); }
+    } else {
+      ctx.fillStyle = alpha(col, 0.85 * a); ctx.fillRect(x, y - h / 2, w * lo, h);
+      ctx.fillStyle = alpha(col, 0.35 * a); ctx.fillRect(x + w * lo, y - h / 2, w * (hi - lo), h);
+    }
+  };
+  for (const s of R.src) {
+    const y = yRow(s.id), dim = s.in ? 1 : 1 - 0.65 * dateDim;
+    rowText(s.id, xId, y, alpha("#e8e6e3", dim), M15); rowText(s.month, xDate, y, alpha("#e8e6e3", dim), M15);
+    if (!s.in) { if (dateDim > 0) rowText("outside", xP, y, alpha("#9ca3af", dateDim * 0.8), F15); continue; }
+    const g = barsIn;
+    if (g <= 0) continue;
+    const res = ramp(t, resolvedAt(s.id), resolvedAt(s.id) + 0.5);
+    const omitted = stopped && R.steps.indexOf(s.id) < 0;
+    const col = omitted ? C.muted : C.blue, a = omitted ? 0.7 : 1;
+    bar(f1, fw * g, y, s.f[0].lo, s.f[0].hi, s.f[0].exact, res, col, a);
+    rowText("×", f1 + fw + 11, y, C.muted, F15, "center");
+    bar(f2, fw * g, y, s.f[1].lo, s.f[1].hi, s.f[1].exact, res, col, a);
+    rowText("=", f2 + fw + 13, y, C.muted, F15, "center");
+    bar(xP, pw * g, y, s.lo, s.hi, s.exact, res, col, a);
+    if (omitted) rowText("omitted", x0 + CW, y, C.muted, F15, "right");
+    else if (res >= 1) rowText(s.exact.toFixed(3), x0 + CW, y, top.includes(s) ? C.green : C.ink, M15, "right");
+  }
+  // gold: the k-th accepted lower bound, once k sources are accepted
+  if (accepted.length >= R.K) {
+    const Lk = accepted.map(s => s.exact).sort((a, b) => b - a)[R.K - 1];
+    const x = xP + pw * Lk, yA = yH + 12, yB = yH + 22 + rowH * SEC.length + 2;
+    ctx.strokeStyle = C.gold; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, yA + 4); ctx.lineTo(x, yB); ctx.stroke();
+    rowText(`k = ${R.K}`, x + 6, yH, C.gold, M15, "left");
+  }
+}
+function settled(t) { return t >= SETTLE; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused) requestAnimationFrame(frame);
+}
+window.__applet = { id: "query-compile", ready: false, settled: false };
+resize(); draw(clock); window.__applet.ready = true;
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>four-state-closure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+</div>
+<script>
+"use strict";
+// COMPUTE-BEGIN
+/* The four-state example of the briefing chapter what-a-useful-summary-must-remember.tex:
+   generator G and retention C (eq. four-state), stationary reconstruction R = D_pi C^T D_{C pi}^{-1}
+   (eq. reconstruction, here C^T/2), coarse law B = CGR, closure residual Delta = CG - BC
+   (eq. closure-residual), and the retained pair y = p1+p2-p3-p4, z = p1-p2-p3+p4 (eq. two-coordinate). */
+const G = [[-5, 4, 1, 0], [4, -7, 0, 3], [1, 0, -5, 4], [0, 3, 4, -7]];
+const Cm = [[1, 1, 0, 0], [0, 0, 1, 1]];
+const mul = (A, B) => A.map(r => B[0].map((_, j) => r.reduce((s, v, k) => s + v * B[k][j], 0)));
+const mv = (A, v) => A.map(r => r.reduce((s, x, k) => s + x * v[k], 0));
+const T = A => A[0].map((_, j) => A.map(r => r[j]));
+function stationary(Gm) {               // solve G pi = 0, sum pi = 1 (replace last row by ones)
+  const n = Gm.length, A = Gm.map(r => r.slice()), b = new Array(n).fill(0);
+  A[n - 1] = new Array(n).fill(1); b[n - 1] = 1;
+  for (let i = 0; i < n; i++) {           // Gaussian elimination with partial pivoting
+    let p = i; for (let r = i + 1; r < n; r++) if (Math.abs(A[r][i]) > Math.abs(A[p][i])) p = r;
+    [A[i], A[p]] = [A[p], A[i]]; [b[i], b[p]] = [b[p], b[i]];
+    for (let r = 0; r < n; r++) if (r !== i) { const f = A[r][i] / A[i][i]; for (let c = i; c < n; c++) A[r][c] -= f * A[i][c]; b[r] -= f * b[i]; }
+  }
+  return b.map((v, i) => v / A[i][i]);
+}
+function rk4(f, x0, h, steps) {         // fine RK4 trajectory, sampled every step
+  const out = [x0.slice()]; let x = x0.slice();
+  for (let s = 0; s < steps; s++) {
+    const k1 = f(x), k2 = f(x.map((v, i) => v + h / 2 * k1[i])), k3 = f(x.map((v, i) => v + h / 2 * k2[i])), k4 = f(x.map((v, i) => v + h * k3[i]));
+    x = x.map((v, i) => v + h / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i])); out.push(x.slice());
+  }
+  return out;
+}
+function computeClosure() {
+  const pi = stationary(G), Cpi = mv(Cm, pi);
+  const R = T(Cm).map((r, i) => r.map((v, j) => pi[i] * v / Cpi[j]));          // D_pi C^T D_{C pi}^{-1}
+  const B = mul(mul(Cm, G), R);
+  const Delta = mul(Cm, G).map((r, i) => r.map((v, j) => v - mul(B, Cm)[i][j]));
+  const dNorm = Math.max(...Delta[0].map((_, j) => Delta.reduce((s, r) => s + Math.abs(r[j]), 0)));
+  // closure coefficients by direct multiplication: (u G) and (w G) expressed in the basis {u, w}
+  const u = [1, 1, -1, -1], w = [1, -1, -1, 1];
+  const rowG = v => G[0].map((_, j) => v.reduce((s, x, i) => s + x * G[i][j], 0));
+  const coef = v => { const r = rowG(v); return [r.reduce((s, x, i) => s + x * u[i], 0) / 4, r.reduce((s, x, i) => s + x * w[i], 0) / 4]; };
+  const K = [coef(u), coef(w)];                                                 // [[-4, 2], [2, -12]]
+  const tMax = 1.2, h = 0.001, steps = Math.round(tMax / h);
+  const starts = [[1, 0, 0, 0], [0, 1, 0, 0]];
+  const fine = starts.map(p0 => rk4(p => mv(G, p), p0, h, steps));
+  const pAexact = fine.map(tr => tr.map(p => p[0] + p[1]));
+  const coarse = rk4(q => mv(B, q), mv(Cm, starts[0]), h, steps).map(q => q[0]);
+  const closed = starts.map(p0 => rk4(v => mv(K, v), [u.reduce((s, x, i) => s + x * p0[i], 0), w.reduce((s, x, i) => s + x * p0[i], 0)], h, steps).map(v => (1 + v[0]) / 2));
+  const slopes = starts.map(p0 => mv(mul(Cm, G), p0)[0]);                      // p_A'(0) = (C G p0)_A
+  const slopeCoarse = mv(mul(B, Cm), starts[0])[0];
+  let maxClosureErr = 0; closed.forEach((c, k) => c.forEach((v, i) => { maxClosureErr = Math.max(maxClosureErr, Math.abs(v - pAexact[k][i])); }));
+  const pAt = tt => { const i = Math.round(tt / h); return { from1: pAexact[0][i], from2: pAexact[1][i], coarse: coarse[i] }; };
+  return { pi, R, B, Delta, dNorm, K, h, tMax, fine, pAexact, coarse, closed, slopes, slopeCoarse, maxClosureErr, pAt };
+}
+// COMPUTE-END
+
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 9;
+if (reduced) clock = SETTLE_AT;
+
+const F = computeClosure();
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+function txt(s, x, y, o) {
+  o = o || {}; ctx.fillStyle = o.color || C.muted; ctx.font = `${o.weight || 400} ${o.size || 15}px ${o.font || FONT.sans}`;
+  ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic"; ctx.fillText(s, x, y);
+}
+const fmt = v => (v < 0 ? "−" : "") + Math.abs(Math.round(v * 1000) / 1000);
+
+/* ---------- the applet ---------- */
+function chain(x0, y0, w, h, p, label, dash) {
+  // states 1, 2 in region A (left), 3, 4 in region B (right); rates from G
+  ctx.fillStyle = C.card; ctx.fillRect(x0, y0, w, h);
+  txt(label, x0 + 10, y0 + 8, { color: C.blue, base: "top", weight: 600 });
+  if (dash) { ctx.strokeStyle = C.blue; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(x0 + 70, y0 + 17); ctx.lineTo(x0 + 96, y0 + 17); ctx.stroke(); ctx.setLineDash([]); }
+  else { ctx.strokeStyle = C.blue; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0 + 70, y0 + 17); ctx.lineTo(x0 + 96, y0 + 17); ctx.stroke(); }
+  const r = Math.min(26, h * 0.16), cx = [x0 + w * 0.27, x0 + w * 0.73], cy = [y0 + h * 0.40, y0 + h * 0.80];
+  const pos = [[cx[0], cy[0]], [cx[0], cy[1]], [cx[1], cy[0]], [cx[1], cy[1]]];
+  const edges = [[0, 1], [2, 3], [0, 2], [1, 3]];
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 1.5;
+  for (const [i, j] of edges) {
+    const [ax, ay] = pos[i], [bx, by] = pos[j], dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy);
+    ctx.beginPath(); ctx.moveTo(ax + dx / L * r, ay + dy / L * r); ctx.lineTo(bx - dx / L * r, by - dy / L * r); ctx.stroke();
+    const mx = (ax + bx) / 2, my = (ay + by) / 2, vert = Math.abs(dx) < 1;
+    txt(String(G[i][j]), mx + (vert ? (i === 0 ? -10 : 10) : 0), my + (vert ? 0 : -9), { color: C.ink, font: FONT.mono, align: vert ? (i === 0 ? "right" : "left") : "center", base: vert ? "middle" : "bottom" });
+  }
+  pos.forEach(([x, y], i) => {
+    ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.stroke();
+    ctx.fillStyle = C.blue; ctx.globalAlpha = 0.85; ctx.beginPath(); ctx.arc(x, y, r * Math.sqrt(Math.max(0, p[i])), 0, 2 * Math.PI); ctx.fill(); ctx.globalAlpha = 1;
+    txt(String(i + 1), x + (i < 2 ? -r - 6 : r + 6), y, { color: C.muted, font: FONT.mono, align: i < 2 ? "right" : "left", base: "middle" });
+  });
+  txt("A", cx[0], y0 + h - 4, { color: C.muted, align: "center", font: FONT.serif, size: 17 });
+  txt("B", cx[1], y0 + h - 4, { color: C.muted, align: "center", font: FONT.serif, size: 17 });
+}
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const tau = F.tMax * Math.min(1, Math.max(0, t / 8)), idx = Math.round(tau / F.h);
+  // left: the chain from state 1 and from state 2
+  const LW = Math.round(Math.min(W * 0.38, 330)), gap = 10, ch = (H - 3 * gap) / 2;
+  chain(gap, gap, LW - gap, ch, F.fine[0][idx], "from 1", false);
+  chain(gap, 2 * gap + ch, LW - gap, ch, F.fine[1][idx], "from 2", true);
+  // right: p_A(t) exact from both starts, the coarse law B, the closed pair (y, z), initial tangents
+  const RX = LW + 74, RY = 14, RW = W - RX - 26, RH = H - RY - 46;
+  const yr = [0.45, 1.02], sx = v => RX + v / F.tMax * RW, sy = v => RY + RH - (v - yr[0]) / (yr[1] - yr[0]) * RH;
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+  for (const v of [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]) { ctx.beginPath(); ctx.moveTo(RX, sy(v)); ctx.lineTo(RX + RW, sy(v)); ctx.stroke(); }
+  ctx.strokeStyle = C.muted; ctx.beginPath(); ctx.moveTo(RX, RY); ctx.lineTo(RX, RY + RH); ctx.lineTo(RX + RW, RY + RH); ctx.stroke();
+  for (const v of [0, 0.4, 0.8, 1.2]) txt(v.toFixed(1), sx(v), RY + RH + 6, { align: "center", base: "top", font: FONT.mono });
+  for (const v of [0.5, 0.75, 1.0]) txt(v.toFixed(2), RX - 6, sy(v), { align: "right", base: "middle", font: FONT.mono });
+  txt("t (inverse base rate)", RX + RW, H - 6, { align: "right" });
+  txt("p", LW + 6, RY + RH * 0.38, { color: C.ink, font: FONT.serif, size: 19, base: "middle" });
+  txt("A", LW + 17, RY + RH * 0.38 + 7, { color: C.ink, font: FONT.serif, size: 15, base: "middle" });
+  const line = (arr, col, wd, dash) => { ctx.strokeStyle = col; ctx.lineWidth = wd; ctx.setLineDash(dash || []); ctx.beginPath();
+    for (let i = 0; i <= idx; i += 4) { const X = sx(i * F.h), Y = sy(arr[i]); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }
+    ctx.lineTo(sx(idx * F.h), sy(arr[idx])); ctx.stroke(); ctx.setLineDash([]); };
+  line(F.coarse, C.orange, 2.5);
+  line(F.pAexact[0], C.blue, 2.5); line(F.pAexact[1], C.blue, 2.5, [7, 5]);
+  ctx.fillStyle = C.ink;
+  for (const c of F.closed) for (let i = 0; i <= idx; i += 60) { ctx.beginPath(); ctx.arc(sx(i * F.h), sy(c[i]), 3, 0, 2 * Math.PI); ctx.fill(); }
+  // the initial slopes p_A'(0) = -1 and -3 as short tangents
+  const dt = 0.09;
+  F.slopes.forEach((m, k) => {
+    ctx.strokeStyle = C.gold; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(sx(0), sy(1)); ctx.lineTo(sx(dt), sy(1 + m * dt)); ctx.stroke();
+    txt(fmt(m), sx(dt) + (k ? 0 : 8), sy(1 + m * dt) + (k ? 16 : 0), { color: C.gold, font: FONT.mono, base: k ? "top" : "middle", align: k ? "center" : "left" });
+  });
+  // legend in the empty upper right
+  const lx = RX + RW * 0.50, ly = RY + 18, row = 24;
+  const key = [["from 1", C.blue, null], ["from 2", C.blue, [7, 5]], ["coarse law", C.orange, null]];
+  key.forEach(([s, col, dash], i) => { ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.setLineDash(dash || []); ctx.beginPath(); ctx.moveTo(lx, ly + i * row); ctx.lineTo(lx + 28, ly + i * row); ctx.stroke(); ctx.setLineDash([]);
+    txt(s, lx + 36, ly + i * row, { color: C.ink, base: "middle" }); });
+  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(lx + 14, ly + 3 * row, 3.5, 0, 2 * Math.PI); ctx.fill();
+  txt("retain z", lx + 36, ly + 3 * row, { color: C.ink, base: "middle" });
+  const K = F.K, term = (c, v, first) => (first ? (c < 0 ? "−" : "") : (c < 0 ? " − " : " + ")) + Math.abs(c) + v;
+  txt("ẏ = " + term(K[0][0], "y", true) + term(K[0][1], "z"), lx, ly + 4 * row + 4, { color: C.muted, font: FONT.mono, base: "middle" });
+  txt("ż = " + term(K[1][0], "y", true) + term(K[1][1], "z"), lx, ly + 5 * row + 4, { color: C.muted, font: FONT.mono, base: "middle" });
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+}
+window.__applet = { id: "four-state-closure", ready: false, settled: false, B: F.B, slopes: F.slopes };
+resize(); draw(clock); window.__applet.settled = settled(clock); window.__applet.ready = true;
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

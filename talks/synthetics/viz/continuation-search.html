@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>continuation-search</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet template. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .caption { flex: 0 0 auto; text-align: center; font-family: Lora, Georgia, serif; font-size: 20px;
+    color: #e8e6e3; padding: 6px 12px 10px; }
+  .caption b { color: #c9a96e; font-weight: 600; }
+  .controls { flex: 0 0 auto; display: flex; justify-content: center; align-items: center; gap: 18px;
+    padding: 6px 10px 10px; font-size: 15px; color: #9ca3af; }
+  .controls input[type=range] { width: 160px; accent-color: #7eb8da; }
+  .controls .val { font-family: "JetBrains Mono", monospace; color: #e8e6e3; min-width: 3.2em; text-align: right; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+  <div class="caption" id="caption">GPU, 262,144 records, batch 1,024: 59.8 µs vs 1,490.7 µs scan</div>
+  <!-- optional: <div class="controls">...</div> -->
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+/* mulberry32 lives in the compute block below; the batch seed is CSEED */
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);           // animation time in seconds
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;                          // seconds after which the frame is the settled state
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ---------- the computation (pure; tools/producers/memory-applets-b/compute.mjs runs this same block) ---------- */
+/*COMPUTE-BEGIN*/
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function computeContinuation(seed) {
+  const rand = mulberry32(seed);
+  const d = 5, NQ = 6;
+  // the even-parity family: every d-bit record whose bits sum to an even number, one record each
+  const records = [];
+  for (let x = 0; x < (1 << d); x++) { const b = Array.from({ length: d }, (_, k) => (x >> (d - 1 - k)) & 1); if (b.reduce((s, v) => s + v, 0) % 2 === 0) records.push(b.join("")); }
+  const N = records.length;
+  // prefix tree: the distinct prefixes at each length
+  const levels = Array.from({ length: d + 1 }, (_, g) => [...new Set(records.map(r => r.slice(0, g)))].sort());
+  // fold, built backwards from the terminal field: two prefixes share a state when their normalised suffix laws are equal
+  const law = p => { const m = new Map(); const rs = records.filter(r => r.startsWith(p)); for (const r of rs) { const s = r.slice(p.length); m.set(s, (m.get(s) || 0) + 1 / rs.length); }
+    return [...m.entries()].sort().map(([s, w]) => s + ":" + w.toFixed(12)).join("|"); };
+  const stateOf = [], states = [];
+  for (let g = 0; g <= d; g++) {
+    const keys = []; stateOf[g] = {};
+    for (const p of levels[g]) { const k = law(p); let i = keys.indexOf(k); if (i < 0) { keys.push(k); i = keys.length - 1; } stateOf[g][p] = i; }
+    states[g] = keys.map((k, i) => { const members = levels[g].filter(p => stateOf[g][p] === i);
+      const par = [...new Set(members.map(p => p.split("").reduce((s, c) => s + Number(c), 0) % 2))];
+      return { members, parity: par.length === 1 ? (par[0] ? "odd" : "even") : "mixed" }; });
+  }
+  // transitions t_g(s, a) and successors b(s, a), read from a representative prefix and checked on every member
+  const trans = [];
+  for (let g = 0; g < d; g++) trans[g] = states[g].map(st => [0, 1].map(a => {
+    const rows = st.members.map(p => { const n = records.filter(r => r.startsWith(p)).length, n1 = records.filter(r => r.startsWith(p + a)).length;
+      return { t: n1 / n, b: n1 ? stateOf[g + 1][p + a] : null }; });
+    const ok = rows.every(r => r.t === rows[0].t && r.b === rows[0].b); if (!ok) throw new Error("fold inconsistent");
+    return rows[0]; }));
+  // a batch of product queries: per field an allowed-symbol mask q_g(a) in {0,1}
+  const queries = [];
+  for (let n = 0; n < NQ; n++) {
+    const mask = Array.from({ length: d }, () => { if (rand() < 0.45) return [1, 1]; return rand() < 0.5 ? [1, 0] : [0, 1]; });
+    // backward messages: m_terminal = 1, m_s = sum_a t(s,a) q(a) m_b(s,a)
+    const m = []; m[d] = states[d].map(() => 1);
+    for (let g = d - 1; g >= 0; g--) m[g] = states[g].map((st, s) => [0, 1].reduce((acc, a) => { const e = trans[g][s][a]; return acc + (e.t ? e.t * mask[g][a] * m[g + 1][e.b] : 0); }, 0));
+    const machine = Math.round(N * m[0][0]);
+    const matches = records.map(r => r.split("").every((c, k) => mask[k][Number(c)] === 1));
+    const scan = matches.filter(Boolean).length;
+    if (Math.abs(N * m[0][0] - machine) > 1e-9 || machine !== scan) throw new Error("count mismatch");
+    queries.push({ mask, label: mask.map(q => q[0] && q[1] ? "*" : q[0] ? "0" : "1").join(""), m, machine, scan, matches });
+  }
+  const statesPerQuery = states.slice(0, d).reduce((s, l) => s + l.length, 0);
+  return { d, N, NQ, records, levels, states, stateOf, trans, queries, statesPerQuery,
+           prefixCounts: levels.map(l => l.length), stateCounts: states.map(l => l.length) };
+}
+/*COMPUTE-END*/
+const CSEED = 20261021;
+const R = computeContinuation(CSEED);
+const d = R.d;
+/* ---------- timeline (seconds) ---------- */
+const T = { fold0: 0.6, foldStep: 0.45, foldDur: 0.4, q0: 3.6, qStep: 1.1, msgStep: 0.15, scanDur: 0.9 };
+const SETTLE = T.q0 + R.NQ * T.qStep;
+const ease = x => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+const ramp = (t, a, b) => ease((t - a) / (b - a));
+function txt(s, x, y, col, font, align) { ctx.fillStyle = col; ctx.font = font; ctx.textAlign = align || "left"; ctx.fillText(s, x, y); }
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function alpha(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
+const fmt = v => v === 0 ? "0" : v === 1 ? "1" : String(+v.toFixed(4));
+
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  ctx.textBaseline = "middle";
+  const F15 = `15px ${FONT.sans}`, M15 = `15px ${FONT.mono}`;
+  const CW = Math.min(W - 32, 900), x0 = Math.round((W - CW) / 2);
+  /* ----- top: prefix tree folding into the continuation machine ----- */
+  const xLab = x0, xA = x0 + 104, xZ = x0 + CW - 34, dx = (xZ - xA) / d;
+  const X = g => xA + g * dx;
+  const yMask = 16, yT0 = 48, yT1 = Math.min(212, H * 0.44), yEven = yT0 + (yT1 - yT0) * 0.22, yOdd = yT0 + (yT1 - yT0) * 0.78, yMid = (yEven + yOdd) / 2;
+  const leaves = R.levels[d];
+  const treeY = {};
+  leaves.forEach((p, i) => { treeY[d + ":" + p] = yT0 + (yT1 - yT0) * (i + 0.5) / leaves.length; });
+  for (let g = d - 1; g >= 0; g--) for (const p of R.levels[g]) { const ch = R.levels[g + 1].filter(c => c.startsWith(p)); treeY[g + ":" + p] = ch.reduce((s, c) => s + treeY[(g + 1) + ":" + c], 0) / ch.length; }
+  const stY = (g, s) => { const st = R.states[g][s]; if (R.states[g].length === 1) return g === 0 ? yEven : yMid; return st.parity === "odd" ? yOdd : yEven; };
+  const fold = g => ramp(t, T.fold0 + (d - g) * T.foldStep, T.fold0 + (d - g) * T.foldStep + T.foldDur);
+  const posY = (g, p) => { const f = fold(g); return treeY[g + ":" + p] * (1 - f) + stY(g, R.stateOf[g][p]) * f; };
+  // current query
+  const qn = Math.max(-1, Math.min(R.NQ - 1, Math.floor((t - T.q0) / T.qStep)));
+  const q = qn >= 0 ? R.queries[qn] : null, tq = qn >= 0 ? t - (T.q0 + qn * T.qStep) : 0;
+  const machineOn = t >= T.fold0 + d * T.foldStep + T.foldDur;
+  // edges of the tree (they pile up onto the machine's edges as levels fold)
+  for (let g = 0; g < d; g++) for (const p of R.levels[g]) for (const a of [0, 1]) {
+    const c = p + a; if (!R.levels[g + 1].includes(c)) continue;
+    const allowed = !q || q.mask[g][a] === 1;
+    ctx.strokeStyle = machineOn ? (allowed ? alpha(C.blue, 0.75) : alpha("#9ca3af", 0.25)) : alpha("#e8e6e3", 0.35);
+    ctx.lineWidth = machineOn ? 2 : 1;
+    ctx.beginPath(); ctx.moveTo(X(g), posY(g, p)); ctx.lineTo(X(g + 1), posY(g + 1, c)); ctx.stroke();
+  }
+  // nodes: prefix dots, then state circles once a level has folded
+  for (let g = 0; g <= d; g++) {
+    const f = fold(g);
+    if (f < 1) for (const p of R.levels[g]) { ctx.fillStyle = alpha("#e8e6e3", 0.9 * (1 - f) + 0.1); ctx.beginPath(); ctx.arc(X(g), posY(g, p), 2.6, 0, 2 * Math.PI); ctx.fill(); }
+    if (f > 0) R.states[g].forEach((st, s) => { ctx.fillStyle = C.ground; ctx.strokeStyle = alpha(C.blue, f); ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(X(g), stY(g, s), 8, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); });
+  }
+  const fAll = fold(d - 1); txt("even", xLab, yEven, alpha("#9ca3af", fAll), F15); txt("odd", xLab, yOdd, alpha("#9ca3af", fAll), F15);
+  // masks above each field's transition
+  txt("mask", xLab, yMask + 1, C.muted, F15);
+  for (let g = 0; g < d; g++) {
+    const cx = (X(g) + X(g + 1)) / 2;
+    for (const a of [0, 1]) {
+      const x = cx - 21 + a * 22, on = !q || q.mask[g][a] === 1;
+      rr(x, yMask - 10, 20, 20, 3);
+      ctx.fillStyle = q ? (on ? alpha(C.blue, 0.3) : C.card) : C.card; ctx.fill();
+      ctx.strokeStyle = q && on ? C.blue : C.rule; ctx.lineWidth = 1; ctx.stroke();
+      txt(String(a), x + 10, yMask + 1, q ? (on ? C.ink : alpha("#9ca3af", 0.6)) : C.muted, M15, "center");
+    }
+  }
+  // backward messages for the current query, terminal first
+  if (q) for (let g = d; g >= 0; g--) {
+    const at = (d - g) * T.msgStep; if (tq < at) continue;
+    R.states[g].forEach((st, s) => { const y = stY(g, s), v = q.m[g][s];
+      const up = !(R.states[g].length === 2 && st.parity === "odd");
+      if (g === 0) return;
+      txt(fmt(v), X(g), up ? y - 20 : y + 21, C.ink, M15, "center"); });
+  }
+  const rootDone = q && tq >= d * T.msgStep;
+  if (rootDone) { txt(fmt(q.m[0][0]), X(0), yEven - 20, C.ink, M15, "center");
+    txt(`${q.machine} of ${R.N}`, X(0), yEven - 40, C.gold, `600 15px ${FONT.mono}`, "center"); }
+  // prefix and state counts per level
+  const yC1 = yT1 + 22, yC2 = yT1 + 44;
+  txt("prefixes", xLab, yC1, C.muted, F15); txt("states", xLab, yC2, C.muted, F15);
+  for (let g = 0; g <= d; g++) {
+    txt(String(R.prefixCounts[g]), X(g), yC1, C.ink, M15, "center");
+    const f = fold(g); if (f > 0) txt(String(R.stateCounts[g]), X(g), yC2, alpha(C.blue, f), M15, "center");
+  }
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, yC2 + 18); ctx.lineTo(x0 + CW, yC2 + 18); ctx.stroke();
+  /* ----- bottom: the batch through the machine, beside a direct scan of the same records ----- */
+  const yB = yC2 + 40, maxRows = Math.max(1, Math.floor((H - yB - 56) / 17)), rowH = Math.min(22, (H - yB - 56) / Math.min(R.NQ, maxRows));
+  const firstRow = Math.max(0, Math.min(qn, R.NQ - maxRows));   // keep the live query in view when the frame is short
+  const done = n => t >= T.q0 + n * T.qStep + Math.max(T.scanDur, d * T.msgStep) + 0.05;
+  const cq = [x0, x0 + 54, x0 + 124, x0 + 206];
+  txt("query", cq[0], yB, C.muted, F15); txt("mask", cq[1], yB, C.muted, F15); txt("machine", cq[2], yB, C.muted, F15); txt("scan", cq[3], yB, C.muted, F15);
+  let statesTouched = 0, recTouched = 0;
+  for (let n = 0; n < R.NQ; n++) {
+    const y = yB + 22 + (n - firstRow) * rowH, Q = R.queries[n], live = n === qn && !done(n);
+    if (t < T.q0 + n * T.qStep) continue;
+    if (n < firstRow || n >= firstRow + maxRows) { if (done(n)) { statesTouched += R.statesPerQuery; recTouched += R.N; } continue; }
+    txt("q" + (n + 1), cq[0], y, live ? C.ink : C.muted, M15); txt(Q.label, cq[1], y, C.ink, M15);
+    if (done(n)) { txt(String(Q.machine), cq[2] + 28, y, C.blue, M15, "center"); txt(String(Q.scan), cq[3] + 16, y, C.orange, M15, "center"); }
+    const tn = t - (T.q0 + n * T.qStep);
+    statesTouched += done(n) ? R.statesPerQuery : R.states.slice(0, d).filter((l, g) => tn >= (d - g) * T.msgStep).reduce((s, l) => s + l.length, 0);
+    recTouched += done(n) ? R.N : Math.min(R.N, Math.floor(R.N * Math.max(0, tn) / T.scanDur));
+  }
+  const yCnt = H - 20;
+  txt("states touched", cq[0], yCnt, C.muted, F15); txt(String(statesTouched), cq[0] + 128, yCnt, C.blue, M15);
+  // the scan grid: one column per record, one row per field
+  const xg0 = x0 + Math.max(270, CW * 0.48), cw = (x0 + CW - xg0) / R.N, ch = Math.min(19, rowH * 0.95, (yCnt - 16 - (yB + 24)) / d);
+  txt("direct scan", xg0, yB, C.muted, F15); txt("timings: right", x0 + CW, yB, C.muted, F15, "right");
+  const scanned = q ? Math.min(R.N, Math.floor(R.N * Math.max(0, tq) / T.scanDur)) : 0;
+  R.records.forEach((r, i) => {
+    const x = xg0 + i * cw + cw / 2, seen = q && i < scanned, hit = seen && q.matches[i];
+    r.split("").forEach((c, k) => {
+      const col = hit ? C.ink : seen ? alpha("#9ca3af", 0.45) : C.muted;
+      if (ch >= 13) txt(c, x, yB + 24 + k * ch, col, M15, "center");
+      else { const s = Math.max(3, ch - 3); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1;      // a short frame: bits as cells, filled for 1
+             if (c === "1") ctx.fillRect(x - s / 2, yB + 24 + k * ch - s / 2, s, s); else ctx.strokeRect(x - s / 2 + 0.5, yB + 24 + k * ch - s / 2 + 0.5, s - 1, s - 1); }
+    });
+    if (hit) { ctx.fillStyle = alpha(C.blue, 0.85); ctx.fillRect(x - cw * 0.35, yB + 24 + d * ch - 6, cw * 0.7, 3); }
+  });
+  if (q && scanned < R.N && tq >= 0) { const x = xg0 + scanned * cw; ctx.strokeStyle = C.orange; ctx.lineWidth = 2; rr(x + 1, yB + 12, cw - 2, d * ch + 4, 3); ctx.stroke(); }
+  txt("records touched", xg0, yCnt, C.muted, F15); txt(String(recTouched), xg0 + 136, yCnt, C.orange, M15);
+}
+function settled(t) { return t >= SETTLE; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused) requestAnimationFrame(frame);
+}
+window.__applet = { id: "continuation-search", ready: false, settled: false };
+resize(); draw(clock); window.__applet.ready = true;
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

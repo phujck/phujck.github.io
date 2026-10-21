@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>partition-register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet. Palette and rules: talks/synthetics/STYLE.md. Built from tools/applet-template.html. */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .caption { flex: 0 0 auto; text-align: center; font-family: Lora, Georgia, serif; font-size: 20px;
+    color: #e8e6e3; padding: 6px 12px 10px; white-space: nowrap; overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+  <div class="caption" id="caption">Reading, writing and erasing a symbol all cost, and erasing costs most</div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ---------- the construction (02_distinctions.tex: symbol map pi : Omega -> X, A_x = pi^-1(x);
+   typicality order; register; every operation costs, erasure has the Landauer floor) ---------- */
+const NSYM = 6, NSLOT = 3, NPTS = 170, DT_EVENT = 0.45, NEVENTS = 24;
+// relative operation costs: illustrative units, only the order "erasure costs most" is the paper's premise
+const OPCOST = { read: 1, write: 1, erase: 3 };
+const OPCOL = { read: C.muted, write: C.blue, erase: C.orange };
+const gauss = () => { const u = Math.max(1e-9, rand()), v = rand(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+// cell centres (the symbol map is nearest-centre), in unit-square coordinates
+const centres = [];
+for (let i = 0; i < NSYM; i++) centres.push([0.12 + 0.76 * rand(), 0.12 + 0.76 * rand()]);
+// relax the centres apart so every cell is visible
+for (let it = 0; it < 60; it++) for (let i = 0; i < NSYM; i++) for (let j = 0; j < NSYM; j++) if (i !== j) {
+  const dx = centres[i][0] - centres[j][0], dy = centres[i][1] - centres[j][1], d = Math.hypot(dx, dy) + 1e-6;
+  if (d < 0.36) { centres[i][0] += 0.02 * dx / d; centres[i][1] += 0.02 * dy / d; }
+  centres[i][0] = Math.min(0.9, Math.max(0.1, centres[i][0])); centres[i][1] = Math.min(0.9, Math.max(0.1, centres[i][1]));
+}
+const cellOf = (x, y) => { let b = 0, bd = 1e9; for (let i = 0; i < NSYM; i++) { const d = (x - centres[i][0]) ** 2 + (y - centres[i][1]) ** 2; if (d < bd) { bd = d; b = i; } } return b; };
+// events: a non-uniform field, so cells differ in typicality
+const blobs = [[centres[0], 0.13, 0.42], [centres[1], 0.12, 0.26], [centres[2], 0.14, 0.16], [[0.5, 0.5], 0.32, 0.16]];
+const pts = [];
+while (pts.length < NPTS) {
+  let u = rand(), k = 0, acc = 0; for (k = 0; k < blobs.length; k++) { acc += blobs[k][2]; if (u <= acc) break; }
+  const b = blobs[Math.min(k, blobs.length - 1)];
+  const x = b[0][0] + b[1] * gauss(), y = b[0][1] + b[1] * gauss();
+  if (x > 0.02 && x < 0.98 && y > 0.02 && y < 0.98) pts.push([x, y, cellOf(x, y)]);
+}
+// typicality = share of events in the cell; symbols are named by rank (x1 most typical)
+const count = new Array(NSYM).fill(0); pts.forEach(p => count[p[2]]++);
+const order = [...Array(NSYM).keys()].sort((a, b) => count[b] - count[a] || a - b);
+const rankOf = new Array(NSYM); order.forEach((c, k) => { rankOf[c] = k + 1; });
+const maxCount = Math.max(...count);
+// the event stream and the register trace (policy: hit = read; miss = write to a free slot,
+// or erase the least typical resident and write; deterministic from SEED)
+const stream = []; for (let k = 0; k < NEVENTS; k++) stream.push(Math.floor(rand() * NPTS));
+const trace = []; { const reg = new Array(NSLOT).fill(null); let cost = 0;
+  for (let k = 0; k < NEVENTS; k++) {
+    const sym = rankOf[pts[stream[k]][2]]; const ops = []; let slot = reg.indexOf(sym);
+    if (slot >= 0) ops.push("read");
+    else { slot = reg.indexOf(null);
+      if (slot < 0) { let worst = 0; for (let s = 1; s < NSLOT; s++) if (reg[s] > reg[worst]) worst = s; slot = worst; ops.push("erase"); }
+      ops.push("write"); }
+    const before = reg.slice(); const evicted = ops[0] === "erase" ? reg[slot] : null; reg[slot] = sym;
+    ops.forEach(o => { cost += OPCOST[o]; });
+    trace.push({ sym, slot, ops, evicted, before, after: reg.slice(), cost });
+  } }
+const TOTAL = trace[trace.length - 1].cost;
+
+/* ---------- drawing ---------- */
+let L = null;
+function layout() {
+  const pad = 22, fw = Math.min(W * 0.5, (H - 2 * pad - 24) * 1.35);
+  const field = { x: pad, y: pad + 22, w: fw, h: H - 2 * pad - 22 };
+  const rx = field.x + field.w + Math.max(60, W * 0.07), rw = W - rx - pad;
+  return { field, rx, rw, pad };
+}
+// exact cells A_x of the nearest-centre symbol map, as polygons (half-plane clipping of the unit square)
+function cellPoly(c) {
+  let poly = [[0, 0], [1, 0], [1, 1], [0, 1]];
+  for (let d = 0; d < NSYM; d++) if (d !== c) {
+    const nx = centres[d][0] - centres[c][0], ny = centres[d][1] - centres[c][1];
+    const mx = (centres[d][0] + centres[c][0]) / 2, my = (centres[d][1] + centres[c][1]) / 2;
+    const side = q => (q[0] - mx) * nx + (q[1] - my) * ny;      // <= 0: closer to c
+    const out = [];
+    for (let k = 0; k < poly.length; k++) {
+      const P = poly[k], Q = poly[(k + 1) % poly.length], sp = side(P), sq = side(Q);
+      if (sp <= 0) out.push(P);
+      if ((sp <= 0) !== (sq <= 0)) { const u = sp / (sp - sq); out.push([P[0] + u * (Q[0] - P[0]), P[1] + u * (Q[1] - P[1])]); }
+    }
+    poly = out;
+  }
+  return poly;
+}
+const POLYS = [...Array(NSYM).keys()].map(cellPoly);
+function sub(name, k) { return name + "₀₁₂₃₄₅₆₇₈₉"[k]; }
+function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  L = layout(); const f = L.field;
+
+  const tt = Math.min(t, SETTLE_AT);
+  const kNow = Math.min(NEVENTS - 1, Math.floor(tt / DT_EVENT));
+  const phase = tt >= NEVENTS * DT_EVENT ? 1 : (tt - kNow * DT_EVENT) / DT_EVENT;
+  const done = tt >= NEVENTS * DT_EVENT;
+  const applied = phase >= 0.55 || done;           // the operation lands at 55% of the event interval
+  // ---- field: Omega partitioned into cells A_x
+  POLYS.forEach((poly, c) => {
+    ctx.beginPath(); poly.forEach((q, k) => { const x = f.x + q[0] * f.w, y = f.y + q[1] * f.h; k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath();
+    ctx.fillStyle = `rgba(126,184,218,${(0.04 + 0.46 * Math.pow(count[c] / maxCount, 1.2)).toFixed(3)})`; ctx.fill();
+    ctx.strokeStyle = "rgba(232,230,227,0.42)"; ctx.lineWidth = 1.3; ctx.stroke(); });
+  ctx.strokeStyle = "rgba(232,230,227,0.30)"; ctx.lineWidth = 1; ctx.strokeRect(f.x + 0.5, f.y + 0.5, f.w - 1, f.h - 1);
+  ctx.fillStyle = C.ink; ctx.font = `600 18px ${FONT.serif}`; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  ctx.fillText("Ω", f.x, f.y - 8);
+  ctx.fillStyle = C.muted; ctx.font = `15px ${FONT.sans}`; ctx.textAlign = "right";
+  ctx.fillText("brighter cell = more typical", f.x + f.w, f.y - 8);
+  const seen = new Set(); for (let k = 0; k <= kNow; k++) if (k < kNow || applied) seen.add(stream[k]);
+  pts.forEach((p, i) => { ctx.fillStyle = seen.has(i) ? C.ink : "rgba(232,230,227,0.42)";
+    ctx.beginPath(); ctx.arc(f.x + p[0] * f.w, f.y + p[1] * f.h, seen.has(i) ? 3.4 : 2.6, 0, 2 * Math.PI); ctx.fill(); });
+  for (let c = 0; c < NSYM; c++) {
+    const x = f.x + centres[c][0] * f.w, y = f.y + centres[c][1] * f.h;
+    ctx.font = `600 19px ${FONT.mono}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = "rgba(10,14,26,0.72)"; const tw = ctx.measureText(sub("x", rankOf[c])).width;
+    roundRect(x - tw / 2 - 6, y - 13, tw + 12, 26, 5); ctx.fill();
+    ctx.fillStyle = C.ink; ctx.fillText(sub("x", rankOf[c]), x, y + 1);
+  }
+  // ---- register
+  const tr = trace[kNow]; const state = applied ? tr.after : tr.before;
+  const sw = Math.min(124, (L.rw - 2 * 18) / NSLOT), sh = sw * 0.82, gap = 18;
+  const regW = NSLOT * sw + (NSLOT - 1) * gap, rx0 = L.rx + (L.rw - regW) / 2;
+  const blockH = sh + 196, ry0 = f.y + Math.max(30, (f.h - blockH) / 2 + 30);
+  ctx.fillStyle = C.ink; ctx.font = `600 18px ${FONT.sans}`; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  ctx.fillText("register", rx0, ry0 - 12);
+  for (let s = 0; s < NSLOT; s++) {
+    const x = rx0 + s * (sw + gap), y = ry0; const active = s === tr.slot && !done;
+    ctx.fillStyle = C.card; roundRect(x, y, sw, sh, 8); ctx.fill();
+    ctx.strokeStyle = active ? C.gold : "rgba(232,230,227,0.35)"; ctx.lineWidth = active ? 3 : 1.2; roundRect(x, y, sw, sh, 8); ctx.stroke();
+    let v = state[s]; let col = C.ink;
+    if (active && !applied && tr.ops[0] === "erase") col = C.orange;
+    ctx.font = `600 ${Math.round(sh * 0.36)}px ${FONT.mono}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = v === null ? "rgba(156,163,175,0.6)" : col; ctx.fillText(v === null ? "·" : sub("x", v), x + sw / 2, y + sh / 2 + 2);
+  }
+  // the current event travels to its slot (gold: the one operation in progress)
+  if (!done) {
+    const p = pts[stream[kNow]]; const px = f.x + p[0] * f.w, py = f.y + p[1] * f.h;
+    const sx = rx0 + tr.slot * (sw + gap) + sw / 2, sy = ry0 + sh + 2;
+    const u = Math.min(1, phase / 0.55); const ex = px + (sx - px) * u, ey = py + (sy - py) * u;
+    ctx.strokeStyle = C.gold; ctx.lineWidth = 2; ctx.setLineDash([6, 5]); ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(px, py, 6, 0, 2 * Math.PI); ctx.fill();
+    // operation label under the register
+    ctx.font = `17px ${FONT.mono}`; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    const lbl = tr.ops.map(o => o === "erase" ? `erase ${sub("x", tr.evicted)}` : `${o} ${sub("x", tr.sym)}`);
+    let tx = rx0 + regW / 2; const parts = lbl; const widths = parts.map(s => ctx.measureText(s).width + 26);
+    let x0 = tx - widths.reduce((a, b) => a + b, 0) / 2;
+    parts.forEach((s, i) => { ctx.fillStyle = OPCOL[tr.ops[i]] === C.muted ? C.ink : OPCOL[tr.ops[i]]; ctx.textAlign = "left"; ctx.fillText(s, x0, ry0 + sh + 38); x0 += widths[i]; });
+  }
+  // ---- cost meter: stacked segments, one per operation, widths in relative units
+  const my = ry0 + sh + 92, mh = 34, mw = regW;
+  ctx.fillStyle = C.ink; ctx.font = `600 18px ${FONT.sans}`; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  ctx.fillText("cost", rx0, my - 10);
+  ctx.fillStyle = C.card; ctx.fillRect(rx0, my, mw, mh); ctx.strokeStyle = "rgba(232,230,227,0.25)"; ctx.lineWidth = 1; ctx.strokeRect(rx0 + 0.5, my + 0.5, mw - 1, mh - 1);
+  const unit = mw / TOTAL; let cx = rx0;
+  for (let k = 0; k <= kNow; k++) {
+    if (k === kNow && !applied) break;
+    trace[k].ops.forEach(o => { const w = OPCOST[o] * unit; ctx.fillStyle = OPCOL[o]; ctx.fillRect(cx + 0.5, my + 2, Math.max(1, w - 1.5), mh - 4); cx += w; });
+  }
+  // legend: one unit block per operation, drawn to the same scale
+  const ly = my + mh + 38; let lx = rx0;
+  ["read", "write", "erase"].forEach(o => {
+    ctx.fillStyle = OPCOL[o]; ctx.fillRect(lx, ly - 13, OPCOST[o] * unit - 1.5, 16);
+    lx += OPCOST[o] * unit + 8; ctx.fillStyle = C.ink; ctx.font = `16px ${FONT.sans}`; ctx.textAlign = "left"; ctx.fillText(o, lx, ly); lx += ctx.measureText(o).width + 28;
+  });
+  // ---- the symbol map arrow between the two halves
+  const ax0 = f.x + f.w + 12, ax1 = L.rx - 12, ay = ry0 + sh / 2;
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(ax0, ay); ctx.lineTo(ax1, ay); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ax1, ay); ctx.lineTo(ax1 - 9, ay - 5); ctx.lineTo(ax1 - 9, ay + 5); ctx.closePath(); ctx.fillStyle = C.muted; ctx.fill();
+  ctx.fillStyle = C.ink; ctx.font = `italic 19px ${FONT.serif}`; ctx.textAlign = "center"; ctx.fillText("π", (ax0 + ax1) / 2, ay - 10);
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+}
+window.__applet = { id: "partition-register", ready: false, settled: false };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

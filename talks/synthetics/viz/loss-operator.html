@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>loss-operator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet: loss-operator. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/*SOLVER-BEGIN*/
+// Symmetric tridiagonal eigenproblem by implicit QL with Wilkinson-type shifts (tqli); eigenvectors accumulated.
+// d: diagonal (n), e: off-diagonal (n-1). Returns eigenvalues ascending and the matching eigenvectors.
+function tqli(dIn, eIn) {
+  const n = dIn.length, d = Float64Array.from(dIn), e = new Float64Array(n);
+  for (let i = 0; i < n - 1; i++) e[i] = eIn[i];
+  const z = []; for (let i = 0; i < n; i++) { const r = new Float64Array(n); r[i] = 1; z.push(r); }
+  for (let l = 0; l < n; l++) {
+    let iter = 0, m;
+    do {
+      for (m = l; m < n - 1; m++) { const dd = Math.abs(d[m]) + Math.abs(d[m + 1]); if (Math.abs(e[m]) <= 1e-15 * dd) break; }
+      if (m !== l) {
+        if (iter++ === 60) throw new Error("tqli: no convergence");
+        let g = (d[l + 1] - d[l]) / (2 * e[l]), r = Math.hypot(g, 1);
+        g = d[m] - d[l] + e[l] / (g + (g >= 0 ? Math.abs(r) : -Math.abs(r)));
+        let s = 1, c = 1, p = 0, i;
+        for (i = m - 1; i >= l; i--) {
+          let f = s * e[i]; const b = c * e[i];
+          e[i + 1] = (r = Math.hypot(f, g));
+          if (r === 0) { d[i + 1] -= p; e[m] = 0; break; }
+          s = f / r; c = g / r; g = d[i + 1] - p; r = (d[i] - g) * s + 2 * c * b; d[i + 1] = g + (p = s * r); g = c * r - b;
+          const zi = z[i], zi1 = z[i + 1];
+          for (let k = 0; k < n; k++) { f = zi1[k]; zi1[k] = s * zi[k] + c * f; zi[k] = c * zi[k] - s * f; }
+        }
+        if (r === 0 && i >= l) continue;
+        d[l] -= p; e[l] = g; e[m] = 0;
+      }
+    } while (m !== l);
+  }
+  const idx = Array.from(d.keys()).sort((a, b) => d[a] - d[b]);
+  return { values: idx.map(i => d[i]), vectors: idx.map(i => z[i]) };
+}
+// H_V = -T^2 d2/dx2 + V'^2/4 - T V''/2 (briefing Eq. loss-operator) by central differences on n interior
+// points of [a, b] with Dirichlet ends. Modes are L2-normalised on the grid, signed positive at their peak.
+function lossOperator(dV, d2V, T, a, b, n) {
+  const h = (b - a) / (n + 1), xs = new Float64Array(n), diag = new Float64Array(n), off = new Float64Array(n - 1);
+  for (let i = 0; i < n; i++) { const x = a + (i + 1) * h; xs[i] = x; diag[i] = 2 * T * T / (h * h) + dV(x) * dV(x) / 4 - T * d2V(x) / 2; }
+  for (let i = 0; i < n - 1; i++) off[i] = -T * T / (h * h);
+  const { values, vectors } = tqli(diag, off);
+  const modes = vectors.map(v => { let s = 0; for (const u of v) s += u * u; const k = 1 / Math.sqrt(s * h); const w = Float64Array.from(v, u => u * k);
+    let m = 0; for (let i = 0; i < n; i++) if (Math.abs(w[i]) > Math.abs(w[m])) m = i; if (w[m] < 0) for (let i = 0; i < n; i++) w[i] = -w[i]; return w; });
+  return { xs, h, values, modes };
+}
+/*SOLVER-END*/
+
+/*MODEL-BEGIN*/
+// Loss landscape: a tilted double well with unequal depths (deep well left). Noise T. Briefing Eq. loss-diffusion:
+// dX = -V'(X) dt + sqrt(2T) dW; stationary pi = e^{-V/T}/Z; p = sqrt(pi) psi gives T d_t psi = -H_V psi.
+const MODEL = { A: 0.5, B: 0.35, T: 0.3, a: -2.6, b: 2.6, n: 300, NMODE: 5,
+  NP: 1000, X0: 1.55, S0: 0.04, DT: 0.002, SNAP: 0.05, TEND: 12 };
+const V = x => MODEL.A * (x * x - 1) ** 2 + MODEL.B * x;
+const dV = x => 4 * MODEL.A * x * (x * x - 1) + MODEL.B;
+const d2V = x => MODEL.A * (12 * x * x - 4);
+function buildModel(rnd) {
+  const { T, a, b, n, NMODE, NP, X0, S0, DT, SNAP, TEND } = MODEL;
+  const op = lossOperator(dV, d2V, T, a, b, n);
+  const E = op.values.slice(0, NMODE);
+  // stationary density and phi_n = psi_n / sqrt(pi) on the grid
+  let Z = 0; const pi = Float64Array.from(op.xs, x => Math.exp(-V(x) / T)); for (const v of pi) Z += v * op.h; for (let i = 0; i < n; i++) pi[i] /= Z;
+  const phi = []; for (let k = 0; k < NMODE; k++) phi.push(Float64Array.from(op.modes[k], (u, i) => u / Math.sqrt(pi[i])));
+  const interp = (arr, x) => { const xc = Math.max(-2.2, Math.min(2.2, x)); const f = (xc - a) / op.h - 1; const i = Math.max(0, Math.min(n - 2, Math.floor(f))); const w = f - i; return arr[i] * (1 - w) + arr[i + 1] * w; };
+  // seeded Euler-Maruyama cloud
+  const gauss = () => { const u = Math.max(1e-12, rnd()), v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+  const X = new Float64Array(NP); for (let i = 0; i < NP; i++) X[i] = X0 + S0 * gauss();
+  const nSnap = Math.round(TEND / SNAP), perSnap = Math.round(SNAP / DT), sq = Math.sqrt(2 * T * DT);
+  const snaps = [], amp = [];
+  const project = () => { const c = new Array(NMODE).fill(0); for (let i = 0; i < NP; i++) for (let k = 0; k < NMODE; k++) c[k] += interp(phi[k], X[i]); return c.map(v => v / NP); };
+  snaps.push(Float32Array.from(X)); amp.push(project());
+  for (let s = 0; s < nSnap; s++) {
+    for (let st = 0; st < perSnap; st++) for (let i = 0; i < NP; i++) X[i] += -dV(X[i]) * DT + sq * gauss();
+    snaps.push(Float32Array.from(X)); amp.push(project());
+  }
+  return { op, E, pi, snaps, amp };
+}
+/*MODEL-END*/
+
+const MD = buildModel(rand);
+const jitter = Array.from({ length: MODEL.NP }, () => (rand() - 0.5) * 2);    // fixed per-candidate vertical offset
+const RATE = MD.E.map(e => e / MODEL.T);
+
+/* ---------- drawing helpers ---------- */
+function text(s, x, y, o = {}) {
+  ctx.font = `${o.italic ? "italic " : ""}${o.weight || 400} ${o.size || 15}px ${o.font || FONT.sans}`;
+  ctx.fillStyle = o.color || C.ink; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+  ctx.fillText(s, x, y);
+}
+/* Script notation: "K_{eff}" and "e^{βΔF − C_R}" draw their sub- and superscripts as smaller raised or lowered
+   glyphs (never below 15 px); a multi-letter subscript such as "eff" is upright, as in the sources' \rm. */
+const SCRIPT_PX = 15;
+function richRuns(s) {
+  const runs = []; let i = 0;
+  (function group(depth, dy) {
+    let buf = ""; const flush = () => { if (buf) { runs.push({ s: buf, depth, dy }); buf = ""; } };
+    while (i < s.length) {
+      const ch = s[i];
+      if (ch === "}") { i++; break; }
+      if (ch === "_" || ch === "^") {
+        flush(); i++; const ndy = dy + (ch === "_" ? 0.28 : -0.42);
+        if (s[i] === "{") { i++; group(depth + 1, ndy); } else { runs.push({ s: s[i], depth: depth + 1, dy: ndy }); i++; }
+        continue;
+      }
+      buf += ch; i++;
+    }
+    flush();
+  })(0, 0);
+  return runs;
+}
+function richFont(run, o) {
+  const size = run.depth ? SCRIPT_PX : o.size, upright = run.depth && /^[a-z]{2,}$/i.test(run.s);
+  return `${o.italic && !upright ? "italic " : ""}${o.weight || 400} ${size}px ${o.font || FONT.sans}`;
+}
+function rich(s, x, y, o = {}) {   // returns the drawn box {x0, y0, x1, y1}
+  o = Object.assign({ size: 18 }, o);
+  const runs = richRuns(s); let wsum = 0;
+  for (const r of runs) { ctx.font = richFont(r, o); r.w = ctx.measureText(r.s).width; wsum += r.w; }
+  let cx = o.align === "center" ? x - wsum / 2 : o.align === "right" ? x - wsum : x;
+  const box = { x0: cx, x1: cx + wsum, y0: Infinity, y1: -Infinity };
+  ctx.fillStyle = o.color || C.ink; ctx.textAlign = "left"; ctx.textBaseline = o.base || "alphabetic";
+  for (const r of runs) {
+    ctx.font = richFont(r, o); const yy = y + r.dy * o.size; ctx.fillText(r.s, cx, yy);
+    const m = ctx.measureText(r.s); box.y0 = Math.min(box.y0, yy - m.actualBoundingBoxAscent); box.y1 = Math.max(box.y1, yy + m.actualBoundingBoxDescent);
+    cx += r.w;
+  }
+  return box;
+}
+function richWidth(s, o) { let w = 0; for (const r of richRuns(s)) { ctx.font = richFont(r, o); w += ctx.measureText(r.s).width; } return w; }
+function panel(x, y, w, h) { ctx.fillStyle = C.card; ctx.fillRect(x, y, w, h); ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1); }
+const XL = -1.9, XR = 1.9, VLO = -0.55, VHI = 2.0;
+
+function landscape(x, y, w, h, k, tSim) {
+  panel(x, y, w, h);
+  const l = x + 16, r = x + w - 16, X = v => l + (r - l) * (v - XL) / (XR - XL);
+  const vt = y + 40, vh = h * 0.46, Y = v => vt + vh * (VHI - v) / (VHI - VLO);
+  text("V(x)", l + 2, y + 28, { font: FONT.serif, italic: true, size: 17, color: C.ink });
+  text(`t = ${tSim.toFixed(1)}`, r, y + 28, { font: FONT.mono, size: 15, color: C.muted, align: "right" });
+  ctx.save(); ctx.beginPath(); ctx.rect(l - 4, vt - 10, r - l + 8, vh + 20); ctx.clip();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.beginPath();
+  for (let i = 0; i <= 240; i++) { const xv = XL + (XR - XL) * i / 240; const px = X(xv), py = Y(V(xv)); if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); }
+  ctx.stroke();
+  // the cloud of candidates on the landscape
+  const S = MD.snaps[k]; ctx.fillStyle = "rgba(126,184,218,0.55)";
+  for (let i = 0; i < S.length; i++) { const xv = S[i]; if (xv < XL || xv > XR) continue; ctx.beginPath(); ctx.arc(X(xv), Y(V(xv)) - 5 + 7 * jitter[i], 2.1, 0, 2 * Math.PI); ctx.fill(); }
+  ctx.restore();
+  // density: empirical histogram against the stationary law
+  const dt = vt + vh + 34, dh = h - (dt - y) - 40, db = dt + dh, NB = 38, bw = (r - l) / NB;
+  let piMax = 0; for (const v of MD.pi) piMax = Math.max(piMax, v); const scale = dh / (1.9 * piMax);
+  const cnt = new Array(NB).fill(0); for (const xv of S) { const j = Math.floor((xv - XL) / (XR - XL) * NB); if (j >= 0 && j < NB) cnt[j]++; }
+  const binW = (XR - XL) / NB;
+  ctx.fillStyle = C.blue;
+  for (let j = 0; j < NB; j++) { const dens = cnt[j] / (S.length * binW); const hh = Math.min(dh, dens * scale); ctx.fillRect(l + j * bw + 1, db - hh, bw - 2, hh); }
+  ctx.strokeStyle = "rgba(232,230,227,0.55)"; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]); ctx.beginPath();
+  let first = true;
+  for (let i = 0; i < MD.op.xs.length; i++) { const xv = MD.op.xs[i]; if (xv < XL || xv > XR) continue; const px = X(xv), py = db - MD.pi[i] * scale; if (first) { ctx.moveTo(px, py); first = false; } else ctx.lineTo(px, py); }
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(l, db + 0.5); ctx.lineTo(r, db + 0.5); ctx.stroke();
+  text("stationary density", l + 2, dt - 4, { size: 15, color: C.muted });
+  text("x", (l + r) / 2, db + 26, { font: FONT.serif, italic: true, size: 17, color: C.muted, align: "center" });
+}
+
+function ladder(x, y, w, h, k) {
+  panel(x, y, w, h);
+  const l = x + 30, lw = Math.max(70, w * 0.40), top = y + 70, bot = y + h - 48;
+  rich("H_V levels", l, y + 28, { font: FONT.serif, italic: true, size: 19, color: C.ink });
+  rich("rate E_n/T", x + w - 14, y + 28, { font: FONT.serif, italic: true, size: 19, color: C.muted, align: "right" });
+  const Emax = MD.E[MD.E.length - 1] * 1.06, Y = e => bot - (bot - top) * e / Emax;
+  // label positions pushed apart where levels crowd (leader lines join them)
+  const ly = MD.E.map(e => Y(e) + 5);
+  for (let it = 0; it < 40; it++) for (let n = 1; n < ly.length; n++) { const gap = ly[n - 1] - ly[n];
+    if (gap < 20) { const d = (20 - gap) / 2; ly[n - 1] = Math.min(bot + 12, ly[n - 1] + d); ly[n] -= d; } }
+  const c0 = MD.amp[0];
+  for (let n = 0; n < MD.E.length; n++) {
+    const yy = Y(MD.E[n]), a = Math.min(1, n === 0 ? Math.abs(MD.amp[k][0]) : Math.abs(MD.amp[k][n]) / Math.abs(c0[n]));   // n = 0: the measured |c_0(t)|, whose exact value is 1
+    ctx.strokeStyle = "rgba(156,163,175,0.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(l, yy); ctx.lineTo(l + lw, yy); ctx.stroke();
+    ctx.strokeStyle = n === 0 ? C.gold : C.blue; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(l, yy); ctx.lineTo(l + lw * a, yy); ctx.stroke();
+    const tx = x + w - 14, lx0 = l + lw + 8, lx1 = tx - 74;
+    ctx.strokeStyle = "rgba(156,163,175,0.35)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(lx0, yy); ctx.lineTo(lx1, ly[n] - 5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(l - 2, yy); ctx.lineTo(l - 9, ly[n] - 5); ctx.stroke();
+    text(n === 0 ? "0" : RATE[n].toFixed(2), tx, ly[n], { font: FONT.mono, size: 15, color: C.ink, align: "right" });
+    text(`${n}`, l - 11, ly[n], { font: FONT.mono, size: 15, color: C.muted, align: "right" });
+  }
+  text("lit length = mode amplitude", l, bot + 30, { size: 15, color: C.muted });
+}
+
+/* ---------- the applet ---------- */
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const tt = Math.max(0, Math.min(MODEL.TEND, t)), k = Math.min(MD.snaps.length - 1, Math.round(tt / MODEL.SNAP));
+  const pad = 8, gap = 10, lw = Math.round((W - 2 * pad - gap) * 0.54), ph = H - 2 * pad;
+  landscape(pad, pad, lw, ph, k, k * MODEL.SNAP);
+  ladder(pad + lw + gap, pad, W - 2 * pad - gap - lw, ph, k);
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused) requestAnimationFrame(frame);
+}
+window.__applet = { id: "loss-operator", ready: false, settled: false, E: MD.E, rates: RATE };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

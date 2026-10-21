@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>envelope</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet: the conceptric envelope. Palette and rules: talks/synthetics/STYLE.md
+     Source: eigen-technical-due-diligence-briefing, the-backend-objects-authority-and-revision.tex:9,11,22
+     and from-a-working-core-to-an-extensible-sdk.tex:4 */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .caption { flex: 0 0 auto; text-align: center; font-family: Lora, Georgia, serif; font-size: 20px;
+    color: #9ca3af; padding: 4px 12px 10px; white-space: nowrap; }
+  .caption span.on { color: #e8e6e3; font-weight: 600; }
+  .caption .sep { color: rgba(156,163,175,0.5); padding: 0 0.35em; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+  <div class="caption" id="caption"><span id="s0">open</span><span class="sep">·</span><span id="s1">read in to out</span><span class="sep">·</span><span id="s2">write out to in</span><span class="sep">·</span><span id="s3">nest across altitudes</span></div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;              // the envelope draws no random field; kept per the template
+const rand = mulberry32(SEED);
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- canvas with device-pixel scaling; a 640 x 450 logical board scaled to fit ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1, S = 1, OX = 0, OY = 0;
+const LW = 640, LH = 450;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  S = Math.min(W / LW, H / LH); OX = (W - LW * S) / 2; OY = (H - LH * S) / 2;
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ---------- helpers ---------- */
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const ease = u => u * u * (3 - 2 * u);
+const lerp = (a, b, u) => a + (b - a) * u;
+const lerpR = (p, q, u) => ({ x: lerp(p.x, q.x, u), y: lerp(p.y, q.y, u), w: lerp(p.w, q.w, u), h: lerp(p.h, q.h, u) });
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function box(b, o) { rr(b.x, b.y, b.w, b.h, o.r ?? 8);
+  if (o.fill) { ctx.fillStyle = o.fill; ctx.fill(); }
+  if (o.stroke) { ctx.setLineDash(o.dash || []); ctx.strokeStyle = o.stroke; ctx.lineWidth = o.lw || 1.5; ctx.stroke(); ctx.setLineDash([]); } }
+/* text floor: a label never draws below MIN_PX device-independent px, whatever slot the board is scaled into
+   (STYLE.md 15 px floor; at a 640 x 430 deck slot the board is height-bound, S = 0.87, so 16 logical px alone gives 13.9) */
+const MIN_PX = 15.5;
+const fs = size => Math.max(size, MIN_PX / S);
+function label(s, x, y, o = {}) { ctx.font = `${o.weight || 400} ${fs(o.size || 16)}px ${o.font || FONT.sans}`;
+  ctx.fillStyle = o.color || C.ink; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic"; ctx.fillText(s, x, y); }
+function tw(s, size = 16, weight = 400) { ctx.font = `${weight} ${fs(size)}px ${FONT.sans}`; return ctx.measureText(s).width; }
+function poly(pts, color, lw, head, dash) { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.setLineDash(dash || []); ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke(); ctx.setLineDash([]);
+  if (head) { const [x1, y1] = pts[pts.length - 2], [x2, y2] = pts[pts.length - 1]; const a = Math.atan2(y2 - y1, x2 - x1), L = 10;
+    ctx.beginPath(); ctx.moveTo(x2 - L * Math.cos(a - 0.45), y2 - L * Math.sin(a - 0.45)); ctx.lineTo(x2, y2);
+    ctx.lineTo(x2 - L * Math.cos(a + 0.45), y2 - L * Math.sin(a + 0.45)); ctx.stroke(); } }
+function partial(pts, u) {            // the first fraction u of a polyline, by length
+  const L = []; let tot = 0; for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i-1][0], pts[i][1] - pts[i-1][1]); L.push(d); tot += d; }
+  let left = u * tot; const out = [pts[0]];
+  for (let i = 1; i < pts.length; i++) { if (left >= L[i-1]) { out.push(pts[i]); left -= L[i-1]; continue; }
+    const f = L[i-1] ? left / L[i-1] : 0; out.push([lerp(pts[i-1][0], pts[i][0], f), lerp(pts[i-1][1], pts[i][1], f)]); break; }
+  return out; }
+function pulse(pts, u, color) { if (u <= 0 || u >= 1) return; const p = partial(pts, u); const e = p[p.length - 1];
+  ctx.beginPath(); ctx.arc(e[0], e[1], 6.5, 0, 2 * Math.PI); ctx.fillStyle = color; ctx.fill(); }
+
+/* ---------- geometry (logical units) ---------- */
+const ENV = { x: 150, y: 50, w: 340, h: 342 };          // the envelope card
+const INNER = { x: 180, y: 140, w: 280, h: 166 };       // its interior
+const SUMMARY = { x: 170, y: 66, w: 170, h: 48 };
+const REVISION = { x: 378, y: 74, w: 92, h: 32 };
+const MATERIAL = { x: 192, y: 170, w: 104, h: 126 };
+const ASSUMP = { x: 306, y: 170, w: 142, h: 58 };
+const GROUNDS = { x: 306, y: 238, w: 142, h: 58 };
+const OPS = ["revise", "link", "open", "inspect"];        // briefing verbs: revise (:22), link (:29), open (:22), inspect (:11)
+const CALC = { x: 80, y: 200, w: 200, h: 200 }, CALC2 = { x: 296, y: 200, w: 140, h: 200 };
+const COMP = { x: 50, y: 120, w: 400, h: 300 }, PROJ = { x: 20, y: 50, w: 600, h: 390 };
+const RUNG = { project: 196, comparison: 266, calculation: 336 };
+
+function opChips() { const out = []; let x = 170; for (const s of OPS) { const w = tw(s) + 20; out.push({ s, x, y: 342, w, h: 32 }); x += w + 10; } return out; }
+
+/* ---------- the applet ---------- */
+function stageOf(t) { return t < 3.4 ? 0 : t < 5.6 ? 1 : t < 8.6 ? 2 : 3; }
+
+function drawEnvelope(t, a) {          // stages one and two; a = opacity of the detail
+  ctx.globalAlpha = a;
+  const st = stageOf(t);
+  const open = ease(seg(t, 0.5, 2.4));
+  // exterior card and its interior boundary
+  box(ENV, { fill: C.card, stroke: C.muted, lw: 1.5, r: 14 });
+  label("outside", ENV.x, 40, { color: C.muted });
+  // summary and revision (exterior band)
+  const readGlow = st === 1 && t > 4.3;
+  box(SUMMARY, { fill: "rgba(126,184,218,0.10)", stroke: st === 1 ? C.gold : C.blue, lw: st === 1 ? 2.5 : 1.5, r: 6 });
+  label("summary", SUMMARY.x + SUMMARY.w / 2, SUMMARY.y + 30, { align: "center", color: readGlow ? C.ink : C.ink, weight: readGlow ? 600 : 400 });
+  const revFlash = t > 7.9 && t < 8.6;
+  box(REVISION, { fill: revFlash ? "rgba(92,191,154,0.22)" : "rgba(126,184,218,0.10)", stroke: revFlash ? C.green : C.blue, lw: 1.5, r: 6 });
+  label("revision", REVISION.x + REVISION.w / 2, REVISION.y + 22, { align: "center" });
+  // typed relationship stubs (exterior, both sides)
+  for (const [s, y, side] of [["supports", 180, -1], ["contains", 260, -1], ["tests", 180, 1], ["uses", 260, 1]]) {
+    const x0 = side < 0 ? ENV.x : ENV.x + ENV.w, x1 = x0 + side * 46;
+    poly([[x0, y], [x1, y]], C.blue, 2);
+    ctx.beginPath(); ctx.arc(x0, y, 4.5, 0, 2 * Math.PI); ctx.fillStyle = C.blue; ctx.fill();
+    label(s, x1 + side * 6, y + 5, { align: side < 0 ? "right" : "left" });
+  }
+  // operations row (exterior, bottom band)
+  label("operations", ENV.x + ENV.w - 20, 332, { align: "right", color: C.muted });
+  const chosen = st === 2 && t > 6.3;
+  for (const c of opChips()) {
+    const gold = st === 2 && c.s === "revise";
+    box(c, { fill: "rgba(126,184,218,0.10)", stroke: gold ? C.gold : C.blue, lw: gold ? 2.5 : 1.5, r: 6 });
+    label(c.s, c.x + c.w / 2, c.y + 22, { align: "center", color: chosen && c.s !== "revise" ? C.muted : C.ink });
+  }
+  // interior: material, assumptions, grounds
+  box(INNER, { fill: "rgba(255,255,255,0.03)", stroke: st === 0 ? C.gold : C.muted, lw: st === 0 ? 2.5 : 1.2, r: 8 });
+  const matFlash = t > 7.0 && t < 7.5;
+  box(MATERIAL, { fill: matFlash ? "rgba(126,184,218,0.28)" : "rgba(255,255,255,0.05)", stroke: C.ink, lw: 1.2, r: 5 });
+  label("material", MATERIAL.x + MATERIAL.w / 2, MATERIAL.y + 68, { align: "center" });
+  box(ASSUMP, { fill: "rgba(255,255,255,0.05)", stroke: C.ink, lw: 1.2, r: 5 });
+  label("assumptions", ASSUMP.x + ASSUMP.w / 2, ASSUMP.y + 35, { align: "center" });
+  box(GROUNDS, { fill: "rgba(255,255,255,0.05)", stroke: C.ink, lw: 1.2, r: 5 });
+  label("grounds", GROUNDS.x + GROUNDS.w / 2, GROUNDS.y + 35, { align: "center" });
+  label("inside", INNER.x + 12, INNER.y + 21, { color: C.muted });
+  // the flap: the closed card hides its interior, then lifts
+  if (open < 1) {
+    const h = INNER.h * (1 - open);
+    ctx.save(); rr(INNER.x, INNER.y, INNER.w, INNER.h, 8); ctx.clip();
+    ctx.fillStyle = "#151a28"; ctx.fillRect(INNER.x, INNER.y, INNER.w, h);
+    poly([[INNER.x, INNER.y], [INNER.x + INNER.w / 2, INNER.y + h * 0.55], [INNER.x + INNER.w, INNER.y]], C.muted, 1.2);
+    ctx.restore();
+  }
+  // stage two, read: material -> summary -> out
+  const readPath = [[MATERIAL.x + 52, MATERIAL.y], [MATERIAL.x + 52, SUMMARY.y + SUMMARY.h]];
+  const readOut = [[SUMMARY.x + 80, SUMMARY.y], [SUMMARY.x + 80, 22], [600, 22]];
+  const ra = st >= 1 ? (st === 1 ? ease(seg(t, 3.4, 3.8)) : 0.45) : 0;
+  if (ra > 0) {
+    ctx.globalAlpha = a * ra;
+    poly(readPath, C.green, 2, true);
+    poly(readOut, C.green, 2.5, true);
+    label("read: in to out", 600, 44, { align: "right", color: C.green });
+    ctx.globalAlpha = a;
+  }
+  if (st === 1) { pulse(readPath, seg(t, 3.6, 4.4), C.green); pulse(readOut, seg(t, 4.5, 5.5), C.green); }
+  // stage two, write: parent -> narrowed to one operation -> one inner object -> outcome out
+  if (st >= 2) {
+    const chip = opChips()[0], cx = chip.x + chip.w / 2;
+    const g = ease(seg(t, 5.7, 6.4));
+    const mouthL = 76, mouthR = 290, mouthY = 446, tipY = chip.y + chip.h + 2;
+    const y = lerp(mouthY, tipY, g);
+    const l = lerp(mouthL, cx - 7, g), r = lerp(mouthR, cx + 7, g);
+    ctx.beginPath(); ctx.moveTo(mouthL, mouthY); ctx.lineTo(l, y); ctx.lineTo(r, y); ctx.lineTo(mouthR, mouthY); ctx.closePath();
+    ctx.fillStyle = "rgba(126,184,218,0.22)"; ctx.fill(); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.5; ctx.stroke();
+    label("parent", 18, 444, { color: C.ink });
+    label("write: out to in", 302, 440, { color: C.blue });
+    const inArrow = [[cx, chip.y], [cx, MATERIAL.y + MATERIAL.h]];
+    const ia = ease(seg(t, 6.4, 7.0));
+    if (ia > 0) poly(partial(inArrow, ia), C.blue, 2.5, ia > 0.98);
+    const outPath = [[MATERIAL.x + MATERIAL.w, MATERIAL.y + 20], [REVISION.x + 20, REVISION.y + REVISION.h]];
+    const outArrow = [[REVISION.x + REVISION.w, REVISION.y + 16], [600, REVISION.y + 16]];
+    pulse(outPath, seg(t, 7.3, 7.9), C.green);
+    const oa = ease(seg(t, 7.9, 8.3));
+    if (oa > 0) { ctx.globalAlpha = a * oa; poly(outArrow, C.green, 2.5, true); label("outcome", 600, REVISION.y + 6, { align: "right", color: C.green }); ctx.globalAlpha = a; }
+  }
+  ctx.globalAlpha = 1;
+}
+
+function levelCard(b, name, sumX, current, a, sumA = 1, sumW = 96) {
+  ctx.globalAlpha = a;
+  box(b, { fill: C.card, stroke: current ? C.ink : C.muted, lw: current ? 2.2 : 1.3, r: 12 });
+  ctx.globalAlpha = a * sumA;            // name and summary appear once the card has grown
+  label(name, b.x + 12, b.y + 26, { color: current ? C.ink : C.muted, weight: current ? 600 : 400 });
+  if (sumX !== null && sumA > 0) {
+    ctx.globalAlpha = a * sumA;
+    const s = { x: sumX, y: b.y + 8, w: sumW, h: 28 };
+    box(s, { fill: "rgba(126,184,218,0.10)", stroke: C.blue, lw: 1.3, r: 5 });
+    label("summary", s.x + s.w / 2, s.y + 20, { align: "center" });
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawNest(t) {               // stage three
+  const shrink = ease(seg(t, 9.0, 9.6));
+  const c = lerpR(ENV, CALC, shrink);
+  const compA = ease(seg(t, 9.8, 10.4)), projA = ease(seg(t, 10.6, 11.2));
+  const level = t < 10.1 ? "calculation" : t < 10.9 ? "comparison" : "project";
+  // project and comparison grow outward from their child
+  if (projA > 0) levelCard(lerpR(COMP, PROJ, projA), "project", PROJ.x + 320, level === "project", projA, seg(projA, 0.75, 1));
+  if (compA > 0) {
+    const cb = lerpR(CALC, COMP, compA);
+    levelCard(cb, "comparison", cb.x + cb.w - 110, level === "comparison", compA, seg(compA, 0.75, 1));
+    levelCard(CALC2, "calculation", null, false, compA * 0.9, 1);
+    ctx.globalAlpha = compA * 0.9; label("result", CALC2.x + CALC2.w / 2, CALC2.y + 130, { align: "center", color: C.muted }); ctx.globalAlpha = 1;
+  }
+  // the envelope, now one calculation
+  const nameA = ease(seg(t, 9.5, 9.9));
+  ctx.globalAlpha = 1;
+  box(c, { fill: C.card, stroke: level === "calculation" ? C.ink : C.muted, lw: level === "calculation" ? 2.2 : 1.3, r: 12 });
+  if (nameA > 0) {
+    ctx.globalAlpha = nameA;
+    label("calculation", CALC.x + 12, CALC.y + 26, { color: level === "calculation" ? C.ink : C.muted, weight: level === "calculation" ? 600 : 400 });
+    const s = { x: CALC.x + 106, y: CALC.y + 38, w: 86, h: 28 };
+    box(s, { fill: "rgba(126,184,218,0.10)", stroke: C.blue, lw: 1.3, r: 5 });
+    label("summary", s.x + s.w / 2, s.y + 20, { align: "center" });
+    const res = { x: CALC.x + 16, y: CALC.y + 96, w: 168, h: 88 };
+    box(res, { fill: "rgba(255,255,255,0.05)", stroke: C.muted, lw: 1.2, r: 5 });
+    label("result", res.x + res.w / 2, res.y + 50, { align: "center" });
+    poly([[s.x + s.w / 2, s.y + s.h], [s.x + s.w / 2, res.y]], C.muted, 1.5, true, [5, 5]);
+    ctx.globalAlpha = 1;
+  }
+  // routes to detail: parent summary -> child
+  const routeA = ease(seg(t, 10.3, 10.6)), route2A = ease(seg(t, 11.1, 11.4));
+  if (routeA > 0) {
+    ctx.globalAlpha = routeA;
+    const cs = COMP.x + 290 + 48;
+    poly([[cs, COMP.y + 36], [cs, CALC.y - 22], [CALC.x + 149, CALC.y - 22], [CALC.x + 149, CALC.y + 38]], C.muted, 1.5, true, [5, 5]);
+    label("route to detail", CALC.x + 156, CALC.y - 30, { color: C.muted });
+    ctx.globalAlpha = 1;
+  }
+  if (route2A > 0) {
+    ctx.globalAlpha = route2A;
+    const ps = PROJ.x + 320 + 48;
+    poly([[ps, PROJ.y + 36], [ps, COMP.y + 8]], C.muted, 1.5, true, [5, 5]);
+    ctx.globalAlpha = 1;
+  }
+  // the altitude ladder: the label changes with the level
+  const la = ease(seg(t, 9.0, 9.4));
+  if (la > 0) {
+    ctx.globalAlpha = la;
+    const x = 494;
+    label("altitude", x - 10, 160, { color: C.muted });
+    poly([[x, RUNG.project], [x, RUNG.calculation]], C.muted, 1.5);
+    for (const [n, y] of Object.entries(RUNG)) {
+      poly([[x - 6, y], [x + 6, y]], C.muted, 1.5);
+      label(n, x + 16, y + 5, { color: n === level ? C.ink : C.muted, weight: n === level ? 600 : 400 });
+    }
+    const y1 = lerp(RUNG.calculation, RUNG.comparison, ease(seg(t, 10.0, 10.3)));
+    const my = lerp(y1, RUNG.project, ease(seg(t, 10.8, 11.1)));
+    ctx.beginPath(); ctx.arc(x, my, 7.5, 0, 2 * Math.PI); ctx.fillStyle = C.gold; ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+let lastStage = -1;
+function draw(t) {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  ctx.setTransform(DPR * S, 0, 0, DPR * S, DPR * OX, DPR * OY);
+  const st = stageOf(t);
+  if (st < 3) drawEnvelope(t, 1);
+  else {
+    const fade = 1 - ease(seg(t, 8.6, 9.0));
+    if (fade > 0) drawEnvelope(Math.min(t, 8.59), fade);
+    drawNest(t);
+  }
+  if (st !== lastStage) { for (let i = 0; i < 4; i++) document.getElementById("s" + i).className = i === st ? "on" : ""; lastStage = st; }
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock = Math.min(clock + dt, SETTLE_AT);
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+}
+window.__applet = { id: "envelope", ready: false, settled: false };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw(clock));
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

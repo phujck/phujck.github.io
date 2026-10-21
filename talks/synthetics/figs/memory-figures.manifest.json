@@ -1,0 +1,179 @@
+{
+ "figures": [
+  {
+   "id": "query-locality",
+   "numbers": {
+    "batch_Q": 1024,
+    "continuation_us_at_262144": 59.8,
+    "packed_scan_us_at_262144": 1490.7,
+    "records_max": 262144,
+    "regimes_per_size": 17,
+    "trace": "median of api_s_median over all unique_even_parity cells with Q=1024 per d in query_locality_matrix_v1.json; matches skein.tex:381-382 (59.8 / 1490.7 / 1739.6)",
+    "weighted_unique_scan_us_at_262144": 1739.6
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/query-locality.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/memory-figures/make_memory_figures.py",
+   "shows": "Warm full-API time per batch of 1,024 queries against record count (4,096 to 262,144) for the continuation, the packed direct scan and the weighted unique-row scan; median over query regimes with the min-max band; 59.8, 1490.7 and 1739.6 \u00b5s annotated at 262,144 records.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/extension/results/query_locality_matrix_v1.json",
+     "sha256": "b6a6661eb437f911c95426c5d5640c520b592b188719992298e9a272b2d66031"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/extension/figures/completed_figures_arrays_v1.json",
+     "sha256": "0402813b96225bb147cd1674ccdca9b4f45e58ca76509979fb9cf583ca6fe431"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/extension/figures/generate_completed_figures.py",
+     "sha256": "617672defcf9c688485d8c51011ed75d5a7d687150ddb68c80b7e8cb6ecb97c7"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/output/pdf/v2.1/skein.tex",
+     "sha256": "a714d33ca77b7d8fc13ca8f5d5caed032557ccedadd5c1417c2c746195ef7c47"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/query-locality.svg",
+   "width": "half"
+  },
+  {
+   "id": "scaling",
+   "numbers": {
+    "active_A_contributions": [
+     12280,
+     98296,
+     786424
+    ],
+    "growth_at_65536": {
+     "stored": 64.31,
+     "work": 64.04
+    },
+    "operator_max_error": 2.32e-13,
+    "sources": [
+     1024,
+     8192,
+     65536
+    ],
+    "sources_max": 65536,
+    "stored_output_bytes": [
+     59104,
+     474848,
+     3800800
+    ],
+    "task_max_error": 5.3e-14,
+    "trace": "rows from section_block_operator_scaling_v4_capacity_accounted.json (the fields the v1 producer plots); errors are max over 4 fibres x 3 stages in section_compact_news_parity_v5_frozen_core.json, quoted at skein.tex:407-409"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/scaling.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/memory-figures/make_memory_figures.py",
+   "shows": "Stored sparse output and accumulation work for the fixed-width sparse family, as growth from 1,024 to 65,536 sources on log-log axes, both tracking the linear reference; note of compact-vs-dense agreement 2.32e-13 (operators) and 5.30e-14 (tasks).",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/reviews/section_block_operator_scaling_v4_capacity_accounted.json",
+     "sha256": "88b08843e8d79f917a834e4643ac8e429eeb764d74e43ec4a991b75bd8dcc4b7"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/figures/generate_figures_v1.py",
+     "sha256": "af20cc980b95678d0dfbaa9ee9017e7294e98c03c290753fbd43e123ffa66ca4"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/reviews/section_compact_news_parity_v5_frozen_core.json",
+     "sha256": "f1f01b4a30cb624739c1f5c9744034d8dadade310563632e2db40cc82ef37cc4"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/output/pdf/v2.1/skein.tex",
+     "sha256": "a714d33ca77b7d8fc13ca8f5d5caed032557ccedadd5c1417c2c746195ef7c47"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/scaling.svg",
+   "width": "half"
+  },
+  {
+   "id": "answers",
+   "numbers": {
+    "correct": {
+     "RAPTOR": 35,
+     "flat RAG": 39,
+     "memory": 40,
+     "metadata control": 40
+    },
+    "questions": 48,
+    "trace": "summaries.<arm>.aggregate.exact_correct and wilson95 (fractions x n=48) in heldout_fine_v3a/analysis.json; same counts in evaluation-results.tex:3-5",
+    "wilson95_counts": {
+     "RAPTOR": [
+      28.32,
+      40.05
+     ],
+     "flat RAG": [
+      32.67,
+      43.11
+     ],
+     "memory": [
+      33.8,
+      43.83
+     ],
+     "metadata control": [
+      33.8,
+      43.83
+     ]
+    }
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/answers.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/memory-figures/make_memory_figures.py",
+   "shows": "Correct answers of 48 for the memory, flat RAG, RAPTOR and the metadata control, bars with Wilson 95% intervals; counts 40, 39, 35, 40 printed on the bars.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/evaluations/heldout_fine_v3a/analysis.json",
+     "sha256": "d1583596d83d1c9dab6dc067015f4b369ccd402c9775af571136f51b146e78c7"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/figures/generate_figures_v1.py",
+     "sha256": "af20cc980b95678d0dfbaa9ee9017e7294e98c03c290753fbd43e123ffa66ca4"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/output/pdf/v2.1/evaluation-results.tex",
+     "sha256": "5e1c218ba70193d33443be4dffea9e13737fcad138ae7b221c7726df9d5d4547"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/answers.svg",
+   "width": "half"
+  },
+  {
+   "id": "reader-controls",
+   "numbers": {
+    "all_questions": 48,
+    "correct_all": {
+     "dense": 33,
+     "hybrid": 34,
+     "memory": 30
+    },
+    "correct_temporal": {
+     "dense": 7,
+     "hybrid": 6,
+     "memory": 4
+    },
+    "evidence_tokens": 4000,
+    "temporal_questions": 9,
+    "trace": "reader-relational-controls-20261015.json (the snapshot memory_reader_controls.py reads); caption at memory-as-a-retained-and-reconstructable-object.tex:120"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/reader-controls.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/memory-figures/make_memory_figures.py",
+   "shows": "LongMem fraction answered correctly with the same reader and 4,000 evidence tokens for memory, dense and hybrid readouts, all 48 questions (30, 33, 34) and the nine temporal questions (4, 7, 6).",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/evidence-snapshots/memory/reader-relational-controls-20261015.json",
+     "sha256": "3acb5f69700e96090f2011b79675956edb51041396ebd8702f2a46ceb761f3b6"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/calculations/memory_reader_controls.py",
+     "sha256": "4b4d5e9481842599c9c66b92dd313778f3568ad109a169ef1ffb4b0e0a62aba0"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/memory-as-a-retained-and-reconstructable-object.tex",
+     "sha256": "a9341e98bf85fede0ff14b01beee44cd4f790692c284ca5ae760a463aa29f6aa"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/reader-controls.svg",
+   "width": "half"
+  }
+ ],
+ "packet": "memory-figures"
+}

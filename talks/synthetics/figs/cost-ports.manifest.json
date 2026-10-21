@@ -1,0 +1,404 @@
+{
+ "figures": [
+  {
+   "colour_map": {
+    "#000000": "#e8e6e3",
+    "#2166ac": "#7eb8da",
+    "#243039": "#7eb8da",
+    "#4d908e": "#5cbf9a",
+    "#7eb8da": "#7eb8da",
+    "#c44e52": "#e0875a",
+    "#d4a03c": "#e0875a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "coc-guessing-machine",
+   "numbers": {
+    "witness_range": "x <= 1e4"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/coc-guessing-machine.png",
+   "port": {
+    "crop": "0,0,0.5,1",
+    "font_family": "Inter",
+    "font_scale": 1.2,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Panel (a) of the Foundations guessing-machine figure: witnesses x up to 10^4 drawn with probability proportional to x^-lambda and tested against x^2 = u; expected trials 1/q against the root; a steep law finds small roots quickly and large roots slowly. This is the operational (guess, test, erase) route to the cost.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/coc-guessing-machine.svg",
+     "sha256": "aa95fdb5768bfee73693f80a63d548f1b6a36ed0f52a2838bcc774b905b07181"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/coc-guessing-machine.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(10.588074%, 15.686035%, 21.960449%)": "#7eb8da",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(12.940979%, 39.99939%, 67.449951%)": "#7eb8da",
+    "rgb(29.803467%, 54.901123%, 36.077881%)": "#5cbf9a",
+    "rgb(30.195618%, 56.469727%, 55.685425%)": "#5cbf9a",
+    "rgb(54.901123%, 58.822632%, 62.744141%)": "#9ca3af",
+    "rgb(76.861572%, 30.587769%, 32.156372%)": "#e0875a",
+    "rgb(83.135986%, 62.744141%, 23.529053%)": "#e0875a"
+   },
+   "id": "zipf-family",
+   "numbers": {
+    "R_panels_b": 500,
+    "critical_lambda": 1,
+    "cutoffs_c": [
+     20,
+     100,
+     500,
+     5000
+    ]
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/zipf-family.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 2200
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The paper's four-panel figure: (a) p(r|lambda) on log-log axes with lambda = 1 marked as Zipf; (b) mean cost C, entropy S and free complexity F against lambda (R = 500); (c) finite partition sums Z_R for R = 20, 100, 500, 5000 approaching zeta(lambda); (d) susceptibility chi = Var(log r) peaking at lambda = 1.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/cost-of-complexity/manuscript/figures/fig_cost_of_complexity_zipf_family.pdf",
+     "sha256": "b07462156e7b3093917ce9c5f0c63dd8bbeefdb0bc77cc9f3abff576fb8d1b7f"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/zipf-family.svg",
+   "width": "full"
+  },
+  {
+   "colour_map": {
+    "#000000": "#e8e6e3",
+    "#0072b2": "#7eb8da",
+    "#009e73": "#5cbf9a",
+    "#243039": "#7eb8da",
+    "#cc79a7": "#d48fc7",
+    "#d55e00": "#e0875a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "ch1-susceptibility",
+   "numbers": {
+    "asymptotic_ratio": "1/12",
+    "peak": "lambda = 1"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch1-susceptibility.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.15,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The finite response chi_R = Var(ln r) against lambda for four cutoffs, sharpening toward lambda = 1 as R grows; the ratio chi_R / (ln R)^2 approaches 1/12 slowly at lambda = 1.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch1-susceptibility.svg",
+     "sha256": "9c651c65f2a6e80b1263bcc63baec0ac0fdc568f43344e18d28baab32bcd3859"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch1-susceptibility.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(10.588074%, 15.686035%, 21.960449%)": "#7eb8da",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(12.940979%, 39.99939%, 67.449951%)": "#7eb8da",
+    "rgb(30.195618%, 56.469727%, 55.685425%)": "#5cbf9a",
+    "rgb(76.861572%, 30.587769%, 32.156372%)": "#e0875a",
+    "rgb(83.135986%, 62.744141%, 23.529053%)": "#e0875a"
+   },
+   "id": "shell-excess",
+   "numbers": {
+    "source": "fig_cost_of_complexity_shell_excess"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/shell-excess.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The paper's shell-excess plot: the cost of flattening tied outcomes into consecutive scalar ranks instead of using a conditional coordinate, by shell position and multiplicity.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/cost-of-complexity/manuscript/figures/fig_cost_of_complexity_shell_excess.pdf",
+     "sha256": "ee80f5bc45f019a0921d5a5ecaf7ecda75bc3e1c0c9883107f67a187a1c4ee36"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/shell-excess.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#243039": "#7eb8da",
+    "#477363": "#5cbf9a",
+    "#7eb8da": "#7eb8da",
+    "#f1f5f3": "#0a0e1a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "ch1-selective-acquisition",
+   "numbers": {
+    "k_threshold": 0.1,
+    "risk_after": 0.5,
+    "risk_before": 0.6,
+    "total_with": "0.35 + 0.5k",
+    "total_without": 0.4
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch1-selective-acquisition.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 2200
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The decision tree of selective sensing: after a = 0 the forecast is 0.2 and risk 0.6, reading b (if its cost k < 0.1) reduces risk to 0.5; after a = 1 both values favour stopping; total risk 0.35 + 0.5k with acquisition against 0.40 without.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch1-selective-acquisition.svg",
+     "sha256": "5b4c64667d5baa0ee22810756e371be22c22543ae803c4175433a508ca86daa0"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch1-selective-acquisition.svg",
+   "width": "full"
+  },
+  {
+   "colour_map": {
+    "#243039": "#7eb8da",
+    "#477363": "#5cbf9a",
+    "#7eb8da": "#7eb8da",
+    "#f1f5f3": "#0a0e1a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "ch1-negative-gate",
+   "numbers": {
+    "greedy_gain": 0,
+    "open_cost": 1,
+    "optimal_gain": 2,
+    "p_child": 0.6,
+    "policies": 5
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch1-negative-gate.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The prerequisite gate: opening costs one unit now, the profitable child is reached with probability 0.6, the other child may be declined; optimal expected gain 2 against zero for greedy stopping, over all five policies of the tree.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch1-negative-gate.svg",
+     "sha256": "82f2fdb5ecbfaaa0bc6ec27f375d48abb91ef6a1efc20d3e69bef36c271e8ad2"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch1-negative-gate.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#243039": "#7eb8da",
+    "#477363": "#5cbf9a",
+    "#7eb8da": "#7eb8da",
+    "#f1f5f3": "#0a0e1a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "ch1-representation",
+   "numbers": {
+    "fibre_probability": "1/4",
+    "symbols": 4,
+    "world_probability": "1/8",
+    "worlds": 8
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch1-representation.png",
+   "port": {
+    "crop": "0,0,1,0.88",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The Foundations alarm source: eight worlds (a,b,c) mapped by the encoder to four symbols (a,b), the sensor label c discarded, the decoder returning the forecast; each two-world fibre has probability 1/4 and preserves the full predictive distribution.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch1-representation.svg",
+     "sha256": "5284d2355acdb4c8ffab74465f8d3530aac0703f465f12a2eb42a40998812e32"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch1-representation.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(10.588074%, 15.686035%, 21.960449%)": "#7eb8da",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(12.940979%, 39.99939%, 67.449951%)": "#7eb8da",
+    "rgb(29.803467%, 54.901123%, 36.077881%)": "#5cbf9a",
+    "rgb(30.195618%, 56.469727%, 55.685425%)": "#5cbf9a",
+    "rgb(54.901123%, 58.822632%, 62.744141%)": "#9ca3af",
+    "rgb(76.861572%, 30.587769%, 32.156372%)": "#e0875a",
+    "rgb(83.135986%, 62.744141%, 23.529053%)": "#e0875a"
+   },
+   "id": "zipf-family-a",
+   "numbers": {
+    "R_panels_b": 500,
+    "critical_lambda": 1,
+    "cutoffs_c": [
+     20,
+     100,
+     500,
+     5000
+    ]
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/zipf-family-a.png",
+   "port": {
+    "crop": "0,0,0.485,0.47",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "panel (a): the rank distributions p(r|lambda) for lambda = 0.5, 0.9, 1 (Zipf), 1.5, 2 on log-log axes",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/cost-of-complexity/manuscript/figures/fig_cost_of_complexity_zipf_family.pdf",
+     "sha256": "b07462156e7b3093917ce9c5f0c63dd8bbeefdb0bc77cc9f3abff576fb8d1b7f"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/zipf-family-a.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(10.588074%, 15.686035%, 21.960449%)": "#7eb8da",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(12.940979%, 39.99939%, 67.449951%)": "#7eb8da",
+    "rgb(29.803467%, 54.901123%, 36.077881%)": "#5cbf9a",
+    "rgb(30.195618%, 56.469727%, 55.685425%)": "#5cbf9a",
+    "rgb(54.901123%, 58.822632%, 62.744141%)": "#9ca3af",
+    "rgb(76.861572%, 30.587769%, 32.156372%)": "#e0875a",
+    "rgb(83.135986%, 62.744141%, 23.529053%)": "#e0875a"
+   },
+   "id": "zipf-family-d",
+   "numbers": {
+    "R_panels_b": 500,
+    "critical_lambda": 1,
+    "cutoffs_c": [
+     20,
+     100,
+     500,
+     5000
+    ]
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/zipf-family-d.png",
+   "port": {
+    "crop": "0.5,0.52,1,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "panel (d): the susceptibility chi(lambda) = Var_lambda(log r), peaking at lambda = 1",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/cost-of-complexity/manuscript/figures/fig_cost_of_complexity_zipf_family.pdf",
+     "sha256": "b07462156e7b3093917ce9c5f0c63dd8bbeefdb0bc77cc9f3abff576fb8d1b7f"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/zipf-family-d.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#000000": "#e8e6e3",
+    "#2166ac": "#7eb8da",
+    "#243039": "#7eb8da",
+    "#4d908e": "#5cbf9a",
+    "#7eb8da": "#7eb8da",
+    "#8c96a0": "#9ca3af",
+    "#c44e52": "#e0875a",
+    "#d4a03c": "#e0875a",
+    "#e8e6e3": "#e8e6e3",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "coc-rank-gauge",
+   "numbers": {
+    "scalars": 3,
+    "symbols": 4
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/coc-rank-gauge.png",
+   "port": {
+    "crop": "0,0,0.45,1",
+    "font_family": "Inter",
+    "font_scale": 1.1,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Left: three admissible typicality scalars for four symbols induce the same order and collapse under relabelling to rank. Right: every nondecreasing schedule of rank is admissible (grey); the logarithm is one of them.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/coc-rank-gauge.svg",
+     "sha256": "ba98518715a6235f62f89d32aa78b9b4a6e3999b2bf4427b9416e5cd924f9766"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/coc-rank-gauge.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#000000": "#e8e6e3",
+    "#2166ac": "#7eb8da",
+    "#243039": "#7eb8da",
+    "#4d908e": "#5cbf9a",
+    "#7eb8da": "#7eb8da",
+    "#c44e52": "#e0875a",
+    "#d4a03c": "#e0875a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "coc-composition",
+   "numbers": {
+    "draws_per_shape": 4000,
+    "worked_pair_excess_nats": 0.073
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/coc-composition.png",
+   "port": {
+    "crop": "0.332,0.085,0.645,1",
+    "font_family": "Inter",
+    "font_scale": 1.2,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Panels (b) and (c) of the Foundations composition figure: (b) mean excess of the sorted-list cost over the tuple cost for 4000 Dirichlet draws per alphabet shape, never negative and growing with the alphabet; (c) the shell excess delta_r = (1/n) sum_k ln((r+k)/r) of flattening an n-fold shell at rank r, largest at low rank.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/coc-composition.svg",
+     "sha256": "8d6dd11f2b1f6cc7a5ee2d426f7a27eddb88a0042a164047b1b5978cca15b288"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/coc-composition.svg",
+   "width": "half"
+  }
+ ],
+ "packet": "cost-ports"
+}

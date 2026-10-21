@@ -1,0 +1,173 @@
+{
+ "figures": [
+  {
+   "caption": "Word tokens in six public-domain English books from Project Gutenberg (Moby Dick, Pride and Prejudice, Middlemarch, Great Expectations, The Count of Monte Cristo, War and Peace): 1,882,701 tokens, 36,438 distinct words.",
+   "downloads": [
+    {
+     "file": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg2701.txt",
+     "sha256": "b5e88b71a1cda068e9ab1d94344c9d932338ba6da1a66def97a1aecd9cfcc87d",
+     "title": "Moby Dick",
+     "url": "https://www.gutenberg.org/cache/epub/2701/pg2701.txt"
+    },
+    {
+     "file": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg1342.txt",
+     "sha256": "3f6bb9d6f78e0293b56acd4714dd68cb7d6d1d293402031ce9d5a216bcaf9d75",
+     "title": "Pride and Prejudice",
+     "url": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt"
+    },
+    {
+     "file": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg145.txt",
+     "sha256": "dc2e0107e6ae07e8e33da934b2ec4e8e600826a2e0cd48df265119cd02e5fb50",
+     "title": "Middlemarch",
+     "url": "https://www.gutenberg.org/cache/epub/145/pg145.txt"
+    },
+    {
+     "file": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg1400.txt",
+     "sha256": "9a637118af8e953e9764ec603d9b0a032883384d465acac2e27966a80cf1c6f8",
+     "title": "Great Expectations",
+     "url": "https://www.gutenberg.org/cache/epub/1400/pg1400.txt"
+    },
+    {
+     "file": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg1184.txt",
+     "sha256": "64f8d5cfa51fcecb904abf7312d395d512a71817e7359b91288beb50517c3836",
+     "title": "The Count of Monte Cristo",
+     "url": "https://www.gutenberg.org/cache/epub/1184/pg1184.txt"
+    },
+    {
+     "file": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg2600.txt",
+     "sha256": "2d5bb2ad5f422765e714617e21fa31bbaf8958aa79682c86fca6660fcc5d1b2b",
+     "title": "War and Peace",
+     "url": "https://www.gutenberg.org/cache/epub/2600/pg2600.txt"
+    }
+   ],
+   "id": "zipf-english",
+   "method": "lower-cased, Gutenberg header/footer stripped at the *** START/END markers, tokens = runs of letters with internal apostrophes; MLE of p(r)=r^-lambda/Z_R(lambda) with R the vocabulary size over all tokens; LS = ordinary least squares of log p(r) on log r for 10<=r<=1000",
+   "numbers": {
+    "lambda_ls_ranks_10_1000": 1.09,
+    "lambda_mle_full_range": 1.045,
+    "lambda_mle_standard_error": 0.00023,
+    "lambda_mle_zeta_normalised_sensitivity": 1.1977,
+    "tokens": 1882701,
+    "tokens_per_book": {
+     "Great Expectations (pg1400)": 186711,
+     "Middlemarch (pg145)": 320413,
+     "Moby Dick (pg2701)": 216603,
+     "Pride and Prejudice (pg1342)": 127858,
+     "The Count of Monte Cristo (pg1184)": 464608,
+     "War and Peace (pg2600)": 566508
+    },
+    "top5": [
+     [
+      "the",
+      102935
+     ],
+     [
+      "and",
+      60661
+     ],
+     [
+      "to",
+      53791
+     ],
+     [
+      "of",
+      51479
+     ],
+     [
+      "a",
+      38111
+     ]
+    ],
+    "vocabulary": 36438
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/zipf-english.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/zipf_english.py",
+   "shows": "Rank against relative frequency of word tokens in six Project Gutenberg English books, log-log, with the full-range maximum-likelihood power law in gold and the ranks 10-1000 least-squares slope in green.",
+   "source_passages": [
+    "synthetics papers/cost-of-complexity/manuscript/figures/simulation.py:358-402 (synthetic precedent)"
+   ],
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg2701.txt",
+     "sha256": "b5e88b71a1cda068e9ab1d94344c9d932338ba6da1a66def97a1aecd9cfcc87d"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg1342.txt",
+     "sha256": "3f6bb9d6f78e0293b56acd4714dd68cb7d6d1d293402031ce9d5a216bcaf9d75"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg145.txt",
+     "sha256": "dc2e0107e6ae07e8e33da934b2ec4e8e600826a2e0cd48df265119cd02e5fb50"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg1400.txt",
+     "sha256": "9a637118af8e953e9764ec603d9b0a032883384d465acac2e27966a80cf1c6f8"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg1184.txt",
+     "sha256": "64f8d5cfa51fcecb904abf7312d395d512a71817e7359b91288beb50517c3836"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/data/pg2600.txt",
+     "sha256": "2d5bb2ad5f422765e714617e21fa31bbaf8958aa79682c86fca6660fcc5d1b2b"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/zipf-english.svg",
+   "width": "half"
+  },
+  {
+   "caption": "Sorted-list minus tuple cost over 4000 random marginal pairs per alphabet shape; no draw is negative.",
+   "data_origin": "read, not recomputed: companion run run-9146279db0bb4e9b (coc.py, mode full, seed from coc.json), whose coc-composition.{pdf,png,svg} are byte-identical to manuscript/figures/generated/coc-composition.*",
+   "id": "composition-excess",
+   "numbers": {
+    "fraction_positive": {
+     "2\u00d72": 1.0,
+     "3\u00d73": 1.0,
+     "4\u00d74": 1.0,
+     "8\u00d78": 1.0
+    },
+    "max_excess_nats": {
+     "2\u00d72": 0.1009,
+     "3\u00d73": 0.2231,
+     "4\u00d74": 0.3193,
+     "8\u00d78": 0.5408
+    },
+    "mean_excess_nats": {
+     "2\u00d72": 0.0428,
+     "3\u00d73": 0.1145,
+     "4\u00d74": 0.1879,
+     "8\u00d78": 0.4153
+    },
+    "min_excess_nats": {
+     "2\u00d72": 3.47e-05,
+     "3\u00d73": 0.00142,
+     "4\u00d74": 0.0134,
+     "8\u00d78": 0.172
+    },
+    "samples_per_shape": 4000,
+    "worked_pair_excess_nats": 0.073,
+    "worked_pair_sorted_list_cost_nats": 0.5582,
+    "worked_pair_tuple_cost_nats": 0.4852
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/composition-excess.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/cost-figures/composition_excess.py",
+   "shows": "Mean excess of the sorted-list cost over the coordinate (tuple) cost for 4000 Dirichlet(1) marginal pairs at four alphabet shapes, with each shape's minimum (gold) above zero and the range as a line.",
+   "source_passages": [
+    "synthetics papers/synthetics-foundations/manuscript/chapters/chapter-01.tex:224-280"
+   ],
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/research_runs/run-9146279db0bb4e9b-data/composition_scan.csv",
+     "sha256": "f3019099feb6e8af7abdf5567122a08e0c15b072e7812b4d922a49460596ef44"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/research_runs/run-9146279db0bb4e9b.result.json",
+     "sha256": "6c94162657c46b169488cfad0883581fdc21aea3814f222bd3deb1cffefda610"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/composition-excess.svg",
+   "width": "half"
+  }
+ ],
+ "packet": "cost-figures"
+}

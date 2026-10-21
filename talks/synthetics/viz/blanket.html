@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>blanket</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet: blanket. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);
+function gauss() { const u = Math.max(1e-12, rand()), v = rand(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- the model (stated in the packet report) ----------
+   World: a 2-d state x with its own Ornstein-Uhlenbeck dynamics about its resting point c, plus the action a.
+   Sensory state: s = x + small noise.  Agent's generative model, per axis: p(x) = N(m, sp^2), p(s|x) = N(x, ss^2).
+   Internal model: q(x) = N(mu, sq^2) with sq^2 the exact posterior variance (Laplace form), so
+     F = E_q[log q(x) - log p(s,x)] = KL(q || p(x|s)) - log p(s)  >=  -log p(s),  equality when mu is the posterior mean.
+   Perception: mu descends dF/dmu.  Action (on from T_ACT): a = -ETA dF/ds, which pushes the world toward what the agent expects. */
+const M = { m: [0.35, -0.3], sp: 0.4, ss: 0.15, c: [-0.55, 0.5], theta: 0.25, sw: 0.12, sTrue: 0.006,
+            kmu: 0.03, eta: 0.45, T_ACT: 3.5, dt: 0.01, T: SETTLE_AT };
+const SQ2 = 1 / (1 / M.sp ** 2 + 1 / M.ss ** 2);
+const SIM = (function simulate() {
+  const n = Math.round(M.T / M.dt) + 1, rows = [];
+  const x = M.c.slice(), mu = M.m.slice();
+  for (let k = 0; k < n; k++) {
+    const t = k * M.dt;
+    const s = [x[0] + M.sTrue * gauss(), x[1] + M.sTrue * gauss()];
+    let F = 0, S = 0;
+    for (let i = 0; i < 2; i++) {
+      F += ((mu[i] - M.m[i]) ** 2 + SQ2) / (2 * M.sp ** 2) + ((s[i] - mu[i]) ** 2 + SQ2) / (2 * M.ss ** 2)
+         + 0.5 * Math.log(2 * Math.PI * M.sp ** 2) + 0.5 * Math.log(2 * Math.PI * M.ss ** 2) - 0.5 * Math.log(2 * Math.PI * Math.E * SQ2);
+      const v = M.sp ** 2 + M.ss ** 2;
+      S += (s[i] - M.m[i]) ** 2 / (2 * v) + 0.5 * Math.log(2 * Math.PI * v);
+    }
+    rows.push({ t, F, S, x: x.slice(), mu: mu.slice() });
+    for (let i = 0; i < 2; i++) {
+      const dFdmu = (mu[i] - M.m[i]) / M.sp ** 2 + (mu[i] - s[i]) / M.ss ** 2;
+      const a = t >= M.T_ACT ? -M.eta * (s[i] - mu[i]) / M.ss ** 2 : 0;
+      mu[i] -= M.kmu * dFdmu * M.dt;
+      x[i] += (-M.theta * (x[i] - M.c[i]) + a) * M.dt + M.sw * Math.sqrt(M.dt) * gauss();
+    }
+  }
+  return rows;
+})();
+const LOGMIN = Math.log(Math.min(...SIM.map(r => r.S)) * 0.8), LOGMAX = Math.log(Math.max(...SIM.map(r => r.F)) * 1.15);
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+function erf(x) { const s = Math.sign(x); x = Math.abs(x); const t = 1 / (1 + 0.3275911 * x);
+  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return s * y; }
+function cdf(z) { return 0.5 * (1 + erf(z / Math.SQRT2)); }
+function label(txt, x, y, col, size, align, font) { ctx.fillStyle = col; ctx.font = `${size}px ${font || FONT.sans}`; ctx.textAlign = align || "center"; ctx.fillText(txt, x, y); }
+function arrow(x0, y0, x1, y1, col, w) {
+  ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+  const a = Math.atan2(y1 - y0, x1 - x0), h = 9; ctx.beginPath(); ctx.moveTo(x1, y1);
+  ctx.lineTo(x1 - h * Math.cos(a - 0.45), y1 - h * Math.sin(a - 0.45)); ctx.lineTo(x1 - h * Math.cos(a + 0.45), y1 - h * Math.sin(a + 0.45)); ctx.closePath(); ctx.fill();
+}
+
+/* ---------- the applet ---------- */
+const CELLS = 8;   // the internal model's resolution: an 8 x 8 coarse lattice over the world's square
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const k = Math.max(0, Math.min(SIM.length - 1, Math.floor(t / M.dt)));
+  const row = SIM[k];
+  const pad = 16, fs = 15;
+  const topH = Math.round(H * 0.6);
+  const bandW = Math.max(112, Math.round(W * 0.17));
+  const side = Math.max(60, Math.min((W - 2 * pad - bandW) / 2, topH - 2 * fs - 22));
+  const x0 = (W - (2 * side + bandW)) / 2, y0 = pad + fs + 10;
+  const wx = x0, ax = x0 + side + bandW;
+  const toPx = (px, v, i) => i === 0 ? px + (v + 1) / 2 * side : y0 + (1 - (v + 1) / 2) * side;
+
+  // panels
+  for (const px of [wx, ax]) { ctx.fillStyle = C.card; ctx.fillRect(px, y0, side, side); ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.strokeRect(px + 0.5, y0 + 0.5, side - 1, side - 1); }
+  label("world", wx + side / 2, y0 - 10, C.ink, fs);
+  label("internal model", ax + side / 2, y0 - 10, C.ink, fs);
+
+  // world: fine field (faint grid) and the wandering state with its trail
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+  for (let g = 1; g < 32; g++) { const u = wx + g * side / 32, v = y0 + g * side / 32;
+    ctx.beginPath(); ctx.moveTo(u, y0); ctx.lineTo(u, y0 + side); ctx.moveTo(wx, v); ctx.lineTo(wx + side, v); ctx.stroke(); }
+  const trail = 150;
+  for (let j = Math.max(0, k - trail); j < k; j++) {
+    const a = SIM[j], b = SIM[j + 1]; ctx.strokeStyle = `rgba(126,184,218,${0.55 * (1 - (k - j) / trail)})`; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(toPx(wx, a.x[0], 0), toPx(wx, a.x[1], 1)); ctx.lineTo(toPx(wx, b.x[0], 0), toPx(wx, b.x[1], 1)); ctx.stroke();
+  }
+  ctx.fillStyle = C.blue; ctx.beginPath(); ctx.arc(toPx(wx, row.x[0], 0), toPx(wx, row.x[1], 1), 7, 0, 2 * Math.PI); ctx.fill();
+
+  // internal model: q(x) integrated over each coarse cell
+  const sq = Math.sqrt(SQ2), mass = [];
+  let mmax = 0;
+  for (let i = 0; i < CELLS; i++) for (let j = 0; j < CELLS; j++) {
+    const lo0 = -1 + 2 * i / CELLS, hi0 = lo0 + 2 / CELLS, lo1 = -1 + 2 * j / CELLS, hi1 = lo1 + 2 / CELLS;
+    const p = (cdf((hi0 - row.mu[0]) / sq) - cdf((lo0 - row.mu[0]) / sq)) * (cdf((hi1 - row.mu[1]) / sq) - cdf((lo1 - row.mu[1]) / sq));
+    mass.push([i, j, p]); mmax = Math.max(mmax, p);
+  }
+  const cw = side / CELLS;
+  for (const [i, j, p] of mass) {
+    ctx.fillStyle = `rgba(126,184,218,${(0.92 * p / mmax).toFixed(3)})`;
+    ctx.fillRect(ax + i * cw + 1, y0 + (CELLS - 1 - j) * cw + 1, cw - 2, cw - 2);
+  }
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+  for (let g = 1; g < CELLS; g++) { ctx.beginPath(); ctx.moveTo(ax + g * cw, y0); ctx.lineTo(ax + g * cw, y0 + side); ctx.moveTo(ax, y0 + g * cw); ctx.lineTo(ax + side, y0 + g * cw); ctx.stroke(); }
+
+  // boundary: sensory state s (perception, world -> model) and active state a (action, model -> world)
+  const bx0 = wx + side, bx1 = ax, bc = (bx0 + bx1) / 2;
+  ctx.fillStyle = C.card; ctx.fillRect(bx0 + 8, y0, bandW - 16, side);
+  ctx.strokeStyle = C.muted; ctx.setLineDash([5, 5]); ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(bx0 + 8, y0); ctx.lineTo(bx0 + 8, y0 + side); ctx.moveTo(bx1 - 8, y0); ctx.lineTo(bx1 - 8, y0 + side); ctx.stroke(); ctx.setLineDash([]);
+  label("boundary", bc, y0 - 10, C.muted, fs);
+  const ys = y0 + side * 0.34, ya = y0 + side * 0.68;
+  const actOn = t >= M.T_ACT, actAlpha = actOn ? 1 : 0.3;
+  arrow(bx0 - 2, ys, bc - 14, ys, C.ink, 1.8); arrow(bc + 14, ys, bx1 + 2, ys, C.ink, 1.8);
+  ctx.globalAlpha = actAlpha;
+  arrow(bx1 + 2, ya, bc + 14, ya, C.ink, 1.8); arrow(bc - 14, ya, bx0 - 2, ya, C.ink, 1.8);
+  ctx.globalAlpha = 1;
+  for (const [y, nm, al] of [[ys, "s", 1], [ya, "a", actAlpha]]) {
+    ctx.globalAlpha = al; ctx.fillStyle = C.ground; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.arc(bc, y, 12, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    label(nm, bc, y + 5, C.ink, fs, "center", FONT.mono); ctx.globalAlpha = 1;
+  }
+  label("perception", bc, ys - 20, C.ink, fs);
+  ctx.globalAlpha = actAlpha; label("action", bc, ya + 34, C.ink, fs); ctx.globalAlpha = 1;
+
+  // traces: free energy F (gold) above surprisal -log p(s) (orange), log scale
+  const gx0 = Math.max(pad + 24, x0), gx1 = W - Math.max(pad, x0), gy0 = topH + 26, gy1 = H - pad - fs - 8;
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(gx0, gy0); ctx.lineTo(gx0, gy1); ctx.lineTo(gx1, gy1); ctx.stroke();
+  label("time", (gx0 + gx1) / 2, gy1 + fs + 4, C.muted, fs);
+  ctx.save(); ctx.translate(gx0 - 8, (gy0 + gy1) / 2); ctx.rotate(-Math.PI / 2); label("nats (log)", 0, 0, C.muted, fs); ctx.restore();
+  const X = tt => gx0 + (tt / M.T) * (gx1 - gx0), Y = v => gy1 - (Math.log(v) - LOGMIN) / (LOGMAX - LOGMIN) * (gy1 - gy0);
+  // gap F - surprisal (the KL term), faint gold
+  ctx.fillStyle = "rgba(201,169,110,0.16)"; ctx.beginPath();
+  for (let j = 0; j <= k; j++) { const r = SIM[j]; j ? ctx.lineTo(X(r.t), Y(r.F)) : ctx.moveTo(X(r.t), Y(r.F)); }
+  for (let j = k; j >= 0; j--) { const r = SIM[j]; ctx.lineTo(X(r.t), Y(r.S)); }
+  ctx.closePath(); ctx.fill();
+  for (const [key, col, w] of [["F", C.gold, 4], ["S", C.orange, 2]]) {
+    ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineJoin = "round"; ctx.beginPath();
+    for (let j = 0; j <= k; j++) { const r = SIM[j]; j ? ctx.lineTo(X(r.t), Y(r[key])) : ctx.moveTo(X(r.t), Y(r[key])); }
+    ctx.stroke();
+  }
+  // action switch-on mark
+  if (actOn) { ctx.strokeStyle = C.muted; ctx.setLineDash([3, 4]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(M.T_ACT), gy0); ctx.lineTo(X(M.T_ACT), gy1); ctx.stroke(); ctx.setLineDash([]);
+    label("action on", X(M.T_ACT) + 6, gy0 + 14, C.muted, fs, "left"); }
+  // legend, top right of the trace panel
+  const lx = gx1 - 10;
+  label("free energy F", lx, gy0 + 14, C.gold, fs, "right");
+  label("surprisal −log p(s)", lx, gy0 + 14 + fs + 8, C.orange, fs, "right");
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused) requestAnimationFrame(frame);
+}
+window.__applet = { id: "blanket", ready: false, settled: false };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

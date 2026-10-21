@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>parity-memory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);     // nothing in this applet is random; kept for the template contract
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+if (reduced) clock = SETTLE_AT;
+
+/* =====================================================================================
+   THE EXAMPLE (skein.tex sec. 1; briefing chapter memory-as-a-retained-and-reconstructable-
+   object.tex, the parity-relation paragraph). Every count drawn is computed from RECORDS.
+   ===================================================================================== */
+const RECORDS = ["000", "011", "101", "110"].map(s => s.split("").map(Number));
+const NAMES = ["A", "B", "C"];
+const ones = [0, 1, 2].map(c => RECORDS.filter(r => r[c] === 1).length);                 // single-bit counts
+const PAIRS = [[0, 1], [0, 2], [1, 2]];
+const pairCounts = PAIRS.map(([u, v]) => [[0, 0], [0, 1], [1, 0], [1, 1]].map(([x, y]) =>
+  RECORDS.filter(r => r[u] === x && r[v] === y).length));
+const QUERIES = [[0, 0], [0, 1]];                                                           // (A, B) fixed by the query
+const queryHits = QUERIES.map(([x, y]) => RECORDS.map((r, i) => (r[0] === x && r[1] === y ? i : -1)).filter(i => i >= 0));
+const pC0 = RECORDS.filter(r => r[2] === 0).length;                                        // what separate summaries say about C
+// two-state parity machine: state 0 = even, 1 = odd; a 1 flips it; the last bit must return it to even
+const allowedLast = r => (r[0] ^ r[1]);
+const machineOK = RECORDS.every(r => allowedLast(r) === r[2]);
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ---------- helpers (logical units) ---------- */
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const ease = u => u * u * (3 - 2 * u);
+const lerp = (a, b, u) => a + (b - a) * u;
+const alpha = (hex, al) => { const v = parseInt(hex.slice(1), 16); return `rgba(${v >> 16},${(v >> 8) & 255},${v & 255},${al})`; };
+function text(s, x, y, size, color, font = FONT.sans, align = "left", base = "alphabetic", weight = "") {
+  ctx.font = `${weight}${size}px ${font}`; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = base; ctx.fillText(s, x, y);
+  return ctx.measureText(s).width; }
+function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function head(x, y, ang, color) { const hl = 8; ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x, y);
+  ctx.lineTo(x - hl * Math.cos(ang - 0.45), y - hl * Math.sin(ang - 0.45));
+  ctx.lineTo(x - hl * Math.cos(ang + 0.45), y - hl * Math.sin(ang + 0.45)); ctx.closePath(); ctx.fill(); }
+function cell(x, y, w, h, s, opt = {}) {
+  rrect(x, y, w, h, 5); ctx.fillStyle = opt.fill || "#141c30"; ctx.fill();
+  ctx.strokeStyle = opt.stroke || alpha(C.muted, 0.5); ctx.lineWidth = opt.lw || 1.2; ctx.stroke();
+  if (s !== "") text(s, x + w / 2, y + h / 2 + 1, opt.size || 20, opt.color || C.ink, FONT.mono, "center", "middle"); }
+
+/* ---------- timeline ---------- */
+const T = { rows: [-1.0, -0.3], singles: [1.0, 2.2], pairs: [2.2, 3.4], s2: 3.8, q: [[3.8, 5.7], [5.7, 7.6]], s3: 7.6,
+            rec0: 7.8, recDur: 1.0 };
+const STAGES = ["1  summaries", "2  joint query", "3  parity rule"];
+const stageAt = t => (t < T.s2 ? 0 : t < T.s3 ? 1 : 2);
+
+function draw(t) {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const s = Math.min(W / 600, H / 420), LW = W / s, LH = H / s;
+  ctx.setTransform(DPR * s, 0, 0, DPR * s, 0, 0);
+  const CW = Math.min(LW - 32, 760), ox = (LW - CW) / 2, oy = (LH - 410) / 2;
+  const st = stageAt(t);
+
+  // stage tabs
+  let tx = ox + 10;
+  STAGES.forEach((lbl, k) => { const on = k === st;
+    const w = text(lbl, tx, oy + 30, on ? 17 : 16, on ? C.ink : C.muted, FONT.sans, "left", "alphabetic", on ? "600 " : "");
+    if (on) { ctx.fillStyle = C.ink; ctx.fillRect(tx, oy + 38, w, 2); }
+    tx += w + 34; });
+  ctx.fillStyle = C.rule; ctx.fillRect(ox, oy + 48, CW, 1);
+
+  // ---- the four records (persistent, left) ----
+  const TX = ox + 10, TY = oy + 100, CS = 42, CG = 8, RS = 52;
+  NAMES.forEach((n, c) => text(n, TX + c * (CS + CG) + CS / 2, TY - 14, 17, C.muted, FONT.sans, "center"));
+  text(`${RECORDS.length} records`, TX + (3 * CS + 2 * CG) / 2, TY + 4 * RS + 20, 16, C.muted, FONT.sans, "center");
+  // per-stage emphasis of the table
+  let colHi = [false, false, false];
+  if (st === 0) {
+    [0, 1, 2].forEach(c => { const a = T.singles[0] + c * 0.4; if (t >= a && t < a + 0.4) colHi[c] = true; });
+    PAIRS.forEach(([u, v], k) => { const a = T.pairs[0] + k * 0.4; if (t >= a && t < a + 0.4) { colHi[u] = colHi[v] = true; } });
+  }
+  let qk = -1, qu = 0;
+  if (st === 1) { qk = t < T.q[1][0] ? 0 : 1; qu = seg(t, T.q[qk][0], T.q[qk][1]); }
+  let rk = -1, ru = 0;
+  if (st === 2) { rk = clamp(Math.floor((t - T.rec0) / T.recDur), 0, 3); ru = t < T.rec0 ? 0 : clamp((t - T.rec0 - rk * T.recDur) / T.recDur); }
+  RECORDS.forEach((r, i) => {
+    const appear = ease(seg(t, T.rows[0] + i * 0.15, T.rows[0] + i * 0.15 + 0.4));
+    if (appear <= 0) return;
+    let rowA = 1, hit = false;
+    if (st === 1) { hit = queryHits[qk].includes(i); rowA = hit ? 1 : lerp(1, 0.22, ease(seg(qu, 0.25, 0.5))); }
+    if (st === 2) { hit = i === rk; rowA = hit ? 1 : 0.35; }
+    ctx.globalAlpha = appear * rowA;
+    const y = TY + i * RS - (1 - appear) * 12;
+    r.forEach((b, c) => {
+      const x = TX + c * (CS + CG);
+      let opt = st === 0 ? { stroke: colHi[c] ? C.ink : alpha(C.muted, 0.3), lw: colHi[c] ? 2.5 : 1.2, color: colHi[c] || t >= T.pairs[1] || t < T.singles[0] ? C.ink : C.muted } : { stroke: alpha(C.muted, 0.5), lw: 1.2 };
+      if (st === 1 && hit && c < 2 && qu > 0.25) opt = { stroke: C.ink, lw: 2 };
+      if (st === 1 && hit && c === 2 && qu > 0.55) opt = { fill: C.gold, stroke: C.gold, color: C.ground };
+      if (st === 2 && hit) opt = { stroke: C.ink, lw: 2 };
+      cell(x, y, CS, CS, String(b), opt);
+    });
+    ctx.globalAlpha = 1;
+  });
+
+  // ---- right panel ----
+  const RX = ox + 190, RW = ox + CW - RX;
+  const fadeIn = a => ease(seg(t, a, a + 0.3));
+  if (st === 0) {
+    text("single bits · balanced", RX, TY - 14, 16, C.muted);
+    [0, 1, 2].forEach(c => {
+      const a = fadeIn(T.singles[0] + c * 0.4); if (a <= 0) return; ctx.globalAlpha = a;
+      const bx = RX + c * (RW / 3), by = TY;
+      text(NAMES[c], bx, by + 16, 18, C.ink, FONT.mono, "left", "middle");
+      RECORDS.forEach((r, i) => { const x = bx + 20 + i * 17;
+        rrect(x, by + 9, 13, 13, 2); if (r[c]) { ctx.fillStyle = C.blue; ctx.fill(); } else { ctx.strokeStyle = alpha(C.muted, 0.7); ctx.lineWidth = 1; ctx.stroke(); } });
+      text(`${ones[c]}/${RECORDS.length}`, bx + 20 + 4 * 17 + 6, by + 16, 17, C.ink, FONT.mono, "left", "middle");
+      ctx.globalAlpha = 1; });
+    text("pairs · independent", RX, TY + 84, 16, C.muted);
+    PAIRS.forEach(([u, v], k) => {
+      const a = fadeIn(T.pairs[0] + k * 0.4); if (a <= 0) return; ctx.globalAlpha = a;
+      const bx = RX + k * (RW / 3), by = TY + 100;
+      text(NAMES[u] + NAMES[v], bx, by + 14, 18, C.ink, FONT.mono, "left", "middle");
+      ["00", "01", "10", "11"].forEach((lbl, j) => { const x = bx + j * 27;
+        cell(x, by + 32, 23, 26, String(pairCounts[k][j]), { size: 16 });
+        text(lbl, x + 11.5, by + 76, 15, C.muted, FONT.mono, "center"); });
+      ctx.globalAlpha = 1; });
+    const a = fadeIn(T.pairs[1]); if (a > 0) { ctx.globalAlpha = a;
+      text(`every combination: ${pairCounts[0][0]} of ${RECORDS.length}`, RX, TY + 222, 16, C.muted); ctx.globalAlpha = 1; }
+  }
+  if (st === 1) {
+    const [x0, y0] = QUERIES[qk], a = ease(seg(qu, 0, 0.2)), reveal = ease(seg(qu, 0.55, 0.75));
+    const hit = RECORDS[queryHits[qk][0]];
+    ctx.globalAlpha = a;
+    text("query", RX, TY + 20, 16, C.muted, FONT.sans, "left", "middle");
+    text(`A = ${x0}   B = ${y0}`, RX + 70, TY + 20, 21, C.ink, FONT.mono, "left", "middle");
+    ctx.globalAlpha = 1;
+    text("joint law", RX, TY + 100, 16, C.muted, FONT.sans, "left", "middle");
+    text("C =", RX + 150, TY + 100, 21, C.ink, FONT.mono, "left", "middle");
+    if (reveal > 0) { ctx.globalAlpha = reveal; text(String(hit[2]), RX + 202, TY + 100, 24, C.gold, FONT.mono, "left", "middle");
+      text(`${queryHits[qk].length} of ${RECORDS.length} records`, RX + 236, TY + 100, 16, C.muted, FONT.sans, "left", "middle"); ctx.globalAlpha = 1; }
+    else text("?", RX + 202, TY + 100, 24, C.muted, FONT.mono, "left", "middle");
+    ctx.globalAlpha = ease(seg(qu, 0.75, 0.9));
+    text("field summaries", RX, TY + 160, 16, C.muted, FONT.sans, "left", "middle");
+    text(`P(C = 0) = ${pC0}/${RECORDS.length}`, RX + 150, TY + 160, 21, C.ink, FONT.mono, "left", "middle");
+    ctx.globalAlpha = 1;
+  }
+  if (st === 2) {
+    const r = RECORDS[rk];
+    // tape: the record read bit by bit
+    text("read", RX, TY + 20, 16, C.muted, FONT.sans, "left", "middle");
+    const readA = ru >= 0.2 || t >= SETTLE_AT, readB = ru >= 0.45 || t >= SETTLE_AT, showAllowed = ru >= 0.55 || t >= SETTLE_AT;
+    const shown = [readA ? String(r[0]) : "", readB ? String(r[1]) : "", showAllowed ? String(allowedLast(r)) : "?"];
+    shown.forEach((v, c) => { const x = RX + 60 + c * 46;
+      const cur = (c === 0 && ru < 0.2) || (c === 1 && ru >= 0.2 && ru < 0.45) || (c === 2 && ru >= 0.45);
+      const opt = c === 2 && showAllowed ? { fill: C.gold, stroke: C.gold, color: C.ground } : { stroke: cur ? C.ink : alpha(C.muted, 0.5), lw: cur ? 2 : 1.2, color: v === "?" ? C.muted : C.ink };
+      cell(x, TY, 40, 40, v, opt); });
+    text(NAMES.join(""), RX + 60 + 3 * 46 + 6, TY + 20, 16, C.muted, FONT.mono, "left", "middle");
+    if (showAllowed) text("allowed last bit", RX + 60 + 92 + 20, TY - 12, 15, C.muted, FONT.sans, "center");
+    // machine state through the record: even -> after A -> after B -> after C (= even)
+    const s1 = r[0], s2 = r[0] ^ r[1];
+    const phase = t >= SETTLE_AT ? 1 : ru;
+    let from = 0, to = 0, mv = 1, bit = -1;
+    if (phase < 0.2) { from = 0; to = s1; mv = ease(seg(phase, 0.05, 0.2)); bit = r[0]; }
+    else if (phase < 0.45) { from = s1; to = s2; mv = ease(seg(phase, 0.28, 0.45)); bit = r[1]; }
+    else if (phase < 0.75) { from = s2; to = s2; mv = 1; }
+    else { from = s2; to = 0; mv = ease(seg(phase, 0.78, 0.95)); bit = allowedLast(r); }
+    const my = TY + 160, R0 = 34, xs = [RX + RW * 0.22, RX + RW * 0.62];
+    // arcs: 1 flips (upper even->odd, lower odd->even); 0 keeps (self loops)
+    ctx.strokeStyle = alpha(C.muted, 0.8); ctx.lineWidth = 1.6;
+    const mid = (xs[0] + xs[1]) / 2, bow = 30;
+    ctx.beginPath(); ctx.moveTo(xs[0] + R0 * 0.8, my - R0 * 0.6); ctx.quadraticCurveTo(mid, my - R0 - bow, xs[1] - R0 * 0.8, my - R0 * 0.6); ctx.stroke();
+    head(xs[1] - R0 * 0.8, my - R0 * 0.6, 0.55, alpha(C.muted, 0.9));
+    ctx.beginPath(); ctx.moveTo(xs[1] - R0 * 0.8, my + R0 * 0.6); ctx.quadraticCurveTo(mid, my + R0 + bow, xs[0] + R0 * 0.8, my + R0 * 0.6); ctx.stroke();
+    head(xs[0] + R0 * 0.8, my + R0 * 0.6, Math.PI + 0.55, alpha(C.muted, 0.9));
+    text("1", mid, my - R0 - bow / 2 - 8, 17, C.ink, FONT.mono, "center", "middle");
+    text("1", mid, my + R0 + bow / 2 + 8, 17, C.ink, FONT.mono, "center", "middle");
+    xs.forEach((x, k) => {   // self loop labelled 0, on the outer side
+      const sx = k === 0 ? -1 : 1, lx = x + sx * (R0 + 16);
+      ctx.beginPath(); ctx.arc(lx, my, 16, 0, 2 * Math.PI); ctx.strokeStyle = alpha(C.muted, 0.8); ctx.stroke();
+      text("0", lx + sx * 26, my, 17, C.ink, FONT.mono, "center", "middle"); });
+    // states
+    const cur = mv >= 1 ? to : -1;
+    ["even", "odd"].forEach((n, k) => {
+      ctx.beginPath(); ctx.arc(xs[k], my, R0, 0, 2 * Math.PI); ctx.fillStyle = k === cur ? alpha(C.blue, 0.3) : "#141c30"; ctx.fill();
+      ctx.strokeStyle = k === cur ? C.ink : alpha(C.muted, 0.7); ctx.lineWidth = k === cur ? 2.5 : 1.4; ctx.stroke();
+      text(n, xs[k], my + 1, 17, C.ink, FONT.sans, "center", "middle"); });
+    // token in transit
+    if (mv < 1 && bit >= 0) {
+      let px, py;
+      if (from === to) { const k = from, sx = k === 0 ? -1 : 1, lx = xs[k] + sx * (R0 + 16), ang = (k === 0 ? 0 : Math.PI) + sx * mv * 2 * Math.PI * (k === 0 ? 1 : -1);
+        px = lx + 16 * Math.cos(ang); py = my + 16 * Math.sin(ang); }
+      else { const up = from === 0, x0 = up ? xs[0] + R0 * 0.8 : xs[1] - R0 * 0.8, x1 = up ? xs[1] - R0 * 0.8 : xs[0] + R0 * 0.8;
+        const yb = up ? my - R0 * 0.6 : my + R0 * 0.6, yc = up ? my - R0 - bow : my + R0 + bow, u = mv;
+        px = (1 - u) * (1 - u) * x0 + 2 * u * (1 - u) * mid + u * u * x1; py = (1 - u) * (1 - u) * yb + 2 * u * (1 - u) * yc + u * u * yb; }
+      ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(px, py, 6, 0, 2 * Math.PI); ctx.fill();
+    }
+    // the rule, accumulated: prefix -> the only allowed last bit
+    text("first two bits → allowed last bit", RX, TY + 262, 16, C.muted);
+    RECORDS.forEach((rr, i) => { if (i > rk || (i === rk && !showAllowed)) return;
+      text(`${rr[0]}${rr[1]} → ${allowedLast(rr)}`, RX + i * (RW / 4), TY + 292, 18, C.ink, FONT.mono); });
+  }
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock = Math.min(SETTLE_AT, clock + dt);
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+}
+window.__applet = { id: "parity-memory", ready: false, settled: false,
+  data: { records: RECORDS.map(r => r.join("")), ones, pairs: PAIRS.map(p => p.map(c => NAMES[c]).join("")), pairCounts,
+    queries: QUERIES.map((q, k) => ({ A: q[0], B: q[1], hits: queryHits[k].map(i => RECORDS[i].join("")) })),
+    summaries_P_C0: `${pC0}/${RECORDS.length}`, rule: RECORDS.map(r => `${r[0]}${r[1]}->${allowedLast(r)}`), machine_reproduces_records: machineOK } };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (!paused && !reduced && !settled(clock)) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

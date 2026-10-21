@@ -1,0 +1,39 @@
+{
+ "figures": [
+  {
+   "colour_map": {
+    "#0072b2": "#7eb8da",
+    "#009e73": "#5cbf9a",
+    "#243039": "#7eb8da",
+    "#d55e00": "#e0875a",
+    "#f5fbf9": "#0a0e1a",
+    "#f7fbfd": "#0a0e1a",
+    "#f7fcfb": "#0a0e1a",
+    "#fefaf7": "#0a0e1a"
+   },
+   "id": "dd-backend-change",
+   "numbers": {
+    "source": "fig dd-backend-change"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/dd-backend-change.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 2200
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "What a change sets in motion: a changed candidate pool leaves the original result describing its original pool, the paragraph's words unchanged while its support has moved, the acceptance that consumed the old basis marked stale and the affected input named over the declared dependency graph.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-backend-change.svg",
+     "sha256": "8adcd0308e40ee50640107d5a6d68a56bf5c48bb1dd5f77348fdf134136c677c"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/dd-backend-change.svg",
+   "width": "full"
+  }
+ ],
+ "packet": "envelope-ports"
+}

@@ -1,0 +1,138 @@
+{
+ "figures": [
+  {
+   "colour_map": {
+    "#0072b2": "#7eb8da",
+    "#009e73": "#5cbf9a",
+    "#243039": "#7eb8da",
+    "#d55e00": "#e0875a",
+    "#f2f8fb": "#27486a",
+    "#f2faf8": "#245a48",
+    "#fff": "#0a0e1a"
+   },
+   "id": "dd-memory-mechanism",
+   "numbers": {
+    "routes": 2
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/dd-memory-mechanism.png",
+   "port": {
+    "crop": "0,0.40,1,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 2200
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Two routes from sources to a reconstructed answer: Corpus as a State retains geometric summaries and inherited bounds; Memory in Pieces (Skein, Parallax) retains task and law coordinates U, the retained law A = U^T L U, the decoder and defect D, with refinement or source-level fallback on a residual or capacity failure.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-memory-mechanism.svg",
+     "sha256": "ea9211edcdab8535d79598e971b0836bc99fa6c7e4e09082c4b384d312684645"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/dd-memory-mechanism.svg",
+   "width": "full"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 44.7052%, 69.802856%)": "#7eb8da",
+    "rgb(0%, 61.959839%, 45.097351%)": "#5cbf9a",
+    "rgb(10.195923%, 10.195923%, 10.195923%)": "#e8e6e3",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(74.116516%, 74.116516%, 74.116516%)": "#9ca3af",
+    "rgb(83.528137%, 36.862183%, 0%)": "#e0875a",
+    "rgb(85.096741%, 85.096741%, 85.096741%)": "#9ca3af",
+    "rgb(90.194702%, 62.35199%, 0%)": "#c9a96e"
+   },
+   "id": "controlled-effective-dynamics",
+   "numbers": {
+    "rms_loss_mass_only": 0.5,
+    "rms_loss_with_register": 0
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/controlled-effective-dynamics.png",
+   "port": {
+    "crop": "0.5,0.5,1,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The finite physical example of retained and eliminated modes: the resolved dynamics acquires the exact memory kernel from its coupling to the unresolved space, the coupling shrinking as the retained space grows; carrying the internal register changes a reference RMS loss of 1/2 to zero.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/extension/figures/controlled_effective_dynamics_v1.pdf",
+     "sha256": "580bda307600c21b9c69268fae57ae4de77c61ef2cf058fb7ba32aa58aba424e"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/controlled-effective-dynamics.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 44.7052%, 69.802856%)": "#7eb8da",
+    "rgb(0%, 61.959839%, 45.097351%)": "#5cbf9a",
+    "rgb(10.195923%, 10.195923%, 10.195923%)": "#e8e6e3",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(85.096741%, 85.096741%, 85.096741%)": "#9ca3af",
+    "rgb(90.194702%, 62.35199%, 0%)": "#c9a96e"
+   },
+   "id": "language-evidence",
+   "numbers": {
+    "budget_tokens": 4000,
+    "longmem_eligible": 42,
+    "qasper_eligible": 235
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/language-evidence.png",
+   "port": {
+    "crop": "0.675,0.08,1,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Panel (c) of the evidence-recovery figure: the frozen witness method and its controls at 4,000 tokens on 235 eligible QASPER questions and 42 LongMem questions, complete supplied evidence per method.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/extension/figures/language_evidence_v1.pdf",
+     "sha256": "11e80367a5a39f936ad417eaece896c68c35e1d453ef2587e9d468bd618750ab"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/language-evidence.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 0%, 0%)": "#e8e6e3",
+    "rgb(0%, 44.7052%, 69.802856%)": "#7eb8da",
+    "rgb(10.195923%, 10.195923%, 18.03894%)": "#7eb8da",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(90.194702%, 62.35199%, 0%)": "#c9a96e"
+   },
+   "id": "observable-sections",
+   "numbers": {
+    "records": 4
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/observable-sections.png",
+   "port": {
+    "crop": "0.66,0.11,1,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1600
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The paper's opening figure: (a) four source records with uniform single and pair marginals; (b) conditioning on two observations determines the third; (c) at a change of grade the child's retained distinctions and the rule used to assess them enter the parent together, with a residual certificate directing refinement.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/corpus-as-a-state/reconstruction/extension/figures/observable_sections.pdf",
+     "sha256": "b90194b0c78b001905ce35c5e8b9afa250426a28f3648abef502efed58ac9edb"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/observable-sections.svg",
+   "width": "half"
+  }
+ ],
+ "packet": "memory-ports"
+}

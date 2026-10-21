@@ -1,0 +1,599 @@
+{
+ "figures": [
+  {
+   "colour_map": {
+    "rgb(0%, 54.508972%, 54.508972%)": "#5cbf9a",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(12.940979%, 39.99939%, 67.449951%)": "#7eb8da",
+    "rgb(14.117432%, 15.293884%, 16.862488%)": "#e8e6e3",
+    "rgb(70.195007%, 23.136902%, 18.03894%)": "#e0875a",
+    "rgb(78.430176%, 52.940369%, 9.803772%)": "#e0875a"
+   },
+   "id": "yba-loss-geometry",
+   "numbers": {
+    "source": "fig_yba_self_consistent_loss_geometry"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/yba-loss-geometry.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 2200
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The endogenous loop of the coupled-evaluators paper: model, embodied interface and evaluator co-adapt; the evaluator approximates the embodied projection of the inaccessible fitness gradient.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/self-consistent-loss-geometries-coupled-evaluators/manuscript/imported/figures/fig_yba_self_consistent_loss_geometry.pdf",
+     "sha256": "350b6d294c216d2e78c6fe2a7a0294c74ccb40455013ebc5858b7d0d4e65ddd2"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/yba-loss-geometry.svg",
+   "width": "full"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 54.508972%, 54.508972%)": "#5cbf9a",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(12.940979%, 39.99939%, 67.449951%)": "#7eb8da",
+    "rgb(14.117432%, 15.293884%, 16.862488%)": "#e8e6e3",
+    "rgb(41.567993%, 31.764221%, 63.920593%)": "#7eb8da",
+    "rgb(41.960144%, 44.7052%, 50.195312%)": "#9ca3af",
+    "rgb(69.802856%, 22.744751%, 28.234863%)": "#e0875a",
+    "rgb(78.430176%, 52.940369%, 9.803772%)": "#e0875a"
+   },
+   "id": "yba-rg-commutation",
+   "numbers": {
+    "source": "fig_yba_rg_commutation"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/yba-rg-commutation.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Contraction over hidden refinements commutes with the free-energy form: eliminating X/Y then Y/Z agrees with eliminating X/Z directly, so a law is a fixed form under coarse-graining and renormalisation is a flow of couplings inside it.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/self-consistent-loss-geometries-coupled-evaluators/manuscript/imported/figures/fig_yba_rg_commutation.pdf",
+     "sha256": "3445ba7a9ff84c078c3745d9e7160cc2f8d994d2ca1806c2d2c1219021c89e6c"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/yba-rg-commutation.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 0%, 0%)": "#e8e6e3",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(12.548828%, 54.116821%, 36.077881%)": "#5cbf9a",
+    "rgb(12.940979%, 39.99939%, 67.449951%)": "#7eb8da",
+    "rgb(14.117432%, 15.293884%, 16.862488%)": "#e8e6e3",
+    "rgb(41.960144%, 44.7052%, 50.195312%)": "#9ca3af",
+    "rgb(69.802856%, 22.744751%, 28.234863%)": "#e0875a",
+    "rgb(84.70459%, 86.665344%, 90.194702%)": "#27486a"
+   },
+   "id": "yba-update-ensemble",
+   "numbers": {
+    "threshold": "L_eff = 0"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/yba-update-ensemble.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The update ensemble as a cost-gain ledger: each candidate perturbation has an embodied cost C_R and a predicted gain beta dF; the diagonal is the threshold L_eff = 0 and marker size is the Gibbs weight exp(beta dF - C).",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/self-consistent-loss-geometries-coupled-evaluators/manuscript/imported/figures/fig_yba_update_ensemble.pdf",
+     "sha256": "9412adac232a939d1d6aa75c9468a37aa69f3a82576f39652b8aa41156fb0b36"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/yba-update-ensemble.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 0%, 0%)": "#e8e6e3",
+    "rgb(0%, 54.508972%, 54.508972%)": "#5cbf9a",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(12.548828%, 54.116821%, 36.077881%)": "#5cbf9a",
+    "rgb(12.940979%, 39.99939%, 67.449951%)": "#7eb8da",
+    "rgb(14.117432%, 15.293884%, 16.862488%)": "#e8e6e3",
+    "rgb(41.567993%, 31.764221%, 63.920593%)": "#7eb8da",
+    "rgb(70.195007%, 23.136902%, 18.03894%)": "#e0875a",
+    "rgb(78.430176%, 52.940369%, 9.803772%)": "#e0875a",
+    "rgb(84.70459%, 86.665344%, 90.194702%)": "#27486a"
+   },
+   "id": "yba-cost-hierarchy",
+   "numbers": {
+    "levels": [
+     "sensation",
+     "attention",
+     "belief",
+     "policy",
+     "value",
+     "world model"
+    ]
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/yba-cost-hierarchy.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1600
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Scale as a price system: sensation, attention, belief, policy, value and world model in rising cost; a residual is promoted only where its residual gain exceeds the promotion cost C_{s+1} - C_s.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/self-consistent-loss-geometries-coupled-evaluators/manuscript/imported/figures/fig_yba_cost_hierarchy_promotion.pdf",
+     "sha256": "1d1139070853d82ac8e496f5ab95ed5c498ff7c07b294dee2dc3c3f5b6c81a6d"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/yba-cost-hierarchy.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#243039": "#7eb8da",
+    "#ebebff": "#27486a",
+    "#ebffeb": "#245a48"
+   },
+   "id": "ch3-evolution-square",
+   "numbers": {
+    "residue": "Delta = CG - BC"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch3-evolution-square.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.2,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The commuting square: aggregating the fine evolution gives C e^{tG} p(0), the fitted coarse law gives e^{tB} C p(0), their difference is E(t) p(0) with infinitesimal residue Delta p(0); the square commutes for every initial law when Delta = 0.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch3-evolution-square.svg",
+     "sha256": "a23fa9ba99f28432ef122275b9066b677bda9e5b4bae1dba14d6f6a142595b0a"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch3-evolution-square.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#243039": "#7eb8da",
+    "#e6e6ff": "#27486a",
+    "#fff0e0": "#6a3a26"
+   },
+   "id": "ch3-memory-flow",
+   "numbers": {
+    "terms": 3
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch3-memory-flow.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.2,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Exact elimination of w = Qx: the retained drift through PLP, the history route u -> w -> u with propagation e^{(t-s)QLQ} inside the eliminated space, and the separate forcing by the initial w(0); the three terms of the projected identity.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch3-memory-flow.svg",
+     "sha256": "ac880706337f6ad6bf863f616cb94d13f4f1cc53f93cfba1901b66b30ac184e5"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch3-memory-flow.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 0%, 0%)": "#e8e6e3",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(16.470337%, 61.567688%, 56.077576%)": "#5cbf9a",
+    "rgb(22.744751%, 43.136597%, 64.704895%)": "#7eb8da",
+    "rgb(69.018555%, 69.018555%, 69.018555%)": "#9ca3af"
+   },
+   "id": "vwo-convergence",
+   "numbers": {
+    "error_rank4": 0.279,
+    "error_two_directions": 0.000329,
+    "pool_rank6": 0.000494,
+    "precision_rank": 10
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/vwo-convergence.png",
+   "port": {
+    "crop": "0,0,0.345,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Panel (a) of the closure-guided paper's augmentation figure: energy error against active dimension for residual-vector augmentation and the weight-one/two Pauli pool at lambda = 1, from 2.79e-1 at rank 4 to numerical precision by rank 10.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/variational-wrong-object/manuscript/imported/figures/fig_constructive_convergence.pdf",
+     "sha256": "84897c299b9ce966243aa14259f4df63b12f1f08ae5a2f70d127d5c83b998421"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/vwo-convergence.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 0%, 0%)": "#e8e6e3",
+    "rgb(0%, 26.66626%, 53.33252%)": "#7eb8da",
+    "rgb(0%, 33.332825%, 26.66626%)": "#5cbf9a",
+    "rgb(0%, 46.665955%, 73.332214%)": "#7eb8da",
+    "rgb(0%, 59.999084%, 53.33252%)": "#5cbf9a",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(53.33252%, 53.33252%, 53.33252%)": "#9ca3af",
+    "rgb(59.999084%, 26.66626%, 0%)": "#e0875a",
+    "rgb(66.665649%, 19.999695%, 46.665955%)": "#d48fc7",
+    "rgb(66.665649%, 66.665649%, 66.665649%)": "#9ca3af",
+    "rgb(69.018555%, 69.018555%, 69.018555%)": "#9ca3af",
+    "rgb(73.332214%, 73.332214%, 73.332214%)": "#9ca3af",
+    "rgb(79.998779%, 19.999695%, 6.666565%)": "#e0875a",
+    "rgb(79.998779%, 79.998779%, 79.998779%)": "#9ca3af",
+    "rgb(93.331909%, 46.665955%, 19.999695%)": "#e0875a"
+   },
+   "id": "closure-results",
+   "numbers": {
+    "J_AB_C": 0.93,
+    "J_AC_B": 0.26,
+    "J_A_BC": 0.9,
+    "J_fast_mode": 30.9,
+    "accuracy_factor_t5": 72,
+    "spike_states": [
+     1,
+     9
+    ]
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-results.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 2200
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "(a) mean L1 prediction error against time for the partitions {A,C}|{B} (J = 0.26), {A,B}|{C} (0.93), {A}|{B,C} (0.90) and fast-mode compression (J = 30.9), the first 72 times more accurate at t = 5; (b) the weighted residue column profile sigma_j of the wrong partition spiking on states 1 and 9, the hidden shortcut endpoints.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/law-of-laws/manuscript/figures/fig_closure_results.pdf",
+     "sha256": "9c08c27d15b6e8a5bb87d60707d610e85619fbf6a70afe9fd5a38aebc99e6e6f"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-results.svg",
+   "width": "full"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 0%, 0%)": "#e8e6e3",
+    "rgb(0%, 46.665955%, 73.332214%)": "#7eb8da",
+    "rgb(0%, 59.999084%, 53.33252%)": "#5cbf9a",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(26.66626%, 26.66626%, 26.66626%)": "#e8e6e3",
+    "rgb(33.332825%, 33.332825%, 33.332825%)": "#e8e6e3",
+    "rgb(53.33252%, 53.33252%, 53.33252%)": "#9ca3af",
+    "rgb(59.999084%, 19.999695%, 6.666565%)": "#e0875a",
+    "rgb(66.665649%, 26.66626%, 13.33313%)": "#e0875a",
+    "rgb(66.665649%, 66.665649%, 66.665649%)": "#9ca3af",
+    "rgb(73.332214%, 73.332214%, 73.332214%)": "#9ca3af",
+    "rgb(79.998779%, 19.999695%, 6.666565%)": "#e0875a",
+    "rgb(79.998779%, 79.998779%, 79.998779%)": "#9ca3af",
+    "rgb(93.331909%, 46.665955%, 19.999695%)": "#e0875a",
+    "rgb(97.253418%, 97.253418%, 97.253418%)": "#0a0e1a"
+   },
+   "id": "closure-geometry",
+   "numbers": {
+    "effective_AC_coupling": 0.64,
+    "hub_rate": 0.4,
+    "intra_rates": [
+     30,
+     12
+    ],
+    "shortcut_rate": 2.0
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-geometry.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "(a) three hub-and-spoke blocks joined by slow hub-to-hub rates 0.4 with a hidden shortcut of rate 2.0 between spoke 1 in A and spoke 9 in C; (b) the block structure: one hub, three spokes, rates 30 hub to spoke and 12 spoke to hub and spoke to spoke.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/law-of-laws/manuscript/figures/fig_closure_geometry.pdf",
+     "sha256": "248ae21fa5f78a6039bdb2960e3e6904c536dcc7b9c440cbb99c161d1e3357f4"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-geometry.svg",
+   "width": "half"
+  },
+  {
+   "id": "ol-scale-flow",
+   "numbers": {
+    "verbatim_copy_sha256": "1a771dfab0cc00e59efc2af8414d1767a9fb57e01e4840d8d6476df8b1003d2e"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ol-scale-flow.png",
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "reuse": true,
+   "shows": "The Loss Hamiltonian paper's scale-flow figure: how the loss operator's content moves across scales under the recursive scale principle. Verbatim copy; the deck inverts it.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/operatorial-loss/manuscript/imported/figures/scale_flow.png",
+     "sha256": "1a771dfab0cc00e59efc2af8414d1767a9fb57e01e4840d8d6476df8b1003d2e"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ol-scale-flow.png",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 0%, 0%)": "#e8e6e3",
+    "rgb(0%, 26.66626%, 53.33252%)": "#7eb8da",
+    "rgb(0%, 33.332825%, 26.66626%)": "#5cbf9a",
+    "rgb(0%, 46.665955%, 73.332214%)": "#7eb8da",
+    "rgb(0%, 59.999084%, 53.33252%)": "#5cbf9a",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(53.33252%, 53.33252%, 53.33252%)": "#9ca3af",
+    "rgb(59.999084%, 26.66626%, 0%)": "#e0875a",
+    "rgb(66.665649%, 19.999695%, 46.665955%)": "#d48fc7",
+    "rgb(66.665649%, 66.665649%, 66.665649%)": "#9ca3af",
+    "rgb(69.018555%, 69.018555%, 69.018555%)": "#9ca3af",
+    "rgb(73.332214%, 73.332214%, 73.332214%)": "#9ca3af",
+    "rgb(79.998779%, 19.999695%, 6.666565%)": "#e0875a",
+    "rgb(79.998779%, 79.998779%, 79.998779%)": "#9ca3af",
+    "rgb(93.331909%, 46.665955%, 19.999695%)": "#e0875a"
+   },
+   "id": "closure-results-a",
+   "numbers": {
+    "J_AB_C": 0.93,
+    "J_AC_B": 0.26,
+    "J_A_BC": 0.9,
+    "J_fast_mode": 30.9,
+    "accuracy_factor_t5": 72,
+    "spike_states": [
+     1,
+     9
+    ]
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-results-a.png",
+   "port": {
+    "crop": "0,0,0.5,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Panel (a): mean L1 prediction error against time for the four coarse-grainings, with their closure losses in the legend; {A,C}|{B} is 72 times more accurate at t = 5.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/law-of-laws/manuscript/figures/fig_closure_results.pdf",
+     "sha256": "9c08c27d15b6e8a5bb87d60707d610e85619fbf6a70afe9fd5a38aebc99e6e6f"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-results-a.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 0%, 0%)": "#e8e6e3",
+    "rgb(0%, 26.66626%, 53.33252%)": "#7eb8da",
+    "rgb(0%, 33.332825%, 26.66626%)": "#5cbf9a",
+    "rgb(0%, 46.665955%, 73.332214%)": "#7eb8da",
+    "rgb(0%, 59.999084%, 53.33252%)": "#5cbf9a",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(53.33252%, 53.33252%, 53.33252%)": "#9ca3af",
+    "rgb(59.999084%, 26.66626%, 0%)": "#e0875a",
+    "rgb(66.665649%, 19.999695%, 46.665955%)": "#d48fc7",
+    "rgb(66.665649%, 66.665649%, 66.665649%)": "#9ca3af",
+    "rgb(69.018555%, 69.018555%, 69.018555%)": "#9ca3af",
+    "rgb(73.332214%, 73.332214%, 73.332214%)": "#9ca3af",
+    "rgb(79.998779%, 19.999695%, 6.666565%)": "#e0875a",
+    "rgb(79.998779%, 79.998779%, 79.998779%)": "#9ca3af",
+    "rgb(93.331909%, 46.665955%, 19.999695%)": "#e0875a"
+   },
+   "id": "closure-results-b",
+   "numbers": {
+    "J_AB_C": 0.93,
+    "J_AC_B": 0.26,
+    "J_A_BC": 0.9,
+    "J_fast_mode": 30.9,
+    "accuracy_factor_t5": 72,
+    "spike_states": [
+     1,
+     9
+    ]
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-results-b.png",
+   "port": {
+    "crop": "0.5,0,1,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Panel (b): the weighted residue column profile sigma_j of the wrong partition {A,B}|{C}, spiking on states 1 and 9, the hidden shortcut endpoints.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/law-of-laws/manuscript/figures/fig_closure_results.pdf",
+     "sha256": "9c08c27d15b6e8a5bb87d60707d610e85619fbf6a70afe9fd5a38aebc99e6e6f"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-results-b.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#000000": "#e8e6e3",
+    "#0072b2": "#7eb8da",
+    "#009e73": "#5cbf9a",
+    "#bbbbbb": "#9ca3af",
+    "#cc79a7": "#d48fc7",
+    "#cccccc": "#9ca3af",
+    "#d55e00": "#e0875a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "ch3-memory",
+   "numbers": {
+    "return_time": 31.2,
+    "scale_separations": [
+     20,
+     5,
+     2,
+     0.8
+    ],
+    "v0": 0.7
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch3-memory.png",
+   "port": {
+    "crop": "0,0,0.49,0.485",
+    "font_family": "Inter",
+    "font_scale": 1.2,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "(a) exact retained two-mode trajectories against their memoryless approximations at four scale separations gamma; (b) a decaying kernel against the constant kernel of the four-dimensional rotation model; (c) the memory and hidden-initial contributions for v(0) = 0.7.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch3-memory.svg",
+     "sha256": "db11a3bbc9878085990747f9b355f6a4ca4343114648e4ffa006f83c9ba2e22a"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch3-memory.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#000000": "#e8e6e3",
+    "#0072b2": "#7eb8da",
+    "#009e73": "#5cbf9a",
+    "#999999": "#9ca3af",
+    "#bbbbbb": "#9ca3af",
+    "#cccccc": "#9ca3af",
+    "#d55e00": "#e0875a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "ch3-diffusion",
+   "numbers": {
+    "levels_compared": 6,
+    "reference_slope": "second order"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch3-diffusion.png",
+   "port": {
+    "crop": "0,0,0.475,1",
+    "font_family": "Inter",
+    "font_scale": 1.2,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Harmonic diffusion in self-adjoint coordinates: (a) the first six levels of H against -T times the separately discretised Fokker-Planck eigenvalues; (b) fixed-domain spectral error against grid spacing with the second-order reference slope.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch3-diffusion.svg",
+     "sha256": "242e6c848070548fdda82c3760e487830db5428fb9a3e27127445e9b1c032a34"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch3-diffusion.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#000000": "#e8e6e3",
+    "#0072b2": "#7eb8da",
+    "#999999": "#9ca3af",
+    "#d55e00": "#e0875a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "dd-operator-projection",
+   "numbers": {
+    "operator_fraction": "about 0.5",
+    "samples_per_point": 2000,
+    "seed": 20240603
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/dd-operator-projection.png",
+   "port": {
+    "crop": "0.505,0,1,1",
+    "font_family": "Inter",
+    "font_scale": 1.2,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "(a) scalar-gradient variance falling with qubit number n; (b) the normalised operator-gradient fraction r_op = ||A||^2 / ||O||^2 staying near one half; seed 20240603, 2,000 samples per point; local and global observable ensembles nearly coincide.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-operator-projection.svg",
+     "sha256": "3f24a220bf5c7fbba14aac638b12c7fe352ebfc48bf1b37261ce5d092f6d374a"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/dd-operator-projection.svg",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "rgb(0%, 0%, 0%)": "#e8e6e3",
+    "rgb(0%, 52.548218%, 65.881348%)": "#7eb8da",
+    "rgb(100%, 100%, 100%)": "#0a0e1a",
+    "rgb(4.31366%, 32.548523%, 58.03833%)": "#7eb8da",
+    "rgb(41.567993%, 19.607544%, 62.35199%)": "#d48fc7",
+    "rgb(69.018555%, 69.018555%, 69.018555%)": "#9ca3af",
+    "rgb(79.998779%, 0%, 0%)": "#e0875a",
+    "rgb(79.998779%, 79.998779%, 79.998779%)": "#9ca3af"
+   },
+   "id": "dd-hmf-ground-state",
+   "numbers": {
+    "bath_energies": [
+     0.2,
+     1.8
+    ],
+    "v_k_squared": "4 nu_k exp(-nu_k/2)"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/dd-hmf-ground-state.png",
+   "port": {
+    "crop": "0.02,0,0.5,1",
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The briefing's cold-spin figure: (a) lines -<sigma_z>_0 = S_g + Delta A_g predicted from the bath spectrum against points from independent diagonalisation, for the tunnelling energies in the legend and coupling g on the axis; (b) the conditional-bath trial's predicted thermal coordinate a'_0 = -h_0 against the numerical ground states; bath energies nu_k = (0.2, 1.8).",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/figures/generated/dd-hmf-physical-ground-state-20261016.pdf",
+     "sha256": "59c0464e50e58bf6886dd1a743bba3eadc23b453c5ddc415fd918662a10367f1"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/dd-hmf-ground-state.svg",
+   "width": "half"
+  }
+ ],
+ "packet": "synthetics-ports"
+}

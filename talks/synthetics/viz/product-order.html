@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>product-order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet. Palette and rules: talks/synthetics/STYLE.md. Built from tools/applet-template.html. */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .caption { flex: 0 0 auto; text-align: center; font-family: Lora, Georgia, serif; font-size: 20px;
+    color: #e8e6e3; padding: 6px 12px 10px; white-space: nowrap; overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+  <div class="caption" id="caption">Flattening the product order into one list adds 0.0730 nats</div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);   // unused: the worked example is exact
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ---------- the construction ----------
+   top (chapter-01.tex:236-276, table tab:ch1-rank-composition): p_A = (0.6, 0.4), p_B = (0.7, 0.3);
+   joint p_i q_j; product-order count r_A r_B; global rank = position in the decreasing list of joints,
+   ties broken so a dominating pair precedes; tuple cost E[ln r_A + ln r_B], sorted cost E[ln r].
+   bottom (06_degeneracy.tex:72-82; chapter-01.tex:278): an n-fold shell at rank r flattened into
+   ranks r..r+n-1 costs delta_r = (1/n) sum_{k<n} ln((r+k)/r). n = 4, one of the source's multiplicities. */
+const PA = [0.6, 0.4], PB = [0.7, 0.3];
+const PAIRS = [];
+for (let i = 1; i <= 2; i++) for (let j = 1; j <= 2; j++) PAIRS.push({ i, j, p: PA[i - 1] * PB[j - 1], count: i * j });
+[...PAIRS].sort((a, b) => b.p - a.p || a.i - b.i || a.j - b.j).forEach((q, k) => { q.rank = k + 1; });
+const TUPLE = PAIRS.reduce((s, q) => s + q.p * (Math.log(q.i) + Math.log(q.j)), 0);
+const SORTED = PAIRS.reduce((s, q) => s + q.p * Math.log(q.rank), 0);
+const EXCESS = SORTED - TUPLE;
+const NSH = 4;
+const delta = r => { let s = 0; for (let k = 0; k < NSH; k++) s += Math.log((r + k) / r); return s / NSH; };
+const RSTEPS = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
+const STEP = 1.0;                                  // seconds per shell position; r = 89 from t = 8.4 s, settled at 12 s
+window.__po = { PAIRS, TUPLE, SORTED, EXCESS, delta };
+const ease = u => u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u);
+function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+// text with a subscript, e.g. ("r", "A"); the subscript stays at the 15 px floor
+function subText(base, sub, x, y, size, col, align) {
+  ctx.font = `${size}px ${FONT.mono}`; const wb = ctx.measureText(base).width;
+  ctx.font = `15px ${FONT.mono}`; const ws = ctx.measureText(sub).width; const w = wb + ws;
+  const x0 = align === "center" ? x - w / 2 : align === "right" ? x - w : x;
+  ctx.fillStyle = col; ctx.textAlign = "left"; ctx.font = `${size}px ${FONT.mono}`; ctx.fillText(base, x0, y);
+  ctx.font = `15px ${FONT.mono}`; ctx.fillText(sub, x0 + wb, y + 5); return w;
+}
+
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const pad = 14, split = Math.round(H * 0.56);
+  // ======== top: the worked pair on the 2 x 2 grid
+  const gx = pad + 58, gy = 50, cw = Math.min(150, (W * 0.62 - gx) / 2), ch = Math.min(96, (split - gy - 14) / 2);
+  ctx.textBaseline = "alphabetic";
+  subText("p", "B", gx + cw, 18, 16, C.muted, "center");
+  [0, 1].forEach(j => { ctx.font = `16px ${FONT.mono}`; ctx.fillStyle = C.ink; ctx.textAlign = "center"; ctx.fillText(PB[j].toFixed(1), gx + (j + 0.5) * cw, gy - 10); });
+  subText("p", "A", gx - 50, gy + ch + 5, 16, C.muted, "left");
+  [0, 1].forEach(i => { ctx.font = `16px ${FONT.mono}`; ctx.fillStyle = C.ink; ctx.textAlign = "right"; ctx.fillText(PA[i].toFixed(1), gx - 8, gy + (i + 0.5) * ch + 6); });
+  PAIRS.forEach(q => {
+    const x = gx + (q.j - 1) * cw, y = gy + (q.i - 1) * ch, inc = q.i !== q.j;
+    ctx.fillStyle = `rgba(126,184,218,${(0.06 + 0.5 * q.p).toFixed(3)})`; ctx.fillRect(x + 2, y + 2, cw - 4, ch - 4);
+    if (inc) { ctx.strokeStyle = C.gold; ctx.lineWidth = 2.6; roundRect(x + 3, y + 3, cw - 6, ch - 6, 6); ctx.stroke(); }
+    ctx.font = `600 22px ${FONT.mono}`; ctx.fillStyle = inc ? C.gold : C.ink; ctx.textAlign = "center";
+    ctx.fillText(q.p.toFixed(2), x + cw / 2, y + ch * 0.42);
+    ctx.font = `15px ${FONT.sans}`; ctx.fillStyle = C.ink;
+    ctx.textAlign = "left"; ctx.fillText(`count ${q.count}`, x + 10, y + ch - 14);
+    ctx.textAlign = "right"; ctx.fillText(`rank ${q.rank}`, x + cw - 10, y + ch - 14);
+  });
+  // costs, read from the grid above
+  const tx = gx + 2 * cw + Math.max(24, W * 0.05), tw = Math.min(230, W - pad - tx);
+  const rows = [["tuple", TUPLE, C.ink], ["sorted", SORTED, C.ink], ["excess", EXCESS, C.orange]];
+  ctx.font = `15px ${FONT.sans}`; ctx.fillStyle = C.muted; ctx.textAlign = "right"; ctx.fillText("nats", tx + tw, gy - 10);
+  rows.forEach(([name, v, col], k) => {
+    const y = gy + 18 + k * 28;
+    ctx.font = `16px ${FONT.sans}`; ctx.fillStyle = C.muted; ctx.textAlign = "left"; ctx.fillText(name, tx, y);
+    ctx.font = `600 18px ${FONT.mono}`; ctx.fillStyle = col; ctx.textAlign = "right"; ctx.fillText(v.toFixed(4), tx + tw, y);
+  });
+  ctx.font = `15px ${FONT.sans}`; ctx.fillStyle = C.muted;
+  ctx.textAlign = "left"; const ky = gy + 2 * ch - 30; ctx.fillText("count =", tx, ky);
+  ctx.font = `15px ${FONT.sans}`; let kx = tx + ctx.measureText("count = ").width;
+  kx += subText("r", "A", kx, ky, 15, C.muted, "left") + 6; subText("r", "B", kx, ky, 15, C.muted, "left");
+  ctx.font = `15px ${FONT.sans}`; ctx.fillStyle = C.muted; ctx.textAlign = "left"; ctx.fillText("rank = sorted line", tx, gy + 2 * ch - 8);
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad, split); ctx.lineTo(W - pad, split); ctx.stroke();
+  // ======== bottom: flattening an n-fold shell at rank r
+  const tt = Math.min(t, SETTLE_AT);
+  const LEAD = 0.6;                                // each step's spread is complete by the whole second
+  const s = Math.min(RSTEPS.length - 1, Math.floor((tt + LEAD) / STEP)), r = RSTEPS[s];
+  const spread = ease(((tt + LEAD - s * STEP) / STEP) / 0.5);
+  const bx0 = pad + 18, bx1 = Math.round(W * 0.47), by = H - 40, slotW = (bx1 - bx0) / NSH;
+  const BMAX = Math.log(NSH), bh = (by - 26) - (split + 40);      // tallest bar: ln((1+3)/1) at r = 1
+  ctx.strokeStyle = "rgba(232,230,227,0.45)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(bx0, by); ctx.lineTo(bx1, by); ctx.stroke();
+  for (let k = 0; k < NSH; k++) {
+    const cx = bx0 + (k + 0.5) * slotW;
+    ctx.strokeStyle = "rgba(232,230,227,0.45)"; ctx.beginPath(); ctx.moveTo(cx, by - 4); ctx.lineTo(cx, by + 4); ctx.stroke();
+    ctx.font = `15px ${FONT.mono}`; ctx.fillStyle = C.muted; ctx.textAlign = "center"; ctx.fillText(k ? `r+${k}` : "r", cx, by + 22);
+    const h = (Math.log((r + k) / r) / BMAX) * bh * spread;
+    ctx.fillStyle = C.orange; ctx.fillRect(cx - slotW * 0.22, by - 12 - h, slotW * 0.44, h);
+    const dx = bx0 + 0.5 * slotW + (cx - bx0 - 0.5 * slotW) * spread, dy = by - 6 - (1 - spread) * k * 12;
+    ctx.fillStyle = C.blue; ctx.beginPath(); ctx.arc(dx, dy, 5.5, 0, 2 * Math.PI); ctx.fill();
+  }
+  ctx.font = `16px ${FONT.mono}`; ctx.fillStyle = C.ink; ctx.textAlign = "left";
+  ctx.fillText(`n = ${NSH},  r = ${r}`, bx0, split + 26);
+  // delta_r against r on a log axis, marker at the current r
+  const qx0 = Math.round(W * 0.57), qx1 = W - pad - 6, qy0 = split + 40, qy1 = H - 40;
+  const RMAX = 100, DMAX = delta(1) * 1.08;
+  const X = v => qx0 + Math.log10(v) / Math.log10(RMAX) * (qx1 - qx0), Y = d => qy1 - d / DMAX * (qy1 - qy0);
+  ctx.strokeStyle = "rgba(232,230,227,0.45)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(qx0, qy0); ctx.lineTo(qx0, qy1); ctx.lineTo(qx1, qy1); ctx.stroke();
+  ctx.strokeStyle = C.blue; ctx.lineWidth = 2.2; ctx.beginPath();
+  for (let k = 0; k <= 120; k++) { const v = Math.pow(RMAX, k / 120), x = X(v), y = Y(delta(v)); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
+  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(X(r), Y(delta(r)), 5, 0, 2 * Math.PI); ctx.fill();
+  ctx.font = `15px ${FONT.mono}`; ctx.fillStyle = C.muted; ctx.textAlign = "center";
+  [1, 10, 100].forEach(v => ctx.fillText(String(v), X(v), qy1 + 20));
+  ctx.textAlign = "left"; ctx.fillStyle = C.ink; ctx.font = `16px ${FONT.mono}`;
+  const w = subText("δ", "r", qx0 + 8, qy0 - 14, 16, C.ink, "left");
+  ctx.font = `600 16px ${FONT.mono}`; ctx.fillStyle = C.orange; ctx.textAlign = "right"; ctx.fillText(delta(r).toFixed(3), qx1, qy0 - 14);
+  ctx.font = `15px ${FONT.sans}`; ctx.fillStyle = C.muted; ctx.textAlign = "center"; ctx.fillText("shell rank r", (qx0 + qx1) / 2, H - 4);
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+}
+window.__applet = { id: "product-order", ready: false, settled: false };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>log-cost</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet. Palette and rules: talks/synthetics/STYLE.md. Built from tools/applet-template.html. */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .caption { flex: 0 0 auto; text-align: center; font-family: Lora, Georgia, serif; font-size: 20px;
+    color: #e8e6e3; padding: 6px 12px 10px; white-space: nowrap; overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+  <div class="caption" id="caption">Pair rank is the product of ranks, and only ln r passes f(rs) = f(r) + f(s)</div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);   // unused: this applet has no random field
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+const PHASE = 4;                               // one composite per 4 s; the three composites loop every 12 s
+if (reduced) clock = 2 * PHASE + 3.5;          // settled view: the last composite with its verdicts shown
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ---------- the construction (03_rank_logrank.tex:137-162; chapter-01.tex:216) ----------
+   product rank r(x,y) = r(x) r(y); costs add, so f(rs) = f(r) + f(s).
+   Candidate schedules exactly as the source producer draws them
+   (synthetics-foundations/numerics/chapter-one/coc.py:223): ln r, 0.35(r-1), sqrt(r)-1. */
+const N = 5;
+const SCHED = [
+  { name: "ln r",        f: r => Math.log(r) },
+  { name: "0.35(r−1)", f: r => 0.35 * (r - 1) },
+  { name: "√r − 1", f: r => Math.sqrt(r) - 1 },
+];
+const TESTS = [[2, 2], [2, 3], [3, 3]];
+const FMAX = Math.max(...TESTS.flatMap(([a, b]) => SCHED.flatMap(s => [s.f(a * b), s.f(a) + s.f(b)])));
+const ease = u => u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u);
+// text with a subscript; the subscript stays at the 15 px floor
+function subText(base, sub, x, y, size, col, align, font) {
+  const f = font || FONT.mono;
+  ctx.font = `${size}px ${f}`; const wb = ctx.measureText(base).width;
+  ctx.font = `15px ${f}`; const ws = ctx.measureText(sub).width; const w = wb + ws;
+  const x0 = align === "center" ? x - w / 2 : align === "right" ? x - w : x;
+  ctx.fillStyle = col; ctx.textAlign = "left"; ctx.font = `${size}px ${f}`; ctx.fillText(base, x0, y);
+  ctx.font = `15px ${f}`; ctx.fillText(sub, x0 + wb, y + 5); return w;
+}
+function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const tl = ((t % (3 * PHASE)) + 3 * PHASE) % (3 * PHASE);
+  const k = Math.floor(tl / PHASE), u = tl - k * PHASE;
+  const [a, b] = TESTS[k], n = a * b;
+  // ---- left: the composition grid of pairs, entries r_A r_B, cells shaded by cost ln(r_A r_B)
+  const pad = 16, top = 40;
+  const gs = Math.min(W * 0.56 - 2 * pad - 26, H - top - 76);
+  const cs = gs / N, gx = pad + 38, gy = top + 4;
+  ctx.textBaseline = "alphabetic";
+  { const cxm = gx + gs / 2; subText("r", "A", cxm - 14, top - 14, 18, C.ink, "right");
+    ctx.font = `18px ${FONT.mono}`; ctx.fillStyle = C.ink; ctx.textAlign = "center"; ctx.fillText("\u00d7", cxm, top - 14);
+    subText("r", "B", cxm + 14, top - 14, 18, C.ink, "left"); }
+  for (let i = 1; i <= N; i++) for (let j = 1; j <= N; j++) {
+    const x = gx + (j - 1) * cs, y = gy + (i - 1) * cs;
+    const cost = Math.log(i * j) / Math.log(N * N);
+    ctx.fillStyle = `rgba(126,184,218,${(0.42 - 0.36 * cost).toFixed(3)})`; ctx.fillRect(x + 1, y + 1, cs - 2, cs - 2);
+    const hit = i === a && j === b;
+    ctx.fillStyle = hit ? C.gold : (i * j === n ? C.ink : "rgba(232,230,227,0.75)");
+    ctx.font = `${hit ? 600 : 400} ${Math.max(15, Math.round(cs * 0.34))}px ${FONT.mono}`; ctx.textBaseline = "middle";
+    ctx.fillText(String(i * j), x + cs / 2, y + cs / 2 + 1);
+  }
+  // equal-rank hyperbolae i j = c through the cell centres
+  const X = j => gx + (j - 0.5) * cs, Y = i => gy + (i - 0.5) * cs;
+  const hyper = (c, col, lw, dash) => { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.setLineDash(dash); ctx.beginPath(); let first = true;
+    for (let s = 0; s <= 200; s++) { const j = 0.6 + (N - 0.2) * s / 200, i = c / j; if (i < 0.6 || i > N + 0.4) { first = true; continue; }
+      if (first) { ctx.moveTo(X(j), Y(i)); first = false; } else ctx.lineTo(X(j), Y(i)); } ctx.stroke(); ctx.setLineDash([]); };
+  [2, 3, 4, 6, 8, 9, 12, 16].forEach(c => { if (c !== n) hyper(c, "rgba(156,163,175,0.45)", 1, [3, 4]); });
+  hyper(n, C.gold, 2.4, []);
+  // the highlighted pair (gold: the composite under test)
+  ctx.strokeStyle = C.gold; ctx.lineWidth = 3; roundRect(gx + (b - 1) * cs + 2, gy + (a - 1) * cs + 2, cs - 4, cs - 4, 5); ctx.stroke();
+  // axes
+  ctx.fillStyle = C.muted; ctx.font = `15px ${FONT.sans}`; ctx.textBaseline = "middle";
+  for (let i = 1; i <= N; i++) { ctx.textAlign = "right"; ctx.fillText(String(i), gx - 8, Y(i)); ctx.textAlign = "center"; ctx.fillText(String(i), X(i), gy + gs + 14); }
+  ctx.textBaseline = "alphabetic"; ctx.textAlign = "center"; ctx.fillStyle = C.ink; ctx.font = `16px ${FONT.sans}`;
+  subText("rank r", "B", gx + gs / 2, gy + gs + 38, 16, C.ink, "center", FONT.sans);
+  ctx.save(); ctx.translate(gx - 34, gy + gs / 2); ctx.rotate(-Math.PI / 2); subText("rank r", "A", 0, 0, 16, C.ink, "center", FONT.sans); ctx.restore();
+  ctx.fillStyle = C.muted; ctx.font = `15px ${FONT.sans}`; ctx.textAlign = "center"; ctx.fillText("brighter = cheaper", gx + gs / 2, gy + gs + 62);
+  // ---- right: the additivity test f(ab) = f(a) + f(b) for the three schedules
+  const rx = gx + gs + Math.max(28, W * 0.05), rw = W - rx - pad;
+  ctx.fillStyle = C.ink; ctx.font = `600 18px ${FONT.mono}`; ctx.textAlign = "left";
+  ctx.fillText(`f(${n}) = f(${a}) + f(${b}) ?`, rx, top - 12);
+  const rowH = Math.min(140, (H - top - 56) / 3), barW = rw - 38;
+  // legend: filled bar = f(ab), outlined pieces = f(a) + f(b)
+  { const ly = top + 3 * rowH + 34; ctx.font = `15px ${FONT.mono}`; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = "rgba(126,184,218,0.85)"; ctx.fillRect(rx, ly - 12, 22, 14); ctx.fillStyle = C.ink; ctx.fillText(`f(${n})`, rx + 28, ly);
+    const x2 = rx + 28 + ctx.measureText(`f(${n})`).width + 22; ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.strokeRect(x2 + 0.5, ly - 12, 22, 14);
+    ctx.fillText(`f(${a}) + f(${b})`, x2 + 28, ly); }
+  const grow = ease(u / 1.2), showMark = u >= 1.3, showVerdict = u >= 2.0;
+  SCHED.forEach((s, idx) => {
+    const y0 = top + 8 + idx * rowH;
+    const lhs = s.f(n), rhs = s.f(a) + s.f(b), pass = Math.abs(lhs - rhs) < 1e-9;
+    ctx.fillStyle = C.ink; ctx.font = `17px ${FONT.mono}`; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+    ctx.fillText(s.name, rx, y0 + 18);
+    // bar: f(ab); stacked outline: f(a) + f(b)
+    const by = y0 + 30, bh = 24, sc = barW / FMAX;
+    ctx.fillStyle = C.card; ctx.fillRect(rx, by, barW, bh);
+    ctx.fillStyle = "rgba(126,184,218,0.85)"; ctx.fillRect(rx, by, lhs * sc * grow, bh);
+    if (showMark) {
+      const fa = s.f(a) * sc, fb = s.f(b) * sc;
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.setLineDash([]);
+      ctx.strokeRect(rx + 0.5, by - 5, fa, bh + 10); ctx.strokeRect(rx + fa + 0.5, by - 5, fb, bh + 10);
+    }
+    ctx.font = `15px ${FONT.mono}`; ctx.fillStyle = C.muted; ctx.textAlign = "left";
+    if (showMark) ctx.fillText(`${lhs.toFixed(2)} ${pass ? "=" : "≠"} ${s.f(a).toFixed(2)} + ${s.f(b).toFixed(2)}`, rx, by + bh + 26);
+    if (showVerdict) {
+      ctx.font = `600 26px ${FONT.sans}`; ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      ctx.fillStyle = pass ? C.ink : C.orange; ctx.fillText(pass ? "✓" : "✗", W - pad, by + bh / 2);
+    }
+  });
+}
+function settled(t) { return reduced; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused) requestAnimationFrame(frame);
+}
+window.__applet = { id: "log-cost", ready: false, settled: false };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

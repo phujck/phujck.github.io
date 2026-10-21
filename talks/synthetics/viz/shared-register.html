@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>shared-register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .controls { flex: 0 0 auto; display: flex; justify-content: center; align-items: center; gap: 14px;
+    padding: 6px 10px 10px; font-size: 15px; color: #9ca3af; }
+  .controls label { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .controls input[type=range] { width: 140px; accent-color: #7eb8da; }
+  .controls .val { font-family: "JetBrains Mono", monospace; color: #e8e6e3; min-width: 3.4em; text-align: right; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+  <div class="controls">
+    <label>&theta; <input id="th" type="range" min="0" max="3.1416" step="0.001" value="0"><span class="val" id="thv">0.000</span></label>
+    <label>C<sub style="font-size:15px">part</sub> <input id="cp" type="range" min="0" max="0.6" step="0.005" value="0.25"><span class="val" id="cpv">0.250</span></label>
+  </div>
+</div>
+<script>
+"use strict";
+// COMPUTE-BEGIN
+/* The shared-register toy, coupled-evaluators paper Sec. IX.A (09_numerical_demonstrations.tex,
+   eqs. num-toy-evaluator-losses .. num-toy-agent-c-optimum) and the briefing chapter
+   the-price-of-a-shared-description.tex (eqs. register-losses .. register-phase-boundary). */
+const PAR = { gamma: 1.0, eta: 0.8, cpart: 0.25 };
+const d2 = th => 2 * (1 - Math.cos(th));                         // d^2 = |a - b|^2
+function bisect(f, lo, hi) {                                     // root of f on [lo, hi], or null
+  let flo = f(lo), fhi = f(hi); if (flo === 0) return lo; if (flo * fhi > 0) return null;
+  for (let i = 0; i < 200; i++) { const m = 0.5 * (lo + hi), fm = f(m); if (flo * fm <= 0) { hi = m; fhi = fm; } else { lo = m; flo = fm; } }
+  return 0.5 * (lo + hi);
+}
+function registerModel(gamma, eta, cpart) {
+  const LA = th => d2(th) / 8;                                   // fixed equal-weight register
+  const share = th => d2(th) * (0.5 + gamma) / 4;                // balanced arbitration, alpha = 1/2
+  const suppress = () => eta / 2;                                // boundary alpha in {0, 1}
+  const LB = th => Math.min(share(th), suppress());              // arbitration, no split
+  const LC = th => Math.min(LB(th), cpart);                      // split register at C_part
+  const regime = th => { const s = share(th), u = suppress(); return cpart < Math.min(s, u) ? "split" : (s <= u ? "share" : "suppress"); };
+  const thetaSplit = bisect(th => LB(th) - cpart, 0, Math.PI);   // L_B*(theta) = C_part
+  const thetaAtt = bisect(th => (0.5 + gamma) * d2(th) - 2 * eta, 0, Math.PI);  // A(theta) = 2 eta
+  return { LA, LB, LC, share, suppress, regime, thetaSplit, thetaAtt };
+}
+// COMPUTE-END
+
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 10;
+if (reduced) clock = SETTLE_AT;
+let manual = null;                                               // theta set by the slider
+const thetaAt = t => manual !== null ? manual : 0.05 + (Math.PI - 0.05) * Math.min(1, Math.max(0, t / SETTLE_AT));
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+function txt(s, x, y, o) {
+  o = o || {}; ctx.fillStyle = o.color || C.muted; ctx.font = `${o.weight || 400} ${o.size || 15}px ${o.font || FONT.sans}`;
+  ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic"; ctx.fillText(s, x, y);
+}
+function lab(sub, xr, y, col) {             // right-aligned L with superscript * and a subscript
+  ctx.font = `400 15px ${FONT.serif}`; const ws = ctx.measureText(sub).width;
+  ctx.font = `400 19px ${FONT.serif}`; const wl = ctx.measureText("L").width; const x = xr - ws - wl - 1;
+  txt("L", x, y, { color: col, font: FONT.serif, size: 19 });
+  txt("*", x + wl + 1, y - 8, { color: col, font: FONT.serif, size: 15 });
+  txt(sub, x + wl + 1, y + 5, { color: col, font: FONT.serif, size: 15 });
+}
+function symval(sub, v, x, y, col) {        // θ with a subscript, then its value
+  txt("θ", x, y, { color: col, font: FONT.serif, size: 18 }); ctx.font = `400 18px ${FONT.serif}`; const w1 = ctx.measureText("θ").width;
+  txt(sub, x + w1 + 1, y + 5, { color: col, size: 15 }); ctx.font = `400 15px ${FONT.sans}`; const w2 = ctx.measureText(sub).width;
+  txt("= " + v.toFixed(3), x + w1 + w2 + 6, y, { color: col, font: FONT.mono });
+}
+function dot(x, y, r, c) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); }
+function ring(x, y, r, c, w) { ctx.strokeStyle = c; ctx.lineWidth = w || 1.5; ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, 2 * Math.PI); ctx.stroke(); }
+
+const thIn = document.getElementById("th"), cpIn = document.getElementById("cp");
+const thV = document.getElementById("thv"), cpV = document.getElementById("cpv");
+let cpart = PAR.cpart, M = registerModel(PAR.gamma, PAR.eta, cpart);
+thIn.addEventListener("input", () => { manual = Number(thIn.value); draw(clock); });
+cpIn.addEventListener("input", () => { cpart = Number(cpIn.value); M = registerModel(PAR.gamma, PAR.eta, cpart); draw(clock); });
+
+/* ---------- the applet ---------- */
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const th = thetaAt(t), reg = M.regime(th);
+  thIn.value = th.toFixed(3); thV.textContent = th.toFixed(3); cpV.textContent = cpart.toFixed(3);
+
+  // left: the plane with targets a, b(theta), the compromise q* and the two loss circles
+  const PW = Math.min(Math.round(W * 0.40), H), pad = 12;
+  const xr = [-1.3, 1.45], yr = [-0.45, 1.35], s = Math.min((PW - 2 * pad) / (xr[1] - xr[0]), (H - 2 * pad) / (yr[1] - yr[0]));
+  const ox = pad + (PW - 2 * pad - s * (xr[1] - xr[0])) / 2 - s * xr[0], oy = H / 2 + s * (yr[1] + yr[0]) / 2;
+  const X = v => ox + s * v, Y = v => oy - s * v;
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, PW, H); ctx.clip();
+  ctx.fillStyle = C.card; ctx.fillRect(pad / 2, pad / 2, PW - pad, H - pad);
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(-1.2), Y(0)); ctx.lineTo(X(1.35), Y(0)); ctx.moveTo(X(0), Y(-0.6)); ctx.lineTo(X(0), Y(1.3)); ctx.stroke();
+  ctx.strokeStyle = C.muted; ctx.setLineDash([3, 5]); ctx.beginPath(); ctx.arc(X(0), Y(0), s, -Math.PI, 0); ctx.stroke(); ctx.setLineDash([]);
+  const a = [1, 0], b = [Math.cos(th), Math.sin(th)], d = Math.sqrt(d2(th));
+  ctx.strokeStyle = C.muted; ctx.beginPath(); ctx.arc(X(0), Y(0), 0.28 * s, -th, 0); ctx.stroke();
+  txt("θ", X(0.36 * Math.cos(th / 2)), Y(0.36 * Math.sin(th / 2)), { color: C.ink, font: FONT.serif, size: 18, align: "center", base: "middle" });
+  if (reg === "share") {
+    const q = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    ring(X(a[0]), Y(a[1]), s * d / 2, C.blue); ring(X(b[0]), Y(b[1]), s * d / 2, C.blue);
+    dot(X(q[0]), Y(q[1]), 5, C.ink); txt("q*", X(q[0]) - 8, Y(q[1]) - 10, { color: C.ink, font: FONT.serif, size: 18, align: "right" });
+  } else if (reg === "suppress") {
+    ring(X(b[0]), Y(b[1]), s * d, C.blue);
+    dot(X(a[0]), Y(a[1]), 7, C.ink); txt("q*", X(a[0]) + 4, Y(a[1]) + 22, { color: C.ink, font: FONT.serif, size: 18, align: "left" });
+  } else {
+    ring(X(a[0]), Y(a[1]), 11, C.green, 2); ring(X(b[0]), Y(b[1]), 11, C.green, 2);
+    txt("q₁", X(a[0]), Y(a[1]) + 34, { color: C.green, font: FONT.serif, size: 18, align: "center" });
+    txt("q₂", X(b[0]), Y(b[1]) + 34, { color: C.green, font: FONT.serif, size: 18, align: "center" });
+  }
+  dot(X(a[0]), Y(a[1]), 5, C.blue); dot(X(b[0]), Y(b[1]), 5, C.blue);
+  txt("a", X(a[0]) + 10, Y(a[1]) - 8, { color: C.ink, font: FONT.serif, size: 18 });
+  txt("b", X(b[0]) + (b[0] >= 0 ? 10 : -10), Y(b[1]) - 14, { color: C.ink, font: FONT.serif, size: 18, align: b[0] >= 0 ? "left" : "right" });
+  txt(`γ = ${PAR.gamma}   η = ${PAR.eta}`, pad + 6, H - pad - 6, { font: FONT.mono });
+  ctx.restore();
+
+  // right: L_A*, L_B*, L_C* against theta, with the two crossings found by root-finding
+  const RX = PW + 64, RY = 46, RW = W - RX - 18, RH = H - RY - 46;
+  const sx = v => RX + v / Math.PI * RW, sy = v => RY + RH - v / 0.55 * RH;
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+  for (const v of [0.1, 0.2, 0.3, 0.4, 0.5]) { ctx.beginPath(); ctx.moveTo(RX, sy(v)); ctx.lineTo(RX + RW, sy(v)); ctx.stroke(); }
+  ctx.strokeStyle = C.muted; ctx.beginPath(); ctx.moveTo(RX, RY); ctx.lineTo(RX, RY + RH); ctx.lineTo(RX + RW, RY + RH); ctx.stroke();
+  for (const v of [0, 1, 2, 3]) txt(String(v), sx(v), RY + RH + 6, { align: "center", base: "top", font: FONT.mono });
+  for (const v of [0, 0.2, 0.4]) txt(v.toFixed(1), RX - 6, sy(v), { align: "right", base: "middle", font: FONT.mono });
+  txt("θ (rad)", RX + RW, H - 6, { align: "right" });
+  txt("loss", RX - 6, RY - 14, { align: "right", base: "middle" });
+  const plot = (f, col, w, dash) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.beginPath();
+    for (let i = 0; i <= 300; i++) { const v = Math.PI * i / 300; i ? ctx.lineTo(sx(v), sy(f(v))) : ctx.moveTo(sx(v), sy(f(v))); } ctx.stroke(); ctx.setLineDash([]); };
+  plot(M.LA, C.muted, 1.5, [5, 4]); plot(M.LB, C.blue, 2); plot(M.LC, C.green, 3);
+  lab("A", sx(Math.PI) - 4, sy(M.LA(Math.PI)) - 10, C.muted);
+  lab("B", sx(Math.PI) - 4, sy(M.LB(Math.PI)) - 10, C.blue);
+  lab("C", sx(Math.PI) - 4, sy(M.LC(Math.PI)) + 26, C.green);
+  if (M.thetaAtt !== null) {
+    const x = sx(M.thetaAtt), y = sy(M.LB(M.thetaAtt));
+    ctx.strokeStyle = C.blue; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, RY + RH); ctx.stroke(); ctx.setLineDash([]);
+    dot(x, y, 5, C.blue); symval("att", M.thetaAtt, x + 8, y - 12, C.blue);
+  }
+  if (M.thetaSplit !== null) {
+    const x = sx(M.thetaSplit), y = sy(M.LC(M.thetaSplit));
+    ctx.strokeStyle = C.gold; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, RY + RH); ctx.stroke(); ctx.setLineDash([]);
+    dot(x, y, 6, C.gold); symval("split", M.thetaSplit, x + 8, y + 24, C.gold);
+  } else txt("θsplit none", RX + 8, RY + 6, { color: C.muted, font: FONT.mono, base: "top" });
+  // the current theta and the regime chip
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(sx(th), RY); ctx.lineTo(sx(th), RY + RH); ctx.stroke();
+  dot(sx(th), sy(M.LC(th)), 4, C.ink);
+  const chip = { share: C.blue, suppress: C.blue, split: C.green }[reg];
+  ctx.font = `600 16px ${FONT.sans}`; const cw = ctx.measureText(reg).width + 24;
+  ctx.fillStyle = C.card; ctx.strokeStyle = chip; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect(RX + RW - cw, 6, cw, 28, 14); ctx.fill(); ctx.stroke();
+  txt(reg, RX + RW - cw / 2, 20, { color: chip, align: "center", base: "middle", weight: 600, size: 16 });
+}
+function settled(t) { return manual !== null || t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+}
+window.__applet = { id: "shared-register", ready: false, settled: false, thetaSplit: M.thetaSplit, thetaAtt: M.thetaAtt };
+resize(); draw(clock); window.__applet.settled = settled(clock); window.__applet.ready = true;
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

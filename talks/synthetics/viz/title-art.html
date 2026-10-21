@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>title-art</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck title art. Palette and rules: talks/synthetics/STYLE.md.
+     A seeded field of events partitioned into cells whose areas follow a Zipf law in rank
+     (area of the rank-r cell proportional to 1/r), coalescing into coarser cells in two levels.
+     Designed at 1280 by 720; the 16:9 frame letterboxes inside any viewport. No chrome. */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #0a0e1a; }
+  #frame { position: relative; aspect-ratio: 16 / 9; width: 100%; max-width: calc(100vh * 16 / 9); max-height: 100vh; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="stage"><div id="frame"><canvas id="cv"></canvas></div></div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- the construction, in design units (1280 by 720) ---------- */
+const DW = 1280, DH = 720;
+const N = 110;                 // fine cells (rank 1 .. N)
+const M1 = 24;                 // cells after the first coalescence
+const M2 = 6;                  // cells after the second coalescence (the settled coarse state)
+const N_EVENTS = 1500;         // uniform seeded events in the field
+// the words: 'Synthetics' in Lora 120 px and 'Gerard McCaul' in Inter 30 px, at these left baselines
+const TITLE_AT = [96, 360], NAME_AT = [101, 418];
+// the text block the rank-1 cell is built around: [x0, y0, x1, y1], a few px wider than both glyph boxes
+// (the producer script measures the real glyph boxes after the fonts load and records the margins)
+const TEXT_BOX = [88, 260, 690, 432];
+
+// Zipf targets: the rank-r cell has area AREA / (r * H_N), so the cells tile the frame exactly.
+let HN = 0; for (let r = 1; r <= N; r++) HN += 1 / r;
+const AREA = DW * DH, A1 = AREA / HN;
+
+// a convex polygon is {x:[], y:[], lab:[]}; lab[k] labels the edge from vertex k to k+1
+// (-1 the frame, -2 the boundary of the rank-1 cell, j >= 1 the power bisector shared with site j)
+function rectPoly() { return { x: [0, DW, DW, 0], y: [0, 0, DH, DH], lab: [-1, -1, -1, -1] }; }
+function clip(poly, ax, ay, b, L) {     // keep ax*x + ay*y <= b
+  const n = poly.x.length, ox = [], oy = [], ol = [];
+  for (let k = 0; k < n; k++) {
+    const k2 = (k + 1) % n, sx = poly.x[k], sy = poly.y[k], ex = poly.x[k2], ey = poly.y[k2], l = poly.lab[k];
+    const sv = ax * sx + ay * sy - b, ev = ax * ex + ay * ey - b;
+    if (sv <= 0) { ox.push(sx); oy.push(sy); ol.push(l);
+      if (ev > 0) { const f = sv / (sv - ev); ox.push(sx + f * (ex - sx)); oy.push(sy + f * (ey - sy)); ol.push(L); } }
+    else if (ev <= 0) { const f = sv / (sv - ev); ox.push(sx + f * (ex - sx)); oy.push(sy + f * (ey - sy)); ol.push(l); }
+  }
+  return { x: ox, y: oy, lab: ol };
+}
+function geom(poly) {                   // area and centroid
+  let a = 0, cx = 0, cy = 0; const n = poly.x.length;
+  for (let k = 0; k < n; k++) { const k2 = (k + 1) % n, c = poly.x[k] * poly.y[k2] - poly.x[k2] * poly.y[k];
+    a += c; cx += (poly.x[k] + poly.x[k2]) * c; cy += (poly.y[k] + poly.y[k2]) * c; }
+  a /= 2; return a > 1e-9 ? { a, cx: cx / (6 * a), cy: cy / (6 * a) } : { a: 0, cx: 0, cy: 0 };
+}
+
+// The rank-1 cell (the most typical symbol) holds the words, so it is shaped to them: a convex octagon
+// around TEXT_BOX with seeded side offsets and corner cuts, grown by bisection until its area is exactly
+// AREA / H_N. The other N - 1 cells are a power diagram of the frame outside it.
+const RANK1 = (function () {
+  const [x0, y0, x1, y1] = TEXT_BOX;
+  const side = [0, 1, 2, 3].map(() => 0.85 + 0.3 * rand());          // left, top, right, bottom
+  const cut = [0, 1, 2, 3, 4, 5, 6, 7].map(() => 0.9 + 0.5 * rand());  // corner-cut legs, in units of d
+  function oct(d) {
+    const L = x0 - d * side[0], T = y0 - d * side[1], R = x1 + d * side[2], B = y1 + d * side[3], c = cut.map(f => f * d);
+    return { x: [L + c[0], R - c[1], R, R, R - c[4], L + c[5], L, L],     // corner legs: TL c0,c7  TR c1,c2
+             y: [T, T, T + c[2], B - c[3], B, B, B - c[6], T + c[7]],      //              BR c3,c4  BL c5,c6
+             lab: new Array(8).fill(-2) };
+  }
+  let lo = 0, hi = 400;
+  for (let it = 0; it < 80; it++) { const m = (lo + hi) / 2; if (geom(oct(m)).a < A1) lo = m; else hi = m; }
+  const K = oct((lo + hi) / 2); K.d = (lo + hi) / 2; return K;
+})();
+const KN = RANK1.x.length;
+function insideRank1(x, y) {            // the octagon runs in the frame's orientation: interior has cross >= 0
+  for (let k = 0; k < KN; k++) { const k2 = (k + 1) % KN, dx = RANK1.x[k2] - RANK1.x[k], dy = RANK1.y[k2] - RANK1.y[k];
+    if (dx * (y - RANK1.y[k]) - dy * (x - RANK1.x[k]) < 0) return false; }
+  return true;
+}
+function outsideRank1(x1, y1, x2, y2) { // the parts of a segment outside the rank-1 cell (Cyrus-Beck)
+  let tin = 0, tout = 1;
+  for (let k = 0; k < KN; k++) { const k2 = (k + 1) % KN, dx = RANK1.x[k2] - RANK1.x[k], dy = RANK1.y[k2] - RANK1.y[k];
+    const f0 = dx * (y1 - RANK1.y[k]) - dy * (x1 - RANK1.x[k]), f1 = dx * (y2 - RANK1.y[k]) - dy * (x2 - RANK1.x[k]);
+    if (f0 < 0 && f1 < 0) return [[x1, y1, x2, y2]];
+    if (f0 >= 0 && f1 >= 0) continue;
+    const t = f0 / (f0 - f1); if (f0 < 0) tin = Math.max(tin, t); else tout = Math.min(tout, t); }
+  if (tin >= tout) return [[x1, y1, x2, y2]];
+  const out = [], at = t => [x1 + t * (x2 - x1), y1 + t * (y2 - y1)];
+  if (tin > 1e-9) out.push([x1, y1, ...at(tin)]);
+  if (tout < 1 - 1e-9) out.push([...at(tout), x2, y2]);
+  return out;
+}
+
+function ejectFromRank1(p) {             // a site that drifts into the rank-1 cell is put back just outside it
+  if (!insideRank1(p[0], p[1])) return;
+  let best = Infinity, bx = 0, by = 0;
+  for (let k = 0; k < KN; k++) { const k2 = (k + 1) % KN, ax = RANK1.x[k], ay = RANK1.y[k], dx = RANK1.x[k2] - ax, dy = RANK1.y[k2] - ay, L = Math.hypot(dx, dy);
+    const dist = (dx * (p[1] - ay) - dy * (p[0] - ax)) / L; if (dist < best) { best = dist; bx = dy / L; by = -dx / L; } }
+  p[0] += (best + 4) * bx; p[1] += (best + 4) * by;
+}
+// sites: index 0 is the rank-1 cell; indices 1..N-1 are seeded points outside it, ranks 2..N in a seeded order
+const order = []; for (let r = 2; r <= N; r++) order.push(r);
+for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+const P = [[0, 0]], Wt = [0], RANK = [1], TGT = [A1];
+for (let k = 0; k < order.length; k++) { let x, y;
+  do { x = 20 + rand() * (DW - 40); y = 20 + rand() * (DH - 40); } while (insideRank1(x, y));
+  P.push([x, y]); RANK.push(order[k]); Wt.push(0); TGT.push(AREA / (order[k] * HN)); }
+
+function cellOf(i) {                    // power cell of site i, and its overlap with the rank-1 cell
+  let poly = rectPoly(), kin = { x: RANK1.x.slice(), y: RANK1.y.slice(), lab: RANK1.lab.slice() };
+  const pi = P[i], qi = pi[0] * pi[0] + pi[1] * pi[1];
+  for (let j = 1; j < N && poly.x.length; j++) { if (j === i) continue;
+    const pj = P[j], ax = 2 * (pj[0] - pi[0]), ay = 2 * (pj[1] - pi[1]), b = pj[0] * pj[0] + pj[1] * pj[1] - qi - Wt[j] + Wt[i];
+    poly = clip(poly, ax, ay, b, j); if (kin.x.length) kin = clip(kin, ax, ay, b, j); }
+  return { poly, kin };
+}
+function restricted(c) {                // area and centroid of the power cell outside the rank-1 cell
+  const g = geom(c.poly), h = geom(c.kin), a = g.a - h.a;
+  return a > 1e-9 ? { a, cx: (g.a * g.cx - h.a * h.cx) / a, cy: (g.a * g.cy - h.a * h.cy) / a } : { a: 0, cx: 0, cy: 0 };
+}
+// capacity-constrained power diagram of the frame outside the rank-1 cell: damped Newton steps on the
+// weights, using the whole power cell's dA_i/dw_i (the sum over its bisector edges of length / (2 * site
+// distance)); it bounds the restricted cell's derivative from above, so a cell pressed against the rank-1
+// cell takes a short step instead of a runaway one. Lloyd moves of the sites while the shape relaxes.
+let CELLS = [];
+(function solve() {
+  const ITER = 800, LLOYD_UNTIL = 200;
+  for (let it = 0; it <= ITER; it++) {
+    CELLS = [null]; for (let i = 1; i < N; i++) CELLS.push(cellOf(i));
+    if (it === ITER) break;
+    for (let i = 1; i < N; i++) {
+      const g = restricted(CELLS[i]), poly = CELLS[i].poly;
+      if (g.a <= 0) {                   // empty cell: lift its weight just above every rival at its site
+        let m = -Infinity; for (let k = 1; k < N; k++) if (k !== i) {
+          const dx = P[i][0] - P[k][0], dy = P[i][1] - P[k][1]; m = Math.max(m, Wt[k] - dx * dx - dy * dy); }
+        Wt[i] = m + TGT[i] / Math.PI; ejectFromRank1(P[i]); continue; }
+      let D = 0; const n = poly.x.length;
+      for (let k = 0; k < n; k++) { const j = poly.lab[k]; if (j < 1) continue; const k2 = (k + 1) % n;
+        D += Math.hypot(poly.x[k2] - poly.x[k], poly.y[k2] - poly.y[k]) / (2 * Math.hypot(P[j][0] - P[i][0], P[j][1] - P[i][1])); }
+      if (D > 0) Wt[i] += 0.7 * (TGT[i] - g.a) / D;
+      if (it < LLOYD_UNTIL) { P[i][0] += 0.5 * (g.cx - P[i][0]); P[i][1] += 0.5 * (g.cy - P[i][1]); ejectFromRank1(P[i]); }
+    }
+  }
+})();
+const CG = [geom(RANK1)]; for (let i = 1; i < N; i++) CG.push(restricted(CELLS[i]));
+
+// shared edges (i < j): bisector pieces outside the rank-1 cell, and the rank-1 boundary inside each cell
+const EDGES = [];
+function addEdge(i, j, x1, y1, x2, y2) { const len = Math.hypot(x2 - x1, y2 - y1);
+  if (len >= 0.5) EDGES.push({ i, j, x1, y1, x2, y2, len, tm: Infinity, lv: 0 }); }
+for (let i = 1; i < N; i++) { const p = CELLS[i].poly, n = p.x.length, q = CELLS[i].kin, m = q.x.length;
+  for (let k = 0; k < n; k++) { const j = p.lab[k]; if (j <= i) continue; const k2 = (k + 1) % n;
+    for (const s of outsideRank1(p.x[k], p.y[k], p.x[k2], p.y[k2])) addEdge(i, j, ...s); }
+  for (let k = 0; k < m; k++) if (q.lab[k] === -2) { const k2 = (k + 1) % m; addEdge(0, i, q.x[k], q.y[k], q.x[k2], q.y[k2]); } }
+
+// coalescence: neighbouring cells merge, the adjacent pair of least combined area first, compact pairs
+// preferred (score = combined area / sqrt(shared boundary)); two levels, N -> M1 -> M2. The rank-1 cell
+// holds the words and stays whole: it is never one side of a merge.
+const T1 = [1.4, 5.4], T2 = [6.2, 10.0], DUR = 0.9;
+const parent = []; for (let i = 0; i < N; i++) parent.push(i);
+function find(i) { while (parent[i] !== i) { parent[i] = parent[parent[i]]; i = parent[i]; } return i; }
+const clArea = CG.map(g => g.a);
+const CELL_T = CG.map(() => [Infinity, Infinity]);      // when each cell first joins at level 1, level 2
+let count = N;
+function coalesce(target, level, span) {
+  const total = count - target; let k = 0;
+  while (count > target) {
+    const shared = new Map();
+    for (const e of EDGES) { const a = find(e.i), b = find(e.j); if (a === b || a === 0 || b === 0) continue;
+      const key = a < b ? a * 1000 + b : b * 1000 + a; shared.set(key, (shared.get(key) || 0) + e.len); }
+    let best = null, bs = Infinity;
+    for (const [key, len] of shared) { const a = Math.floor(key / 1000), b = key % 1000;
+      const s = (clArea[a] + clArea[b]) / Math.sqrt(len); if (s < bs) { bs = s; best = [a, b]; } }
+    const [a, b] = best, tm = span[0] + (span[1] - span[0]) * (total > 1 ? k / (total - 1) : 0);
+    for (let c = 0; c < N; c++) { const r = find(c); if ((r === a || r === b) && CELL_T[c][level - 1] === Infinity) CELL_T[c][level - 1] = tm; }
+    parent[b] = a; clArea[a] += clArea[b]; count--;
+    for (const e of EDGES) if (e.tm === Infinity && find(e.i) === find(e.j)) { e.tm = tm; e.lv = level; }
+    k++;
+  }
+}
+coalesce(M1, 1, T1);
+coalesce(M2, 2, T2);
+const COARSE = CG.map((_, i) => find(i));
+const coarseIds = [...new Set(COARSE)];
+const TONE = {}; coarseIds.forEach((id, k) => { TONE[id] = [0.055, 0.085, 0.07, 0.10, 0.06, 0.09][k % 6]; });
+
+// events: uniform seeded points, each in the rank-1 cell or else in the site cell of least power distance
+function cellAt(x, y) { if (insideRank1(x, y)) return 0; let bi = 1, bd = Infinity;
+  for (let i = 1; i < N; i++) { const d = (x - P[i][0]) ** 2 + (y - P[i][1]) ** 2 - Wt[i]; if (d < bd) { bd = d; bi = i; } }
+  return bi; }
+const EV = [];
+for (let k = 0; k < N_EVENTS; k++) { const x = rand() * DW, y = rand() * DH; EV.push([x, y, cellAt(x, y)]); }
+
+// fidelity measurement, exposed for the producer script: realised area against 1/rank
+const zipf = (function () {
+  let sx = 0, sy = 0, sxx = 0, sxy = 0, maxRel = 0, minA = Infinity, maxA = 0;
+  for (let i = 0; i < N; i++) { const lx = Math.log(RANK[i]), ly = Math.log(CG[i].a);
+    sx += lx; sy += ly; sxx += lx * lx; sxy += lx * ly; maxRel = Math.max(maxRel, Math.abs(CG[i].a - TGT[i]) / TGT[i]);
+    minA = Math.min(minA, CG[i].a); maxA = Math.max(maxA, CG[i].a); }
+  const slope = (N * sxy - sx * sy) / (N * sxx - sx * sx);
+  const counts = new Array(N).fill(0); for (const e of EV) counts[e[2]]++;
+  return { n_cells: N, n_level1: M1, n_level2: M2, n_events: N_EVENTS, loglog_slope: slope, max_rel_area_error: maxRel,
+    rank1_area_share: CG[0].a / AREA, rank1_target_share: 1 / HN, area_sum_over_frame: CG.reduce((s, g) => s + g.a, 0) / AREA,
+    min_area_px: minA, max_area_px: maxA, events_in_rank1: counts[0],
+    coarse_cells: coarseIds.length, edges: EDGES.length, empty_cells: CG.filter(g => g.a <= 0).length,
+    rank1_joins_at: CELL_T[0], coarse_children: coarseIds.map(id => COARSE.filter(c => c === id).length),
+    coarse_area_share: coarseIds.map(id => CG.reduce((s, g, i) => s + (COARSE[i] === id ? g.a : 0), 0) / AREA) };
+})();
+// placement, exposed for the producer script: the rank-1 cell and where the words are drawn
+const placement = { rank1: { x: RANK1.x, y: RANK1.y, grow_d: RANK1.d }, text_box: TEXT_BOX,
+  title: { text: "Synthetics", at: TITLE_AT, font: "400 120px Lora, Georgia, serif" },
+  name: { text: "Gerard McCaul", at: NAME_AT, font: "400 30px Inter, system-ui, sans-serif" } };
+
+/* ---------- canvas with device-pixel scaling, letterboxed 16:9 ---------- */
+const frameEl = document.getElementById("frame");
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1, U = 1;
+function resize() {
+  const r = frameEl.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height)); U = W / DW;
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+function ss(t, a, b) { if (!isFinite(a)) return 0; const x = Math.min(1, Math.max(0, (t - a) / (b - a))); return x * x * (3 - 2 * x); }
+function polyPath(p) { ctx.beginPath(); ctx.moveTo(p.x[0], p.y[0]); for (let k = 1; k < p.x.length; k++) ctx.lineTo(p.x[k], p.y[k]); ctx.closePath(); }
+
+/* ---------- the frame at animation time t ---------- */
+function draw(t) {
+  if (W < 160 || H < 90) return;            // a hidden or not-yet-laid-out frame has no canvas to draw into
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  ctx.setTransform(DPR * U, 0, 0, DPR * U, 0, 0);
+  const appear = 1;   // the fine field is present from the first frame
+  const p1 = ss(t, T1[0], T1[1] + DUR), p2 = ss(t, T2[0], T2[1] + DUR);
+
+  // fills: a cell deepens each time it coalesces; after the second level it takes its coarse cell's tone
+  for (let i = 1; i < N; i++) {
+    const a1 = ss(t, CELL_T[i][0], CELL_T[i][0] + DUR), a2 = ss(t, CELL_T[i][1], CELL_T[i][1] + DUR);
+    const base = 0.035 + 0.02 * a1, tone = TONE[COARSE[i]];
+    ctx.fillStyle = rgba(C.blue, appear * (base * (1 - a2) + tone * a2));
+    polyPath(CELLS[i].poly); ctx.fill();
+  }
+  // the rank-1 cell is cut out of the site cells and given its own gold-tinted ground
+  polyPath(RANK1); ctx.fillStyle = C.ground; ctx.fill(); ctx.fillStyle = rgba(C.gold, 0.05); ctx.fill();
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+  // boundaries: an open boundary is a gap between two outlined cells; it widens with each level it survives
+  // and closes when its two sides coalesce, leaving a hairline trace of the children inside the hull
+  const open = [];
+  for (const e of EDGES) {
+    const m = ss(t, e.tm, e.tm + DUR);
+    const gap = (2.2 + 1.8 * p1 + (e.lv === 2 || e.lv === 0 ? 2.6 * p2 : 0) * (e.lv === 0 ? 1 : 0.5)) * (1 - m);
+    const out = (0.32 + 0.18 * p1 + 0.22 * p2 * (e.lv === 0 ? 1 : 0)) * (1 - m);
+    if (m > 0) { ctx.strokeStyle = rgba(C.blue, appear * 0.16 * m); ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(e.x1, e.y1); ctx.lineTo(e.x2, e.y2); ctx.stroke(); }
+    if (gap > 0.05) open.push([e, gap, out]);
+  }
+  for (const [e, gap, out] of open) { const gold = e.i === 0;
+    ctx.strokeStyle = gold ? rgba(C.gold, 0.8) : rgba(C.blue, appear * out); ctx.lineWidth = gap + 2.2;
+    ctx.beginPath(); ctx.moveTo(e.x1, e.y1); ctx.lineTo(e.x2, e.y2); ctx.stroke(); }
+  ctx.strokeStyle = C.ground;
+  for (const [e, gap] of open) { ctx.lineWidth = gap; ctx.beginPath(); ctx.moveTo(e.x1, e.y1); ctx.lineTo(e.x2, e.y2); ctx.stroke(); }
+
+  // events
+  ctx.fillStyle = rgba(C.blue, 0.55 * appear);
+  for (const [x, y] of EV) { ctx.beginPath(); ctx.arc(x, y, 1.15, 0, 6.2832); ctx.fill(); }
+
+  // gold marks one thing: the rank-1 cell (the most typical symbol), which holds the words
+
+  // quiet ground behind the words, clipped to the rank-1 cell, then the words
+  const [bx0, by0, bx1, by1] = TEXT_BOX, qx = (bx0 + bx1) / 2, qy = (by0 + by1) / 2, qr = (bx1 - bx0) * 0.62;
+  ctx.save(); polyPath(RANK1); ctx.clip();
+  const g = ctx.createRadialGradient(qx, qy, 20, qx, qy, qr);
+  g.addColorStop(0, "rgba(10,14,26,0.82)"); g.addColorStop(0.6, "rgba(10,14,26,0.6)"); g.addColorStop(1, "rgba(10,14,26,0)");
+  ctx.translate(qx, qy); ctx.scale(1, 0.42); ctx.translate(-qx, -qy);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(qx, qy, qr, 0, 6.2832); ctx.fill(); ctx.restore();
+  ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = C.ink; ctx.font = placement.title.font;
+  ctx.shadowColor = C.ground; ctx.shadowBlur = 18;
+  ctx.fillText(placement.title.text, TITLE_AT[0], TITLE_AT[1]); ctx.fillText(placement.title.text, TITLE_AT[0], TITLE_AT[1]);
+  ctx.fillStyle = C.muted; ctx.font = placement.name.font;
+  ctx.fillText(placement.name.text, NAME_AT[0], NAME_AT[1]);
+  ctx.shadowBlur = 0;
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !reduced) requestAnimationFrame(frame);
+}
+window.__applet = { id: "title-art", ready: false, settled: settled(clock), zipf, placement, cellAt };
+resize(); draw(clock); window.__applet.ready = true;
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw(clock));
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

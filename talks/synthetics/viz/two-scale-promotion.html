@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>two-scale-promotion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet. Palette and rules: talks/synthetics/STYLE.md */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+</div>
+<script>
+"use strict";
+// COMPUTE-BEGIN
+/* The two-scale promotion toy of the coupled-evaluators paper, Sec. IX.B-IX.C
+   (09_numerical_demonstrations.tex), ported line for line from the paper's producer
+   your-brain-on-algebra/validation/numerical_demonstrations.py (generate_regime_data,
+   run_two_scale_agent, two_scale_gain_stream, promotion_metrics, coarse_graining_defect_rows).
+   Producer constants: beta 2.5, window 28, adapt rate 0.22, sigma 0.25, 700 steps,
+   shifts (140,1.75) (310,0.60) (470,1.45) (600,1.05), 24 streams, block size 4.
+   The only change: the Gaussian noise comes from a seeded mulberry32 + Box-Muller stream. */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 6;                     // chosen from the eight base seeds in tools/producers/loss-toys/seed_spread.mjs: its grid minimum is the paper's 0.0768
+const TS = { T: 700, SIGMA: 0.25, BETA: 2.5, WINDOW: 28, ADAPT: 0.22,
+  SHIFTS: [[140, 1.75], [310, 0.60], [470, 1.45], [600, 1.05]], STREAMS: 24, LANE_STREAM: 42,
+  LOW: 0.005, HIGH: 0.400, DEFECT_C1: 0.060, BLOCK: 4, BURN: 40, REF: 0.5 };
+function linspace(a, b, n) { const o = []; for (let i = 0; i < n; i++) o.push(a + (b - a) * i / (n - 1)); return o; }
+function gaussStream(k) {
+  const r = mulberry32((SEED + 7919 * k) >>> 0);
+  return function () { const u1 = 1 - r(), u2 = r(); return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2); };
+}
+function generateRegimeData(k) {
+  const n = gaussStream(k), T = TS.T, x = new Float64Array(T), y = new Float64Array(T), th = new Float64Array(T);
+  for (let t = 0; t < T; t++) x[t] = n();
+  for (let t = 0; t < T; t++) { let v = 1; for (const [s, val] of TS.SHIFTS) if (t >= s) v = val; th[t] = v; }
+  for (let t = 0; t < T; t++) y[t] = th[t] * x[t] + TS.SIGMA * n();
+  return { x, y, th };
+}
+function windowFit(x, y, t, theta) {   // rolling structural fit over the last WINDOW steps
+  const start = Math.max(0, t - TS.WINDOW + 1), m = t + 1 - start;
+  if (m < 8) return { thetaW: theta, gain: 0 };
+  let sxy = 0, sxx = 0;
+  for (let i = start; i <= t; i++) { sxy += x[i] * y[i]; sxx += x[i] * x[i]; }
+  const thetaW = sxy / (sxx + 1e-6);
+  let cur = 0, cand = 0;
+  for (let i = start; i <= t; i++) { const a = y[i] - theta * x[i], b = y[i] - thetaW * x[i]; cur += a * a; cand += b * b; }
+  return { thetaW, gain: Math.max(0, cur / m - cand / m) };
+}
+function runAgent(x, y, c0, c1) {      // u_t = 1 iff beta (dF1 - dF0) > c1 - c0
+  const T = y.length, thetaHat = new Float64Array(T), prom = new Uint8Array(T), dc = c1 - c0;
+  thetaHat[0] = 1.0;
+  for (let t = 1; t < T; t++) {
+    let theta = thetaHat[t - 1];
+    const err = y[t] - theta * x[t];
+    const { thetaW, gain } = windowFit(x, y, t, theta);
+    const local = 0.10 * Math.min(err * err, TS.SIGMA * TS.SIGMA);
+    if (TS.BETA * (gain - local) > dc) {
+      const obs = Math.abs(x[t]) > 0.15 ? Math.min(3.5, Math.max(-1.5, y[t] / x[t])) : thetaW;
+      theta = theta + TS.ADAPT * (obs - theta); prom[t] = 1;
+    }
+    thetaHat[t] = theta;
+  }
+  return { thetaHat, prom };
+}
+function gainStream(x, y, path) {      // m_t = beta [dF1(t) - dF0(t)]
+  const T = y.length, m = new Float64Array(T);
+  for (let t = 1; t < T; t++) {
+    const theta = path[t - 1], err = y[t] - theta * x[t];
+    const { gain } = windowFit(x, y, t, theta);
+    m[t] = TS.BETA * (gain - 0.10 * Math.min(err * err, TS.SIGMA * TS.SIGMA));
+  }
+  return m;
+}
+function promotionMetrics(streams, c1) {
+  const shifts = TS.SHIFTS.map(s => s[0]); let fs = 0, ms = 0, di = 0;
+  for (const s of streams) {
+    const { prom } = runAgent(s.x, s.y, 0, c1); let n = 0, fal = 0;
+    for (let t = 0; t < prom.length; t++) if (prom[t]) { n++; if (shifts.every(h => Math.abs(t - h) > 35)) fal++; }
+    let miss = 0;
+    for (const h of shifts) { let hit = false; for (let t = h; t < Math.min(h + 65, prom.length); t++) if (prom[t]) { hit = true; break; } if (!hit) miss++; }
+    const f = fal / Math.max(n, 1), mr = miss / shifts.length;
+    fs += f; ms += mr; di += 0.5 * (f + mr);
+  }
+  const k = streams.length;
+  return { c: c1, falseShare: fs / k, missed: ms / k, index: di / k };
+}
+const sigm = z => z >= 0 ? 1 / (1 + Math.exp(-z)) : Math.exp(z) / (1 + Math.exp(z));
+const logit = p => { const q = Math.min(1 - 1e-9, Math.max(1e-9, p)); return Math.log(q / (1 - q)); };
+function defectRows(stream, cValues) {
+  const { thetaHat } = runAgent(stream.x, stream.y, 0, TS.DEFECT_C1);
+  const m = gainStream(stream.x, stream.y, thetaHat), use = m.slice(TS.BURN);
+  const nb = Math.floor(use.length / TS.BLOCK), blocks = [], sums = [];
+  for (let b = 0; b < nb; b++) { const blk = Array.from(use.slice(b * TS.BLOCK, (b + 1) * TS.BLOCK)); blocks.push(blk); sums.push(blk.reduce((a, v) => a + v, 0)); }
+  const rows = cValues.map(c => {
+    const push = blocks.map(blk => 1 - blk.reduce((a, v) => a * (1 - sigm(v - c)), 1));
+    const direct = sums.map(s => sigm(s - c));
+    const ceff = sums.map((s, i) => s - logit(push[i]));
+    const meanCeff = ceff.reduce((a, v) => a + v, 0) / nb;
+    let tv = 0, tvFit = 0;
+    for (let i = 0; i < nb; i++) { tv += Math.abs(push[i] - direct[i]); tvFit += Math.abs(push[i] - sigm(sums[i] - meanCeff)); }
+    return { c, tv: tv / nb, tvFit: tvFit / nb, ceff: meanCeff };
+  });
+  let ri = 0; cValues.forEach((c, i) => { if (Math.abs(c - TS.REF) < Math.abs(cValues[ri] - TS.REF)) ri = i; });
+  const slope = (rows[ri + 1].ceff - rows[ri - 1].ceff) / (cValues[ri + 1] - cValues[ri - 1]);
+  return { rows, ref: rows[ri], slope, blocks: nb };
+}
+function computeTwoScale(streamFor) {
+  streamFor = streamFor || generateRegimeData;
+  const streams = []; for (let k = 0; k < TS.STREAMS; k++) streams.push(streamFor(k));
+  const cGrid = linspace(0.001, 0.50, 80), rates = cGrid.map(c => promotionMetrics(streams, c));
+  let bi = 0; rates.forEach((r, i) => { if (r.index < rates[bi].index) bi = i; });
+  const lane = streamFor(TS.LANE_STREAM);
+  const costs = [TS.LOW, rates[bi].c, TS.HIGH];
+  const lanes = costs.map(c => Object.assign({ c }, runAgent(lane.x, lane.y, 0, c), promotionMetrics(streams, c)));
+  const defect = defectRows(lane, linspace(0.001, 2.00, 120));
+  return { cGrid, rates, best: rates[bi], lane, lanes, defect };
+}
+// COMPUTE-END
+
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 10;
+if (reduced) clock = SETTLE_AT;
+
+const R = computeTwoScale();
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+const ease = u => u <= 0 ? 0 : u >= 1 ? 1 : 1 - Math.pow(1 - u, 3);
+function txt(s, x, y, o) {
+  o = o || {}; ctx.fillStyle = o.color || C.muted; ctx.font = `${o.weight || 400} ${o.size || 15}px ${o.font || FONT.sans}`;
+  ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic"; ctx.fillText(s, x, y);
+}
+function axes(x0, y0, w, h, xt, yt, xr, yr, fmtX, fmtY) {
+  const sx = v => x0 + (v - xr[0]) / (xr[1] - xr[0]) * w, sy = v => y0 + h - (v - yr[0]) / (yr[1] - yr[0]) * h;
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+  for (const v of yt) { ctx.beginPath(); ctx.moveTo(x0, sy(v)); ctx.lineTo(x0 + w, sy(v)); ctx.stroke(); }
+  ctx.strokeStyle = C.muted; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0, y0 + h); ctx.lineTo(x0 + w, y0 + h); ctx.stroke();
+  for (const v of xt) txt(fmtX(v), sx(v), y0 + h + 6, { align: "center", base: "top", font: FONT.mono });
+  for (const v of yt) txt(fmtY(v), x0 - 6, sy(v), { align: "right", base: "middle", font: FONT.mono });
+  return { sx, sy };
+}
+function curve(xs, ys, sx, sy, upto, color, width, dash) {
+  ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dash || []); ctx.beginPath();
+  const n = Math.max(1, Math.round(upto * (xs.length - 1)));
+  for (let i = 0; i <= n; i++) { const X = sx(xs[i]), Y = sy(ys[i]); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }
+  ctx.stroke(); ctx.setLineDash([]);
+}
+
+/* ---------- the applet ---------- */
+const LANE_NAME = ["low cost", "compromise", "high cost"], LANE_COL = [C.orange, C.gold, C.blue];
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const reveal = ease(t / 9), T = R.lane.y.length, nShow = Math.max(30, Math.round(reveal * (T - 1)));
+  const split = W < 1000 ? 0.50 : 0.58;   // a 740-wide column keeps both panels readable
+  const padT = 12, padB = 44, gap = 10, LX = 62, LW = Math.round(W * split) - LX;
+  const laneH = (H - padT - padB - 2 * gap) / 3;
+  const sx = v => LX + v / (T - 1) * LW;
+  // three lanes: true theta (muted step), estimate theta-hat (lane hue), promotions (ticks)
+  R.lanes.forEach((L, k) => {
+    const y0 = padT + k * (laneH + gap), sy = v => y0 + laneH - 18 - (v - 0.1) / (2.2 - 0.1) * (laneH - 26);
+    ctx.fillStyle = C.card; ctx.fillRect(LX, y0, LW, laneH);
+    ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+    for (const [s] of [[140], [310], [470], [600]]) { ctx.beginPath(); ctx.moveTo(sx(s), y0); ctx.lineTo(sx(s), y0 + laneH); ctx.stroke(); }
+    ctx.setLineDash([]);
+    ctx.strokeStyle = C.muted; ctx.lineWidth = 1.5; ctx.beginPath();
+    for (let i = 0; i < T; i++) { const X = sx(i), Y = sy(R.lane.th[i]); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); } ctx.stroke();
+    ctx.strokeStyle = LANE_COL[k]; ctx.lineWidth = 2; ctx.beginPath();
+    for (let i = 0; i <= nShow; i++) { const X = sx(i), Y = sy(L.thetaHat[i]); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); } ctx.stroke();
+    ctx.strokeStyle = LANE_COL[k]; ctx.globalAlpha = 0.8; ctx.lineWidth = 1; ctx.beginPath();
+    let np = 0;
+    for (let i = 0; i <= nShow; i++) if (L.prom[i]) { np++; ctx.moveTo(sx(i), y0 + laneH - 2); ctx.lineTo(sx(i), y0 + laneH - 12); }
+    ctx.stroke(); ctx.globalAlpha = 1;
+    txt(LW < 420 ? `${LANE_NAME[k]}  ${L.c.toFixed(3)}` : `${LANE_NAME[k]}  c₁−c₀ = ${L.c.toFixed(3)}`, LX + 10, y0 + 8, { color: LANE_COL[k], base: "top", weight: 600 });
+    txt(`${np} promotions`, LX + LW - 10, y0 + 8, { color: C.muted, base: "top", align: "right", font: FONT.mono });
+    txt("θ", LX - 14, y0 + laneH / 2, { color: C.ink, align: "right", base: "middle", font: FONT.serif, size: 18 });
+  });
+  for (const v of [0, 200, 400, 600]) txt(String(v), sx(v), H - padB + 6, { align: "center", base: "top", font: FONT.mono });
+  txt("time step", LX + LW / 2, H - 8, { align: "center", base: "alphabetic" });
+
+  // right column: rates across 24 streams, then the block coarse-graining defect
+  const RX = Math.round(W * split) + (W < 1000 ? 54 : 70), RW = W - RX - 22, h1 = Math.round((H - padT - padB - 54) * 0.55), h2 = (H - padT - padB - 54) - h1;
+  const p1y = padT + 22;
+  txt(W < 1000 ? `false and missed rates against c₁−c₀` : `rates against c₁ − c₀, ${TS.STREAMS} streams`, RX, padT + 4, { base: "top", color: C.muted });
+  const A1 = axes(RX, p1y, RW, h1, [0, 0.25, 0.5], [0, 0.25, 0.5], [0, 0.5], [0, 0.55], v => v.toFixed(2), v => v.toFixed(2));
+  const cg = R.cGrid;
+  curve(cg, R.rates.map(r => r.falseShare), A1.sx, A1.sy, reveal, C.orange, 2);
+  curve(cg, R.rates.map(r => r.missed), A1.sx, A1.sy, reveal, C.blue, 2);
+  curve(cg, R.rates.map(r => r.index), A1.sx, A1.sy, reveal, C.ink, 1.5, [5, 4]);
+  [["false promotions", C.orange, null], ["missed shifts", C.blue, null], ["mean of the two", C.ink, [5, 4]]].forEach(([s, col, dash], i) => {
+    const ly = A1.sy(0.50 - 0.065 * i), lx = A1.sx(0.27);
+    ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.setLineDash(dash || []); ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx + 24, ly); ctx.stroke(); ctx.setLineDash([]);
+    txt(s, lx + 32, ly, { color: col, base: "middle" });
+  });
+  if (reveal > 0.98) {
+    const bx = A1.sx(R.best.c), by = A1.sy(R.best.index), tx = A1.sx(0.085), ty = A1.sy(0.33);
+    ctx.strokeStyle = C.gold; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(bx, by - 6); ctx.lineTo(tx + 20, ty + 10); ctx.stroke();
+    ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(bx, by, 5, 0, 2 * Math.PI); ctx.fill();
+    txt(`min ${R.best.c.toFixed(4)}`, tx, ty, { color: C.gold, font: FONT.mono, base: "alphabetic" });
+  }
+  const p2y = p1y + h1 + 54;
+  txt(W < 1000 ? `block defect against c₁−c₀, ${TS.BLOCK} per block` : `block defect against c₁ − c₀, ${TS.BLOCK} steps per block`, RX, p2y - 18, { base: "top", color: C.muted });
+  const D = R.defect, dc = D.rows.map(r => r.c);
+  const A2 = axes(RX, p2y + 4, RW, h2 - 4, [0, 1, 2], [0, 0.25, 0.5], [0, 2], [0, 0.5], v => v.toFixed(0), v => v.toFixed(2));
+  curve(dc, D.rows.map(r => r.tv), A2.sx, A2.sy, reveal, C.orange, 2);
+  curve(dc, D.rows.map(r => r.tvFit), A2.sx, A2.sy, reveal, C.ink, 2);
+  ctx.strokeStyle = C.muted; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(A2.sx(D.ref.c), p2y + 4); ctx.lineTo(A2.sx(D.ref.c), p2y + h2); ctx.stroke(); ctx.setLineDash([]);
+  if (reveal > 0.5) {
+    txt("same cost", A2.sx(1.95), A2.sy(D.rows[110].tv) + 18, { color: C.orange, align: "right" });
+    txt("running cost", A2.sx(1.95), A2.sy(0.0) - 8, { color: C.ink, align: "right" });
+    txt(`${D.ref.tv.toFixed(3)} → ${D.ref.tvFit.toFixed(3)}`, A2.sx(D.ref.c) + 8, A2.sy(0.30), { color: C.ink, font: FONT.mono, base: "middle" });
+  }
+}
+function settled(t) { return t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+}
+window.__applet = { id: "two-scale-promotion", ready: false, settled: false, data: R };
+resize(); draw(clock); window.__applet.settled = settled(clock); window.__applet.ready = true;
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>zeta-library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  /* Synthetics deck applet. Palette and rules: talks/synthetics/STYLE.md. Built from tools/applet-template.html. */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0e1a; color: #e8e6e3;
+    font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #frame { position: relative; flex: 1 1 auto; min-height: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .caption { flex: 0 0 auto; text-align: center; font-family: Lora, Georgia, serif; font-size: 20px;
+    color: #e8e6e3; padding: 4px 12px 4px; white-space: nowrap; overflow: hidden; }
+  .controls { flex: 0 0 auto; display: flex; justify-content: center; align-items: center; gap: 14px;
+    padding: 4px 10px 8px; font-size: 15px; color: #9ca3af; white-space: nowrap; }
+  .controls input[type=range] { width: 150px; accent-color: #7eb8da; }
+  .controls .val { font-family: "JetBrains Mono", monospace; color: #e8e6e3; min-width: 3em; text-align: right; font-size: 15px; }
+  .controls button { font: 15px "JetBrains Mono", monospace; color: #9ca3af; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.14); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+  .controls button.on { color: #e8e6e3; border-color: #7eb8da; background: rgba(126,184,218,0.16); }
+  .controls .lab { font-family: "JetBrains Mono", monospace; color: #e8e6e3; font-size: 15px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"><canvas id="cv"></canvas></div>
+  <div class="caption" id="caption">The susceptibility peaks near &lambda; = 1 and sharpens as R grows</div>
+  <div class="controls">
+    <span class="lab">&lambda;</span><input id="lam" type="range" min="0.6" max="3" step="0.01" value="3"><span class="val" id="lamv">3.00</span>
+    <span class="lab">R</span><button data-r="100">100</button><button data-r="500" class="on">500</button><button data-r="5000">5000</button>
+  </div>
+</div>
+<script>
+"use strict";
+/* ---------- palette (STYLE.md) ---------- */
+const C = { ground: "#0a0e1a", ink: "#e8e6e3", muted: "#9ca3af", gold: "#c9a96e", blue: "#7eb8da",
+            green: "#5cbf9a", orange: "#e0875a", rule: "rgba(255,255,255,0.08)", card: "rgba(255,255,255,0.04)" };
+const FONT = { sans: "Inter, system-ui, sans-serif", serif: "Lora, Georgia, serif", mono: '"JetBrains Mono", monospace' };
+
+/* ---------- determinism: seeded PRNG, no Math.random, no wall clock ---------- */
+function mulberry32(seed) { let a = seed >>> 0; return function () {
+  a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const SEED = 20261021;
+const rand = mulberry32(SEED);   // unused: every number here is an exact finite sum
+
+/* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
+const Q = new URLSearchParams(location.search);
+let clock = Number(Q.get("t") || 0);
+const paused = Q.get("pause") === "1";
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SETTLE_AT = 12;
+if (reduced) clock = SETTLE_AT;
+
+/* ---------- canvas with device-pixel scaling ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = cv.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", () => { resize(); draw(clock); });
+
+/* ---------- the construction (chapter-01.tex:529-575; 04_zipf_free_complexity.tex:61-136) ----------
+   p(r) = r^-lambda / Z_R(lambda), Z_R = sum_{r<=R} r^-lambda, C = sum p ln r,
+   S = lambda C + ln Z_R, chi = Var_lambda(ln r) = -dC/dlambda. All finite sums, computed here. */
+const LMIN = 0.6, LMAX = 3.0, RS = [100, 500, 5000];
+function family(R, lam) {
+  let Z = 0, M1 = 0, M2 = 0;
+  for (let r = 1; r <= R; r++) { const w = Math.pow(r, -lam), l = Math.log(r); Z += w; M1 += w * l; M2 += w * l * l; }
+  const Cm = M1 / Z, chi = M2 / Z - Cm * Cm, S = lam * Cm + Math.log(Z);
+  return { Z, C: Cm, S, chi };
+}
+const LGRID = []; for (let k = 0; k <= 240; k++) LGRID.push(LMIN + k * (LMAX - LMIN) / 240);
+const CURVES = {}; RS.forEach(R => { CURVES[R] = LGRID.map(l => family(R, l)); });
+const YMAX = { C: Math.max(...RS.map(R => Math.max(...CURVES[R].map(v => v.C)))),
+               S: Math.max(...RS.map(R => Math.max(...CURVES[R].map(v => v.S)))),
+               chi: Math.max(...RS.map(R => Math.max(...CURVES[R].map(v => v.chi)))) };
+window.__zeta = { family, CURVES };   // exposed for the report's numerical cross-check
+
+/* ---------- state: autoplay sweeps lambda; the slider or an R button takes over ---------- */
+let R = 500, manual = false, lamManual = 3;
+const ease = u => u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u);
+function lamAuto(t) {          // 3.0 -> 0.6 over 0..8 s, then 0.6 -> 1.2 over 8..11 s, settled at 1.2
+  if (t <= 8) return 3.0 - 2.4 * ease(t / 8);
+  return 0.6 + 0.6 * ease((t - 8) / 3);
+}
+const slider = document.getElementById("lam"), lamv = document.getElementById("lamv");
+slider.addEventListener("input", () => { manual = true; lamManual = Number(slider.value); draw(clock); });
+document.querySelectorAll("button[data-r]").forEach(b => b.addEventListener("click", () => {
+  R = Number(b.dataset.r); document.querySelectorAll("button[data-r]").forEach(x => x.classList.toggle("on", x === b)); draw(clock); }));
+
+const SUP = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
+const pow10 = e => e === 0 ? "1" : e === 1 ? "10" : "10" + String(e).split("").map(c => SUP[c]).join("");
+
+function draw(t) {
+  ctx.fillStyle = C.ground; ctx.fillRect(0, 0, W, H);
+  const lam = manual ? lamManual : lamAuto(Math.min(t, SETTLE_AT));
+  slider.value = lam.toFixed(2); lamv.textContent = lam.toFixed(2);
+  const pad = 14;
+  // ---- left: p(r) on log-log axes, current lambda in blue, lambda = 1 in gold
+  const lw = Math.round(W * 0.54);
+  const px0 = pad + 44, px1 = lw - 12, py0 = 30, py1 = H - 44;
+  const XMAXE = Math.log10(5000), YMINE = -12;
+  const sx = lr => px0 + (lr / XMAXE) * (px1 - px0), sy = lp => py0 + (lp / YMINE) * (py1 - py0);
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
+  ctx.fillStyle = C.muted; ctx.font = `15px ${FONT.sans}`;
+  for (let e = 0; e <= 3; e++) { const x = sx(e); ctx.beginPath(); ctx.moveTo(x, py0); ctx.lineTo(x, py1); ctx.stroke();
+    ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText(pow10(e), x, py1 + 5); }
+  for (let e = 0; e >= -12; e -= 4) { const y = sy(e); ctx.beginPath(); ctx.moveTo(px0, y); ctx.lineTo(px1, y); ctx.stroke();
+    ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(e === 0 ? "1" : pow10(e), px0 - 6, y); }
+  ctx.strokeStyle = "rgba(232,230,227,0.45)"; ctx.beginPath(); ctx.moveTo(px0, py0); ctx.lineTo(px0, py1); ctx.lineTo(px1, py1); ctx.stroke();
+  ctx.fillStyle = C.ink; ctx.font = `16px ${FONT.sans}`; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+  ctx.fillText("rank r", (px0 + px1) / 2, H - 6);
+  ctx.textAlign = "left"; ctx.font = `16px ${FONT.mono}`; ctx.fillText("p(r)", px0 + 6, py0 - 10);
+  const curve = (l, col, w, dash) => { const Z = family(R, l).Z; ctx.strokeStyle = col; ctx.lineWidth = w; ctx.setLineDash(dash); ctx.beginPath();
+    const n = 160; for (let s = 0; s <= n; s++) { const r = Math.pow(R, s / n), lp = Math.log10(Math.pow(r, -l) / Z);
+      const x = sx(Math.log10(r)), y = sy(Math.max(YMINE, lp)); s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.setLineDash([]); };
+  curve(1, C.gold, 2, [7, 5]);
+  curve(lam, C.blue, 2.6, []);
+  // cutoff R marker
+  ctx.strokeStyle = "rgba(156,163,175,0.6)"; ctx.setLineDash([2, 4]); const xr = sx(Math.log10(R));
+  ctx.beginPath(); ctx.moveTo(xr, py0); ctx.lineTo(xr, py1); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = C.muted; ctx.font = `15px ${FONT.mono}`; ctx.textAlign = xr > px1 - 50 ? "right" : "left"; ctx.textBaseline = "alphabetic";
+  ctx.fillText(`R = ${R}`, xr + (xr > px1 - 50 ? -6 : 6), py0 + 16);
+  { const y1 = sy(Math.log10(1 / (R * family(R, 1).Z))); ctx.fillStyle = C.gold; ctx.font = `15px ${FONT.mono}`;
+    if (xr < px1 - 70) { ctx.textAlign = "left"; ctx.fillText("\u03bb = 1", xr + 6, y1 + 5); }
+    else { ctx.textAlign = "right"; ctx.fillText("\u03bb = 1", xr - 10, y1 - 22); } }
+  // ---- right: C, S, chi against lambda for this R; chi also for the other cutoffs (muted)
+  const qx0 = lw + 40, qx1 = W - pad - 4, ph = (H - 30 - 34) / 3;
+  const lx = l => qx0 + (l - LMIN) / (LMAX - LMIN) * (qx1 - qx0);
+  const cur = family(R, lam);
+  [["C", "C(λ)"], ["S", "S(λ)"], ["chi", "χ(λ)"]].forEach(([key, name], i) => {
+    const y0 = 22 + i * ph, y1 = y0 + ph - 22, ymax = YMAX[key] * 1.05;
+    const vy = v => y1 - (v / ymax) * (y1 - y0);
+    ctx.fillStyle = C.card; ctx.fillRect(qx0, y0, qx1 - qx0, y1 - y0);
+    ctx.strokeStyle = C.gold; ctx.lineWidth = 1.2; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.moveTo(lx(1), y0); ctx.lineTo(lx(1), y1); ctx.stroke(); ctx.setLineDash([]);
+    if (key === "chi") RS.filter(Rc => Rc !== R).forEach(Rc => { ctx.strokeStyle = "rgba(156,163,175,0.7)"; ctx.lineWidth = 1.2; ctx.beginPath();
+      CURVES[Rc].forEach((v, k) => { const x = lx(LGRID[k]), y = vy(v.chi); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
+      let kp = 0; CURVES[Rc].forEach((v, k) => { if (v.chi > CURVES[Rc][kp].chi) kp = k; });
+      ctx.fillStyle = C.muted; ctx.font = `15px ${FONT.mono}`; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+      ctx.fillText(String(Rc), lx(LGRID[kp]) + 10, Math.max(y0 + 12, vy(CURVES[Rc][kp].chi) + (Rc < R ? 14 : -10))); ctx.textBaseline = "alphabetic"; });
+    ctx.strokeStyle = C.blue; ctx.lineWidth = 2.2; ctx.beginPath();
+    CURVES[R].forEach((v, k) => { const x = lx(LGRID[k]), y = vy(v[key]); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
+    // current lambda
+    ctx.strokeStyle = "rgba(232,230,227,0.6)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(lx(lam), y0); ctx.lineTo(lx(lam), y1); ctx.stroke();
+    ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(lx(lam), vy(cur[key]), 4.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.font = `16px ${FONT.mono}`; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillStyle = C.ink;
+    ctx.fillText(name, qx0, y0 - 5);
+    ctx.textAlign = "right"; ctx.fillText(cur[key].toFixed(2), qx1, y0 - 5);
+  });
+  // lambda axis under the last panel
+  const yb = 22 + 3 * ph - 22;
+  ctx.fillStyle = C.muted; ctx.font = `15px ${FONT.mono}`; ctx.textBaseline = "top";
+  [0.6, 1, 2, 3].forEach(l => { ctx.textAlign = l === 0.6 ? "left" : l === 3 ? "right" : "center"; ctx.fillText(String(l), lx(l), yb + 5); });
+  ctx.fillStyle = C.ink; ctx.font = `16px ${FONT.mono}`; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+  ctx.fillText("λ", (qx0 + qx1) / 2, H - 6);
+}
+function settled(t) { return manual || t >= SETTLE_AT; }
+
+/* ---------- loop ---------- */
+let last = null;
+function frame(ts) {
+  if (last === null) last = ts;
+  const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+  if (!paused && !reduced) clock += dt;
+  draw(clock);
+  window.__applet.settled = settled(clock);
+  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+}
+window.__applet = { id: "zeta-library", ready: false, settled: false };
+resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
+if (!paused && !reduced) requestAnimationFrame(frame);
+</script>
+</body>
+</html>

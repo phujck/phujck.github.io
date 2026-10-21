@@ -1,0 +1,204 @@
+{
+ "figures": [
+  {
+   "colour_map": {
+    "#243039": "#7eb8da",
+    "#477363": "#5cbf9a",
+    "#f1f5f3": "#0a0e1a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "ch2-description-loop",
+   "numbers": {
+    "source": "fig ch2-description-loop"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch2-description-loop.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.15,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "Foundations chapter two: a forecast that acts on its own target, the description loop in which the record's content feeds the process it describes.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch2-description-loop.svg",
+     "sha256": "babe4869ebffdb4c7587fc6f3f9e2b196b2f2e89f3ea24e06145972d74061eea"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch2-description-loop.svg",
+   "width": "half"
+  },
+  {
+   "id": "anf-loop-fig",
+   "numbers": {
+    "verbatim_copy_sha256": "1abe246543faa1ae6ab13d8ac438118e28da5dc08d205898ff780b74c51c85b6"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/anf-loop-fig.png",
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "reuse": true,
+   "shows": "The four-leg adaptive loop of the Adaptive Normal Form paper: slow control theta, generated field h = Pi(theta), fast microstate, coarse delayed measurement m. Verbatim copy; the deck inverts it.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/phujck.github.io/talks/laws-of-learning-v3/figs/fig1_adaptive_loop.png",
+     "sha256": "1abe246543faa1ae6ab13d8ac438118e28da5dc08d205898ff780b74c51c85b6"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/anf-loop-fig.png",
+   "width": "half"
+  },
+  {
+   "id": "anf-flip",
+   "numbers": {
+    "verbatim_copy_sha256": "3e3624429a104fb078a57bd10621fdb903cd271e5823711c22c03ddc053e10d1"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/anf-flip.png",
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "reuse": true,
+   "shows": "The flip bifurcation: below N_c the order-parameter deviation is flat; above it the two-cycle amplitude grows as sqrt(N - N_c). Verbatim copy; the deck inverts it.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/phujck.github.io/talks/laws-of-learning-v3/figs/fig2c_r3_flip.png",
+     "sha256": "3e3624429a104fb078a57bd10621fdb903cd271e5823711c22c03ddc053e10d1"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/anf-flip.png",
+   "width": "half"
+  },
+  {
+   "id": "anf-wedge",
+   "numbers": {
+    "verbatim_copy_sha256": "9842b313a6fdd19e265842cdc893a84c386aa439485c307addfdfdde1a8a9a03"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/anf-wedge.png",
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "reuse": true,
+   "shows": "The viable window in the (N, L) plane: the stability floor L_min ~ log N and the reconfiguration ceiling, both priced by lambda_0. Verbatim copy; the deck inverts it.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/phujck.github.io/talks/laws-of-learning-v3/figs/fig4a_wedge.png",
+     "sha256": "9842b313a6fdd19e265842cdc893a84c386aa439485c307addfdfdde1a8a9a03"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/anf-wedge.png",
+   "width": "half"
+  },
+  {
+   "id": "video-koopman",
+   "numbers": {
+    "verbatim_copy_sha256": "0ab10d3c5f570f8052723d99c5259fcb636ee88b6f8d6de429d1f7365d712215"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/video/08_s07_koopman.mp4",
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "reuse": true,
+   "shows": "Koopman linearisation: a nonlinear flow (the cylinder wake) lifted to a linear operator on observables. Verbatim copy of the author's published talk asset.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/phujck.github.io/assets/talks/dynamics-as-computation/videos/08_s07_koopman.mp4",
+     "sha256": "0ab10d3c5f570f8052723d99c5259fcb636ee88b6f8d6de429d1f7365d712215"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/video/08_s07_koopman.mp4",
+   "width": "half"
+  },
+  {
+   "id": "video-dmd",
+   "numbers": {
+    "verbatim_copy_sha256": "2e1bee771070edb6807253faddf918ca64091bda08135cd202c71f7fc696126b"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/video/10_s08_dmd.mp4",
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "reuse": true,
+   "shows": "Dynamic mode decomposition: the reduced operator A W = W Lambda, the modes Phi = X' V Sigma^-1 W and the reconstruction of the state from a few modes. Verbatim copy of the author's published talk asset.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/phujck.github.io/assets/talks/dynamics-as-computation/videos/10_s08_dmd.mp4",
+     "sha256": "2e1bee771070edb6807253faddf918ca64091bda08135cd202c71f7fc696126b"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/video/10_s08_dmd.mp4",
+   "width": "half"
+  },
+  {
+   "id": "video-kvn",
+   "numbers": {
+    "verbatim_copy_sha256": "93fa93255f1b9cd0e981191ac4c62069164e689a3730effbb7f8bbe016116d20"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/video/11_s09_kvn_bridge.mp4",
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "reuse": true,
+   "shows": "Koopman-von Neumann as a bridge: finite coordinates, a larger dictionary, a linear lifted state a_{n+1} = A_r a_n. Verbatim copy of the author's published talk asset.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/phujck.github.io/assets/talks/dynamics-as-computation/videos/11_s09_kvn_bridge.mp4",
+     "sha256": "93fa93255f1b9cd0e981191ac4c62069164e689a3730effbb7f8bbe016116d20"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/video/11_s09_kvn_bridge.mp4",
+   "width": "half"
+  },
+  {
+   "id": "video-svd",
+   "numbers": {
+    "verbatim_copy_sha256": "89d8a45aedc54dfa41682c9d6abae50535a2900bfb893b0d5779a4f0cf2b36b7"
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/video/09_s07b_svd.mp4",
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "reuse": true,
+   "shows": "Compressing the lift: the singular value decomposition keeps the dominant directions of the lifted state. Verbatim copy of the author's published talk asset.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/phujck.github.io/assets/talks/dynamics-as-computation/videos/09_s07b_svd.mp4",
+     "sha256": "89d8a45aedc54dfa41682c9d6abae50535a2900bfb893b0d5779a4f0cf2b36b7"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/video/09_s07b_svd.mp4",
+   "width": "half"
+  },
+  {
+   "colour_map": {
+    "#0072b2": "#7eb8da",
+    "#477363": "#5cbf9a",
+    "#7eb8da": "#7eb8da",
+    "#d55e00": "#e0875a",
+    "#e0875a": "#e0875a",
+    "#ffffff": "#0a0e1a"
+   },
+   "id": "ch2-pm-contexts",
+   "numbers": {
+    "W_classical_max": 4,
+    "W_quantum": 6,
+    "column_products": [
+     1,
+     1,
+     -1
+    ],
+    "row_products": [
+     1,
+     1,
+     1
+    ]
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch2-pm-contexts.png",
+   "port": {
+    "crop": null,
+    "font_family": "Inter",
+    "font_scale": 1.0,
+    "keep_hues": false,
+    "width": 1400
+   },
+   "producer": "talks/synthetics/tools/producers/ports/port_all.py",
+   "shows": "The Peres-Mermin square: nine observables, every row and column a jointly measurable context, row products +1 and column products +1, +1, -1, so no single value assignment satisfies all six; the witness W is at most 4 classically and 6 quantum mechanically.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/synthetics-foundations/manuscript/figures/generated/ch2-pm-contexts.svg",
+     "sha256": "48515fdb0ff6d18b4aa42bec9d8724717126ec1822d8811b9d6e418922954436"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/ch2-pm-contexts.svg",
+   "width": "half"
+  }
+ ],
+ "packet": "model-ports"
+}

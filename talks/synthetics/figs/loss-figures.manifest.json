@@ -1,0 +1,135 @@
+{
+ "figures": [
+  {
+   "id": "register-phase-diagram",
+   "numbers": {
+    "C_part_slice": 0.25,
+    "boundary_csv_max_abs_dev_from_recompute": 0.0,
+    "eta": 0.8,
+    "gamma": 1.0,
+    "meeting_C_part": 0.4,
+    "theta_att": 1.0853,
+    "theta_split": 0.8411
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/register-phase-diagram.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/loss-figures/make_loss_figures.py",
+   "shows": "Register-choice phase diagram at gamma=1, eta=0.8: share, suppress and split regions in the (theta, C_part) plane, boundary C_crit(theta) from the briefing's archived CSV, meeting point and the dashed C_part=0.25 slice.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/calculations/register_phase_diagram.py",
+     "sha256": "925882d9ede01dde4b6239efd14c2db1a4c23737647305a47a8fdc3841eae59c"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/figures/phase-run-939b6a8b76724d02.result/register-boundary.csv",
+     "sha256": "cea261a174820e38ac494c155013575442f683e95f01e301c96964cb32f8d6fc"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/the-price-of-a-shared-description.tex",
+     "sha256": "6f419be1f68a949bbb058764be6c809059244967e891e290d62a6de1dd42ec1b"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/register-phase-diagram.svg",
+   "width": "half"
+  },
+  {
+   "id": "retention-trajectories",
+   "numbers": {
+    "closed_pair": "ydot=-4y+2z, zdot=2y-12z",
+    "coarse_rate": -4,
+    "initial_slope_state_1": -1.0,
+    "initial_slope_state_2": -3.0,
+    "max_abs_dev_retained_z_and_expm_vs_analytic": 9.992007221626409e-16,
+    "p_A_infinity": 0.5
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/retention-trajectories.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/loss-figures/make_loss_figures.py",
+   "shows": "Exact p_A(t) of the four-state generator from state 1 and state 2, the two-state coarse model exp(-4t), and the retained-z closed pair (gold rings) landing on both exact curves.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/calculations/representation_illustrations.py",
+     "sha256": "6fbec2ba4f746abc5e5038455b450e0ef1ca546a64803a6827ac45b3cbcde670"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/what-a-useful-summary-must-remember.tex",
+     "sha256": "e9f07cc6fff4005ed235a9d35dee00e79e34f10b4a5b39cb54009afb11990c4c"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/retention-trajectories.svg",
+   "width": "half"
+  },
+  {
+   "id": "closure-augmentation",
+   "numbers": {
+    "after_two_residual_directions": 0.000329,
+    "byte_identical_to": "figs/vwo-convergence.png (same port_figure.py command and pin)",
+    "fallback": "ported: no archived rank-growth data found; panel (a) from port_figure.py --crop 0,0,0.345,1 --width 1400 on the PDF; values quoted from main.tex:98-105 (caption and following paragraph)",
+    "fixed_active_space_error": 0.279,
+    "lambda": 1,
+    "numerical_precision_by_rank": 10,
+    "operator_pool_rank_6": 0.000494,
+    "slide_quotes": {
+     "0.00033": 0.000329,
+     "0.28": 0.279
+    }
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-augmentation.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/loss-figures/make_loss_figures.py",
+   "shows": "Panel (a) of the closure-guided paper's convergence figure, ported to the house palette: energy error against active rank for residual-vector augmentation and the Pauli operator pool at lambda=1.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/variational-wrong-object/manuscript/imported/figures/fig_constructive_convergence.pdf",
+     "sha256": "84897c299b9ce966243aa14259f4df63b12f1f08ae5a2f70d127d5c83b998421"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/synthetics papers/variational-wrong-object/manuscript/imported/main.tex",
+     "sha256": "65e68547b115f62a8696b26a6177798b44d87a1334aef4c86e434a61ae11407b"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/port_figure.py",
+     "sha256": "b6ce5f5a739170285dec6a21441db60a9514f540d5dff31e565c6f08b4901912"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/closure-augmentation.svg",
+   "width": "half"
+  },
+  {
+   "id": "gap-selection",
+   "numbers": {
+    "couplings": [
+     0.4,
+     0.6,
+     0.8,
+     1.0,
+     1.2
+    ],
+    "lambda_1_before_error": 0.333634,
+    "lambda_1_gap_error": 0.028259,
+    "lambda_1_raw_error": 0.3067,
+    "slide_quotes": {
+     "0.028": 0.028,
+     "0.31": 0.31
+    }
+   },
+   "png": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/gap-selection.png",
+   "producer": "/home/phujck/VScodeProjects/laplace/talks/synthetics/tools/producers/loss-figures/make_loss_figures.py",
+   "shows": "Retained-space energy error after one added direction against coupling lambda: raw residual amplitude picks the high-gap channel, amplitude over gap picks the low-gap channel; dashed muted line is the error before enlargement.",
+   "sources": [
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/calculations/replot_archived_quantum.py",
+     "sha256": "3820c52e8a7384dd8e6a04d4a5bdee71d28f1f48e410bc0a79a7d971b6b861da"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/evidence-snapshots/quantum/metric_pool_sweep.csv",
+     "sha256": "531c3778144cae2c73f43f8ff8e2f8035190e47d55989cd30cdf1400ebb1f323"
+    },
+    {
+     "path": "/home/phujck/VScodeProjects/laplace/writing_projects/eigen-technical-due-diligence-briefing/manuscript/working-draft/chapters/quantum-prototypes-changing-the-calculation.tex",
+     "sha256": "46a4ef522fbcb9f187e067e23ce2692da0b3112b4eb97856b9d30fb829ee6644"
+    }
+   ],
+   "svg": "/home/phujck/VScodeProjects/laplace/talks/synthetics/deck/public/figs/gap-selection.svg",
+   "width": "half"
+  }
+ ],
+ "packet": "loss-figures"
+}
