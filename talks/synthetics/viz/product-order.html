@@ -109,15 +109,15 @@ function draw(t) {
   const rows = [["tuple", TUPLE, C.ink], ["sorted", SORTED, C.ink], ["excess", EXCESS, C.orange]];
   ctx.font = `15px ${FONT.sans}`; ctx.fillStyle = C.muted; ctx.textAlign = "right"; ctx.fillText("nats", tx + tw, gy - 10);
   rows.forEach(([name, v, col], k) => {
-    const y = gy + 18 + k * 28;
+    const y = gy + 18 + k * Math.min(28, Math.max(22, (2 * ch - 60) / 3));
     ctx.font = `16px ${FONT.sans}`; ctx.fillStyle = C.muted; ctx.textAlign = "left"; ctx.fillText(name, tx, y);
     ctx.font = `600 18px ${FONT.mono}`; ctx.fillStyle = col; ctx.textAlign = "right"; ctx.fillText(v.toFixed(4), tx + tw, y);
   });
   ctx.font = `15px ${FONT.sans}`; ctx.fillStyle = C.muted;
-  ctx.textAlign = "left"; const ky = gy + 2 * ch - 30; ctx.fillText("count =", tx, ky);
+  ctx.textAlign = "left"; const ky = Math.min(gy + 2 * ch - 30, Math.max(gy + 104, gy + 2 * ch - 30)); ctx.fillText("count =", tx, ky);
   ctx.font = `15px ${FONT.sans}`; let kx = tx + ctx.measureText("count = ").width;
   kx += subText("r", "A", kx, ky, 15, C.muted, "left") + 6; subText("r", "B", kx, ky, 15, C.muted, "left");
-  ctx.font = `15px ${FONT.sans}`; ctx.fillStyle = C.muted; ctx.textAlign = "left"; ctx.fillText("rank = sorted line", tx, gy + 2 * ch - 8);
+  ctx.font = `15px ${FONT.sans}`; ctx.fillStyle = C.muted; ctx.textAlign = "left"; ctx.fillText("rank = sorted line", tx, ky + 20);
   ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad, split); ctx.lineTo(W - pad, split); ctx.stroke();
   // ======== bottom: flattening an n-fold shell at rank r
   const tt = Math.min(t, SETTLE_AT);

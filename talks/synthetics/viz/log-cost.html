@@ -143,8 +143,10 @@ function draw(t) {
       ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.setLineDash([]);
       ctx.strokeRect(rx + 0.5, by - 5, fa, bh + 10); ctx.strokeRect(rx + fa + 0.5, by - 5, fb, bh + 10);
     }
-    ctx.font = `15px ${FONT.mono}`; ctx.fillStyle = C.muted; ctx.textAlign = "left";
-    if (showMark) ctx.fillText(`${lhs.toFixed(2)} ${pass ? "=" : "≠"} ${s.f(a).toFixed(2)} + ${s.f(b).toFixed(2)}`, rx, by + bh + 26);
+    ctx.font = `15px ${FONT.mono}`; ctx.fillStyle = C.muted;
+    // a short frame has no room under the bar: the arithmetic then sits on the name's line, right-aligned to the bar
+    if (showMark) { const txt = `${lhs.toFixed(2)} ${pass ? "=" : "≠"} ${s.f(a).toFixed(2)} + ${s.f(b).toFixed(2)}`;
+      if (rowH < 108) { ctx.textAlign = "right"; ctx.fillText(txt, rx + barW, y0 + 18); } else { ctx.textAlign = "left"; ctx.fillText(txt, rx, by + bh + 26); } }
     if (showVerdict) {
       ctx.font = `600 26px ${FONT.sans}`; ctx.textAlign = "right"; ctx.textBaseline = "middle";
       ctx.fillStyle = pass ? C.ink : C.orange; ctx.fillText(pass ? "✓" : "✗", W - pad, by + bh / 2);
