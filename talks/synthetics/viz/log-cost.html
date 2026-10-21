@@ -40,8 +40,8 @@ const rand = mulberry32(SEED);   // unused: this applet has no random field
 /* ---------- clock: ?t=<seconds> starts there, ?pause=1 freezes, reduced motion settles ---------- */
 const Q = new URLSearchParams(location.search);
 let clock = Number(Q.get("t") || 0);
-const paused = Q.get("pause") === "1";
-const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let paused = Q.get("pause") === "1";
+let reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const SETTLE_AT = 12;
 const PHASE = 4;                               // one composite per 4 s; the three composites loop every 12 s
 if (reduced) clock = 2 * PHASE + 3.5;          // settled view: the last composite with its verdicts shown
@@ -157,17 +157,28 @@ function settled(t) { return reduced; }
 
 /* ---------- loop ---------- */
 let last = null;
+/* deck play control: the deck's button (Embed.vue) fires "deckplay" in this window; the applet then runs from the start of
+   its current stage even when the visitor's browser asks for reduced motion, because the visitor asked for it */
+const _raf = window.requestAnimationFrame.bind(window); let frameAlive = false;
+function raf(fn) { frameAlive = true; return _raf(ts => { frameAlive = false; fn(ts); }); }
+window.addEventListener("deckplay", () => {
+  reduced = false; paused = false; last = null;
+  clock = (typeof winStart === "number") ? winStart : 0;
+  if (typeof heldSince !== "undefined") heldSince = 0;
+  if (!frameAlive) raf(frame);
+});
+window.addEventListener("deckpause", () => { paused = !paused; if (!paused) { last = null; if (!frameAlive) raf(frame); } });
 function frame(ts) {
   if (last === null) last = ts;
   const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
   if (!paused && !reduced) clock += dt;
   draw(clock);
   window.__applet.settled = settled(clock);
-  if (!paused) requestAnimationFrame(frame);
+  if (!paused) raf(frame);
 }
 window.__applet = { id: "log-cost", ready: false, settled: false };
 resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
-if (!paused && !reduced) requestAnimationFrame(frame);
+if (!paused && !reduced) raf(frame);
 </script>
 </body>
 </html>
