@@ -26,7 +26,7 @@
 <body>
 <div id="stage">
   <div id="frame"><canvas id="cv"></canvas></div>
-  <div class="caption" id="caption">GPU, 262,144 records, batch 1,024: 59.8 µs vs 1,490.7 µs scan</div>
+  <div class="caption" id="caption">Even parity, d = 5: 16 records, 2 states per level</div>
   <!-- optional: <div class="controls">...</div> -->
 </div>
 <script>
@@ -199,7 +199,7 @@ function draw(t) {
     const y = yB + 22 + (n - firstRow) * rowH, Q = R.queries[n], live = n === qn && !done(n);
     if (t < T.q0 + n * T.qStep) continue;
     if (n < firstRow || n >= firstRow + maxRows) { if (done(n)) { statesTouched += R.statesPerQuery; recTouched += R.N; } continue; }
-    txt("q" + (n + 1), cq[0], y, live ? C.ink : C.muted, M15); txt(Q.label, cq[1], y, C.ink, M15);
+    txt("Q" + (n + 1), cq[0], y, live ? C.ink : C.muted, M15); txt(Q.label, cq[1], y, C.ink, M15);
     if (done(n)) { txt(String(Q.machine), cq[2] + 28, y, C.blue, M15, "center"); txt(String(Q.scan), cq[3] + 16, y, C.orange, M15, "center"); }
     const tn = t - (T.q0 + n * T.qStep);
     statesTouched += done(n) ? R.statesPerQuery : R.states.slice(0, d).filter((l, g) => tn >= (d - g) * T.msgStep).reduce((s, l) => s + l.length, 0);

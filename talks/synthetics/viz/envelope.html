@@ -25,7 +25,7 @@
 <body>
 <div id="stage">
   <div id="frame"><canvas id="cv"></canvas></div>
-  <div class="caption" id="caption"><span id="s0">open</span><span class="sep">·</span><span id="s1">read in to out</span><span class="sep">·</span><span id="s2">write out to in</span><span class="sep">·</span><span id="s3">nest across altitudes</span></div>
+  <div class="caption" id="caption"><span id="s0">open</span><span class="sep">·</span><span id="s1">observe</span><span class="sep">·</span><span id="s2">operate</span><span class="sep">·</span><span id="s3">nest</span></div>
 </div>
 <script>
 "use strict";
@@ -288,18 +288,27 @@ function settled(t) { return t >= SETTLE_AT; }
 
 /* ---------- loop ---------- */
 let last = null;
+/* deck clicks: the parent sets window.__deckClick and fires "deckclick"; each click holds one window of the clock */
+const CLICK_WINDOWS = [[0, 3.35], [3.4, 8.55], [8.6, SETTLE_AT]];
+let holdEnd = Infinity, running = false;
+window.addEventListener("deckclick", () => {
+  const k = Math.max(0, Math.min(window.__deckClick | 0, CLICK_WINDOWS.length - 1)); const [a, b] = CLICK_WINDOWS[k];
+  if (clock < a || clock >= b) clock = a; holdEnd = b; last = null;
+  if (!running && !paused) requestAnimationFrame(frame);
+});
 function frame(ts) {
+  running = true;
   if (last === null) last = ts;
   const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-  if (!paused && !reduced) clock = Math.min(clock + dt, SETTLE_AT);
+  if (!paused && !reduced) clock = Math.min(clock + dt, SETTLE_AT, holdEnd);
   draw(clock);
   window.__applet.settled = settled(clock);
-  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+  if (!paused && !settled(clock) && clock < holdEnd) requestAnimationFrame(frame); else running = false;
 }
 window.__applet = { id: "envelope", ready: false, settled: false };
 resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw(clock));
-if (!paused && !reduced) requestAnimationFrame(frame);
+if (!paused && !reduced) { running = true; requestAnimationFrame(frame); }
 </script>
 </body>
 </html>

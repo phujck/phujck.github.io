@@ -301,18 +301,27 @@ function settled(t) { return t >= SETTLE_AT; }
 
 /* ---------- loop ---------- */
 let last = null;
+/* deck clicks: the parent sets window.__deckClick and fires "deckclick"; each click holds one window of the clock */
+const CLICK_WINDOWS = [[0, 3.35], [3.4, 7.35], [7.4, SETTLE_AT]];
+let holdEnd = Infinity, running = false;
+window.addEventListener("deckclick", () => {
+  const k = Math.max(0, Math.min(window.__deckClick | 0, CLICK_WINDOWS.length - 1)); const [a, b] = CLICK_WINDOWS[k];
+  if (clock < a || clock >= b) clock = a; holdEnd = b; last = null;
+  if (!running && !paused) requestAnimationFrame(frame);
+});
 function frame(ts) {
+  running = true;
   if (last === null) last = ts;
   const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-  if (!paused && !reduced) clock += dt;
+  if (!paused && !reduced) clock = Math.min(clock + dt, holdEnd);
   draw(clock);
   window.__applet.settled = settled(clock);
-  if (!paused) requestAnimationFrame(frame);
+  if (!paused && clock < holdEnd) requestAnimationFrame(frame); else running = false;
 }
 window.__applet = { id: "law-form", ready: false, settled: false,
   numbers: { x: xs, weights: CAND.map(p => [p.l, p.w]), Keff: Keff } };
 resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
-if (!paused && !reduced) requestAnimationFrame(frame);
+if (!paused && !reduced) { running = true; requestAnimationFrame(frame); }
 </script>
 </body>
 </html>

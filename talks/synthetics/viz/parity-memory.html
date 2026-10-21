@@ -245,20 +245,29 @@ function settled(t) { return t >= SETTLE_AT; }
 
 /* ---------- loop ---------- */
 let last = null;
+/* deck clicks: the parent sets window.__deckClick and fires "deckclick"; each click holds one window of the clock */
+const CLICK_WINDOWS = [[0, 7.55], [0, 7.55], [7.6, SETTLE_AT], [7.6, SETTLE_AT]];
+let holdEnd = Infinity, running = false;
+window.addEventListener("deckclick", () => {
+  const k = Math.max(0, Math.min(window.__deckClick | 0, CLICK_WINDOWS.length - 1)); const [a, b] = CLICK_WINDOWS[k];
+  if (clock < a || clock >= b) clock = a; holdEnd = b; last = null;
+  if (!running && !paused) requestAnimationFrame(frame);
+});
 function frame(ts) {
+  running = true;
   if (last === null) last = ts;
   const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-  if (!paused && !reduced) clock = Math.min(SETTLE_AT, clock + dt);
+  if (!paused && !reduced) clock = Math.min(SETTLE_AT, clock + dt, holdEnd);
   draw(clock);
   window.__applet.settled = settled(clock);
-  if (!paused && !settled(clock)) requestAnimationFrame(frame);
+  if (!paused && !settled(clock) && clock < holdEnd) requestAnimationFrame(frame); else running = false;
 }
 window.__applet = { id: "parity-memory", ready: false, settled: false,
   data: { records: RECORDS.map(r => r.join("")), ones, pairs: PAIRS.map(p => p.map(c => NAMES[c]).join("")), pairCounts,
     queries: QUERIES.map((q, k) => ({ A: q[0], B: q[1], hits: queryHits[k].map(i => RECORDS[i].join("")) })),
     summaries_P_C0: `${pC0}/${RECORDS.length}`, rule: RECORDS.map(r => `${r[0]}${r[1]}->${allowedLast(r)}`), machine_reproduces_records: machineOK } };
 resize(); draw(clock); window.__applet.ready = true; window.__applet.settled = settled(clock);
-if (!paused && !reduced && !settled(clock)) requestAnimationFrame(frame);
+if (!paused && !reduced && !settled(clock)) { running = true; requestAnimationFrame(frame); }
 </script>
 </body>
 </html>
