@@ -198,6 +198,12 @@
     const { view, scene, image, highlight, focusButton } = frames[current];
     const imageWidth = Number(image.getAttribute("width"));
     const imageHeight = Number(image.getAttribute("height"));
+    const stickyHeight = document.querySelector('.site-header').getBoundingClientRect().height;
+    const captions = stops[current].querySelector('figcaption').getBoundingClientRect().height;
+    const extra = tour.querySelector('.tour-links')?.getBoundingClientRect().height || 0;
+    const available = (window.visualViewport?.height || innerHeight) - stickyHeight
+      - header.getBoundingClientRect().height - nav.getBoundingClientRect().height - captions - extra - 14;
+    view.style.maxHeight = Math.max(120, Math.floor(available)) + 'px';
     const width = view.clientWidth;
     const height = view.clientHeight;
     if (!width || !height) return;
@@ -340,38 +346,4 @@
     anchorObserver.observe(nav);
   }
   show(Math.max(0, indexFromHash()));
-})();
-
-(() => {
-  "use strict";
-  const section = document.querySelector(".simulation");
-  if (!section) return;
-  const stops = [...section.querySelectorAll(".sim-stop")];
-  const links = [...section.querySelectorAll(".sim-stops a")];
-  function show(id) {
-    const active = stops.find(stop => stop.id === id);
-    if (!active) return;
-    for (const stop of stops) stop.hidden = stop !== active;
-    for (const link of links) {
-      if (link.hash === "#" + id) link.setAttribute("aria-current", "step");
-      else link.removeAttribute("aria-current");
-    }
-  }
-  for (const link of links) {
-    link.addEventListener("click", event => {
-      if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      if (location.hash !== link.hash) history.pushState(null, "", link.hash);
-      show(link.hash.slice(1));
-    });
-  }
-  function fromAddress() {
-    const id = location.hash.slice(1);
-    if (id.startsWith("simulation-")) show(id);
-  }
-  section.classList.add("sim-enhanced");
-  show(stops[0].id);
-  fromAddress();
-  window.addEventListener("hashchange", fromAddress);
-  window.addEventListener("popstate", fromAddress);
 })();

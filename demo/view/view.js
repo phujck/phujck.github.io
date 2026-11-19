@@ -44,8 +44,8 @@
   const holder = document.getElementById("material");
   const related = document.getElementById("related");
   if (item.stop) {
-    related.href = "../writing/#" + item.stop;
-    related.textContent = "Return to walkthrough";
+    related.href = item.stop.startsWith("simulation") ? "/demo/writing/simulation/#" + item.stop : "../writing/#" + item.stop;
+    related.textContent = item.stop.startsWith("simulation") ? "Return to the simulation" : "Return to walkthrough";
     related.hidden = false;
   }
   let element;

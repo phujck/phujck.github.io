@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="theme-color" content="#0b1522">
+  <meta name="description" content="Eight layouts for the same sixteen symbols lead to a question about what it costs a register to hold its own organisation.">
+  <meta property="og:title" content="Physical origins of the Kalmár constant · EigenEngine">
+  <meta property="og:description" content="Eight layouts for sixteen symbols, the cost of choosing an organisation, and what it takes to store that choice.">
+  <meta property="og:image" content="https://gmccaul.co.uk/eigenengine/kalmar-constant/layouts.svg">
+  <meta property="og:url" content="https://gmccaul.co.uk/eigenengine/kalmar-constant/">
+  <title>Physical origins of the Kalmár constant · EigenEngine</title>
+  <link rel="canonical" href="https://gmccaul.co.uk/eigenengine/kalmar-constant/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./kalmar.css">
+  <script src="./kalmar.js" defer></script>
+</head>
+<body>
+  <header class="km-top">
+    <nav class="km-wrap" aria-label="Related EigenEngine pages">
+      <a class="km-back" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
+      <a href="/eigenengine/cost-of-complexity/">The Cost of Complexity <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main class="km-wrap">
+    <header class="km-hero">
+      <p class="km-label">Follow-up draft · 19 November 2026</p>
+      <h1>Physical origins of the <em>Kalmár constant</em></h1>
+      <p class="km-by">Gerard McCaul · EigenEngine</p>
+      <div class="km-hero-bottom">
+        <div>
+          <p class="km-lede">Sixteen symbols have eight layouts. What does it cost to hold the chosen layout?</p>
+          <p class="km-context"><cite>The Cost of Complexity</cite> prices the choices inside a layout. This unreviewed draft charges for the layout itself. It came from one pass with Eigen running Claude.</p>
+        </div>
+        <a class="km-button km-primary" href="/demo/view/?asset=kalmar-paper">Read the draft <small>PDF</small></a>
+      </div>
+    </header>
+
+    <section class="km-plate" id="layouts" aria-labelledby="km-layout-title">
+      <div class="km-section-head">
+        <h2 id="km-layout-title">Same sixteen symbols. Eight layouts.</h2>
+        <p>A register holds the alternatives for one choice. In <strong>2 × 8</strong>, choose one of two registers, then one of eight symbols. In <strong>8 × 2</strong>, reverse those group sizes. Symbol 11 keeps its rank as it moves.</p>
+      </div>
+      <div class="km-board km-layout" data-layout-demo>
+        <div class="km-layout-controls">
+          <fieldset>
+            <legend>Choose a layout</legend>
+            <div class="km-picks">
+              <button type="button" data-layout="0" aria-pressed="false">16</button>
+              <button type="button" data-layout="1" aria-pressed="true">2 × 8</button>
+              <button type="button" data-layout="2" aria-pressed="false">4 × 4</button>
+              <button type="button" data-layout="4" aria-pressed="false">8 × 2</button>
+              <button type="button" data-layout="3" aria-pressed="false">2 × 2 × 4</button>
+              <button type="button" data-layout="5" aria-pressed="false">2 × 4 × 2</button>
+              <button type="button" data-layout="6" aria-pressed="false">4 × 2 × 2</button>
+              <button type="button" data-layout="7" aria-pressed="false">2 × 2 × 2 × 2</button>
+            </div>
+          </fieldset>
+          <button class="km-replay" type="button" data-layout-replay>Replay 2 × 8 → 8 × 2</button>
+        </div>
+        <figure class="km-stage">
+          <div class="km-stage-header"><strong data-layout-name>2 × 8</strong><span data-layout-desc>Two groups of eight</span></div>
+          <svg class="km-layout-graph" viewBox="0 0 640 236" role="img" aria-label="Sixteen ranked symbols, arranged in two groups of eight. Symbol 11 is highlighted.">
+            <g data-frames></g>
+            <g data-symbols></g>
+          </svg>
+          <noscript><img src="./layouts.svg" width="640" height="440" alt="The symbol numbered 11 appears in both the two-groups-of-eight and the eight-groups-of-two layouts."></noscript>
+          <figcaption><span><i></i> A register</span><span><i></i> Symbol 11</span><p data-layout-address aria-live="polite">Symbol 11 · register 2, position 3.</p></figcaption>
+        </figure>
+        <div class="km-boundaries">
+          <p><strong>Choose boundaries in symbol 11’s address</strong></p>
+          <div class="km-address" role="group" aria-label="Toggle boundaries in the four-bit address">
+            <span>1</span><button type="button" data-gap="0" aria-label="Boundary after the first bit" aria-pressed="true">|</button>
+            <span>0</span><button type="button" data-gap="1" aria-label="Boundary after the second bit" aria-pressed="false">|</button>
+            <span>1</span><button type="button" data-gap="2" aria-label="Boundary after the third bit" aria-pressed="false">|</button><span>0</span>
+          </div>
+        </div>
+      </div>
+      <p class="km-after">The 11th symbol has zero-based address 10, written as <code>1010</code> in binary. Each of the three gaps can hold a register boundary, giving 2<sup>3</sup> = 8 layouts.</p>
+      <a class="km-source" href="/demo/view/?asset=kalmar-paper&amp;page=3">Figure 1, p. 3 <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="km-plate" id="growth" aria-labelledby="km-growth-title">
+      <div class="km-section-head">
+        <h2 id="km-growth-title">Count every layout up to a limit.</h2>
+        <p>Let <var>H</var>(<var>N</var>) count the layouts for exactly <var>N</var> symbols. For sixteen, <var>H</var>(16) = 8. Kalmár’s constant describes the growth of a different count, the total across all sizes up to <var>N</var>.</p>
+        <p>If the first choice has <var>n</var> options, the remaining choices can cover at most <var>N</var>/<var>n</var> positions. Every nonempty layout starts on one of these branches.</p>
+        <p>For a total growing as <var>N</var><sup>ρ</sup>, the fraction starting with <var>n</var> approaches <var>n</var><sup>−ρ</sup>. The branch fractions sum to one. The zeta sum adds the term for 1.</p>
+      </div>
+      <div class="km-board km-growth">
+        <figure class="km-branch">
+          <div class="km-branch-origin">All layouts up to <var>N</var></div>
+          <div class="km-branches" role="group" aria-label="Choose the first register size">
+            <button type="button" data-branch="2" aria-pressed="true"><b>2 first</b><span>Remaining range <var>N</var>/2</span></button>
+            <button type="button" data-branch="3" aria-pressed="false"><b>3 first</b><span>Remaining range <var>N</var>/3</span></button>
+            <button type="button" data-branch="4" aria-pressed="false"><b>4 first</b><span>Remaining range <var>N</var>/4</span></button>
+            <span class="km-branch-rest">and every larger first choice</span>
+          </div>
+          <figcaption data-branch-read aria-live="polite">Start with 2 options. The remaining layouts fit within half the original range.</figcaption>
+        </figure>
+        <div class="km-growth-result">
+          <p class="km-math">2<sup>−ρ</sup> + 3<sup>−ρ</sup> + 4<sup>−ρ</sup> + … = 1 <span aria-hidden="true">⇒</span> ζ(ρ) = 2</p>
+          <div><strong>ρ ≈ 1.72865</strong><p>Doubling the allowed range gives about <strong>3.31 times</strong> as many layouts in total, for large ranges.</p></div>
+        </div>
+      </div>
+      <a class="km-source" href="/demo/view/?asset=kalmar-paper&amp;page=2">Kalmár’s theorem, Eq. (12), p. 2 <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="km-plate" id="capacity" aria-labelledby="km-capacity-title">
+      <div class="km-section-head">
+        <h2 id="km-capacity-title">Charging for each register slows the growth.</h2>
+        <p>Now count layouts by cost. A register with <var>n</var> choices costs <var>K</var><sub>0</sub> + κ ln <var>n</var>. The constant κ converts the logarithm into a budget. The fixed charge <var>K</var><sub>0</sub> is paid for every register in the layout.</p>
+      </div>
+      <div class="km-board km-capacity" data-capacity>
+        <figure class="km-chart">
+          <figcaption><strong>Growth exponent λ<sub>c</sub></strong><span>Draft Table I</span></figcaption>
+          <svg viewBox="0 0 540 246" role="img" aria-label="The growth exponent falls from 1.72865 when the fixed cost is zero, to 1.00033 at cost eight.">
+            <g data-capacity-chart></g>
+          </svg>
+          <noscript><p>Table I gives 1.72865 at cost 0, 1.25549 at cost 1, and 1.00033 at cost 8.</p></noscript>
+          <p>Fixed cost per register, <var>K</var><sub>0</sub> / κ</p>
+        </figure>
+        <div class="km-case-panel">
+          <fieldset>
+            <legend>Choose a fixed cost</legend>
+            <div class="km-picks km-case-picks">
+              <button type="button" data-case="0" aria-pressed="true">0</button>
+              <button type="button" data-case="1" aria-pressed="false">0.25</button>
+              <button type="button" data-case="2" aria-pressed="false">0.5</button>
+              <button type="button" data-case="3" aria-pressed="false">1</button>
+              <button type="button" data-case="4" aria-pressed="false">2</button>
+              <button type="button" data-case="5" aria-pressed="false">3</button>
+              <button type="button" data-case="6" aria-pressed="false">5</button>
+              <button type="button" data-case="7" aria-pressed="false">8</button>
+            </div>
+          </fieldset>
+          <div class="km-case-reading" aria-live="polite">
+            <p data-case-name>No fixed charge</p>
+            <p class="km-number">λ<sub>c</sub> = <strong data-case-value>1.72865</strong></p>
+            <p data-case-note>Without a fixed charge, the budget count gives the same exponent as Kalmár’s range count.</p>
+          </div>
+        </div>
+      </div>
+      <p class="km-math km-after" aria-label="zeta of lambda c equals one plus exponential of lambda c times K zero divided by kappa">ζ(λ<sub>c</sub>) = 1 + exp(λ<sub>c</sub> <var>K</var><sub>0</sub>/κ)</p>
+      <p class="km-after">At large budget <var>B</var>, each additional κ of budget multiplies the count by about e<sup>λ<sub>c</sub></sup>. As the fixed charge rises, λ<sub>c</sub> decreases toward 1, the convergence boundary of the <a href="/demo/view/?asset=cost-paper&amp;page=14">infinite-range Zipf distribution</a>.</p>
+      <a class="km-source" href="/demo/view/?asset=kalmar-paper&amp;page=3">Table I and Eq. (15), pp. 2–3 <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="km-plate" id="self-description" aria-labelledby="km-self-title">
+      <div class="km-section-head">
+        <h2 id="km-self-title">Four bits for the symbols. Ten to hold their layout too.</h2>
+        <p>Three bits say where the register boundaries go. That three-bit record has a layout of its own. Keep recording until one bit is left, with no gap to describe.</p>
+      </div>
+      <div class="km-board km-self" data-self>
+        <div class="km-tower">
+          <ol aria-label="Layers of self-description">
+            <li data-bit-row><span><strong>Choose a symbol</strong>16 possibilities</span><span class="km-bitmarks" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>4 bits</b></li>
+            <li data-bit-row><span><strong>Record that layout</strong>8 possibilities</span><span class="km-bitmarks" aria-hidden="true"><i></i><i></i><i></i></span><b>3 bits</b></li>
+            <li data-bit-row><span><strong>Record the three-bit layout</strong>4 possibilities</span><span class="km-bitmarks" aria-hidden="true"><i></i><i></i></span><b>2 bits</b></li>
+            <li data-bit-row><span><strong>Record the two-bit layout</strong>2 possibilities</span><span class="km-bitmarks" aria-hidden="true"><i></i></span><b>1 bit</b></li>
+          </ol>
+          <div class="km-bit-sum"><strong data-bit-total>4 + 3 + 2 + 1 = 10 bits</strong><button type="button" data-bit-replay>Replay the count</button></div>
+        </div>
+        <aside class="km-fixed">
+          <h3>48 never gets smaller.</h3>
+          <div class="km-loop" aria-label="Forty-eight leads back to forty-eight"><span>48</span><span aria-hidden="true">⟳</span><span>48</span></div>
+          <p>With 48 symbols there are 48 layouts. Recording that choice leads back to the same size.</p>
+          <p><strong>817 of 9,999</strong> sizes tested from 2 to 10,000 fail to finish. Of those, 811 reach a fixed size and six enter a two-size cycle.</p>
+        </aside>
+      </div>
+      <a class="km-source" href="/demo/view/?asset=kalmar-paper&amp;page=5">Self-description and Table II, p. 5 <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="km-plate km-deeper" aria-labelledby="km-depth-title">
+      <div class="km-section-head"><h2 id="km-depth-title">Further results and limits.</h2></div>
+      <details>
+        <summary>What if the records of layouts also need a layout?</summary>
+        <div>
+          <p>The ten-bit record has four constituent registers. The draft’s next level stores how those registers are grouped, then applies the same rule to the new record. On a four-bit payload, the successive budgets are</p>
+          <div class="km-levels" aria-label="Reflective budgets for four content bits">
+            <span><b>4</b> Content</span><span><b>10</b> Layout</span><span><b>20</b> Grouping</span><span><b>35</b> Next grouping</span>
+          </div>
+          <p>Each additional level prices one more grouping choice. The result depends on choosing that particular freedom to record.</p>
+          <a class="km-source" href="/demo/view/?asset=kalmar-paper&amp;page=6">Reflective hierarchy, Fig. 3 and Eq. (31), pp. 5–6 ↗</a>
+        </div>
+      </details>
+      <details>
+        <summary>How many levels would a layout typically use?</summary>
+        <div>
+          <p>With only the average cost specified, the maximum-entropy distribution assigns a geometric distribution to the number of levels. The average depth grows without bound as the weighting parameter approaches λ<sub>c</sub> from above. The draft proposes a corresponding pattern of branch sizes in self-organising hierarchies. That prediction awaits a data test.</p>
+          <a class="km-source" href="/demo/view/?asset=kalmar-paper&amp;page=4">The ensemble, Fig. 2 and Theorem 2, p. 4 ↗</a>
+        </div>
+      </details>
+      <details>
+        <summary>Which claims belong to the draft?</summary>
+        <div>
+          <p>The ordered-factorisation count and Kalmár’s theorem are classical. The draft interprets the constant as a capacity under a stated cost law. Its literature search for that interpretation, the threshold and the closure results was limited. The model prices holding a layout whose subregisters at each level share a size. Changing a layout would need a separate account.</p>
+          <p>The acknowledgements credit Claude with deriving the results in Sections III–VI at Gerard McCaul’s prompting and producing the checks, figures and draft in the same conversation. McCaul proposed the hierarchy in Section VII and Claude formalised it.</p>
+          <a class="km-source" href="/demo/view/?asset=kalmar-paper&amp;page=7">Limits and acknowledgements, pp. 6–7 ↗</a>
+        </div>
+      </details>
+    </section>
+    <footer class="km-footer"><a href="/eigenengine.html">← Back to EigenEngine</a><a href="/eigenengine/cost-of-complexity/">Read The Cost of Complexity ↗</a></footer>
+  </main>
+</body>
+</html>

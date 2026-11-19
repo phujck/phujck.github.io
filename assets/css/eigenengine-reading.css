@@ -1,0 +1,7 @@
+body { --nav-height:64px; }
+.reading-exit { width:min(1140px,calc(100% - 2rem)); margin:2rem auto 4rem; }
+.er-record-page h1 { font:400 clamp(2.45rem,5vw,4.7rem)/1.08 'Lora',Georgia,serif; letter-spacing:-.055em; }
+.ee-page .ee-project-record { padding-top:clamp(36px,6vw,80px); }
+.sim-dedicated { padding:clamp(18px,4vw,52px) 0; }
+.sim-dedicated .simulation { margin:0; }
+.sim-dedicated .sim-intro h1 { font:400 clamp(2.2rem,4.3vw,3.8rem)/1.09 'Lora',Georgia,serif; letter-spacing:-.04em; margin:.35rem 0 0; }

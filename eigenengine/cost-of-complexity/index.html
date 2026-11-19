@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="description" content="The Cost of Complexity, Gerard McCaul’s physical theory of representation. Explore how the cost of subdividing one square depends on what a split costs.">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="The Cost of Complexity · EigenEngine">
+  <meta property="og:description" content="A Physical Theory of Representation, with an interactive Hilbert refinement from the paper.">
+  <meta property="og:url" content="https://gmccaul.co.uk/eigenengine/cost-of-complexity/">
+  <meta property="og:image" content="https://gmccaul.co.uk/demo/writing/media/published-figure.webp">
+  <title>The Cost of Complexity · EigenEngine</title>
+  <link rel="canonical" href="https://gmccaul.co.uk/eigenengine/cost-of-complexity/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/eigenengine-paper.css">
+  <script src="/assets/js/eigenengine-results.js" defer></script>
+</head>
+<body class="er-article-page">
+  <a class="er-skip-link" href="#paper">Skip to the paper</a>
+  <header class="er-paper-header">
+    <nav class="er-paper-shell" aria-label="Paper navigation">
+      <a class="er-paper-return" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
+      <div class="er-paper-side">
+        <a class="er-paper-nav-link" href="/demo/view/?asset=cost-paper">Open PDF</a>
+        <a class="er-paper-nav-link" href="/eigenengine/kalmar-constant/">Kalmár draft</a>
+      </div>
+    </nav>
+  </header>
+  <main class="er-paper-shell" id="paper">
+    <header class="er-paper-heading">
+      <p class="er-paper-kicker">Research paper · November 2026</p>
+      <h1>The Cost of Complexity</h1>
+      <p class="er-paper-subtitle">A Physical Theory of Representation</p>
+      <p class="er-paper-byline">Gerard McCaul · EigenEngine · 21 pages</p>
+      <p class="er-paper-summary">A physical system can distinguish more things by putting them into groups and then choosing within a group. The paper asks what the apparatus that makes those choices costs. Its Hilbert example shows how one arrangement can have different costs depending on what each split consumes.</p>
+      <div class="er-paper-actions">
+        <a class="er-paper-return" href="/demo/view/?asset=cost-paper">Read the paper <span class="er-paper-format">PDF</span></a>
+        <a class="ee-text-link" href="#try-refinement">Try the refinement</a>
+      </div>
+    </header>
+
+    <div class="er-results">
+      <header class="er-intro">
+        <p class="ee-label">The Cost of Complexity · The geometry of refinement</p>
+        <h2 id="ee-result-title">What does another distinction cost?</h2>
+        <p>Start with a square. Divide it into four quarters, then divide each quarter into four again. You can now tell sixteen places apart. The paper asks what it costs to build the apparatus that lets you make those choices.</p>
+      </header>
+
+      <div class="er-address">
+        <div class="er-address-copy">
+          <h3>Choose a quarter, then a cell</h3>
+          <p>Each quarter is a <em>register</em>, a physical system that holds a set of alternatives. Picking the quarter is itself a choice. The apparatus that makes it is a register too, so it belongs in the budget.</p>
+          <p class="er-equation">Cost to reach a cell = cost to provide and choose its quarter + cost to choose inside it</p>
+          <a class="ee-text-link" href="/demo/view/?asset=cost-paper&amp;page=5">See the register example in the paper</a>
+        </div>
+        <div class="er-address-demo" data-register-address hidden>
+          <div class="er-picks">
+            <fieldset>
+              <legend>Choose a quarter</legend>
+              <div class="er-pick-grid er-quarter-grid">
+                <button type="button" data-quarter="1" aria-label="Quarter 1" aria-pressed="false">1</button>
+                <button type="button" data-quarter="2" aria-label="Quarter 2" aria-pressed="true">2</button>
+                <button type="button" data-quarter="3" aria-label="Quarter 3" aria-pressed="false">3</button>
+                <button type="button" data-quarter="4" aria-label="Quarter 4" aria-pressed="false">4</button>
+              </div>
+            </fieldset>
+            <span class="er-address-arrow" aria-hidden="true">→</span>
+            <fieldset>
+              <legend data-local-legend>Inside quarter 2</legend>
+              <div class="er-pick-grid er-cell-grid">
+                <button type="button" data-cell="1" aria-label="Cell 1" aria-pressed="false">1</button>
+                <button type="button" data-cell="2" aria-label="Cell 2" aria-pressed="false">2</button>
+                <button type="button" data-cell="3" aria-label="Cell 3" aria-pressed="true">3</button>
+                <button type="button" data-cell="4" aria-label="Cell 4" aria-pressed="false">4</button>
+              </div>
+            </fieldset>
+          </div>
+          <p class="er-address-read" data-address-read role="status">Quarter 2, cell 3 identifies one of the sixteen places.</p>
+        </div>
+      </div>
+
+      <section class="er-lab" id="refinement" aria-labelledby="er-lab-title">
+        <header class="er-lab-intro">
+          <h3 id="er-lab-title">What does the next round cost?</h3>
+          <p>In this model, each round splits every existing cell into four. Change the price of a split and advance a round. The cuts stay in the same places.</p>
+        </header>
+        <div data-refinement-lab hidden>
+          <div class="er-board" id="try-refinement" data-chart-view="geometry">
+          <div class="er-lab-controls">
+            <fieldset class="er-rule">
+              <legend>Price one split by</legend>
+              <div class="er-options">
+                <button type="button" data-price="area" aria-pressed="true">Area</button>
+                <button type="button" data-price="length" aria-pressed="false">Wall length</button>
+                <button type="button" data-price="cubic" aria-pressed="false">Width cubed</button>
+              </div>
+            </fieldset>
+            <button class="er-play" type="button" data-replay-rounds>Replay all rounds</button>
+          </div>
+            <div class="er-view-switch" role="group" aria-label="Figure view"><button type="button" data-chart-view="geometry" aria-pressed="true">Dividing the square</button><button type="button" data-chart-view="plot" aria-pressed="false">Cost curves</button></div>
+            <div class="er-geometry">
+              <figure>
+                <svg viewBox="0 0 240 240" data-layout-before role="img" aria-label="Four cells after one round"></svg>
+                <figcaption><span>Before the round</span><strong data-count-before>4 cells</strong></figcaption>
+              </figure>
+              <span class="er-round-arrow" aria-hidden="true">→</span>
+              <figure>
+                <svg viewBox="0 0 240 240" data-layout-after role="img" aria-label="Sixteen cells after two rounds"></svg>
+                <figcaption><span data-child-label>After the round</span><strong data-count-after>16 cells</strong></figcaption>
+              </figure>
+            </div>
+            <figure class="er-plot">
+              <figcaption>Total subdivision cost</figcaption>
+              <ul class="er-legend" aria-label="Cost curves">
+                <li data-curve-key="area">Area</li>
+                <li data-curve-key="length">Wall length</li>
+                <li data-curve-key="cubic">Width cubed</li>
+              </ul>
+              <svg viewBox="0 0 460 235" data-cost-plot role="img" aria-label="Total subdivision cost by number of cells"></svg>
+            </figure>
+            <div class="er-round-info">
+              <p class="er-step-label" data-round-label>Round 2 of 4</p>
+              <p class="er-round-math" data-round-math>4 splits × 1/4 unit per split = 1 unit added</p>
+              <dl class="er-values">
+                <div><dt>Added this round</dt><dd data-increment>1</dd></div>
+                <div><dt data-total-label>Total after this round</dt><dd data-total>2</dd></div>
+              </dl>
+              <div class="er-nav">
+                <button type="button" data-previous-round>Previous round</button>
+                <button type="button" data-next-round>Next round</button>
+              </div>
+            </div>
+          </div>
+          <p class="er-sr-only" data-round-status role="status"></p>
+          <div class="er-annotation">
+          <p class="er-rule-note" data-price-note>Each smaller square has a quarter of its parent’s area, so one split costs a quarter as much.</p>
+          <p class="er-geometry-note">Gold marks the new cuts inside each parent square. The blue Hilbert path visits the new cells in order, from the filled starting point to the open endpoint.</p>
+              <p class="er-units">For each rule the first round costs 1 unit. The figures count subdivision costs.</p>
+          </div>
+            <div class="er-plot-copy">
+              <h4>What adds up</h4>
+              <p>Area pricing adds one unit every time the number of cells quadruples. The total grows as <strong>log N</strong>, where <em>N</em> is the number of cells.</p>
+              <p>Wall-length pricing adds twice as much at each round. The total grows as <strong>√N</strong>. Pricing by width cubed halves each new contribution and the total approaches two units.</p>
+            </div>
+        </div>
+        <noscript>
+          <div class="er-static">
+            <img src="/demo/writing/media/published-figure.webp" width="1554" height="771" alt="The paper’s Hilbert subdivisions and their total subdivision costs under three pricing rules." loading="lazy">
+            <p>Four rounds make 4, 16, 64 and 256 cells. With the first round set to one unit, area-priced rounds add 1, 1, 1 and 1 for a total of 4. Wall-length pricing adds 1, 2, 4 and 8 for a total of 15. Width-cubed pricing adds 1, ½, ¼ and ⅛ for a total of 1⅞.</p>
+          </div>
+        </noscript>
+        <footer class="er-lab-links">
+          <a class="ee-text-link" href="/demo/view/?asset=cost-paper&amp;page=10">Open Figure 3 (through 64 cells)</a>
+          <a class="ee-text-link" href="/demo/writing/simulation/">Trace a numerical check of Figure 3</a>
+        </footer>
+      </section>
+
+      <section class="er-theorem" aria-labelledby="er-theorem-title">
+        <div>
+          <h3 id="er-theorem-title">When does the logarithm survive?</h3>
+          <p>When the same multiplication of capacity costs the same at every size, the logarithm is exact. The paper calls that assumption <em>homogeneous refinement</em>.</p>
+        </div>
+        <div>
+          <p>The general bound needs a different assumption. If registers can be reused like digits and their complete costs add, a fixed-size digit repeated enough times sets a logarithmic upper bound on the cheapest design. A positive limiting price per unit of information gives logarithmic growth.</p>
+          <a class="ee-text-link" href="/demo/view/?asset=cost-paper&amp;page=7">Read the positional composition theorem</a>
+        </div>
+      </section>
+
+      <div class="er-related">
+        <article>
+          <h3>Erasing a failed guess releases heat</h3>
+          <p>In a model that guesses, checks and resets after failure, the erased guesses form their own distribution. With a thermal bath at temperature <em>T</em> initially uncorrelated with the register, and a complete reset that uses no retained side information, Landauer’s principle puts a floor on the mean heat released. The paper bounds that floor using the guesses’ probability ranks.</p>
+          <p class="er-equation">⟨Q⟩ ≥ k<sub>B</sub>T H ≥ k<sub>B</sub>T ⟨log r⟩</p>
+          <p>Here <em>H</em> is the entropy of the guesses actually erased, and <em>r</em> puts the most likely erased guess first.</p>
+          <a class="ee-text-link" href="/demo/view/?asset=cost-paper&amp;page=12">See the guessing machine</a>
+        </article>
+        <article>
+          <h3>A logarithmic price gives a family of power laws</h3>
+          <p>Take a finite vocabulary where the symbol in rank <em>r</em> costs log <em>r</em> to reach. Among distributions with the same mean cost, the one with greatest entropy is a power law.</p>
+          <p class="er-equation">p(r) ∝ r<sup>−λ</sup></p>
+          <p>The mean cost sets <em>λ</em>. The case <em>λ</em> = 1 is Zipf’s law on a finite vocabulary. An infinite vocabulary needs <em>λ</em> &gt; 1 to normalise.</p>
+          <a class="ee-text-link" href="/demo/view/?asset=cost-paper&amp;page=13">Read the rank-distribution result</a>
+        </article>
+      </div>
+
+      <details class="ee-expand er-details" id="derivations">
+        <summary>Further results and evidence</summary>
+        <div class="er-detail-body">
+          <p>The symbol-cost theorem concerns the cost of reaching a particular rank. A design needs to distinguish its entire more-typical prefix and pay for the selector and for identifying where each code ends. Under the paper’s conditions the asymptotic price per unit of information approaches the register rate.</p>
+          <p>The geometry can also change while the order stays fixed. Figure 4 puts the same hierarchy on self-similar sets of different dimensions. With wall-length pricing, the exponent decreases as the supporting set thins. In the disconnected cases the path just indicates rank order.</p>
+          <p>The paper also asks how much information a representation keeps about a chosen target. Its objective balances that fidelity against the cost of the register describing it.</p>
+          <p><a href="/demo/view/?asset=cost-paper&amp;page=8">Symbol cost</a> · <a href="/demo/view/?asset=cost-paper&amp;page=11">Figure 4</a> · <a href="/demo/view/?asset=cost-paper&amp;page=15">Fidelity</a></p>
+          <figure class="er-word-example">
+            <img src="/talks/synthetics/figs/zipf-english.png" width="1200" height="1120" loading="lazy" alt="The rank and frequency of words in six English novels with two power-law fits.">
+            <figcaption>The Synthetics talk compared the family with word frequencies from six public-domain English novels. The maximum-likelihood fit for that corpus gave an exponent of 1.045.</figcaption>
+          </figure>
+        </div>
+      </details>
+      <p class="er-credit">Gerard McCaul developed the ideas and takes responsibility for the results. Eigen assisted with derivations, figures and drafting using ChatGPT and Claude.</p>
+
+    </div>
+
+    <aside class="er-paper-followup" aria-labelledby="er-followup-title">
+      <div>
+        <p class="er-paper-kicker">Follow-up draft</p>
+        <h2 id="er-followup-title">What if the layout itself has to be stored?</h2>
+        <p>The Kalmár draft asks what it costs to record the choice of layout among all the ways the system can organise the same distinctions.</p>
+      </div>
+      <a class="ee-text-link" href="/eigenengine/kalmar-constant/">Explore the Kalmár result</a>
+    </aside>
+    <footer class="er-paper-footer">
+      <a class="er-paper-return" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
+      <nav aria-label="Related demonstrations">
+        <a class="ee-text-link" href="/eigenengine.html#how">Trace a claim in EigenEngine</a>
+        <a class="ee-text-link" href="/eigenengine.html#memory">Watch the memory answer a question</a>
+      </nav>
+    </footer>
+  </main>
+</body>
+</html>

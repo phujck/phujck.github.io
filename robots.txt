@@ -6,6 +6,7 @@ Disallow: /review/
 Disallow: /memories/
 Disallow: /registers/
 Disallow: /eigenengine.html
+Disallow: /eigenengine/
 Disallow: /talks/optical-twinning-trees/
 Disallow: /demo/
 

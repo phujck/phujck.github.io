@@ -171,22 +171,20 @@
   background: radial-gradient(ellipse at 91% 24%, #3c382c 0, #242b2b 38%, #1a232a 66%, #1a1c20);
   box-shadow: 0 25px 55px -38px #000;
 }
-.ee-cover-curve {
-  position: absolute;
-  z-index: -2;
-  width: max(88%,350px);
-  height: auto;
-  right: -10%;
-  top: -15%;
-  transform: rotate(-8deg);
+.ee-cover-art {
+  position:absolute; inset:0; width:100%; height:100%; z-index:-2; display:block; overflow:hidden;
+  background:none; color:inherit; border:0; margin:0; padding:0; cursor:pointer;
 }
-.ee-cover-field path, .ee-cover-field use { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.ee-cover-field .ee-hilbert-ghost { stroke: #aea27c; stroke-opacity: .18; stroke-width: .64; }
-.ee-cover-field .ee-hilbert-line { stroke: #d2b077; stroke-width: 1.5; stroke-opacity: .65; }
-.ee-cover-field .ee-hilbert-light { stroke: #ffe0a2; stroke-width: 2; filter: drop-shadow(0 0 2px #e7b965); }
+.ee-cover-art:focus-visible { outline-offset:-5px !important; }
+.ee-cover-curve { position:absolute; width:clamp(260px,75%,468px); height:auto; right:-1%; top:-5%; transform:rotate(-7deg); }
+.ee-cover-curve path { stroke-linecap:round; stroke-linejoin:round; fill:none; }
+.ee-curve-frame { stroke:#d9c48e; stroke-opacity:.25; stroke-width:.9; }
+.ee-curve-guide { stroke:#e1bb72; stroke-width:2.0; opacity:.25; }
+.ee-curve-ink { stroke:#e8bf76; stroke-width:2.8; filter:drop-shadow(0 0 2px #dbb56a4a); }
+.ee-curve-quarter { stroke:#f6d599; stroke-width:3.4; filter:drop-shadow(0 0 2px #f2c16488); }
 .ee-feature-paper::after {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(90deg, #171c20f2 2%, #191e21b8 42%, transparent 82%), linear-gradient(0deg, #171c20 4%, #171c20a8 35%, transparent 75%);
+  background: linear-gradient(90deg,#171c20f5 3%,#191e21a6 38%,transparent 74%),linear-gradient(0deg,#171c20 1%,#171c20c4 34%,transparent 73%);
 }
 .ee-feature-copy { padding: clamp(22px,3.1vw,49px); padding-top: clamp(46px,5.2vw,80px); }
 .ee-feature-copy p.ee-label { font-size: .69rem; color: #f1d396; margin-bottom: 1.45rem; letter-spacing:.105em; }
@@ -197,11 +195,6 @@
 .ee-paper-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem 1.15rem; margin-top: 1.25rem; }
 .ee-feature-paper .ee-paper-actions .ee-primary { background: #e6d2ad; }
 .ee-feature-paper .ee-paper-actions .ee-text-link { font-size: .88rem; }
-#ee-curve-motion {
-  position: absolute; top: 9px; right: 10px; padding: .33rem .58rem;
-  border: 1px solid #bbae855c; background: #151b1de8; border-radius: 4px; color: #e7d9bd;
-  font: 500 .68rem/1.25 var(--font-display); cursor: pointer;
-}
 .ee-claim-lead, .ee-memory-lead { display: grid; grid-template-columns: 1.06fr .94fr; align-items: center; gap: clamp(24px,5vw,78px); }
 .ee-claim-lead h2, .ee-memory-lead h2 { max-width: 17ch; }
 .ee-claim-lead header > p:last-child, .ee-memory-lead > p, .ee-memory-bridge {
@@ -229,7 +222,7 @@
   .ee-feature-paper { min-height: 310px; }
   .ee-feature-copy { padding: 1.4rem; }
   .ee-feature-copy p.ee-label { margin-bottom: 1rem; margin-top:.8rem; }
-  .ee-cover-curve { right:-20%;top:-15%; }
+  .ee-cover-curve { right:-5%; top:-2%; width:72%; }
   .ee-feature-copy .ee-paper-pitch { font-size:.91rem; }
   .ee-contents a { line-height: 1.15; padding: .62rem 0; }
 }
@@ -243,3 +236,36 @@
 .ee-evidence-plot span { display:flex; justify-content:space-between; padding:.45rem .75rem; border-top:1px solid #384a51; }
 @media(max-width:760px) { .ee-evidence-case { grid-template-columns: 1fr; gap:1rem; } }
 @media(max-width:480px) { .footer-links { flex-wrap: wrap; justify-content: center; } }
+
+.ee-science-entry { display:flex; align-items:center; justify-content:space-between; gap:clamp(16px,4vw,60px); border-top:1px solid #394452; padding:clamp(24px,3.5vw,42px) 0; }
+.ee-science-entry h3 { font:400 clamp(1.48rem,2.4vw,2.2rem)/1.18 var(--font-body); letter-spacing:-.03em; }
+.ee-science-entry p { margin-top:.5rem; color:var(--ee-muted); max-width:69ch; }
+.ee-science-entry a { flex-shrink:0; }
+.ee-feature-copy { pointer-events:none; }
+.ee-feature-copy a { pointer-events:auto; }
+@media(max-width:760px){.ee-science-entry { display:block; } .ee-science-entry a { margin-top:.8rem; }}
+.ee-page .ee-project-intro { color:#c5ced5; margin-top:1.2rem; max-width:48ch; font:400 1rem/1.55 var(--font-body); border-left:2px solid #ad935f; padding-left:.8rem; }
+.ee-project-intro strong { color:#efe4ce; font-weight:500; }
+.ee-first-calculation { display:block; width:min(100%,342px); height:auto; margin:.75rem 0 .1rem; }
+.ee-claim-specimen .ee-claim-statement { margin-top:.1rem; }
+@media(max-width:780px) { .ee-page .ee-project-intro {font-size:.95rem;margin-top:1rem;} }
+.ee-page :is(#how,#memory,#workspace,#see) { scroll-margin-top: var(--nav-height); }
+.ee-feature-paper {scroll-margin-top:calc(var(--nav-height) + 6px);}
+/* On smaller screens the return belongs after the reading, outside the diagrams. */
+@media(max-width:1100px) {
+  .back-to-top { position:static; margin:.5rem auto 1.1rem; opacity:1; pointer-events:auto; }
+}
+/* A short laptop window should show the entire cover on first arrival. */
+@media(min-width:741px) and (max-height:810px) {
+  .ee-hero-layout { padding-top:calc(var(--nav-height) + 25px); padding-bottom:30px; }
+  .ee-intro h1 { font-size:clamp(3.65rem,6.3vw,5.8rem); }
+  .ee-page .ee-definition { font-size:clamp(1.6rem,2.25vw,2.15rem); }
+  .ee-page .ee-project-intro { margin-top:.85rem; }
+  .ee-intro .ee-actions { margin-top:1.2rem; }
+}
+@media(min-width:741px) and (max-height:665px) {
+  .ee-hero-layout { padding-top:calc(var(--nav-height) + 14px); padding-bottom:22px; }
+  .ee-feature-paper { align-self:start; min-height:min(465px,calc(100svh - 100px)); }
+  .ee-page .ee-intro-body, .ee-page .ee-project-intro { font-size:.94rem; line-height:1.47; }
+}
+.ee-page #ee-memory-map, .ee-page #ee-envelope {scroll-margin-top:calc(var(--nav-height) + 3px);}

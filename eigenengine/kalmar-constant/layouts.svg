@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 440" role="img" aria-labelledby="title">
+  <title id="title">The 2 × 8 and 8 × 2 layouts of sixteen symbols, with symbol 11 in gold</title>
+  <defs>
+    <linearGradient id="ground" x1="0" x2="1" y1="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#244464"/>
+      <stop offset="1" stop-color="#0b1523"/>
+    </linearGradient>
+    <g id="eight" fill="#739fba">
+      <rect width="18" height="17" rx="3"/><rect x="24" width="18" height="17" rx="3"/>
+      <rect x="48" width="18" height="17" rx="3"/><rect x="72" width="18" height="17" rx="3"/>
+      <rect x="96" width="18" height="17" rx="3"/><rect x="120" width="18" height="17" rx="3"/>
+      <rect x="144" width="18" height="17" rx="3"/><rect x="168" width="18" height="17" rx="3"/>
+    </g>
+    <g id="pair" fill="#739fba">
+      <rect x="-8" y="-10" width="61" height="38" rx="7" fill="#1f3c55" stroke="#6d97b3" stroke-width="2"/>
+      <rect width="18" height="17" rx="3"/><rect x="26" width="18" height="17" rx="3"/>
+    </g>
+  </defs>
+  <rect width="640" height="440" rx="22" fill="url(#ground)"/>
+  <rect x="28" y="53" width="270" height="282" rx="19" fill="#0f1f31" stroke="#658daa" stroke-width="2"/>
+  <rect x="342" y="53" width="270" height="282" rx="19" fill="#0f1f31" stroke="#658daa" stroke-width="2"/>
+  <text x="59" y="106" fill="#e3bd85" font-family="system-ui,sans-serif" font-size="42" font-weight="600">2 × 8</text>
+  <text x="373" y="106" fill="#e3bd85" font-family="system-ui,sans-serif" font-size="42" font-weight="600">8 × 2</text>
+  <g transform="translate(65 150)">
+    <rect x="-15" y="-15" width="215" height="48" rx="9" fill="#1f3c55" stroke="#6d97b3" stroke-width="2"/>
+    <use href="#eight"/>
+    <g transform="translate(0 85)">
+      <rect x="-15" y="-15" width="215" height="48" rx="9" fill="#263439" stroke="#dcb981" stroke-width="2"/>
+      <use href="#eight"/>
+      <rect x="48" width="18" height="17" rx="3" fill="#e3bd85"/>
+    </g>
+  </g>
+  <g transform="translate(377 151)">
+    <use href="#pair"/><use href="#pair" x="58"/><use href="#pair" x="116"/><use href="#pair" x="174"/>
+    <use href="#pair" y="85"/><use href="#pair" x="58" y="85"/><use href="#pair" x="116" y="85"/><use href="#pair" x="174" y="85"/>
+    <rect x="116" y="85" width="18" height="17" rx="3" fill="#e3bd85"/>
+    <rect x="108" y="75" width="61" height="38" rx="7" fill="none" stroke="#dcb981" stroke-width="2"/>
+  </g>
+  <path d="M121 256C178 315 340 365 493 268" fill="none" stroke="#e1b982" stroke-width="2.5" stroke-dasharray="5 7"/>
+  <circle cx="121" cy="256" r="5" fill="#e1b982"/><circle cx="493" cy="268" r="5" fill="#e1b982"/>
+  <text x="320" y="388" fill="#dce5ec" font-family="system-ui,sans-serif" font-size="23" font-weight="550" text-anchor="middle">THE SAME SIXTEEN SYMBOLS</text>
+</svg>
