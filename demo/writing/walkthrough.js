@@ -3,6 +3,8 @@
 
   const frame = document.querySelector(".session-film");
   const film = frame.querySelector("video");
+  const play = frame.querySelector(".film-play");
+  const resume = frame.querySelector(".film-resume");
   const captions = frame.querySelector(".film-caption-text");
   const captionTitle = frame.querySelector(".film-caption-title");
   const trackElement = film.querySelector("track");
@@ -16,8 +18,18 @@
   const storageKey = "eigenengine-session-film-time";
   let activeChapter = chapters[0];
   let engaged = false;
+  let playing = false;
   let fullscreen = false;
   let restoreRibbon = false;
+
+  function syncTransport() {
+    const atStart = film.currentTime < .25;
+    const show = !playing && !fullscreen;
+    play.hidden = !show || !atStart;
+    resume.hidden = !show || atStart;
+    const label = film.ended ? "Replay film" : "Resume film";
+    if (resume.textContent !== label) resume.textContent = label;
+  }
 
   function sync() {
     const time = film.currentTime;
@@ -34,6 +46,7 @@
       : cues.find(({ startTime, endTime }) => startTime <= time && time < endTime);
     if (cue && captions.textContent !== cue.text) captions.textContent = cue.text;
     frame.toggleAttribute("data-native-captions", track.mode === "showing");
+    syncTransport();
   }
 
   function setFullscreen(active) {
@@ -93,6 +106,13 @@
     });
   }
 
+  for (const button of [play, resume]) {
+    button.addEventListener("click", () => {
+      film.focus({ preventScroll: true });
+      film.play().catch(() => {});
+    });
+  }
+
   track.mode = "hidden";
   trackElement.addEventListener("load", sync);
   track.addEventListener("cuechange", sync);
@@ -101,13 +121,25 @@
     sync();
   });
   film.addEventListener("timeupdate", sync);
-  film.addEventListener("playing", () => { engaged = true; });
+  film.addEventListener("playing", () => {
+    engaged = true;
+    playing = true;
+    syncTransport();
+  });
   film.addEventListener("seeked", () => {
     engaged = true;
     remember();
     sync();
   });
-  film.addEventListener("pause", () => remember());
+  film.addEventListener("pause", () => {
+    playing = false;
+    remember();
+    syncTransport();
+  });
+  film.addEventListener("ended", () => {
+    playing = false;
+    syncTransport();
+  });
   window.addEventListener("pagehide", () => {
     film.pause();
     remember();
@@ -143,6 +175,7 @@
   } else if (!hash || hash === "#session-film") {
     restore();
   }
+  syncTransport();
 })();
 
 (() => {

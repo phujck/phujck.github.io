@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#101824">
+  <meta name="description" content="Two manuscripts share a versioned piece of evidence. Explore how query diffusion, sparse connections and an author’s correction could make research reusable across projects.">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="What can one research project teach another? · EigenEngine">
+  <meta property="og:description" content="Follow a query between two papers, inspect the evidence that travels, and see how a human correction can change what a research system remembers.">
+  <meta property="og:url" content="https://gmccaul.co.uk/eigenengine/networked-research/">
+  <meta property="og:image" content="https://gmccaul.co.uk/assets/img/eigen/networked-research.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://gmccaul.co.uk/eigenengine/networked-research/">
+  <title>What can one research project teach another? · EigenEngine</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./article.css">
+  <link rel="stylesheet" href="./project-figure.css">
+  <script defer src="./project-figure.js"></script>
+</head>
+<body>
+  <a class="nr-skip" href="#article">Skip to the article</a>
+  <header class="nr-bar"><nav class="nr-width" aria-label="Page navigation">
+    <a class="nr-back" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
+    <a href="/demo/writing/">Writing App film <span aria-hidden="true">↗</span></a>
+  </nav></header>
+  <main id="article">
+    <header class="nr-hero">
+      <div class="nr-width nr-lead">
+        <div><p class="nr-eyebrow">Research architecture</p><h1>What can one research project teach another?</h1></div>
+        <div class="nr-deck">
+          <p>A paper can cite an earlier result in a sentence. To use it in a new calculation, someone still has to recover the assumptions, the evidence and the version that was checked.</p>
+          <p>In EigenEngine’s design, a whole project can be a conceptric. Its exterior names a result, its revision and the operations available to a reader. Inside are the claims, calculations and decisions that made the result usable.</p>
+        </div>
+      </div>
+      <nav class="nr-width nr-index" aria-label="In this article"><a href="#linked-query">Follow a citation</a><a href="#scale">What scales?</a><a href="#judgement">Human judgement</a><a href="#learning">Testing an improvement</a></nav>
+    </header>
+
+    <section id="linked-query" class="nr-width nr-section" aria-labelledby="nr-link-title">
+      <div class="nr-section-lead">
+        <div><p class="nr-eyebrow">Two papers · One question</p><h2 id="nr-link-title">Choosing a symbol and choosing its layout</h2></div>
+        <p>In <em>The Cost of Complexity</em>, four bits identify one of sixteen symbols once a layout is fixed. Its follow-up draft counts eight ways to lay out those same symbols. Choosing one of eight layouts takes three more bits. The follow-up cites the earlier figure to show exactly what the original four bits selected.</p>
+      </div>
+      <p class="nr-demo-scope"><strong>Worked example.</strong> These two downloadable objects use public figures. Your browser can compare the follow-up alone with a query that crosses its citation. A network of independently hosted projects would also need discovery and permission checks at each host.</p>
+      <div id="project-network">
+        <div class="nr-static"><h3>Follow the cited result</h3><p>The follow-up’s eight layouts account for the three bits. In the earlier paper, symbol 11 is group 2, position 3 in a 2 × 8 layout, and group 6, position 1 in an 8 × 2 layout. The symbol keeps its identity as its address changes.</p>
+          <div class="nr-links"><a href="/demo/view/?asset=kalmar-paper&amp;page=3">Eight layouts in Figure 1</a><a href="/demo/view/?asset=cost-paper&amp;page=5">Both addresses in Figure 2</a></div>
+        </div>
+      </div>
+      <div class="nr-explanation">
+        <h3>What makes that link reusable?</h3>
+        <div><p><strong>Query diffusion</strong> gives candidate records a share of a question’s weight. Each step passes some weight to neighbours. A group can be considered as a single object and opened when its contents matter. In the example above, the two small, downloadable project objects contain the routes. Following the citation checks the identity and revision of the file it names, then opens the figure behind the answer.</p>
+        <p>A research handover can carry selected claims, sources, calculations, figures and reviews. The recipient can open a claim and follow its grounds with the same tools used inside the original project. An external dependency stays named until the recipient has permission to resolve it. If a source changes, the citation still identifies the version used and a later use can be reviewed.</p></div>
+      </div>
+      <details class="nr-more"><summary>What has been transferred in practice?</summary>
+        <p>A recorded handover of the Writing App’s <em>Behaviour example</em> contained 335 files and 1,061 selected records. A separate clean-install check reopened retained work, review and replies in the distributed workspace. For comparison, packaging the Cost paper for arXiv took 11 build inputs and reproduced all 21 pages. The handover carries selected working history. The package check answers whether the article can be built.</p>
+        <p>The two files in the figure are a browser example of a link between projects. Discovery across independent installations, permission checks at each host and exchange of later revisions are further steps toward a research network.</p>
+        <a href="/demo/writing/#session-arxiv">Inspect the manuscript package check ↗</a>
+      </details>
+    </section>
+
+    <section id="scale" class="nr-band" aria-labelledby="nr-scale-title"><div class="nr-width nr-section nr-scale">
+      <div class="nr-section-copy"><p class="nr-eyebrow">Scaling</p><h2 id="nr-scale-title">When does local computation pay?</h2>
+        <p>A diffusion update needs the neighbours of each active record. If each of <var>N</var> records keeps at most <var>k</var> neighbours, at most <var>kN</var> outgoing links need storing. A query confined to a few branches need only work along the links it visits. It can cross a named reference when another project holds the evidence.</p>
+        <p>This offers a route to a larger network. Each project can build local structure once and reuse it for many questions. Its neighbours can refer to the parts they need. Broad questions, dense links and many rounds of propagation all increase the work. In a separate scientific-text search test, every candidate had to be opened.</p>
+      </div>
+      <div>
+        <figure class="nr-table"><figcaption><h3>Building a sparse memory</h3><p>The calculation combined neighbouring sources into groups and worked out how weight would pass between them.</p></figcaption>
+          <table><thead><tr><th scope="col">Sources</th><th scope="col">Output bytes</th><th scope="col">Terms summed</th></tr></thead>
+          <tbody><tr><th scope="row">1,024</th><td>59,104</td><td>12,280</td></tr><tr><th scope="row">8,192</th><td>474,848</td><td>98,296</td></tr><tr><th scope="row">65,536</th><td>3,800,800</td><td>786,424</td></tr></tbody></table>
+          <p>With eight times as many sources in the last step, stored output and the number of terms summed both grew about eightfold. The test used a nearest-neighbour chain, groups of eight and two retained coordinates per group. Graph construction and group selection were supplied to this test.</p>
+          <div class="nr-links"><a href="/demo/view/?asset=synthetics&amp;slide=29">Open the scaling figure ↗</a><a href="./measurements.json" download>Measurement data</a></div>
+        </figure>
+        <details class="nr-more"><summary>What happened when a query could not skip a branch?</summary>
+          <p>In a separate test using passages from scientific papers in QASPER, the search checked every candidate at all four sizes from 1,024 to 8,192 vectors. Direct GPU scoring was faster throughout. Lookup saves work when a branch can be ruled out or a repeated calculation can be reused.</p>
+        </details>
+      </div>
+    </div></section>
+
+    <section id="judgement" class="nr-width nr-section" aria-labelledby="nr-human-title">
+      <div class="nr-section-lead">
+        <div><p class="nr-eyebrow">The long tail of research decisions</p><h2 id="nr-human-title">What did the author choose to keep?</h2></div>
+        <p>An author can agree with an equation and still reject the paragraph around it. A summary of the guessing machine can give its heat bound in one line. Ask <em>which guesses actually have to be erased</em>, and the sequence of operations is essential.</p>
+      </div>
+      <div class="nr-human-grid">
+        <div class="nr-history"><dl class="nr-trace">
+          <div><dt>18 November · 15:44 UTC</dt><dd>The author objected that cuts to the later sections made <q>the whole argument harder to follow. Particularly around the guessing machine.</q></dd></div>
+          <div><dt>15:55 UTC · Saved proposal</dt><dd>The sequence of the opening changed.<blockquote><span>Before</span>“We first identify the uncertainty removed by reset, then apply the result to a machine that guesses, tests and discards candidate solutions.”</blockquote><blockquote><span>Proposed</span>“Consider a machine that proposes an answer, checks it, and starts again when the answer is wrong.”</blockquote></dd></div>
+          <div><dt>Published manuscript · Section IV</dt><dd>The reader meets the machine, sees it test a guess, and learns when a failed guess is reset. The heat bound uses the distribution of guesses that reach that reset.</dd></div>
+        </dl>
+        <a class="nr-source-figure" href="/demo/view/?asset=cost-paper&amp;page=12"><img src="./guessing-machine.webp" width="784" height="432" loading="lazy" alt="Published Figure 5. A guessed candidate is tested. A success halts, while a failure enters reset and returns to the next guess."><span>Figure 5 · The failed guesses enter reset ↗</span></a>
+        </div>
+        <div class="nr-human-reading"><h3>What did the revision preserve?</h3>
+          <p>The published paragraph tells us what survived. The saved edit shows what the author was offered instead, the reason they gave for intervening, and how the proposed opening changed. That is an observable piece of expert judgement. An author can choose to share this particular decision while keeping the rest of the conversation private.</p>
+          <p>The <strong>tail</strong> is relative to a reference distribution. A detail can be marginal across routine questions yet essential once the question is restricted to failed guesses. Human edits can expose precisely those distinctions that an agent’s usual proposals leave out. To estimate how unusual a choice was would require comparable proposals and decisions. Here we can inspect the choice and its stated reason.</p>
+          <a class="nr-single" href="/demo/writing/project-record/">Inspect the project’s editing record ↗</a>
+          <details class="nr-more"><summary>Why does a rare question need finer evidence?</summary>
+            <p>Suppose the question selects cases that carry just 1% of the original weight. Once we condition on those cases, they carry the entire answer. A summary that performed well on average may have discarded exactly the distinction needed here.</p>
+            <p>For a condition of reference mass <var>z</var>, the memory’s error bound multiplies the omitted part of the task by <span class="nr-math">√(1/<var>z</var> − 1)</span>. A loose bound calls for opening finer records or returning to the source. This is a statement about a distribution of questions and evidence.</p>
+            <a href="/demo/view/?asset=synthetics&amp;slide=26">See the task-error bound in the talk ↗</a>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="learning" class="nr-band nr-close" aria-labelledby="nr-next-title"><div class="nr-width nr-section nr-close-grid">
+      <div><p class="nr-eyebrow">Guided self-improvement</p><h2 id="nr-next-title">Give the correction a question it must answer.</h2></div>
+      <div class="nr-section-copy"><p>The edit improves this manuscript. A useful test of learning changes the machine. Suppose the next project keeps a log of every failed guess. When does the erasure bound apply? The distinction the new answer needs is <em>which event actually resets the record</em>. Rejection leaves a stored guess in the log. The bound applies when that information is erased, under the conditions of the reset.</p>
+        <p>The extraction rule, retrieval code and tests can themselves be versioned research objects. An agent can propose a change, run both versions on fresh questions with the same evidence budget, and show a reviewer which answers have the right supporting passages. The test needs familiar questions as well as exceptional ones, so a repair can reveal what it costs elsewhere. An accepted version can then be shared with other projects. Each recipient chooses whether to adopt it.</p>
+        <p>The environment has already been used to revise its own <em>Living System Guide</em>. An independent reader identified difficult passages and figures, the guide was rebuilt, and the weak sections were read again. Extending that practice to the memory means testing whether a changed rule retrieves better evidence on unfamiliar problems. A saved author correction supplies a starting case for that experiment.</p>
+        <div class="nr-links"><a href="/eigenengine.html#memory">See diffusion inside one project ↑</a><a href="/demo/writing/simulation/#simulation-stale">See a changed input trigger review ↗</a></div>
+      </div>
+    </div></section>
+  </main>
+  <footer class="nr-width nr-footer"><a class="nr-back" href="/eigenengine.html">← Back to EigenEngine</a><a href="/eigenengine/kalmar-constant/">The Kalmár follow-up ↗</a></footer>
+</body>
+</html>

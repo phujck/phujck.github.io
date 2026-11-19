@@ -88,9 +88,13 @@
     element.title = item.title;
     element.allowFullscreen = true;
     const page = params.get("page");
-    element.src = item.src + (item.type === "pdf" && /^\d{1,3}$/.test(page || "") ? "#page=" + page : "");
+    const slide = params.get("slide");
+    const talkSlide = item === assets.synthetics && /^\d{1,2}$/.test(slide || "")
+      && Number(slide) >= 1 && Number(slide) <= 39;
+    const target = item.src + (talkSlide ? "#/" + Number(slide) : "");
+    element.src = target + (item.type === "pdf" && /^\d{1,3}$/.test(page || "") ? "#page=" + page : "");
     if (item.type === "page") {
-      related.href = item.src;
+      related.href = target;
       related.target = "_blank";
       related.rel = "noopener";
       related.textContent = "Open original ↗";

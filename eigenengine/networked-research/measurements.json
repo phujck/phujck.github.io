@@ -1,0 +1,57 @@
+{
+  "sparse_transport": {
+    "source": "section_block_operator_scaling_v4_capacity_accounted.json",
+    "source_sha256": "88b08843e8d79f917a834e4643ac8e429eeb764d74e43ec4a991b75bd8dcc4b7",
+    "configuration": "reversible uniform nearest-neighbour chain; fixed source block width 8; retained rank 2",
+    "scope": "operator construction/transport only; apply kernels have independent batch-capacity guards and are validated in oracle tests but not timed here",
+    "row_fields": [
+      "sources",
+      "output_bytes",
+      "terms_summed"
+    ],
+    "rows": [
+      [
+        1024,
+        59104,
+        12280
+      ],
+      [
+        8192,
+        474848,
+        98296
+      ],
+      [
+        65536,
+        3800800,
+        786424
+      ]
+    ]
+  },
+  "separate_query_control": {
+    "source": "local_access_result_review_v2.json",
+    "source_sha256": "a94f63fe5754687d90d646eaa1dba2b9392df2424615345b75b3972e69a8e477",
+    "scope": "QASPER scientific-paper candidate vectors; certified top-k geometric traversal versus direct GPU scoring. Ratio greater than 1 means the local traversal took longer.",
+    "rows": [
+      {
+        "N": 1024,
+        "source_read_fraction": 1.0,
+        "hot_local_over_flat": 16.845093478571073
+      },
+      {
+        "N": 2048,
+        "source_read_fraction": 1.0,
+        "hot_local_over_flat": 85.31477967721085
+      },
+      {
+        "N": 4096,
+        "source_read_fraction": 1.0,
+        "hot_local_over_flat": 32.17554051747141
+      },
+      {
+        "N": 8192,
+        "source_read_fraction": 1.0,
+        "hot_local_over_flat": 141.27081315438608
+      }
+    ]
+  }
+}

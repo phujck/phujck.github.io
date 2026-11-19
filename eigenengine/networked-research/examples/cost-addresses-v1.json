@@ -1,0 +1,26 @@
+{
+  "format": "eigenengine/worked-example-project@1",
+  "id": "cost-addresses",
+  "revision": 1,
+  "title": "The Cost of Complexity",
+  "document": {
+    "viewerAsset": "cost-paper",
+    "file": "/assets/docs/the-cost-of-complexity.pdf",
+    "sha256": "e9c6dabb85d252a81c6e27fc575e7c1bb3e7a90973533fe6b6b3c09c98b9fb98"
+  },
+  "entry": "register-address",
+  "nodes": [
+    {
+      "id": "register-address",
+      "label": "Register address",
+      "children": ["address-in-two-layouts"],
+      "routes": [{"node": "address-in-two-layouts", "share": 1}]
+    },
+    {
+      "id": "address-in-two-layouts",
+      "label": "Two readings of symbol 11",
+      "source": {"page": 5, "figure": "Figure 2(b,c)"},
+      "evidence": {"rank": 11, "layouts": [[2, 8], [8, 2]]}
+    }
+  ]
+}

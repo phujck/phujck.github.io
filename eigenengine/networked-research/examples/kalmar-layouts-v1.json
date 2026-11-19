@@ -1,0 +1,42 @@
+{
+  "format": "eigenengine/worked-example-project@1",
+  "id": "kalmar-layouts",
+  "revision": 1,
+  "title": "Physical origins of the Kalmár constant",
+  "question": "For sixteen symbols, what do the extra three bits buy?",
+  "document": {
+    "viewerAsset": "kalmar-paper",
+    "file": "/assets/docs/physical-origins-of-the-kalmar-constant.pdf",
+    "sha256": "456564aa0c4951035cffb734b65d314e20fe1b0b511215f7907276aae500bb2c"
+  },
+  "entry": "layout-choice",
+  "nodes": [
+    {
+      "id": "layout-choice",
+      "label": "Layout choice",
+      "children": ["eight-layouts", "ref-1"],
+      "routes": [{"node": "eight-layouts", "share": 0.6}, {"node": "ref-1", "share": 0.4}]
+    },
+    {
+      "id": "eight-layouts",
+      "label": "Eight layouts",
+      "source": {"page": 3, "figure": "Figure 1(a)"},
+      "evidence": {"symbols": 16, "layouts": [[16], [2, 8], [8, 2], [4, 4], [2, 2, 4], [2, 4, 2], [4, 2, 2], [2, 2, 2, 2]]}
+    },
+    {
+      "id": "ref-1",
+      "label": "Citation [1]",
+      "source": {"page": 3, "figure": "Figure 1(a) caption"},
+      "reference": {
+        "file": "cost-addresses-v1.json",
+        "id": "cost-addresses",
+        "revision": 1,
+        "sha256": "6a609122932f28d4c5ce19296b919598ca7b213d0e7734ecbf41a47d2dadb737",
+        "entry": "register-address",
+        "evidence": "address-in-two-layouts",
+        "figure": "Figure 2(b,c)",
+        "page": 5
+      }
+    }
+  ]
+}
