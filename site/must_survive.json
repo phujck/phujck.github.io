@@ -161,5 +161,20 @@
     "url": "/eigenengine.html",
     "kind": "page",
     "note": "EigenEngine Ltd company page, added 2026-10-08"
+    },
+  {
+    "url": "/assets/docs/the-cost-of-complexity.pdf",
+    "kind": "asset",
+    "note": "The cost of complexity (arXiv version of 2026-11-19); linked from /eigenengine.html and handed out directly"
+  },
+  {
+    "url": "/assets/docs/physical-origins-of-the-kalmar-constant.pdf",
+    "kind": "asset",
+    "note": "Kalmar-constant draft of 2026-11-19; linked from /eigenengine.html"
+  },
+  {
+    "url": "/assets/writing/spanspermia.pdf",
+    "kind": "asset",
+    "note": "Spanspermia extended draft, added 2026-11-19; direct link handed out, linked from /writing.html"
   }
 ]
