@@ -27,7 +27,7 @@
     <div class="shell masthead">
       <a class="return-link" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
       <nav aria-label="About this walkthrough">
-        <a href="#edit-example">One edit up close</a>
+        <a href="#simulation">Simulation to figure</a>
         <a href="/demo/view/?asset=cost-paper&amp;page=10">Read the paper</a>
       </nav>
     </div>
@@ -36,7 +36,7 @@
     <header class="session-intro">
       <p class="eyebrow">Writing App · 18 November 2026</p>
       <h1>A scientific paper in revision</h1>
-      <p>Explore the saved editing record for <em>The Cost of Complexity</em>, and see the paper packaged for arXiv later that day.</p>
+      <p>Explore the saved editing record for <em>The Cost of Complexity</em>, from a multi-file revision to the arXiv package. Then trace a new numerical check of the paper’s claim from the simulation into a manuscript figure.</p>
     </header>
 
     <section class="session-tour" id="session" aria-labelledby="session-title">
@@ -149,11 +149,49 @@
       </article>
       <div class="tour-status" role="status"></div>
       <div class="tour-links">
+        <a href="#simulation">Simulation to figure ↓</a>
+        <a href="#edit-example">One edit up close ↓</a>
         <a href="/eigenengine.html#project-record">Project record</a>
         <a href="/demo/view/?asset=session-tour">Watch session film</a>
         <a href="./media/session-tour.mp4" download>Download film</a>
         <a href="./media/session-tour.vtt" download>Timed captions</a>
       </div>
+    </section>
+
+    <section class="simulation" id="simulation" aria-labelledby="simulation-title">
+      <header class="sim-intro">
+        <div><p class="eyebrow">Numerical evidence in the Writing App</p>
+          <h2 id="simulation-title">From a simulation to a manuscript figure</h2></div>
+        <p>Does each round of subdivision really cost the same? This new check of <a href="/demo/view/?asset=cost-paper&amp;page=10">Figure 3</a> starts with a single square. A program splits every square into four and counts what each cut costs. Its output supplies the points in the plot.</p>
+      </header>
+      <div class="sim-result">
+        <figure><a href="/demo/view/?asset=simulation-plot"><img src="./media/simulation-plot.webp" width="1332" height="774" loading="lazy" alt="The cumulative budget from the enumerated cuts rises to 4 under area pricing and 15 under wall-length pricing."></a></figure>
+        <div><p class="eyebrow">Same cuts, two prices</p><h3>One table supplies both curves.</h3>
+          <table aria-label="Cumulative cost after each round, in units of each rule’s first cut"><thead><tr><th>Round</th><th>Cells</th><th>Area</th><th>Wall length</th></tr></thead>
+            <tbody><tr><th>0</th><td>1</td><td>0</td><td>0</td></tr><tr><th>1</th><td>4</td><td>1</td><td>1</td></tr><tr><th>2</th><td>16</td><td>2</td><td>3</td></tr><tr><th>3</th><td>64</td><td>3</td><td>7</td></tr><tr><th>4</th><td>256</td><td>4</td><td>15</td></tr></tbody>
+          </table>
+          <p>In four rounds the program splits 85 parent squares. Prices are measured in units of the first cut under each rule. Area pricing adds one unit per round. Wall-length pricing adds 1, 2, 4, then 8.</p>
+          <a href="./simulation/costs.csv" download>Download the run’s table (CSV)</a>
+        </div>
+      </div>
+      <nav class="sim-stops" aria-label="Trace the numerical evidence"><a href="#simulation-run">Run the simulation</a><a href="#simulation-result">Inspect the result</a><a href="#simulation-binding">Link the figure</a><a href="#simulation-figure">Open the manuscript</a><a href="#simulation-stale">Change the input</a></nav>
+      <article class="sim-stop" id="simulation-run"><div class="sim-stop-copy"><h3>Run the simulation</h3><p>The program visits each parent square. It charges its area under one pricing rule and the length of its dividing walls under the other, and saves each round’s totals.</p><a href="/demo/view/?asset=simulation-run">Inspect this app screen ↗</a></div>
+        <a class="sim-screen" href="/demo/view/?asset=simulation-run"><img src="./media/simulation-run.webp" width="1440" height="900" loading="lazy" alt="Run the simulation in the Writing App"></a></article>
+      <article class="sim-stop" id="simulation-result"><div class="sim-stop-copy"><h3>Inspect the numerical result</h3><p>The completed run records 256 cells, 85 splits and totals of 4 and 15. Its result is linked to the area-pricing claim. From that result the app can open both the five-row table and the record of the inputs and code that generated it.</p><a href="/demo/view/?asset=simulation-table">Open the table in the app ↗</a> · <a href="/demo/view/?asset=simulation-provenance">Inspect its inputs and code ↗</a></div>
+        <a class="sim-screen" href="/demo/view/?asset=simulation-result"><img src="./media/simulation-result.webp" width="1440" height="900" loading="lazy" alt="Inspect the numerical result in the Writing App"></a></article>
+      <article class="sim-stop" id="simulation-binding"><div class="sim-stop-copy"><h3>Link the figure to its evidence</h3><p>The plot takes its two series from the run’s CSV. Beneath it, Linked results names the recorded calculation. The table and the attached result have separate revision checks.</p><a href="/demo/view/?asset=simulation-binding">Inspect this app screen ↗</a></div>
+        <a class="sim-screen" href="/demo/view/?asset=simulation-binding"><img src="./media/simulation-binding.webp" width="1440" height="900" loading="lazy" alt="Link the figure to its evidence in the Writing App"></a></article>
+      <article class="sim-stop" id="simulation-figure"><div class="sim-stop-copy"><h3>Place the computed figure in the manuscript</h3><p>Place in manuscript inserts the plot after the calculation paragraph, with a caption. The manuscript rebuilds from that source. The published Figure 3 remains the reference for this separate check.</p><a href="/demo/view/?asset=simulation-figure">Inspect this app screen ↗</a></div>
+        <a class="sim-screen" href="/demo/view/?asset=simulation-figure"><img src="./media/simulation-figure.webp" width="1440" height="900" loading="lazy" alt="Place the computed figure in the manuscript in the Writing App"></a></article>
+      <article class="sim-stop" id="simulation-stale"><div class="sim-stop-copy"><h3>The figure remembers its input</h3>
+        <p>A single extra newline changed the CSV’s fingerprint while leaving every number the same. The app marked the drawing and its evidence stale. The old run, rendered figure and manuscript were still intact. Restoring the original bytes made both checks current again.</p>
+        <a href="/demo/view/?asset=simulation-stale">Inspect the stale figure ↗</a> · <a href="/eigenengine.html#how">Return to the claim</a></div>
+        <a class="sim-screen" href="/demo/view/?asset=simulation-stale"><img src="./media/simulation-stale.webp" width="1440" height="900" loading="lazy" alt="The Writing App reports drawing stale and evidence stale after the table changes."></a></article>
+      <details class="sim-reproduce"><summary>Inspect or reproduce the calculation</summary>
+        <p>Save the code and inputs in the same folder. Run the command below with Python 3. The resulting CSV and JSON match the recorded run byte for byte.</p>
+        <pre><code>python3 subdivide.py --mode smoke --args-json '{}' --result replay/result.json</code></pre>
+        <div><a href="./simulation/subdivide.py" download>Simulation code</a><a href="./simulation/inputs.json" download>Inputs</a><a href="./simulation/costs.csv" download>Output table</a><a href="./simulation/result.json" download>Numerical result</a><a href="./simulation/record.json" download>Run and figure record</a></div>
+      </details>
     </section>
 
     <header class="intro" id="edit-example">
@@ -185,7 +223,7 @@
           <ol>
             <li><a href="#workflow">Workflow</a></li>
             <li><a href="#reader-plan">Reader plan</a></li>
-            <li><a href="#figure">Figure</a></li>
+            <li><a href="#figure">Numerical figure</a></li>
             <li><a href="#reading-options">Reading options</a></li>
             <li><a href="#published-figure">Figure in the PDF</a></li>
           </ol>
@@ -286,14 +324,14 @@
         </article>
 
         <article class="walk-step" id="figure" aria-labelledby="figure-title">
-          <h2 id="figure-title">Figure</h2>
-          <p class="summary">The figure inspector opens the image attached to the manuscript and shows its saved version.</p>
-          <figure class="capture" data-focus-x=".30" data-focus-y=".53">
-            <a href="/demo/view/?asset=figure">
-              <img src="./media/figure.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App displays the Hilbert refinement figure and its three budget curves.">
+          <h2 id="figure-title">How the figure gets its numbers</h2>
+          <p class="summary">The plotted points come from a simulation of 85 square splits. In the figure editor, the CSV supplies the two series and <strong>Linked results</strong> leads back to the calculation. <a href="#simulation">Trace the run, table and manuscript placement.</a></p>
+          <figure class="capture" data-focus-x=".44" data-focus-y=".71">
+            <a href="/demo/view/?asset=simulation-binding">
+              <img src="./media/simulation-binding.webp" width="1440" height="900" fetchpriority="low" alt="The app shows the plotted area and wall-length costs, the linked subdivision result, and Place in manuscript.">
               <span class="capture-link">Enlarge screen</span>
             </a>
-            <figcaption>The same four-way split gives a different budget depending on how the cost of each cut scales.</figcaption>
+            <figcaption>This figure was computed for the walkthrough. <a href="/demo/view/?asset=figure">Inspect the original paper figure used in the editing example.</a></figcaption>
           </figure>
         </article>
 
@@ -355,11 +393,6 @@
         <span>The source paper</span>
         <strong>The Cost of Complexity</strong>
         <small>Gerard McCaul · Figure 3 in the PDF</small>
-      </a>
-      <a href="https://github.com/phujck/laplace-writing-evaluation/releases/tag/evaluation-2026-11-18">
-        <span>The app used in this walkthrough</span>
-        <strong>Writing App evaluation release</strong>
-        <small>18 November 2026 · GitHub</small>
       </a>
       <div class="page-exit">
         <a class="return-link" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>

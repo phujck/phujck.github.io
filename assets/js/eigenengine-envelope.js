@@ -93,7 +93,7 @@
     {
       lens: 'inference', ids: ['price', 'count', 'width'],
       edges: [['price', 'claim'], ['count', 'claim'], ['width', 'claim']],
-      status: 'The square fixes the count and width changes. Compare how the two prices scale.',
+      status: 'The claim requires three things: four children, their widths and the price of a division.',
     },
     {
       lens: 'evidence', ids: ['claim', 'fig3'],
@@ -105,19 +105,13 @@
     'On the square, each child is half as wide as its parent.',
     'On the square, each child is half as wide as its parent and has one quarter of its area.',
   ];
-  const traceSources = [
-    { label: 'Square refinement passage', eligible: true, links: [1, 2] },
-    { label: 'Figure 3 · area pricing', eligible: true, links: [0] },
-    { label: 'Figure 3 · wall-length pricing', eligible: true, links: [0] },
-    { label: 'Figure 4 · other geometries', eligible: false, links: [] },
-  ];
   const fingerprints = ['a88446a9727338fc7b079226c89a5473eb25f49c6a38e9f0ef16dd62a11a332a', 'd6b6f1ef03c58b2ec978eef177e423291cb170158eed512d233d035a9e5348df'];
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const svgNS = 'http://www.w3.org/2000/svg';
   const baseAngle = { membership: -0.36, inference: 0.13, evidence: 0.54 };
   const defaultTilt = 0.43;
   const state = {
-    lens: 'membership', selected: 'section', role: 'reader', phase: -1,
+    lens: 'membership', selected: 'claim', role: 'reader', phase: -1,
     source: 0, accepted: 0, prior: null, preview: false,
     yaw: baseAngle.membership, pitch: defaultTilt, spinning: null, drag: null,
     positions: structuredClone(lenses.membership.positions), timers: [],
@@ -171,15 +165,15 @@
           </svg>
           <div class="ee-envelope__cover" aria-hidden="true">
             <div class="ee-envelope__sheet ee-envelope__sheet--material">
-              <span>Material</span><b aria-hidden="true">▦</b><strong>Registers, premises and figures</strong>
+              <span>Statement</span><b aria-hidden="true">▦</b><strong>Equal cost per round</strong>
             </div>
             <div class="ee-envelope__sheet ee-envelope__sheet--grounds">
-              <span>Grounds</span><strong>Square construction · Fig. 3</strong>
+              <span>Assumption and evidence</span><strong>Area pricing · Figure 3</strong>
             </div>
             <div class="ee-envelope__sheet ee-envelope__sheet--interface">
-              <span>Section</span><strong>Geometry of refinement</strong>
-              <span class="ee-envelope__face-operation">Open section · Read source</span>
-              <span class="ee-envelope__face-revision">Source revision <code data-face-hash></code></span>
+              <span>Claim · The Cost of Complexity</span><strong>Constant cost per level</strong>
+              <span class="ee-envelope__face-operation">Open premise · Inspect figure</span>
+              <span class="ee-envelope__face-revision">Sample source revision <code data-face-hash></code></span>
             </div>
           </div>
           <div class="ee-envelope__points"></div>
@@ -202,14 +196,14 @@
     <p class="ee-envelope__lens-note" data-lens-note></p>
     <div class="ee-envelope__exercises">
       <section class="ee-envelope__exercise">
-        <h3>Follow a question</h3>
-        <p>In the square construction, which pricing rule makes every round cost the same?</p>
-        <button type="button" data-run>Trace the answer</button>
+        <h3>Provenance of the claim</h3>
+        <p>Which assumption gives equal cost per round, and where is it shown?</p>
+        <button type="button" data-run>Trace the claim to Figure 3</button>
         <div class="ee-envelope__query-result" aria-live="polite"></div>
       </section>
       <section class="ee-envelope__exercise">
         <div class="ee-envelope__exercise-top">
-          <h3>Check the source revision</h3>
+          <h3>Change a source revision</h3>
           <div class="ee-envelope__role" role="group" aria-label="Example role">
             <button type="button" data-role="reader" aria-pressed="true">Reader</button>
             <button type="button" data-role="editor" aria-pressed="false">Editor</button>
@@ -219,11 +213,10 @@
       </section>
     </div>
     <details class="ee-envelope__mechanics">
-      <summary>How Eigen builds the map, follows a question and checks its grounds</summary>
-      <p>At ingestion, diffusion over related sources helps build groups at several levels of detail. A compiled question sets its conditions, narrows the groups, and follows the selected relationships to exact passages. On structured fields, conditional queries also pass filter messages through a graph of shared continuations.</p>
+      <summary>How the revision check works</summary>
       <p>A claim fingerprint covers its source and direct prerequisites. Work can carry a review requirement farther through declared prerequisite links. In the example above, the sample correction travels from a source passage to the premise about width and reaches the answer that used it.</p>
     </details>
-    <p class="ee-envelope__caption">Relationships follow the published paper. Source revision controls use a sample passage.</p>
+    <p class="ee-envelope__caption">The nodes represent the published section and Figures 3–4. The revision check uses a working copy of its width premise. <a href="/demo/writing/#simulation-stale">See the app flag an actual change to a figure’s input ↗</a></p>
   `;
 
   const $ = (selector, element = mount) => element.querySelector(selector);
@@ -484,28 +477,6 @@
     $('[data-run]').disabled = false;
   }
 
-  function sourceWeights(rounds) {
-    let weights = [1, 0, 0, 0];
-    const share = 0.4;
-    for (let round = 0; round < rounds; round += 1) {
-      const next = weights.map(weight => (1 - share) * weight);
-      traceSources.forEach((source, index) => {
-        const neighbours = source.links.filter(other => traceSources[other].eligible);
-        if (!neighbours.length) next[index] += share * weights[index];
-        else neighbours.forEach(other => { next[other] += share * weights[index] / neighbours.length; });
-      });
-      weights = next;
-    }
-    return `<div class="ee-envelope__allocation">
-      <p>Illustrative source weights · square construction</p>
-      <ul>${traceSources.map((source, i) => {
-        const percent = Math.round(100 * weights[i]);
-        return `<li><span>${source.label}</span><span>${source.eligible ? `${percent}%` : 'Outside scope'}</span>
-          <span class="ee-envelope__weight" aria-hidden="true"><i style="width:${percent}%"></i></span></li>`;
-      }).join('')}</ul>
-    </div>`;
-  }
-
   function runQuestion() {
     stopQuestion();
     openGraph();
@@ -518,7 +489,7 @@
       moveTo(step.lens, baseAngle[step.lens]);
       pulseEdges(step.edges, phase ? 'teal' : 'gold');
       answer.innerHTML = `<p><strong>Area pricing.</strong> Each round divides four times as many squares, each with one quarter of the area. Under wall-length pricing the cost per round doubles.</p>
-        <p>${step.status}</p>${sourceWeights(phase + 1)}
+        <p>${step.status}</p>
         <a href="#refinement">Compare the cost curves ↓</a>
         <a href="${paper}&amp;page=10">Open Figure 3 ↗</a>`;
       if (phase !== phases.length - 1) return;
@@ -650,7 +621,7 @@
         stopQuestion();
         state.phase = -1;
         showCover(true);
-        select('section');
+        select('claim');
       }
     } else if (button.hasAttribute('data-lens')) {
       openGraph();
@@ -707,7 +678,7 @@
         state.positions[id] = [x * 0.86, y * 0.48, z * 0.64];
       });
       draw();
-      state.introTimer = setTimeout(openGraph, 1420);
+      state.introTimer = setTimeout(openGraph, 2900);
     }, { threshold: 0.33 });
     observer.observe(stage);
   }

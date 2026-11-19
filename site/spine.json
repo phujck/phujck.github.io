@@ -213,13 +213,14 @@
       "extra_css": [
         "/assets/css/eigenengine-paper.css",
         "/assets/css/page-eigenengine.css",
-        "/assets/css/eigenengine-envelope.css"
+        "/assets/css/eigenengine-envelope.css",
+        "/assets/css/eigenengine-memory.css"
       ],
       "og_image_width": "1200",
       "og_image_height": "630",
       "jsonld": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Organization\",\n  \"name\": \"EigenEngine Ltd\",\n  \"url\": \"https://gmccaul.co.uk/eigenengine.html\",\n  \"foundingDate\": \"2026-08-06\",\n  \"foundingLocation\": {\n    \"@type\": \"Country\",\n    \"name\": \"United Kingdom\"\n  },\n  \"founder\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://gmccaul.co.uk/#gerard-mccaul\",\n    \"name\": \"Gerard McCaul\"\n  },\n  \"description\": \"EigenEngine is an integrated research environment for people and AI agents. Explore the connected manuscript, evidence and calculations in the Writing App.\",\n  \"email\": \"eigen@gmccaul.co.uk\"\n}",
       "robots": "noindex, nofollow, noarchive",
-      "body_scripts": "  <script src=\"/assets/js/eigenengine-paper.js\" defer></script>\n  <script src=\"/assets/js/eigenengine-envelope.js\" defer></script>\n  <script src=\"/assets/js/eigenengine-record.js\" defer></script>",
+      "body_scripts": "  <script src=\"/assets/js/eigenengine-paper.js\" defer></script>\n  <script src=\"/assets/js/eigenengine-envelope.js\" defer></script>\n  <script src=\"/assets/js/eigenengine-record.js\" defer></script>\n  <script src=\"/assets/js/eigenengine-memory.js\" defer></script>\n  <script src=\"/assets/js/eigenengine-results.js\" defer></script>",
       "twitter_image": "https://gmccaul.co.uk/assets/img/eigen/research-environment.png"
     },
     {

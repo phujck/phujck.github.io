@@ -17,6 +17,14 @@
     "reader-plan": ["The reader plan", "reader-plan"],
     figure: ["Inspect the figure", "figure"],
     "reading-options": ["Reading options", "reading-options"],
+    "simulation-table": ["The numerical evidence table", "simulation-result"],
+    "simulation-provenance": ["Code, inputs and output", "simulation-result"],
+    "simulation-stale": ["The figure after its input changed", "simulation-stale"],
+    "simulation-run": ["The subdivision simulation", "simulation-run"],
+    "simulation-result": ["Recorded numerical result", "simulation-result"],
+    "simulation-binding": ["The figure’s evidence and table", "simulation-binding"],
+    "simulation-figure": ["The computed figure in the manuscript", "simulation-figure"],
+    "simulation-plot": ["The computed costs of subdivision", "simulation"],
     "published-figure": ["Figure 3 in the paper", "published-figure"],
   };
   const assets = Object.assign(Object.create(null), window.eigenExampleViews || {}, {
