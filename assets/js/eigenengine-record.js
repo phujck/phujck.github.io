@@ -24,6 +24,7 @@
   const filters = chart.querySelector(".ee-frequency-filters");
   const all = chart.querySelector("#ee-all-tools");
   const subtitle = chart.querySelector("#ee-frequency-total");
+  const header = document.querySelector(".site-header");
   const channels = ["read", "action", "failure"];
   const subtitles = {total:"recorded attempts", read:"recorded reads", action:"recorded actions", failure:"recorded failures"};
   let channel = "total";
@@ -69,12 +70,20 @@
     const data = await response.json();
     filters.addEventListener("click", event => {
       const button = event.target.closest("button");
-      if (!button) return;
+      if (!button || channel === button.dataset.count) return;
       channel = button.dataset.count;
-      expanded = false;
       paint(data);
     });
-    all.addEventListener("click", () => { expanded = !expanded; paint(data); });
+    all.addEventListener("click", () => {
+      expanded = !expanded;
+      paint(data);
+      if (!expanded && bars.getBoundingClientRect().top < header.getBoundingClientRect().bottom) {
+        chart.scrollIntoView({ block: "start", behavior: "instant" });
+        if (document.activeElement === all && all.getBoundingClientRect().bottom > window.innerHeight) {
+          filters.querySelector('[aria-pressed="true"]').focus({ preventScroll: true });
+        }
+      }
+    });
     filters.hidden = false;
     paint(data);
   }

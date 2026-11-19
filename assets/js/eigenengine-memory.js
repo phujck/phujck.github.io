@@ -7,7 +7,6 @@
 
   const paper = '/demo/view/?asset=cost-paper';
   const version = 'e9c6dabb85d252a81c6e27fc575e7c1bb3e7a90973533fe6b6b3c09c98b9fb98';
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const narrow = window.matchMedia('(max-width: 540px)');
   const svgNS = 'http://www.w3.org/2000/svg';
   const topics = [
@@ -28,12 +27,6 @@
   const tierTime = 1100;
   const spreadAt = resolutionAt + 3 * tierTime;
   const spreadRound = 1050;
-  const reducedFrames = [
-    [0, 140], [1120, 1700], [2540, 4240], [5200, 7210],
-    [7700, 7700], [8800, 8800], [9900, 9900], [11000, 11000],
-    [12050, 12050], [13100, 13100], [14150, 14150], [15200, 15200],
-    [16250, 16250], [16600, duration],
-  ];
   const occupation = 2;
   const figure3 = 17;
   const leafBase = 17;
@@ -74,8 +67,8 @@
 
   const state = {
     role: 'paper', time: 0, frame: null, priorTime: null, phase: -1,
-    visible: false, begun: false, playing: false, full: !reduced.matches,
-    drawn: -1, fading: null,
+    visible: false, begun: false, playing: false,
+    drawn: -1,
   };
   const observed = new Set();
   let diffusion;
@@ -99,7 +92,6 @@
       <div class="ee-memory__transport" role="group" aria-label="Animation controls">
         <button class="ee-memory__play" type="button" data-play>Play</button>
         <button type="button" data-replay>Restart</button>
-        <button type="button" data-motion hidden>Play full motion</button>
       </div>
     </div>
     <div class="ee-memory__body">
@@ -183,7 +175,6 @@
     <details class="ee-memory__support" id="ee-memory-evidence">
       <summary>Open the supporting record</summary>
       <div class="ee-memory__readout"></div>
-      <button class="ee-memory__mobile-motion" type="button" data-mobile-motion hidden>Play full motion</button>
     </details>
     <details class="ee-memory__mechanism">
       <summary>What the map preserves</summary>
@@ -199,9 +190,7 @@
 
   const $ = selector => mount.querySelector(selector);
   const stage = $('.ee-memory__graph');
-  const canvas = $('.ee-memory__canvas');
   const playButton = $('[data-play]');
-  const motionButtons = [$('[data-motion]'), $('[data-mobile-motion]')];
   const readout = $('.ee-memory__readout');
   const outcome = $('[data-outcome]');
   const phaseSelect = $('[data-phase-select]');
@@ -422,7 +411,7 @@
     stage.dataset.resolution = String(t);
     stage.dataset.mass = mass.reduce((sum, amount) => sum + amount, 0).toFixed(9);
     stage.dataset.restrictedMass = records.reduce((sum, row) => sum + (admitted(row) ? 0 : mass[leafId(row.id)]), 0).toFixed(9);
-    scanner.setAttribute('opacity', state.full ? Math.min(smooth(scan * 7), 1 - smooth((scan - .92) / .08)) : 0);
+    scanner.setAttribute('opacity', Math.min(smooth(scan * 7), 1 - smooth((scan - .92) / .08)));
     scanner.setAttribute('transform', `translate(${mix(194, 528, scan)},0)`);
     catalogueLabels.forEach(label => label.setAttribute('opacity', 1 - smooth(fold / .43)));
     stage.classList.toggle('is-scoped', scoped);
@@ -497,7 +486,7 @@
       signal.setAttribute('r', 5 + strength * 28);
     });
 
-    const flows = routing && state.full ? diffusion.transfers[iteration].filter(({ moved }) => moved > .0013) : [];
+    const flows = routing ? diffusion.transfers[iteration].filter(({ moved }) => moved > .0013) : [];
     flows.forEach(({ from, to, moved }, index) => {
       const branch = from < leafBase;
       const bridge = !branch && Math.floor((from - leafBase) / 4) !== Math.floor((to - leafBase) / 4);
@@ -570,33 +559,7 @@
       <a href="${paper}&amp;page=13">Open page 13, Equation 46 <span aria-hidden="true">↗</span></a>${comparison}<button type="button" data-repeat>Repeat question</button>`;
   }
 
-  function clearFade() {
-    if (!state.fading) return;
-    state.fading.animation.cancel();
-    state.fading.cover.remove();
-    state.fading = null;
-  }
-
-  function crossfade() {
-    clearFade();
-    if (!stage.animate) return;
-    const cover = stage.cloneNode(true);
-    cover.removeAttribute('role');
-    cover.removeAttribute('aria-label');
-    cover.removeAttribute('data-phase');
-    cover.setAttribute('aria-hidden', 'true');
-    cover.querySelector('defs')?.remove();
-    cover.querySelectorAll('[data-record]').forEach(node => node.removeAttribute('data-record'));
-    cover.classList.add('ee-memory__crossfade');
-    canvas.append(cover);
-    const animation = cover.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 310, easing: 'linear' });
-    state.fading = { animation, cover };
-    animation.onfinish = () => {
-      if (state.fading?.cover === cover) clearFade();
-    };
-  }
-
-  function render(time, playback = false) {
+  function render(time) {
     state.time = clamp(time, 0, duration);
     state.phase = phases.findLastIndex(({ at }) => state.time >= at);
     if (priorPhase !== state.phase) {
@@ -613,11 +576,8 @@
       stage.setAttribute('aria-label', phases[state.phase].label + '. Public paper: Representation, Refinement, Rank and use, and Erasure.');
     }
 
-    const scene = playback && !state.full
-      ? reducedFrames.findLast(([at]) => state.time >= at)[1]
-      : state.time;
+    const scene = state.time;
     if (scene !== state.drawn) {
-      if (playback && !state.full && state.drawn >= 0) crossfade();
       draw(scene);
       state.drawn = scene;
     }
@@ -636,11 +596,6 @@
 
   function refreshControls() {
     playButton.textContent = state.playing ? 'Pause' : state.time >= duration ? 'Replay' : state.time ? 'Resume' : 'Play';
-    motionButtons.forEach(button => {
-      button.hidden = !reduced.matches;
-      button.textContent = state.full ? 'Use reduced motion' : 'Play full motion';
-    });
-    mount.dataset.motion = state.full ? 'full' : 'reduced';
   }
 
   function suspend() {
@@ -662,7 +617,7 @@
     }
     const elapsed = state.priorTime === null ? 0 : Math.min(80, now - state.priorTime);
     state.priorTime = now;
-    render(state.time + elapsed, true);
+    render(state.time + elapsed);
     if (state.time >= duration) {
       stop();
       return;
@@ -679,7 +634,6 @@
     state.begun = true;
     if (state.time >= duration) {
       $('[data-reused]').hidden = true;
-      clearFade();
       render(0);
     }
     state.playing = true;
@@ -689,7 +643,6 @@
 
   function restart() {
     stop();
-    clearFade();
     $('[data-reused]').hidden = true;
     state.drawn = -1;
     render(0);
@@ -707,30 +660,34 @@
     diffusion = makeDiffusion();
     priorPhase = -1;
     state.drawn = -1;
-    clearFade();
-    repeat(false);
+    // Read the same instant through the new scope. Only Repeat rewinds the query.
+    if (state.phase >= 2) $('[data-reused]').hidden = false;
+    render(state.time);
+    refreshControls();
   }
 
-  function repeat(allowFade = true) {
+  function repeat() {
+    const exhibit = $('.ee-memory__exhibit');
     $('[data-reused]').hidden = false;
     stop();
-    if (!state.full && allowFade) crossfade();
     render(phases[2].at);
     play();
+    // The shorter receipt can move the diagram out of view. Frame it after the
+    // updated record has laid out so its visibility clock can run immediately.
+    exhibit.scrollIntoView({block: 'start', behavior: 'instant'});
   }
 
   function fitDiagram() {
-    clearFade();
     stage.setAttribute('viewBox', narrow.matches ? '0 26 590 356' : '0 0 760 406');
   }
 
   const stoppedFrames = [1720, 4660, 7350, 13540, duration];
   function selectPhase(phase) {
+    if (phase === state.phase) return;
     state.begun = true;
-    stop();
-    if (!state.full) crossfade();
     if (phase < 2) $('[data-reused]').hidden = true;
-    render(stoppedFrames[phase]);
+    if (phase === phases.length - 1) stop();
+    render(state.playing ? phases[phase].at : stoppedFrames[phase]);
     refreshControls();
   }
 
@@ -739,14 +696,10 @@
     if (event.target.closest('[data-see-evidence]')) support.open = true;
     const button = event.target.closest('button');
     if (!button) return;
-    state.begun = true;
     if (button.hasAttribute('data-play')) {
       if (state.playing) stop();
       else play();
     } else if (button.hasAttribute('data-replay')) {
-      restart();
-    } else if (button.hasAttribute('data-motion') || button.hasAttribute('data-mobile-motion')) {
-      state.full = !state.full;
       restart();
     } else if (button.hasAttribute('data-phase')) {
       selectPhase(Number(button.dataset.phase));
@@ -756,13 +709,6 @@
     } else if (button.hasAttribute('data-role')) {
       switchRole(button.dataset.role);
     }
-  });
-  reduced.addEventListener('change', () => {
-    state.full = !reduced.matches;
-    clearFade();
-    state.drawn = -1;
-    render(state.time, state.playing);
-    refreshControls();
   });
   narrow.addEventListener('change', fitDiagram);
   document.addEventListener('visibilitychange', () => {

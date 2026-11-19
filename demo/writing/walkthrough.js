@@ -1,6 +1,153 @@
 (() => {
   "use strict";
 
+  const frame = document.querySelector(".session-film");
+  const film = frame.querySelector("video");
+  const captions = frame.querySelector(".film-caption-text");
+  const captionTitle = frame.querySelector(".film-caption-title");
+  const trackElement = film.querySelector("track");
+  const track = trackElement.track;
+  const chapterList = document.querySelector(".film-chapters");
+  const chapters = Array.from(chapterList.querySelectorAll("button"), (button) => ({
+    button,
+    time: Number(button.dataset.time),
+    title: button.querySelector("b").textContent
+  }));
+  const storageKey = "eigenengine-session-film-time";
+  let activeChapter = chapters[0];
+  let engaged = false;
+  let fullscreen = false;
+  let restoreRibbon = false;
+
+  function sync() {
+    const time = film.currentTime;
+    const selected = chapters.findLast((chapter) => chapter.time <= time) || chapters[0];
+    if (selected !== activeChapter) {
+      activeChapter.button.removeAttribute("aria-current");
+      selected.button.setAttribute("aria-current", "true");
+      captionTitle.textContent = selected.title;
+      activeChapter = selected;
+    }
+    const cues = Array.from(track.cues || []);
+    const cue = time >= film.duration
+      ? cues.at(-1)
+      : cues.find(({ startTime, endTime }) => startTime <= time && time < endTime);
+    if (cue && captions.textContent !== cue.text) captions.textContent = cue.text;
+    frame.toggleAttribute("data-native-captions", track.mode === "showing");
+  }
+
+  function setFullscreen(active) {
+    if (active === fullscreen) return;
+    fullscreen = active;
+    if (active && track.mode !== "showing") {
+      restoreRibbon = true;
+      track.mode = "showing";
+    } else if (!active && restoreRibbon) {
+      restoreRibbon = false;
+      track.mode = "hidden";
+    }
+    sync();
+  }
+
+  function remember(time = film.currentTime) {
+    if (!engaged) return;
+    try {
+      window.sessionStorage.setItem(storageKey, String(time));
+    } catch {
+      // The film still works where storage is unavailable.
+    }
+    try {
+      window.history.replaceState({ ...window.history.state, sessionFilmTime: time }, "");
+    } catch {
+      // Session storage also carries the position across pages.
+    }
+  }
+
+  function restore() {
+    if (engaged || !film.paused || film.currentTime) return;
+    let savedTime = window.history.state?.sessionFilmTime;
+    try {
+      savedTime ??= window.sessionStorage.getItem(storageKey);
+    } catch {
+      // The position can still be restored from browser history.
+    }
+    if (savedTime != null) {
+      film.preload = "metadata";
+      const time = Number(savedTime);
+      film.currentTime = time;
+      engaged = true;
+      remember(time);
+    }
+  }
+
+  for (const chapter of chapters) {
+    chapter.button.addEventListener("click", () => {
+      if (chapter === activeChapter) return;
+      film.preload = "metadata";
+      // Seek inside the cue so native captions also clear the preceding line.
+      const time = chapter.time ? chapter.time + .001 : 0;
+      film.currentTime = time;
+      engaged = true;
+      remember(time);
+      sync();
+    });
+  }
+
+  track.mode = "hidden";
+  trackElement.addEventListener("load", sync);
+  track.addEventListener("cuechange", sync);
+  film.textTracks.addEventListener("change", () => {
+    if (track.mode === "disabled") track.mode = "hidden";
+    sync();
+  });
+  film.addEventListener("timeupdate", sync);
+  film.addEventListener("playing", () => { engaged = true; });
+  film.addEventListener("seeked", () => {
+    engaged = true;
+    remember();
+    sync();
+  });
+  film.addEventListener("pause", () => remember());
+  window.addEventListener("pagehide", () => {
+    film.pause();
+    remember();
+  });
+
+  document.addEventListener("fullscreenchange", () => setFullscreen(document.fullscreenElement === film));
+  film.addEventListener("webkitbeginfullscreen", () => setFullscreen(true));
+  film.addEventListener("webkitendfullscreen", () => setFullscreen(false));
+  window.addEventListener("hashchange", () => {
+    if (!window.location.hash || window.location.hash === "#session-film") restore();
+  });
+  if ("IntersectionObserver" in window) {
+    const visibility = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting && !film.paused && !fullscreen
+        && document.fullscreenElement !== film && !film.webkitDisplayingFullscreen) {
+        film.pause();
+      }
+    });
+    visibility.observe(film);
+  }
+
+  chapterList.hidden = false;
+  const hash = window.location.hash;
+  const navigationType = performance.getEntriesByType("navigation")[0]?.type;
+  if (!hash && (!navigationType || navigationType === "navigate")) {
+    try {
+      window.sessionStorage.removeItem(storageKey);
+    } catch {
+      // A fresh opening can still play without storage.
+    }
+    film.muted = true;
+    film.play().catch(() => {});
+  } else if (!hash || hash === "#session-film") {
+    restore();
+  }
+})();
+
+(() => {
+  "use strict";
+
   const walkthrough = document.querySelector(".walkthrough");
   const steps = Array.from(walkthrough.querySelectorAll(".walk-step"));
   const controls = walkthrough.querySelector(".viewer-controls");
@@ -12,6 +159,7 @@
   const share = walkthrough.querySelector(".share-row");
   const copy = share.querySelector(".copy-link");
   const shareStatus = share.querySelector(".share-status");
+  const lightbox = document.querySelector(".lightbox");
   let current = 0;
 
   const stepIndex = (id) => steps.findIndex((step) => step.id === id);
@@ -64,8 +212,12 @@
   previous.addEventListener("click", () => chooseStep(current - 1, current === 1));
   next.addEventListener("click", () => chooseStep(current + 1, current === steps.length - 2));
   window.addEventListener("hashchange", () => {
+    if (lightbox.open) lightbox.close();
     const index = hashStep();
-    if (index >= 0 || !window.location.hash) showStep(Math.max(0, index));
+    const hash = window.location.hash;
+    if (index >= 0 || !hash || hash === "#edit-example" || hash === "#walkthrough") {
+      showStep(Math.max(0, index));
+    }
   });
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -82,7 +234,6 @@
     });
   }
 
-  const lightbox = document.querySelector(".lightbox");
   const lightboxTitle = lightbox.querySelector("#lightbox-title");
   const lightboxScroll = lightbox.querySelector(".lightbox-scroll");
   const lightboxImage = lightboxScroll.querySelector("img");
@@ -98,12 +249,10 @@
       return;
     }
 
-    window.requestAnimationFrame(() => {
-      const x = Number(activeCapture.dataset.focusX);
-      const y = Number(activeCapture.dataset.focusY);
-      lightboxScroll.scrollLeft = x * lightboxImage.offsetWidth - lightboxScroll.clientWidth / 2;
-      lightboxScroll.scrollTop = y * lightboxImage.offsetHeight - lightboxScroll.clientHeight / 2;
-    });
+    const x = Number(activeCapture.dataset.focusX);
+    const y = Number(activeCapture.dataset.focusY);
+    lightboxScroll.scrollLeft = x * lightboxImage.offsetWidth - lightboxScroll.clientWidth / 2;
+    lightboxScroll.scrollTop = y * lightboxImage.offsetHeight - lightboxScroll.clientHeight / 2;
   }
 
   if (typeof lightbox.showModal === "function") {
@@ -148,12 +297,17 @@
   const previous = controls.querySelector(".tour-previous");
   const next = controls.querySelector(".tour-next");
   const status = tour.querySelector(".tour-status");
+  const sessionFilm = document.querySelector(".session-film video");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const narrowScreen = window.matchMedia("(max-width: 560px)");
+  const stopDelay = 7600;
   let current = 0;
   let focused = false;
   let timer = null;
-  let animationFrame;
+  let nextAt;
+  let playRemaining = null;
+  let autoplayEntry = false;
+  let camera;
 
   const clamped = (value, min, max) => Math.max(min, Math.min(max, value));
   const atLastStop = () => current === stops.length - 1;
@@ -181,7 +335,7 @@
         const aboveView = bounds.top < siteHeader.offsetHeight;
         const belowView = bounds.bottom > window.innerHeight;
         if ((focused || narrowScreen.matches) && (aboveView || belowView)) {
-          view.scrollIntoView({ block: "center", behavior: reducedMotion.matches ? "instant" : "smooth" });
+          view.scrollIntoView({ block: "nearest", behavior: reducedMotion.matches ? "instant" : "smooth" });
         }
       });
     }
@@ -232,14 +386,22 @@
         region.map((value) => value * 100 + "%");
     }
 
-    scene.classList.toggle("is-moving", animate && !reducedMotion.matches);
+    const start = animate ? getComputedStyle(scene).transform : null;
+    const target = "translate(" + x + "px, " + y + "px) scale(" + scale + ")";
+    camera?.cancel();
+    camera = null;
     highlight.classList.toggle("is-visible", Boolean(detail && region));
-    scene.style.transform = "translate(" + x + "px, " + y + "px) scale(" + scale + ")";
+    scene.style.transform = target;
+    if (start && start !== "none") {
+      camera = scene.animate([{ transform: start }, { transform: target }], {
+        duration: 680,
+        easing: "cubic-bezier(.2,.75,.26,1)"
+      });
+    }
     if (focusButton) focusButton.textContent = detail ? "Full workspace" : "Focus detail";
   }
 
   function show(index, animate = false) {
-    window.cancelAnimationFrame(animationFrame);
     current = index;
     const stop = stops[current];
     focused = Boolean(stop.dataset.region);
@@ -251,41 +413,63 @@
     });
     previous.disabled = current === 0;
     next.disabled = atLastStop();
+    updatePlay();
     status.textContent = "Stop " + (current + 1) + " of " + stops.length + ". " +
       stop.querySelector("h3").textContent;
 
-    if (focused && animate && !reducedMotion.matches) {
-      paint(false);
-      animationFrame = window.requestAnimationFrame(() => {
-        animationFrame = window.requestAnimationFrame(() => paint(focused, true));
-      });
-    } else {
-      paint(focused);
-    }
+    if (focused && animate) paint(false);
+    paint(focused, focused && animate);
   }
 
-  function pause() {
+  function updatePlay() {
+    play.textContent = timer !== null ? "Pause tour"
+      : atLastStop() && playRemaining === null ? "Replay tour" : "Play tour";
+  }
+
+  function pause(freeze = false) {
+    if (freeze && timer !== null) {
+      playRemaining = Math.max(0, nextAt - performance.now());
+      if (camera?.playState === "running") {
+        const frameTime = camera.currentTime;
+        camera.pause();
+        camera.currentTime = frameTime;
+      }
+    } else if (!freeze) {
+      playRemaining = null;
+    }
     window.clearTimeout(timer);
     timer = null;
-    play.textContent = "Play tour";
+    updatePlay();
   }
 
-  function scheduleNext() {
+  function navigate(index, method = "pushState") {
+    window.history[method](null, "", "#" + stops[index].id);
+    show(index, true);
+  }
+
+  function scheduleNext(delay = stopDelay) {
+    nextAt = performance.now() + delay;
     timer = window.setTimeout(() => {
       if (atLastStop()) {
         pause();
         return;
       }
-      show(current + 1, true);
+      // Keep a single history entry for the stops reached during this playback.
+      navigate(current + 1, autoplayEntry ? "replaceState" : "pushState");
+      autoplayEntry = true;
       scheduleNext();
-    }, 7600);
+    }, delay);
+    updatePlay();
   }
 
   function move(index) {
-    if (index < 0 || index >= stops.length || index === current) return;
+    if (index < 0 || index >= stops.length) return;
+    if (index === current) {
+      pause(true);
+      return;
+    }
     pause();
-    window.history.pushState(null, "", "#" + stops[index].id);
-    show(index, true);
+    navigate(index);
   }
 
   links.forEach((link, index) => {
@@ -306,17 +490,26 @@
   });
   play.addEventListener("click", () => {
     if (timer !== null) {
-      pause();
+      pause(true);
       return;
     }
-    if (atLastStop()) show(0);
-    play.textContent = "Pause tour";
-    scheduleNext();
+    sessionFilm.pause();
+    const delay = playRemaining;
+    playRemaining = null;
+    if (delay === null) {
+      autoplayEntry = false;
+      if (atLastStop()) navigate(0);
+    }
+    if (camera?.playState === "paused") camera.play();
+    scheduleNext(delay ?? stopDelay);
   });
 
   tour.addEventListener("focusin", (event) => {
-    if (event.target !== play && timer !== null) pause();
+    if (event.target !== play && timer !== null) pause(true);
   });
+  for (const event of ["pointerdown", "play", "seeking"]) {
+    sessionFilm.addEventListener(event, () => pause(true));
+  }
 
   function measureAnchorOffset() {
     tour.style.setProperty("--tour-anchor-offset", header.offsetHeight + nav.offsetHeight + 18 + "px");
@@ -327,7 +520,7 @@
     paint(focused);
   });
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) pause();
+    if (document.hidden) pause(true);
   });
   window.addEventListener("hashchange", () => {
     pause();

@@ -20,11 +20,13 @@
   }
 
   quarterButtons.forEach((button) => button.addEventListener("click", () => {
+    if (quarter === Number(button.dataset.quarter)) return;
     quarter = Number(button.dataset.quarter);
     showAddress();
   }));
 
   cellButtons.forEach((button) => button.addEventListener("click", () => {
+    if (cell === Number(button.dataset.cell)) return;
     cell = Number(button.dataset.cell);
     showAddress();
   }));
@@ -32,6 +34,7 @@
   address.hidden = false;
 
   const lab = results.querySelector("[data-refinement-lab]");
+  const board = lab.querySelector(".er-board");
   const before = lab.querySelector("[data-layout-before]");
   const after = lab.querySelector("[data-layout-after]");
   const plot = lab.querySelector("[data-cost-plot]");
@@ -49,6 +52,7 @@
   const previous = lab.querySelector("[data-previous-round]");
   const next = lab.querySelector("[data-next-round]");
   const priceButtons = Array.from(lab.querySelectorAll("[data-price]"));
+  const viewButtons = Array.from(board.querySelectorAll("button[data-chart-view]"));
   const curveKeys = Array.from(lab.querySelectorAll("[data-curve-key]"));
 
   const rules = [
@@ -58,20 +62,22 @@
   ];
   const svgNamespace = "http://www.w3.org/2000/svg";
   const maxRound = 4;
-  const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const transitionTime = 1260;
   const beatTime = 2750;
   const squareEdge = 14;
   const squareWidth = 212;
-  let round = 2;
+  let round = 1;
   let progress = 1;
   let scene;
   let graph;
   let animationFrame = 0;
-  let sequenceTimer = 0;
-  let entryTimer = 0;
-  let sequenceKind = "";
-  let introOffered = false;
+  let frameTime;
+  let roundElapsed = 0;
+  let playback = "";
+  let onscreen = true;
+  let introVisible = false;
+  let introPending = true;
+  let introTimer;
   let rule = rules[0];
 
   function svg(parent, name, attrs, label) {
@@ -317,113 +323,139 @@
   }
 
   function settle(announce = true) {
-    window.cancelAnimationFrame(animationFrame);
-    animationFrame = 0;
     paint(1);
     showReadout(true, announce);
   }
 
   function setRound(value, animate = true) {
-    window.cancelAnimationFrame(animationFrame);
     round = value;
+    roundElapsed = 0;
     drawParents();
     scene = makeSplit();
     drawPlot();
-    previous.disabled = round === 1;
-    next.disabled = round === maxRound;
+    previous.setAttribute("aria-disabled", String(round === 1));
+    next.setAttribute("aria-disabled", String(round === maxRound));
 
-    if (!animate || motion.matches) {
+    if (!animate) {
       settle(animate);
       return;
     }
 
     showReadout(false);
     paint(0);
-    const began = window.performance.now();
-    function advance(now) {
-      const elapsed = clamp((now - began) / transitionTime);
-      if (elapsed === 1) settle();
-      else {
-        paint(elapsed);
-        animationFrame = window.requestAnimationFrame(advance);
-      }
+  }
+
+  function setPlayback(mode) {
+    playback = mode;
+    play.textContent = mode === "playing" ? "Pause playback" :
+      mode === "paused" ? "Resume playback" : "Replay all rounds";
+  }
+
+  function suspendAnimation() {
+    window.cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
+    frameTime = undefined;
+  }
+
+  function scheduleAnimation() {
+    if (animationFrame || document.hidden || !onscreen || playback === "paused") return;
+    if (progress === 1 && playback !== "playing") {
+      frameTime = undefined;
+      return;
     }
     animationFrame = window.requestAnimationFrame(advance);
   }
 
-  function stopPlayback() {
-    window.clearTimeout(sequenceTimer);
-    sequenceKind = "";
-    play.textContent = "Replay all rounds";
-    if (progress < 1) settle();
+  function advance(now) {
+    animationFrame = 0;
+    roundElapsed += now - (frameTime ?? now);
+    frameTime = now;
+    if (progress < 1) {
+      if (roundElapsed >= transitionTime) settle();
+      else paint(roundElapsed / transitionTime);
+    }
+    if (playback === "playing" && roundElapsed >= beatTime) {
+      if (round === maxRound) setPlayback("");
+      else setRound(round + 1);
+    }
+    scheduleAnimation();
   }
 
-  function playSequence(lastRound, kind) {
-    stopPlayback();
-    sequenceKind = kind;
-    play.textContent = "Stop playback";
-    setRound(1);
-    function advance() {
-      if (round === lastRound) stopPlayback();
-      else {
-        setRound(round + 1);
-        sequenceTimer = window.setTimeout(advance, beatTime);
-      }
-    }
-    sequenceTimer = window.setTimeout(advance, beatTime);
+  function scheduleIntroduction() {
+    window.clearTimeout(introTimer);
+    if (!introPending || !introVisible || document.hidden) return;
+    introTimer = window.setTimeout(() => {
+      introPending = false;
+      setRound(2);
+      scheduleAnimation();
+    }, 850);
   }
 
   function keepManualControl() {
-    introOffered = true;
-    window.clearTimeout(entryTimer);
-    stopPlayback();
+    introPending = false;
+    window.clearTimeout(introTimer);
   }
 
   priceButtons.forEach((button) => button.addEventListener("click", () => {
     keepManualControl();
+    if (button.dataset.price === rule.id) return;
     rule = rules.find((pricing) => pricing.id === button.dataset.price);
     priceButtons.forEach((choice) => choice.setAttribute("aria-pressed", String(choice === button)));
     curveKeys.forEach((key) => key.classList.toggle("er-legend-active", key.dataset.curveKey === rule.id));
     drawPlot();
-    paintPlot(1);
-    showReadout(true, true);
+    paintPlot(progress);
+    showReadout(progress === 1, progress === 1);
   }));
 
-  previous.addEventListener("click", () => {
+  viewButtons.forEach((button) => button.addEventListener("click", () => {
     keepManualControl();
-    setRound(round - 1);
-  });
-  next.addEventListener("click", () => {
-    keepManualControl();
-    setRound(round + 1);
-  });
-  play.addEventListener("click", () => {
-    const alreadyPlaying = Boolean(sequenceKind);
-    keepManualControl();
-    if (!alreadyPlaying) playSequence(maxRound, "replay");
-  });
+    if (board.dataset.chartView === button.dataset.chartView) return;
+    board.dataset.chartView = button.dataset.chartView;
+    viewButtons.forEach(option => option.setAttribute("aria-pressed", String(option === button)));
+  }));
 
-  const diagrams = lab.querySelector(".er-geometry");
-  if ("IntersectionObserver" in window) {
-    const visibility = new IntersectionObserver(([entry]) => {
-      window.clearTimeout(entryTimer);
-      if (entry.intersectionRatio < .7) {
-        if (sequenceKind === "introduction") stopPlayback();
-      } else if (!introOffered && !motion.matches) {
-        entryTimer = window.setTimeout(() => {
-          introOffered = true;
-          playSequence(2, "introduction");
-        }, 850);
-      }
-    }, { threshold: .7, rootMargin: "-70px 0px -18px" });
-    visibility.observe(diagrams);
+  function stepRound(direction) {
+    keepManualControl();
+    const target = round + direction;
+    if (target < 1 || target > maxRound) return;
+    suspendAnimation();
+    setPlayback("");
+    setRound(target);
+    scheduleAnimation();
   }
 
-  motion.addEventListener("change", () => {
-    if (motion.matches) keepManualControl();
+  previous.addEventListener("click", () => stepRound(-1));
+  next.addEventListener("click", () => stepRound(1));
+  play.addEventListener("click", () => {
+    keepManualControl();
+    if (playback === "playing") {
+      setPlayback("paused");
+      suspendAnimation();
+      return;
+    }
+    if (!playback) {
+      suspendAnimation();
+      setRound(1);
+    }
+    setPlayback("playing");
+    scheduleAnimation();
   });
+
+  if ("IntersectionObserver" in window) {
+    const visibility = new IntersectionObserver(([entry]) => {
+      onscreen = entry.isIntersecting;
+      introVisible = entry.intersectionRatio >= .65;
+      scheduleIntroduction();
+      if (onscreen) scheduleAnimation();
+      else suspendAnimation();
+    }, { threshold: [0, .65] });
+    visibility.observe(board);
+  }
+
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) keepManualControl();
+    if (document.hidden) suspendAnimation();
+    else scheduleAnimation();
+    scheduleIntroduction();
   });
 
   function openNote() {
@@ -435,24 +467,4 @@
   curveKeys[0].classList.add("er-legend-active");
   setRound(round, false);
   lab.hidden = false;
-})();
-
-(() => {
-  const board = document.querySelector(".er-board");
-  if (!board) return;
-  board.addEventListener("click", event => {
-    if (!event.target.closest("button")) return;
-    const bounds = board.getBoundingClientRect();
-    const header = document.querySelector(".er-paper-header")?.offsetHeight || 0;
-    if (bounds.height <= innerHeight - header - 6 && (bounds.top < header || bounds.bottom > innerHeight)) {
-      board.scrollIntoView({block:"start", behavior:"instant"});
-    }
-  });
-  for (const button of board.querySelectorAll("button[data-chart-view]")) {
-    button.addEventListener("click", () => {
-      board.dataset.chartView = button.dataset.chartView;
-      board.querySelectorAll("button[data-chart-view]").forEach(option =>
-        option.setAttribute("aria-pressed", String(option === button)));
-    });
-  }
 })();

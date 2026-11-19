@@ -10,7 +10,7 @@
   <meta property="og:title" content="Writing App walkthrough · EigenEngine">
   <meta property="og:description" content="See the manuscript, revision history and arXiv export for The Cost of Complexity in the EigenEngine Writing App.">
   <meta property="og:url" content="https://gmccaul.co.uk/demo/writing/">
-  <meta property="og:image" content="https://gmccaul.co.uk/demo/writing/media/full-project.webp">
+  <meta property="og:image" content="https://gmccaul.co.uk/demo/writing/media/session-tour-poster.webp">
   <meta property="og:image:alt" content="The Writing App shows the manuscript, outline and saved editing conversation for The Cost of Complexity.">
   <title>Writing App walkthrough · EigenEngine</title>
   <link rel="canonical" href="https://gmccaul.co.uk/demo/writing/">
@@ -23,7 +23,7 @@
   <script src="./walkthrough.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#session">Skip to the editing session</a>
+  <a class="skip-link" href="#session-film">Skip to the session film</a>
   <header class="site-header">
     <div class="shell masthead">
       <a class="return-link" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
@@ -34,11 +34,39 @@
     </div>
   </header>
   <main class="shell">
-    <header class="session-intro">
-      <p class="eyebrow">Writing App · 18 November 2026</p>
-      <h1>A scientific paper in revision</h1>
-      <p>Explore the saved editing record for <em>The Cost of Complexity</em>, from a multi-file revision to the arXiv package. Then trace a new numerical check of the paper’s claim from the simulation into a manuscript figure.</p>
-    </header>
+    <section class="session-opening" id="session-film" aria-labelledby="film-title">
+      <header class="session-intro">
+        <div>
+          <p class="eyebrow">Writing App · 18 November 2026</p>
+          <h1 id="film-title">Inside the Writing App</h1>
+        </div>
+        <p>Follow the saved session for <em>The Cost of Complexity</em>, with separate worked examples of an edit and a numerical figure.</p>
+      </header>
+      <div class="session-film">
+        <video controls playsinline muted preload="none" poster="./media/session-tour-poster.webp" aria-label="The Writing App session film">
+          <source src="./media/session-tour.mp4" type="video/mp4">
+          <track kind="captions" srclang="en" label="English" src="./media/session-tour.vtt">
+          <a href="./media/session-tour.mp4" download>Download the session film</a>
+        </video>
+        <div class="film-caption">
+          <p class="film-caption-title">Editing workspace</p>
+          <p class="film-caption-text">The Cost of Complexity asks what it costs to distinguish more outcomes.</p>
+        </div>
+      </div>
+      <div class="film-chapters" role="group" aria-label="Session film chapters" hidden>
+        <button type="button" data-time="0" aria-current="true"><span>0:00</span><b>Editing workspace</b></button>
+        <button type="button" data-time="9"><span>0:09</span><b>Saved revisions</b></button>
+        <button type="button" data-time="22"><span>0:22</span><b>Edit and accept</b></button>
+        <button type="button" data-time="38"><span>0:38</span><b>Simulation to figure</b></button>
+        <button type="button" data-time="60"><span>1:00</span><b>Workflow</b></button>
+        <button type="button" data-time="68"><span>1:08</span><b>arXiv package</b></button>
+      </div>
+      <div class="film-links">
+        <a class="film-inspect" href="#session">Inspect the saved session <span aria-hidden="true">↓</span></a>
+        <a href="./media/session-tour.mp4" download>Download film</a>
+        <a href="./media/session-tour.vtt" download>Timed captions</a>
+      </div>
+    </section>
 
     <section class="session-tour" id="session" aria-labelledby="session-title">
       <header class="tour-header">
@@ -153,9 +181,7 @@
         <a href="/demo/writing/simulation/">Simulation to figure ↓</a>
         <a href="#edit-example">One edit up close ↓</a>
         <a href="/demo/writing/project-record/">Project record</a>
-        <a href="/demo/view/?asset=session-tour">Watch session film</a>
-        <a href="./media/session-tour.mp4" download>Download film</a>
-        <a href="./media/session-tour.vtt" download>Timed captions</a>
+        <a href="#session-film">Watch session film ↑</a>
       </div>
     </section>
 

@@ -105,13 +105,13 @@
             <div class="er-view-switch" role="group" aria-label="Figure view"><button type="button" data-chart-view="geometry" aria-pressed="true">Dividing the square</button><button type="button" data-chart-view="plot" aria-pressed="false">Cost curves</button></div>
             <div class="er-geometry">
               <figure>
-                <svg viewBox="0 0 240 240" data-layout-before role="img" aria-label="Four cells after one round"></svg>
-                <figcaption><span>Before the round</span><strong data-count-before>4 cells</strong></figcaption>
+                <svg viewBox="0 0 240 240" data-layout-before role="img" aria-label="One parent cell"></svg>
+                <figcaption><span>Before the round</span><strong data-count-before>1 cell</strong></figcaption>
               </figure>
               <span class="er-round-arrow" aria-hidden="true">→</span>
               <figure>
-                <svg viewBox="0 0 240 240" data-layout-after role="img" aria-label="Sixteen cells after two rounds"></svg>
-                <figcaption><span data-child-label>After the round</span><strong data-count-after>16 cells</strong></figcaption>
+                <svg viewBox="0 0 240 240" data-layout-after role="img" aria-label="Four cells after one round"></svg>
+                <figcaption><span data-child-label>After the round</span><strong data-count-after>4 cells</strong></figcaption>
               </figure>
             </div>
             <figure class="er-plot">
@@ -124,14 +124,14 @@
               <svg viewBox="0 0 460 235" data-cost-plot role="img" aria-label="Total subdivision cost by number of cells"></svg>
             </figure>
             <div class="er-round-info">
-              <p class="er-step-label" data-round-label>Round 2 of 4</p>
-              <p class="er-round-math" data-round-math>4 splits × 1/4 unit per split = 1 unit added</p>
+              <p class="er-step-label" data-round-label>Round 1 of 4</p>
+              <p class="er-round-math" data-round-math>1 split × 1 unit per split = 1 unit added</p>
               <dl class="er-values">
                 <div><dt>Added this round</dt><dd data-increment>1</dd></div>
-                <div><dt data-total-label>Total after this round</dt><dd data-total>2</dd></div>
+                <div><dt data-total-label>Total after this round</dt><dd data-total>1</dd></div>
               </dl>
               <div class="er-nav">
-                <button type="button" data-previous-round>Previous round</button>
+                <button type="button" data-previous-round aria-disabled="true">Previous round</button>
                 <button type="button" data-next-round>Next round</button>
               </div>
             </div>

@@ -1,7 +1,6 @@
 (() => {
   'use strict';
 
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const svgNS = 'http://www.w3.org/2000/svg';
 
   function svg(parent, tag, attrs = {}, text) {
@@ -90,6 +89,7 @@
     const frames = get('[data-frames]');
     const marks = get('[data-symbols]');
     const replay = get('[data-layout-replay]');
+    const description = get('[data-layout-desc]');
     const layoutButtons = [...panel.querySelectorAll('[data-layout]')];
     const gapButtons = [...panel.querySelectorAll('[data-gap]')];
     const selected = 10;
@@ -104,8 +104,8 @@
       return { node, edge };
     });
 
-    function frameLayer(boxes) {
-      const layer = svg(frames, 'g');
+    function frameLayer(boxes, mask) {
+      const layer = svg(frames, 'g', { 'data-frame-mask': mask });
       for (const box of boxes) {
         const marked = selected >= box.first && selected < box.first + box.count;
         const className = 'km-group-box' + (box.label ? '' : ' is-nested') + (marked ? ' is-chosen' : '');
@@ -126,20 +126,22 @@
       });
     }
 
+    function describe(factors) {
+      return factors.length === 1 ? 'One register of sixteen'
+        : factors.length === 2 ? `${factors[0]} groups of ${factors[1]}`
+          : `${factors.length} levels of choice`;
+    }
+
     function label(mask, factors) {
       const joined = factors.join(' × ');
       const address = addressOf(selected, factors);
-      const description = factors.length === 1 ? 'One register of sixteen'
-        : factors.length === 2 ? `${factors[0]} groups of ${factors[1]}`
-          : `${factors.length} levels of choice`;
       get('[data-layout-name]').textContent = joined;
-      get('[data-layout-desc]').textContent = description;
       get('[data-layout-address]').textContent = address.length === 1
         ? 'Symbol 11 · one register, position 11.'
         : address.length === 2
           ? `Symbol 11 · register ${address[0]}, position ${address[1]}.`
           : `Symbol 11 · successive choices ${address.join(' → ')}.`;
-      graph.setAttribute('aria-label', `Layout ${joined}. ${description}. Symbol 11 is highlighted.`);
+      graph.setAttribute('aria-label', `Layout ${joined}. ${describe(factors)}. Symbol 11 is highlighted.`);
       layoutButtons.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.layout) === mask)));
       gapButtons.forEach(button => button.setAttribute('aria-pressed', String(Boolean(mask & (1 << Number(button.dataset.gap))))));
     }
@@ -147,7 +149,7 @@
     let mask = 1;
     const current = arrangement(factorsFor(mask));
     let points = current.points;
-    let layer = frameLayer(current.boxes);
+    frameLayer(current.boxes, mask);
     let timer = null;
     let animation = null;
     let engaged = false;
@@ -158,30 +160,47 @@
       timer = null;
     }
 
-    function choose(next, animate = !reduced.matches) {
+    function choose(next, animate = true) {
       const factors = factorsFor(next);
       const target = arrangement(factors);
       const start = points;
       cancelAnimationFrame(animation);
-      const prior = layer;
-      frames.replaceChildren(prior);
-      layer = frameLayer(target.boxes);
-      mask = next;
-      label(next, factors);
+      const layers = [...frames.children];
+      let layer = layers.find(node => Number(node.dataset.frameMask) === next);
+      if (!layer) {
+        layer = frameLayer(target.boxes, next);
+        layer.setAttribute('opacity', 0);
+        layers.push(layer);
+      }
+      if (next !== mask) {
+        mask = next;
+        label(next, factors);
+      }
 
-      if (!animate) {
+      function finish() {
+        animation = null;
         frames.replaceChildren(layer);
+        layer.setAttribute('opacity', 1);
         points = target.points;
         place(points);
         trail.setAttribute('opacity', 0);
+        description.textContent = describe(factors);
+      }
+
+      if (!animate) {
+        finish();
         return;
       }
 
-      layer.setAttribute('opacity', 0);
-      get('[data-layout-desc]').textContent = 'Regrouping the same symbols';
+      const opacityAtStart = layers.map(node => Number(node.getAttribute('opacity') ?? 1));
+      description.textContent = 'Regrouping the same symbols';
       const began = performance.now();
       function step(now) {
         const time = Math.min(1, (now - began) / 1160);
+        if (time === 1) {
+          finish();
+          return;
+        }
         const weight = ease(time);
         points = start.map((item, i) => {
           const end = target.points[i];
@@ -191,14 +210,12 @@
         const b = points[selected];
         trail.setAttribute('d', `M${a.x} ${a.y} Q${(a.x + b.x) / 2} ${Math.min(a.y, b.y) - 25} ${b.x} ${b.y}`);
         trail.setAttribute('opacity', Math.sin(time * Math.PI) * .88);
-        prior.setAttribute('opacity', Math.max(0, 1 - time * 2));
-        layer.setAttribute('opacity', Math.max(0, (time - .25) / .75));
+        layers.forEach((node, i) => {
+          const fade = node === layer ? Math.max(0, (time - .25) / .75) : Math.min(1, time * 2);
+          node.setAttribute('opacity', between(opacityAtStart[i], node === layer ? 1 : 0, fade));
+        });
         place(points);
-        if (time < 1) animation = requestAnimationFrame(step);
-        else {
-          frames.replaceChildren(layer);
-          label(next, factors);
-        }
+        animation = requestAnimationFrame(step);
       }
       animation = requestAnimationFrame(step);
     }
@@ -210,7 +227,10 @@
       clearPending();
       if (button === replay) {
         choose(1, false);
-        timer = setTimeout(() => choose(4, true), 660);
+        timer = setTimeout(() => {
+          timer = null;
+          choose(4);
+        }, 660);
       } else if (button.hasAttribute('data-layout')) {
         const next = Number(button.dataset.layout);
         if (next !== mask) choose(next);
@@ -221,11 +241,12 @@
 
     place(points);
     label(mask, factorsFor(mask));
+    description.textContent = describe(factorsFor(mask));
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver(([entry]) => {
         if (entry.intersectionRatio < .62) {
           if (!engaged) clearPending();
-        } else if (!engaged && !witnessed && !reduced.matches && timer === null) {
+        } else if (!engaged && !witnessed && timer === null) {
           timer = setTimeout(() => {
             witnessed = true;
             timer = null;
@@ -240,7 +261,10 @@
   const rho = 1.7286472;
   const branchButtons = [...document.querySelectorAll('[data-branch]')];
   const branchRead = document.querySelector('[data-branch-read]');
+  let activeBranch;
   function branch(n) {
+    if (n === activeBranch) return;
+    activeBranch = n;
     branchButtons.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.branch) === n)));
     const share = (100 * n ** (-rho)).toFixed(1);
     branchRead.textContent = `Start with ${n} options. This branch has room for N/${n} and accounts for about ${share}% of layouts in the large-range limit.`;
@@ -288,6 +312,7 @@
     const graph = axis.closest('svg');
     let at = { x: x(0), y: y(Number(cases[0].value)) };
     let frame = null;
+    let activeCase;
 
     function place(next) {
       marker.setAttribute('cx', next.x);
@@ -300,6 +325,8 @@
     }
 
     function choose(index, animate = false) {
+      if (index === activeCase) return;
+      activeCase = index;
       const item = cases[index];
       title.textContent = index ? `Fixed cost ${item.label}` : 'No fixed charge';
       reading.textContent = item.value;
@@ -310,17 +337,18 @@
       graph.setAttribute('aria-label', `Growth exponent falls toward one. At cost ${item.label}, it is ${item.value}.`);
       buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
       cancelAnimationFrame(frame);
-      const to = { x: x(item.x), y: y(Number(item.value)) };
-      if (!animate || reduced.matches) {
-        place(to);
+      const target = { x: x(item.x), y: y(Number(item.value)) };
+      if (!animate) {
+        frame = null;
+        place(target);
         return;
       }
       const start = at;
       const began = performance.now();
       function tick(now) {
         const t = Math.min(1, (now - began) / 370);
-        place({ x: between(start.x, to.x, ease(t)), y: between(start.y, to.y, ease(t)) });
-        if (t < 1) frame = requestAnimationFrame(tick);
+        place({ x: between(start.x, target.x, ease(t)), y: between(start.y, target.y, ease(t)) });
+        frame = t < 1 ? requestAnimationFrame(tick) : null;
       }
       frame = requestAnimationFrame(tick);
     }
@@ -362,12 +390,12 @@
       acted = true;
       play();
     });
-    count(reduced.matches ? 4 : 1);
+    count(1);
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver(([entry]) => {
         if (entry.intersectionRatio < .58) return;
         observer.disconnect();
-        if (!acted && !reduced.matches) play();
+        if (!acted) play();
       }, { threshold: [.58] });
       observer.observe(panel.querySelector('.km-tower'));
     } else count(4);

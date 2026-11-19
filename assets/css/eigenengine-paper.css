@@ -180,7 +180,7 @@
   font: 550 .96rem/1.2 var(--font-display);
 }
 
-.er-options > button:hover, .er-nav > button:not(:disabled):hover, .er-play:hover { border-color: var(--er-focus); }
+.er-options > button:hover, .er-nav > button:not([aria-disabled="true"]):hover, .er-play:hover { border-color: var(--er-focus); }
 .er-lab-controls { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .7rem 1rem; align-items: end; }
 .er-play { min-inline-size: 9.35rem; background: var(--er-ground); color: var(--er-area); white-space: nowrap; }
 .er-options > button[data-price="area"] { --er-selected: var(--er-area); }
@@ -306,7 +306,7 @@
 .er-nav { margin-top: .8rem; }
 .er-nav > button[data-next-round] { color: #1b150d; border-color: var(--er-length); background: var(--er-length); }
 .er-nav > button[data-next-round]:hover { background: #f6d39d; }
-.er-nav > button:disabled { cursor: default; opacity: .5; }
+.er-nav > button[aria-disabled="true"] { cursor: default; opacity: .5; }
 
 .er-plot-area {
   display: grid;
@@ -660,13 +660,13 @@
 @media(max-width:800px) {
   .er-board .er-round-info { grid-template-columns:1fr 1fr;grid-template-areas:"label metrics" "math metrics" "nav nav"; }
 }
-@media(max-width:640px) {
+@media screen and (max-width:640px) {
   .er-board { grid-template-columns:1fr; grid-template-areas:"controls" "switch" "picture" "values"; gap:.48rem; }
   .er-board .er-geometry, .er-board .er-plot { grid-area:picture; }
   .er-view-switch { display:flex; grid-area:switch; gap:.3rem; }
   .er-view-switch button { font:500 .82rem/1.25 var(--font-display); border:0; border-bottom:2px solid transparent; border-radius:0; padding:.4rem .45rem; color:var(--er-muted); background:transparent; cursor:pointer; }
   .er-view-switch [aria-pressed="true"] { color:var(--er-ink); border-color:var(--er-focus); }
-  .er-board[data-chart-view="plot"] .er-geometry, .er-board[data-chart-view="geometry"] .er-plot { display:none; }
+  .er-board[data-chart-view="plot"] .er-geometry, .er-board[data-chart-view="geometry"] .er-plot { visibility:hidden; }
   .er-board .er-geometry svg { max-height:min(22svh,150px); }
   .er-board .er-plot svg { max-height:24svh; }
   .er-board .er-round-info { padding-top:.4rem;column-gap:.5rem;row-gap:.25rem; }
@@ -678,6 +678,9 @@
   .er-board .er-values dd { font-size:1.14rem; }
   .er-board .er-play { margin:0; }
   .er-board .er-options button,.er-board .er-nav button { font-size:.82rem; min-height:32px; }
+}
+@media screen and (max-width:375px) {
+  .er-board .er-round-math { min-block-size:3lh; }
 }
 @media print { .er-view-switch {display:none;} .er-board .er-plot,.er-board .er-geometry {display:block!important} }
 .er-article-page #try-refinement {scroll-margin-top:calc(var(--er-paper-nav-height) + 5px);}

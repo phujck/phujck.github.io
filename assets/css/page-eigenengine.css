@@ -176,12 +176,14 @@
   background:none; color:inherit; border:0; margin:0; padding:0; cursor:pointer;
 }
 .ee-cover-art:focus-visible { outline-offset:-5px !important; }
-.ee-cover-curve { position:absolute; width:clamp(260px,75%,468px); height:auto; right:-1%; top:-5%; transform:rotate(-7deg); }
+.ee-cover-curve { position:absolute; width:min(73%,448px); height:auto; right:1.2%; top:1.5%; transform:rotate(-6deg); }
 .ee-cover-curve path { stroke-linecap:round; stroke-linejoin:round; fill:none; }
 .ee-curve-frame { stroke:#d9c48e; stroke-opacity:.25; stroke-width:.9; }
 .ee-curve-guide { stroke:#e1bb72; stroke-width:2.0; opacity:.25; }
-.ee-curve-ink { stroke:#e8bf76; stroke-width:2.8; filter:drop-shadow(0 0 2px #dbb56a4a); }
-.ee-curve-quarter { stroke:#f6d599; stroke-width:3.4; filter:drop-shadow(0 0 2px #f2c16488); }
+.ee-curve-ink { stroke:#b69961; stroke-width:2.35; }
+.ee-curve-tracer { filter:drop-shadow(0 0 3px #ffd58b); }
+.ee-curve-tracer path { stroke:#ffe3a8; stroke-width:4.6; }
+.ee-curve-tracer circle { fill:#fff9e9; stroke:#f7ce7e; stroke-width:1.5; }
 .ee-feature-paper::after {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: linear-gradient(90deg,#171c20f5 3%,#191e21a6 38%,transparent 74%),linear-gradient(0deg,#171c20 1%,#171c20c4 34%,transparent 73%);
@@ -222,7 +224,7 @@
   .ee-feature-paper { min-height: 310px; }
   .ee-feature-copy { padding: 1.4rem; }
   .ee-feature-copy p.ee-label { margin-bottom: 1rem; margin-top:.8rem; }
-  .ee-cover-curve { right:-5%; top:-2%; width:72%; }
+  .ee-cover-curve { right:1%; top:1%; width:72%; }
   .ee-feature-copy .ee-paper-pitch { font-size:.91rem; }
   .ee-contents a { line-height: 1.15; padding: .62rem 0; }
 }
@@ -242,7 +244,8 @@
 .ee-science-entry p { margin-top:.5rem; color:var(--ee-muted); max-width:69ch; }
 .ee-science-entry a { flex-shrink:0; }
 .ee-feature-copy { pointer-events:none; }
-.ee-feature-copy a { pointer-events:auto; }
+.ee-feature-copy :is(a, h2, p) { pointer-events:auto; }
+.ee-feature-copy :is(h2, p) { width:fit-content; }
 @media(max-width:760px){.ee-science-entry { display:block; } .ee-science-entry a { margin-top:.8rem; }}
 .ee-page .ee-project-intro { color:#c5ced5; margin-top:1.2rem; max-width:48ch; font:400 1rem/1.55 var(--font-body); border-left:2px solid #ad935f; padding-left:.8rem; }
 .ee-project-intro strong { color:#efe4ce; font-weight:500; }

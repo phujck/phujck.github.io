@@ -118,7 +118,6 @@
     'On the square, each child is half as wide as its parent and has one quarter of its area.',
   ];
   const fingerprints = ['a88446a9727338fc7b079226c89a5473eb25f49c6a38e9f0ef16dd62a11a332a', 'd6b6f1ef03c58b2ec978eef177e423291cb170158eed512d233d035a9e5348df'];
-  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const svgNS = 'http://www.w3.org/2000/svg';
   const baseAngle = { membership: -0.63, inference: 0.79, evidence: -0.94 };
   const defaultTilt = 0.43;
@@ -130,14 +129,14 @@
     yaw: baseAngle.membership, pitch: defaultTilt, spinning: null, drag: null,
     positions: structuredClone(lenses.membership.positions), timers: [],
     pulseFrame: null, engaged: false, visible: false, story: null, storyFrame: null,
-    scene: 'sealed', flap: 0, extraction: 0, dissolve: 1, turn: 1,
+    scene: 'sealed', flap: 0, extraction: 0, cardScale: 1, turn: 1,
     size: { width: 1, height: 1, card: 90 },
 
   };
 
   mount.innerHTML = `
     <div class="ee-envelope__exhibit">
-    <div class="ee-envelope__toolbar">
+    <div class="ee-envelope__toolbar" tabindex="-1" role="group" aria-label="Graph controls">
       <div class="ee-envelope__lens" role="group" aria-label="Show relationships">
         <button type="button" data-lens="membership" aria-pressed="true" aria-label="Where it belongs"><span class="env-wide">Where it belongs</span><span class="env-short">Belongs to</span></button>
         <button type="button" data-lens="inference" aria-pressed="false" aria-label="What it requires"><span class="env-wide">What it requires</span><span class="env-short">Requires</span></button>
@@ -148,7 +147,6 @@
         <button type="button" data-orbit="1" aria-label="Rotate right" title="Rotate right">↷</button>
         <button type="button" data-orbit="0" aria-label="Reset view"><span class="env-wide">Reset view</span><span class="env-short">Reset</span></button>
         <button type="button" data-cover>Open envelope</button>
-        <button type="button" data-full-motion hidden aria-label="Play full motion"><span class="env-wide">Play full motion</span><span class="env-short">Full motion</span></button>
       </div>
     </div>
     <div class="ee-envelope__workspace">
@@ -237,7 +235,6 @@
   const points = $('.ee-envelope__points');
   const cover = $('.ee-envelope__cover');
   const coverButton = $('[data-cover]');
-  const fullMotionButton = $('[data-full-motion]');
   const sceneNote = $('[data-scene-note]');
   const svg = $('.ee-envelope__svg');
   const picker = $('.ee-envelope__node-picker select');
@@ -372,7 +369,7 @@
     let markers = '';
     const full = state.extraction;
     const animating = graph && state.turn < 1;
-    const turnSize = animating ? 1 - .58 * Math.sin(Math.PI * state.turn) : 1;
+    const turnSize = state.cardScale;
     const frames = ids.map(id => {
       const own = ports.indexOf(id);
       const progress = graph ? 1 : !leaving ? 0 : own >= 0
@@ -431,7 +428,6 @@
         needsReview ? 'Claim: Constant cost per level, review required' : 'Claim: Constant cost per level');
     }
     state.projected = projected;
-    stage.style.setProperty('--ee-dissolve', state.dissolve);
     stage.style.setProperty('--ee-flap-turn', `${state.flap * 155}deg`);
     stage.style.setProperty('--ee-extraction', full);
     cover.style.width = `${casing.w}px`;
@@ -461,30 +457,30 @@
     const from = { yaw: state.yaw, pitch: state.pitch, positions: structuredClone(state.positions) };
     const destination = lenses[lens].positions;
     const turn = Math.atan2(Math.sin(yaw - from.yaw), Math.cos(yaw - from.yaw));
-    const reduced = motion.matches;
+    const initialScale = state.cardScale;
     function step(now) {
-      const t = clamp((now - start) / (reduced ? 330 : duration));
-      const weight = reduced ? Number(t >= .5) : ease(t);
+      const t = clamp((now - start) / duration);
+      const weight = ease(t);
       state.yaw = from.yaw + turn * weight;
       state.pitch = mix(from.pitch, pitch, weight);
-      state.turn = regroup && !reduced ? t : 1;
-      state.dissolve = reduced && regroup ? Math.abs(2 * t - 1) : 1;
+      state.turn = regroup ? t : 1;
+      state.cardScale = regroup && t < .5
+        ? mix(initialScale, .42, ease(2 * t))
+        : mix(regroup ? .42 : initialScale, 1, regroup ? ease(2 * t - 1) : weight);
       ids.forEach(id => {
-        const bend = regroup && !reduced ? Math.sin(Math.PI * t) * (from.positions[id][0] - destination[id][0]) * .16 : 0;
+        const bend = regroup ? Math.sin(Math.PI * t) * (from.positions[id][0] - destination[id][0]) * .16 : 0;
         const [x, y, z] = destination[id].map((value, index) => mix(from.positions[id][index], value, weight));
         state.positions[id] = [x, y + bend, z];
       });
       draw();
       if (t < 1) state.spinning = requestAnimationFrame(step);
     }
-    if (reduced && !regroup) step(start + 330);
-    else state.spinning = requestAnimationFrame(step);
+    state.spinning = requestAnimationFrame(step);
   }
 
   function pulseEdges(edges, tone) {
     cancelAnimationFrame(state.pulseFrame);
     layers.pulse.innerHTML = '';
-    if (motion.matches) return;
     const start = performance.now();
     function frame(now) {
       const elapsed = now - start;
@@ -537,17 +533,17 @@
     const compact = state.story ? 'Skip' : state.scene === 'graph' ? 'Replay' : 'Open';
     coverButton.setAttribute('aria-label', command);
     coverButton.innerHTML = `<span class="env-wide">${command}</span><span class="env-short">${compact}</span>`;
-    fullMotionButton.hidden = !motion.matches;
   }
 
   function openGraph() {
+    if (!state.story && state.scene === 'graph') return;
     cancelAnimationFrame(state.storyFrame);
     state.storyFrame = null;
     state.story = null;
     state.flap = 1;
     state.extraction = 1;
     state.turn = 1;
-    state.dissolve = 1;
+    state.cardScale = 1;
     scene('graph');
     updateStoryControls();
     draw();
@@ -557,42 +553,31 @@
     const story = state.story;
     if (!story) return;
     state.storyFrame = null;
-    if (story.autoplay && !state.visible) {
+    if (!state.visible || document.hidden) {
       story.tick = null;
       return;
     }
     story.elapsed += story.tick == null ? 0 : Math.min(70, now - story.tick);
     story.tick = now;
     const t = story.elapsed;
-    if (story.reduced) {
-      // Three stationary scenes. Move the nodes only at the bottom of each dissolve.
-      const openAt = 1500, graphAt = 3230, halfFade = 180;
-      state.dissolve = Math.min(1, Math.abs(t - openAt) / halfFade, Math.abs(t - graphAt) / halfFade);
-      state.flap = Number(t >= openAt);
-      state.extraction = Number(t >= graphAt);
-      scene(t < openAt ? 'sealed' : t < graphAt ? 'open' : 'graph');
-      if (t >= graphAt + halfFade) return openGraph();
-    } else {
-      state.flap = ease(clamp((t - 1020) / 660));
-      state.extraction = ease(clamp((t - 2090) / 1980));
-      state.dissolve = 1;
-      scene(t < 1130 ? 'sealed' : t < 2100 ? 'open' : 'release');
-      if (t >= 4090) return openGraph();
-    }
+    state.flap = ease(clamp((t - 1020) / 660));
+    state.extraction = ease(clamp((t - 2090) / 1980));
+    scene(t < 1130 ? 'sealed' : t < 2100 ? 'open' : 'release');
+    if (t >= 4090) return openGraph();
     draw();
     state.storyFrame = requestAnimationFrame(advanceStory);
   }
 
-  function playStory({ autoplay = false, fullMotion = false } = {}) {
+  function playStory() {
     cancelAnimationFrame(state.storyFrame);
     cancelAnimationFrame(state.spinning);
     cancelAnimationFrame(state.pulseFrame);
     layers.pulse.innerHTML = '';
-    state.story = { elapsed: 0, tick: null, reduced: motion.matches && !fullMotion, autoplay };
+    state.story = { elapsed: 0, tick: null };
     state.extraction = 0;
     state.flap = 0;
     state.turn = 1;
-    state.dissolve = 1;
+    state.cardScale = 1;
     state.positions = structuredClone(lenses[state.lens].positions);
     scene('sealed');
     updateStoryControls();
@@ -665,6 +650,12 @@
     if (state.timers.length && state.phase === 0) $('.ee-envelope__query-result').textContent = '';
     state.timers.forEach(clearTimeout);
     state.timers = [];
+    if (state.phase >= 0) {
+      state.phase = -1;
+      cancelAnimationFrame(state.pulseFrame);
+      layers.pulse.replaceChildren();
+      draw();
+    }
     $('[data-run]').disabled = false;
   }
 
@@ -677,6 +668,7 @@
     }
     stopQuestion();
     openGraph();
+    toolbar.focus({preventScroll: true});
     $('[data-run]').disabled = true;
     const answer = $('.ee-envelope__query-result');
     const advance = phase => {
@@ -687,19 +679,19 @@
       pulseEdges(step.edges, phase ? 'teal' : 'gold');
       answer.innerHTML = `<p><strong>Area pricing.</strong> Each round divides four times as many squares, each with one quarter of the area. Under wall-length pricing the cost per round doubles.</p>
         <p>${step.status}</p>
-        <a href="/eigenengine/cost-of-complexity/#refinement">Compare the cost curves ↓</a>
+        <a href="/eigenengine/cost-of-complexity/#refinement">Compare the cost curves in the paper ↗</a>
         <a href="${paper}&amp;page=10">Open Figure 3 ↗</a>`;
       if (phase !== phases.length - 1) return;
       select('fig3');
       answer.insertAdjacentHTML('beforeend', `<blockquote>“a price set by area (γ = 2) adds the same increment … at every depth”</blockquote>
-        <a href="/demo/writing/#proposal">Review the wording in the app ↗</a>`);
+        <a href="/demo/writing/">Watch the Writing App film ↗</a>`);
       const run = $('[data-run]');
       run.textContent = 'Trace again';
       run.disabled = false;
       state.timers = [];
     };
     advance(0);
-    state.timers.push(setTimeout(() => advance(1), motion.matches ? 2600 : 1900));
+    state.timers.push(setTimeout(() => advance(1), 1900));
   }
 
   function revision() {
@@ -720,7 +712,7 @@
       <p>${current
         ? 'The answer applies to the square construction. Its reviewed source revision matches the current passage.'
         : 'The answer still cites its earlier source revision. Review the current passage before accepting a new basis.'}</p>
-      ${(state.preview || !current) ? `<div class="ee-envelope__preview">
+      ${((state.preview && editable) || !current) ? `<div class="ee-envelope__preview">
         <p><strong>Earlier passage</strong> ${samples[0]}</p><p><strong>${applied ? 'Current passage' : 'Proposed passage'}</strong> ${samples[1]}</p>
       </div>` : ''}
       <div class="ee-envelope__revision-actions">
@@ -728,7 +720,7 @@
           ? '<button type="button" data-revision="preview">Preview source correction</button>' : !applied
             ? '<button type="button" data-revision="apply">Apply sample correction</button>' : !current
               ? '<button type="button" data-revision="review">Record a fresh review</button>' : ''}
-        ${applied || state.preview ? '<button type="button" data-revision="reset">Reset sample</button>' : ''}
+        ${applied || (state.preview && editable) ? '<button type="button" data-revision="reset">Reset sample</button>' : ''}
       </div>
       ${!current ? '<p class="ee-envelope__history">The source fingerprint changed. The width premise and the answer that uses it are ready for review.</p>' : ''}
     `;
@@ -786,6 +778,7 @@
     const dy = event.clientY - tracking.y;
     if (!tracking.turned && Math.abs(dx) < 5) return;
     if (!tracking.turned) {
+      stopQuestion();
       tracking.turned = true;
       cancelAnimationFrame(state.spinning);
       tracking.yaw = state.yaw;
@@ -809,37 +802,40 @@
   mount.addEventListener('click', event => {
     const button = event.target.closest('button');
     if (!button) return;
-    state.engaged = true;
-    if (button.hasAttribute('data-cover') || button.hasAttribute('data-full-motion')) {
+    if (button.hasAttribute('data-cover')) {
+      state.engaged = true;
       stopQuestion();
-      if (state.story && button.hasAttribute('data-cover')) {
-        openGraph();
-      } else {
-        playStory({ fullMotion: button.hasAttribute('data-full-motion') });
-      }
+      if (state.story) openGraph();
+      else playStory();
     } else if (button.hasAttribute('data-lens')) {
-      openGraph();
-      if (state.lens === button.dataset.lens && state.phase < 0) return;
+      if (state.lens === button.dataset.lens) return;
+      state.engaged = true;
       stopQuestion();
-      state.phase = -1;
+      openGraph();
       displayLens(button.dataset.lens);
       moveTo(state.lens, baseAngle[state.lens], defaultTilt, 970, true);
     } else if (button.hasAttribute('data-orbit')) {
+      state.engaged = true;
+      stopQuestion();
       openGraph();
       const delta = Number(button.dataset.orbit);
       if (delta) moveTo(state.lens, state.yaw + delta * 0.38);
       else moveTo(state.lens, baseAngle[state.lens], defaultTilt);
     } else if (button.dataset.point) {
-      if (state.story) openGraph();
+      if (state.selected === button.dataset.point && !state.timers.length) return;
+      stopQuestion();
       select(button.dataset.point);
     } else if (button.dataset.open) {
-      select(button.dataset.open, true);
+      state.engaged = true;
+      stopQuestion();
       openGraph();
+      select(button.dataset.open, true);
     } else if (button.hasAttribute('data-run')) {
+      state.engaged = true;
       runQuestion();
     } else if (button.dataset.role) {
+      if (state.role === button.dataset.role) return;
       state.role = button.dataset.role;
-      state.preview = false;
       revision();
     } else if (button.dataset.revision) {
       revisionAction(button.dataset.revision);
@@ -852,8 +848,11 @@
   stage.addEventListener('lostpointercapture', endDrag);
   window.addEventListener('pointerup', endDrag);
   picker.addEventListener('change', () => {
-    state.engaged = true;
-    openGraph();
+    stopQuestion();
+    if (!ports.includes(picker.value)) {
+      state.engaged = true;
+      openGraph();
+    }
     select(picker.value);
   });
   measure();
@@ -863,26 +862,31 @@
   revision();
   updateStoryControls();
   new ResizeObserver(measure).observe(stage);
-  motion.addEventListener('change', () => {
-    if (state.story) playStory({ autoplay: state.story.autoplay });
-    updateStoryControls();
-  });
+  function syncStoryClock() {
+    if (!state.story) return;
+    if (!state.visible || document.hidden) {
+      cancelAnimationFrame(state.storyFrame);
+      state.storyFrame = null;
+      state.story.tick = null;
+    } else if (state.storyFrame === null) {
+      state.storyFrame = requestAnimationFrame(advanceStory);
+    }
+  }
+  document.addEventListener('visibilitychange', syncStoryClock);
 
   if ('IntersectionObserver' in window) {
     let started = false;
     const observer = new IntersectionObserver(([entry]) => {
       state.visible = entry.isIntersecting && entry.intersectionRatio >= .42;
-      if (!state.visible) {
-        if (state.story?.autoplay) state.story.tick = null;
-        return;
-      }
-      if (!started) {
+      if (state.visible && !started) {
         started = true;
-        if (!state.engaged) playStory({ autoplay: true });
-      } else if (state.story?.autoplay && state.storyFrame === null) {
-        state.storyFrame = requestAnimationFrame(advanceStory);
+        if (!state.engaged && !state.story && state.scene !== 'graph') playStory();
       }
+      syncStoryClock();
     }, { threshold: [0, .42] });
     observer.observe(stage);
+  } else {
+    state.visible = true;
+    playStory();
   }
 })();

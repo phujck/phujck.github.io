@@ -30,7 +30,7 @@
   const assets = Object.assign(Object.create(null), window.eigenExampleViews || {}, {
     "cost-paper": {type: "pdf", title: "The Cost of Complexity", src: "/assets/docs/the-cost-of-complexity.pdf"},
     "kalmar-paper": {type: "pdf", title: "Physical origins of the Kalmár constant", src: "/assets/docs/physical-origins-of-the-kalmar-constant.pdf"},
-    "session-tour": {type: "video", title: "The 18 November editing session", src: "../writing/media/session-tour.mp4", stop:"session"},
+    "session-tour": {type: "video", title: "The 18 November editing session", src: "../writing/media/session-tour.mp4", stop:"session-film"},
     "proposal-walkthrough": {type: "video", title: "One edit up close", src: "../writing/media/proposal-walkthrough.mp4", stop:"video"}
   });
   for (const [id, [title, stop]] of Object.entries(images)) {
@@ -58,13 +58,22 @@
     element.title = "Click to switch between the fitted and full-size image";
     const size = document.getElementById("image-size");
     size.hidden = false;
-    function resize() {
-      const expanded = element.classList.toggle("expanded");
+    function resize(expanded) {
+      element.classList.toggle("expanded", expanded);
       size.setAttribute("aria-pressed", String(expanded));
       size.textContent = expanded ? "Fit image" : "Actual size";
+      holder.tabIndex = expanded ? 0 : -1;
+      if (!expanded) {
+        holder.scrollTo(0, 0);
+        if (document.activeElement === holder) size.focus();
+      }
     }
-    element.addEventListener("click", resize);
-    size.addEventListener("click", resize);
+    const toggleSize = () => resize(!element.classList.contains("expanded"));
+    element.addEventListener("click", toggleSize);
+    size.addEventListener("click", toggleSize);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && element.classList.contains("expanded")) resize(false);
+    });
   } else if (item.type === "video") {
     element = document.createElement("video");
     element.controls = true;

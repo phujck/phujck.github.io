@@ -3,77 +3,117 @@
   const art = document.querySelector(".ee-cover-art");
   if (!art) return;
   const ink = art.querySelector(".ee-curve-ink");
-  const quarter = art.querySelector(".ee-curve-quarter");
   const guide = art.querySelector(".ee-curve-guide");
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const tracer = art.querySelector(".ee-curve-tracer");
+  const trail = tracer.querySelector("path");
+  const tip = tracer.querySelector("circle");
 
-  // Each four consecutive children belong to the cell at their parent's rank.
-  // Coarse and fine polylines therefore share vertices throughout the refinement.
+  // Four consecutive children have the same parent. Keep their identities when
+  // interpolating so each turn in the coarse curve opens into its own subcurve.
   function point(side, rank) {
     let x = 0, y = 0;
-    for (let step = 1; step < side; step *= 2) {
+    for (let size = 1; size < side; size *= 2) {
       const right = 1 & (rank >> 1);
       const up = 1 & (rank ^ right);
       if (!up) {
-        if (right) { x = step - 1 - x; y = step - 1 - y; }
+        if (right) { x = size - 1 - x; y = size - 1 - y; }
         [x, y] = [y, x];
       }
-      x += step * right;
-      y += step * up;
+      x += size * right;
+      y += size * up;
       rank >>= 2;
     }
     return [(x + .5) * 320 / side, 320 - (y + .5) * 320 / side];
   }
 
   const levels = [2, 4, 8, 16].map(side =>
-    Array.from({length: 256}, (_, index) => point(side, Math.floor(index * side * side / 256))));
-  function line(coords) {
-    return coords.map(([x, y], index) => (index ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1)).join("");
+    Array.from({length: 256}, (_, i) => point(side, Math.floor(i * side * side / 256))));
+  function path(points) {
+    return points.map(([x, y], i) => (i ? "L" : "M") + x.toFixed(2) + " " + y.toFixed(2)).join("");
   }
-  const shapes = levels.map(line);
-  const thirds = levels.map(points => line(points.slice(128, 192)));
+
+  // Consecutive vertices coincide before a parent subdivides. Measure only
+  // visible segments so the light keeps travelling at the coarse levels too.
+  function curve(vertices) {
+    const points = [vertices[0]], distances = [0];
+    let length = 0;
+    for (const vertex of vertices.slice(1)) {
+      const [x, y] = points[points.length - 1];
+      const segment = Math.hypot(vertex[0] - x, vertex[1] - y);
+      if (segment === 0) continue;
+      length += segment;
+      distances.push(length);
+      points.push(vertex);
+    }
+    return {points, distances, length, d: path(points)};
+  }
+  function atDistance(curve, distance) {
+    let low = 0, high = curve.points.length - 1;
+    while (low + 1 < high) {
+      const middle = (low + high) >> 1;
+      if (curve.distances[middle] < distance) low = middle;
+      else high = middle;
+    }
+    const ratio = (distance - curve.distances[low]) / (curve.distances[high] - curve.distances[low]);
+    const [x, y] = curve.points[low], [endX, endY] = curve.points[high];
+    return {point: [x + (endX - x) * ratio, y + (endY - y) * ratio], segment: low};
+  }
+  function reflected(value) {
+    const lap = (value % 2 + 2) % 2;
+    return lap <= 1 ? lap : 2 - lap;
+  }
+  const shapes = levels.map(curve);
   const sequence = [0, 1, 2, 3, 2, 1];
   const stepTime = 1660;
-  let elapsed = 0, last = null, handle = null, visible = true, paused = false, frozenStage = -1;
-  function draw() {
-    const phase = Math.floor(elapsed / stepTime) % sequence.length;
-    const start = sequence[phase], end = sequence[(phase + 1) % sequence.length];
-    const fraction = (elapsed % stepTime) / stepTime;
-    const t = Math.min(1, Math.max(0, (fraction - .23) / .6));
-    const ease = t * t * (3 - 2*t);
-    if (reduced.matches) {
-      // Fixed geometries dissolve in place; no pan, rotation or travelling camera.
-      guide.setAttribute("d", shapes[start]);
-      ink.setAttribute("d", shapes[end]);
-      quarter.setAttribute("d", thirds[end]);
-      guide.style.opacity = String(.88 * (1 - ease));
-      ink.style.opacity = String(ease);
-      quarter.style.opacity = String(ease);
-      return;
+  let clock = 0, travel = .43, last = null, handle = null;
+  let visible = true, paused = false;
+  let paintedCurve = null, paintedGuide = -1;
+
+  function draw(dt) {
+    const index = Math.floor(clock / stepTime) % sequence.length;
+    const from = sequence[index], to = sequence[(index + 1) % sequence.length];
+    const t = Math.max(0, Math.min(1, ((clock % stepTime) / stepTime - .23) / .6));
+    const ease = t * t * (3 - 2 * t);
+    let active = shapes[from];
+    if (t === 1) active = shapes[to];
+    else if (t > 0) {
+      active = curve(levels[from].map(([x, y], i) => [
+        x + (levels[to][i][0] - x) * ease,
+        y + (levels[to][i][1] - y) * ease,
+      ]));
     }
-    guide.style.opacity = String(.16 + .16 * (1 - ease));
-    ink.style.opacity = quarter.style.opacity = "1";
-    guide.setAttribute("d", shapes[start]);
-    if (t === 0 || t === 1) {
-      const held = t === 0 ? start : end;
-      if (frozenStage !== held) {
-        ink.setAttribute("d", shapes[held]);
-        quarter.setAttribute("d", thirds[held]);
-        frozenStage = held;
-      }
-    } else {
-      frozenStage = -1;
-      const expanded = levels[start].map(([x,y], i) => [
-        x + (levels[end][i][0] - x) * ease, y + (levels[end][i][1] - y) * ease
-      ]);
-      ink.setAttribute("d", line(expanded));
-      quarter.setAttribute("d", line(expanded.slice(128,192)));
+    if (active !== paintedCurve) {
+      ink.setAttribute("d", active.d);
+      paintedCurve = active;
     }
+    if (from !== paintedGuide) {
+      guide.setAttribute("d", shapes[from].d);
+      paintedGuide = from;
+    }
+    guide.style.opacity = String(.12 + .16 * (1 - ease));
+
+    // The head and its entire short wake follow the arclength of the very path
+    // painted above. At either end the light turns back without jumping across.
+    travel += dt * Math.max(.000062, Math.min(.00019, .185 / active.length));
+    const tailTime = travel - Math.min(.16, 108 / active.length);
+    const head = reflected(travel), tail = reflected(tailTime);
+    let left = Math.min(head, tail), right = Math.max(head, tail);
+    if (Math.floor(travel) !== Math.floor(tailTime)) {
+      if (Math.floor(travel) % 2 === 1) right = 1;
+      else left = 0;
+    }
+    const a = atDistance(active, left * active.length), b = atDistance(active, right * active.length);
+    trail.setAttribute("d", path([a.point, ...active.points.slice(a.segment + 1, b.segment + 1), b.point]));
+    const {point: [x, y]} = atDistance(active, head * active.length);
+    tip.setAttribute("cx", x.toFixed(2));
+    tip.setAttribute("cy", y.toFixed(2));
   }
+
   function frame(now) {
-    if (last !== null) elapsed = (elapsed + Math.min(100, now - last)) % (stepTime * sequence.length);
+    const dt = last === null ? 0 : Math.min(100, now - last);
     last = now;
-    draw();
+    clock = (clock + dt) % (stepTime * sequence.length);
+    draw(dt);
     handle = requestAnimationFrame(frame);
   }
   function update() {
@@ -85,12 +125,12 @@
     art.title = label;
   }
   art.disabled = false;
+  tracer.removeAttribute("visibility");
   art.addEventListener("click", () => { paused = !paused; update(); });
   document.addEventListener("visibilitychange", update);
-  reduced.addEventListener("change", () => { frozenStage = -1; draw(); update(); });
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; update(); }).observe(art);
   }
-  draw();
+  draw(0);
   update();
 })();

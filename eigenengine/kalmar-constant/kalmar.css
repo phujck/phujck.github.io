@@ -344,6 +344,11 @@ legend { margin-bottom: .31rem; padding: 0; color: var(--light); font: 550 .85re
   .km-tower, .km-fixed { padding-inline: .65rem; }
   .km-tower li { grid-template-columns: minmax(90px, 1fr) auto auto; }
 }
+@media (max-width: 375px) {
+  .km-stage-header { display: grid; }
+  .km-stage figcaption p { min-block-size: 2lh; }
+  .km-bit-sum { display: grid; justify-items: start; }
+}
 
 .km-layout-graph .km-trail {
   fill: none;

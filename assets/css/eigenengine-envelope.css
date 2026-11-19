@@ -108,7 +108,6 @@
 #ee-envelope .ee-envelope__stage {
   --ee-card-width: 100px;
   --ee-card-height: 53px;
-  --ee-dissolve: 1;
   --ee-extraction: 0;
   --ee-flap-turn: 0deg;
   position: relative;
@@ -134,7 +133,6 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  opacity: var(--ee-dissolve);
 }
 
 #ee-envelope .ee-envelope__cover {
@@ -143,7 +141,7 @@
   isolation: isolate;
   perspective: 690px;
   perspective-origin: 50% 30%;
-  opacity: calc(var(--ee-dissolve) * (1 - var(--ee-extraction) * .94));
+  opacity: calc(1 - var(--ee-extraction) * .94);
   transform: translate(-50%, -50%) scale(calc(1 - var(--ee-extraction) * .12));
 }
 
@@ -304,8 +302,7 @@
 }
 
 #ee-envelope .ee-envelope__point[hidden],
-#ee-envelope .ee-envelope__cover[hidden],
-#ee-envelope [data-full-motion][hidden] { display: none; }
+#ee-envelope .ee-envelope__cover[hidden] { display: none; }
 
 #ee-envelope .ee-envelope__point.is-port {
   background: linear-gradient(162deg, #273d58, #19304a);

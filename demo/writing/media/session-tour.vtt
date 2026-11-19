@@ -1,19 +1,57 @@
 WEBVTT
 
-00:00:00.000 --> 00:00:06.750
-The editing workspace. The full manuscript, its revision marks and the saved conversation share one workspace.
+00:00:00.000 --> 00:00:04.500 align:center
+The Cost of Complexity asks what it costs
+to distinguish more outcomes.
 
-00:00:06.750 --> 00:00:13.500
-More than 50 proposed edits. At 10:25 a proposal covered eight source files. This edit keeps the proof outline in the main text and points readers to Appendix A for the details.
+00:00:04.500 --> 00:00:09.000 align:center
+The manuscript, its files and the editing
+conversation share one workspace.
 
-00:00:13.500 --> 00:00:20.250
-Saved project changes. The 18:50 turn records 34 project changes. Its history links the task, proposed revisions and decisions.
+00:00:09.000 --> 00:00:15.500 align:center
+On 18 November, one proposal covered
+more than 50 edits across eight TeX files.
 
-00:00:20.250 --> 00:00:27.000
-A changed passage. The seventh edit distinguishes a bound on sensory surprisal from a fixed rank cost. The app preserves the proposal and the later revision that resolved it.
+00:00:15.500 --> 00:00:22.000 align:center
+The app keeps the original proposal
+and links to the later revision.
 
-00:00:27.000 --> 00:00:33.750
-The source file’s history. The section has its own file history. Here it records saves by the author at 19:50 and 22:02.
+00:00:22.000 --> 00:00:25.667 align:center
+This staged excerpt revisits a claim
+about the cost of subdividing a square.
 
-00:00:33.750 --> 00:00:40.500
-Building the arXiv package. The app repeats the package check on the saved manuscript. Its 11 files compile in an empty folder and reproduce the text on all 21 pages.
+00:00:25.667 --> 00:00:30.958 align:center
+The author edits the proposed sentence.
+The new wording prices each split by area.
+
+00:00:30.958 --> 00:00:38.000 align:center
+Accept saves the author’s wording
+to the excerpt. Undo is available.
+
+00:00:38.000 --> 00:00:43.000 align:center
+A separate check splits a square
+into 256 cells over four rounds.
+
+00:00:43.000 --> 00:00:48.000 align:center
+The run records 85 splits. Total cost is
+4 by area and 15 by wall length.
+
+00:00:48.000 --> 00:00:53.500 align:center
+The plot reads each round’s totals
+from the CSV and links back to the run.
+
+00:00:53.500 --> 00:01:00.000 align:center
+The app rebuilds the manuscript
+with the new plot and its caption.
+
+00:01:00.000 --> 00:01:08.000 align:center
+This example workflow routes the draft
+to an independent evidence reviewer.
+
+00:01:08.000 --> 00:01:14.000 align:center
+The app rechecks an 11-file arXiv package
+from the saved 18 November manuscript.
+
+00:01:14.000 --> 00:01:20.000 align:center
+Both LaTeX passes succeed.
+The text matches across all 21 pages.

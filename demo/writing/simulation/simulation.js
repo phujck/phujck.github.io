@@ -5,11 +5,10 @@
   const stops = [...section.querySelectorAll(".sim-stop")];
   const links = [...section.querySelectorAll(".sim-stops a")];
   function show(id) {
-    const active = stops.find(stop => stop.id === id);
-    if (!active) return;
+    const active = stops.find(stop => stop.id === id) || stops[0];
     for (const stop of stops) stop.hidden = stop !== active;
     for (const link of links) {
-      if (link.hash === "#" + id) link.setAttribute("aria-current", "step");
+      if (link.hash === "#" + active.id) link.setAttribute("aria-current", "step");
       else link.removeAttribute("aria-current");
     }
   }
@@ -22,12 +21,9 @@
     });
   }
   function fromAddress() {
-    const id = location.hash.slice(1);
-    if (id.startsWith("simulation-")) show(id);
+    show(location.hash.slice(1));
   }
   section.classList.add("sim-enhanced");
-  show(stops[0].id);
   fromAddress();
   window.addEventListener("hashchange", fromAddress);
-  window.addEventListener("popstate", fromAddress);
 })();
