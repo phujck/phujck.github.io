@@ -97,7 +97,7 @@
 /* ---------- two-up panels ---------- */
 .trip-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
   gap: var(--space-xl);
 }
 .trip-panel {
@@ -270,7 +270,7 @@
 
 .trip-lightbox[hidden] { display: none !important; }
 .trip-lightbox {
-  position: fixed; inset: 0; z-index: 200; background: rgba(5, 7, 14, 0.95);
+  position: fixed; inset: 0; z-index: 1001; background: rgba(5, 7, 14, 0.95);
   display: flex; align-items: center; justify-content: center; padding: var(--space-xl);
 }
 .trip-lightbox figure { margin: 0; max-width: min(1200px, 92vw); display: flex; flex-direction: column; gap: 0.7rem; }
@@ -287,4 +287,6 @@
 .trip-lb-nav.next { right: 0.5rem; }
 
 .trip-note { font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-md); max-width: 70ch; }
+
+.footer-links { flex-wrap: wrap; justify-content: center; }
 
