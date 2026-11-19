@@ -29,6 +29,7 @@
   };
   const assets = Object.assign(Object.create(null), window.eigenExampleViews || {}, {
     "cost-paper": {type: "pdf", title: "The Cost of Complexity", src: "/assets/docs/the-cost-of-complexity.pdf"},
+    "dynamic-memory": {type: "pdf", title: "Dynamic Memory · Early experiment", src: "/assets/docs/dynamic-memory-early-experiment.pdf", preliminary: true},
     "kalmar-paper": {type: "pdf", title: "Physical origins of the Kalmár constant", src: "/assets/docs/physical-origins-of-the-kalmar-constant.pdf"},
     "session-tour": {type: "video", title: "Saved manuscript session", src: "../writing/media/session-tour.mp4", poster: "session-tour-poster.webp", stop: "session-film", transcript: "session-film-transcript"},
     "proposal-walkthrough": {type: "video", title: "One edit up close", src: "../writing/media/proposal-walkthrough.mp4", poster: "proposal-changes.webp", stop: "video", transcript: "edit-film-transcript"}
@@ -128,5 +129,19 @@
     }
   }
   holder.replaceChildren(element);
+  if (item.preliminary) {
+    const notice = document.createElement("aside");
+    notice.className = "preliminary-notice";
+    notice.setAttribute("aria-label", "Experimental results");
+    const warning = document.createElement("strong");
+    warning.textContent = "Early experiment. These numbers are not representative of EigenEngine.";
+    const open = document.createElement("a");
+    open.href = item.src;
+    open.target = "_blank";
+    open.rel = "noopener";
+    open.textContent = "Open the PDF in a new tab ↗";
+    notice.append(warning, open);
+    holder.prepend(notice);
+  }
   if (textOptions) holder.append(textOptions);
 })();

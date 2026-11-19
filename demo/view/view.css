@@ -42,3 +42,6 @@ a.ee-reading-return {
   text-underline-offset: .2em;
 }
 @media (max-width: 620px) { .ee-reading-returns { max-width: 55%; } }
+
+.preliminary-notice {display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.35em 1.25em;padding:.66rem clamp(.8rem,3vw,3rem);border-bottom:2px solid #c79953;background:#302820;color:#ffe0a5;font-size:clamp(.92rem,1.4vw,1.13rem)}
+.preliminary-notice a {color:#f8deb3;font-size:.9rem}

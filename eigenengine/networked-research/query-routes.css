@@ -1,0 +1,127 @@
+#nr-query-routes {
+  min-width: 0;
+  max-width: 53rem;
+  margin: 0;
+}
+
+#nr-query-routes > [data-query-fallback][hidden] { display: none !important; }
+
+#nr-query-routes .query-routes {
+  padding: clamp(.58rem, 1.6vw, .9rem);
+  border: 1px solid #40515f;
+  border-radius: .55rem;
+  background: radial-gradient(ellipse at 45% 39%, #1d3441, #111f2c 86%);
+  font: 400 .9rem/1.42 var(--nr-sans);
+}
+
+#nr-query-routes .query-routes__intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .38rem .8rem;
+  margin-bottom: .38rem;
+}
+
+#nr-query-routes .query-routes__intro > span {
+  color: #c2d5de;
+  font-weight: 550;
+}
+
+#nr-query-routes .query-routes__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+
+#nr-query-routes button {
+  min-height: 39px;
+  padding: .34rem .62rem;
+  border: 1px solid #597284;
+  border-radius: .3rem;
+  background: #182b3a;
+  color: var(--nr-ink);
+  font: 550 .88rem/1.25 var(--nr-sans);
+  text-align: start;
+  cursor: pointer;
+}
+
+#nr-query-routes button:hover { border-color: var(--nr-gold); }
+
+#nr-query-routes button[aria-pressed="true"] {
+  border-color: #d2ad76;
+  background: #382f27;
+  color: #f5d399;
+}
+
+#nr-query-routes .query-routes > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 218px;
+  overflow: visible;
+}
+
+#nr-query-routes .query-routes__boxes rect {
+  fill: #111f2c;
+  fill-opacity: .8;
+  stroke: #506d7b;
+  stroke-width: 1;
+}
+
+#nr-query-routes .query-routes__edge {
+  fill: none;
+  stroke: #7899aa;
+  stroke-width: calc(1px + 4.1px * var(--query-weight, 0));
+  stroke-linecap: round;
+}
+
+#nr-query-routes .query-routes__edge--linked { stroke-dasharray: 4 3; }
+
+#nr-query-routes .query-routes__node {
+  fill: #284452;
+  stroke: #8facbb;
+  stroke-width: 1.2;
+}
+
+#nr-query-routes .query-routes svg text {
+  fill: #c8dae2;
+  font: 475 15.5px/1.2 var(--nr-sans);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+#nr-query-routes .query-routes svg .query-routes__title { font-size: 19px; font-weight: 550; }
+#nr-query-routes .query-routes svg .query-routes__claim { fill: #f6d69b; font-size: 12.5px; }
+
+#nr-query-routes .query-routes__edge[data-emphasis="true"] { stroke: #f2c781; }
+#nr-query-routes .query-routes__node[data-emphasis="true"] { fill: #785b39; stroke: #f7d393; }
+#nr-query-routes .query-routes__label[data-emphasis="true"] { fill: #f6d69b; }
+
+#nr-query-routes .query-routes__packet {
+  fill: #fff1c9;
+  filter: drop-shadow(0 0 3px #ffdb8e);
+  pointer-events: none;
+}
+
+#nr-query-routes .query-routes__reading {
+  padding: .25rem .16rem 0;
+  color: #e3e9e9;
+}
+
+#nr-query-routes .query-routes__legend { color: #aebfc9; font-size: .83rem; }
+#nr-query-routes .query-routes__answer { margin-top: .2rem; min-height: 1.45em; color: #f1d4a0; }
+#nr-query-routes .query-routes__source { display: inline-block; margin-top: .12rem; font-size: .86rem; font-weight: 500; }
+
+#nr-query-routes figcaption {
+  margin-top: .52rem;
+  color: var(--nr-muted);
+  font: 400 .86rem/1.4 var(--nr-sans);
+}
+
+@media (max-width: 440px) {
+  #nr-query-routes .query-routes svg text { font-size: 17px; }
+  #nr-query-routes .query-routes svg .query-routes__title { font-size: 21px; }
+  #nr-query-routes .query-routes svg .query-routes__claim { font-size: 15px; }
+  #nr-query-routes button { font-size: .84rem; }
+  #nr-query-routes .query-routes__answer { min-height: 2.85em; }
+}

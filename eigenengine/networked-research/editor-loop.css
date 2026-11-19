@@ -1,0 +1,172 @@
+#editor-learning-loop { container-type: inline-size; min-width: 0; margin: 0; }
+#editor-learning-loop .el-shell {
+  --el-ink: #eae9e2;
+  --el-muted: #bdcbd2;
+  --el-gold: #e7c58b;
+  --el-green: #9bd7bd;
+  --el-font: Outfit, system-ui, sans-serif;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--el-ink);
+  background: #101d29;
+  border: 1px solid #425467;
+  border-radius: .68rem;
+  font: 400 1rem/1.42 var(--el-font);
+}
+#editor-learning-loop :is(p,h3) { margin: 0; }
+#editor-learning-loop button { cursor: pointer; font: inherit; }
+#editor-learning-loop button:focus-visible { outline: 2px solid #f1cd86; outline-offset: 2px; }
+#editor-learning-loop .el-header {
+  display: flex; align-items: center; justify-content: space-between; gap: .6rem;
+  padding: .65rem 1rem;
+  background: #162534; border-bottom: 1px solid #344958;
+}
+#editor-learning-loop #el-title {
+  color: #f0ede6; font: 500 clamp(1.02rem, 2.1cqw, 1.42rem)/1.23 Lora, Georgia, serif;
+}
+#editor-learning-loop .el-controls { display: flex; gap: .35rem; flex: none; }
+#editor-learning-loop .el-controls button {
+  min-height: 34px; padding: .28rem .55rem; border: 1px solid #506775; border-radius: .3rem;
+  color: #e3ebeb; background: #1b2c3a; font: 550 .81rem/1.18 var(--el-font);
+}
+#editor-learning-loop .el-controls button:hover { color: #f5d8a2; border-color: #b39d77; }
+#editor-learning-loop .el-workspace {
+  --el-stacked: 0;
+  position: relative; isolation: isolate;
+  display: grid; grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); align-items: stretch;
+  gap: clamp(2rem, 5.2cqw, 4.7rem); padding: 1.25rem clamp(1.25rem, 4.3cqw, 3.4rem);
+  background: radial-gradient(ellipse at 57% 54%, #172d3a 0, #0e1b27 76%);
+}
+#editor-learning-loop .el-wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; }
+#editor-learning-loop .el-routes path { fill:none; stroke:#638294; stroke-width:1.6; }
+#editor-learning-loop .el-routes path:last-child { stroke:#86ac9d; stroke-dasharray:3 3; }
+#editor-learning-loop .el-flight { fill:none; stroke:#f1cc83; stroke-width:2.5; stroke-linecap:round; }
+#editor-learning-loop .el-traveler rect { fill:#f6dba2; stroke:#312d25; stroke-width:.8; }
+#editor-learning-loop .el-halo { fill:#ecc381; opacity:.18; }
+#editor-learning-loop [data-phase="4"] .el-flight { stroke:#a2d7bd; }
+#editor-learning-loop [data-phase="4"] .el-traveler rect { fill:#bce7d0; }
+#editor-learning-loop .el-editor {
+  position: relative; display:flex; flex-direction:column; min-width:0; align-self:center;
+  border: 1px solid #576472; border-radius: .49rem; background: #192631;
+  box-shadow: 0 .45rem 1.3rem #08132080;
+}
+#editor-learning-loop .el-record-label, #editor-learning-loop .el-cycle-label {
+  font: 600 .77rem/1.3 var(--el-font); letter-spacing:.035em;
+}
+#editor-learning-loop .el-record-label {
+  display:flex; align-items:center; justify-content:space-between; gap:.65rem;
+  padding:.48rem .74rem; color:var(--el-gold); border-bottom:1px solid #40505b;
+}
+#editor-learning-loop .el-record-label span { color:#bfd0d8; font-weight:450; letter-spacing:normal; }
+#editor-learning-loop .el-proposal { display:grid; justify-items:start; padding:.55rem .78rem .62rem; }
+#editor-learning-loop .el-saved-ui {
+  width:100%; height:auto; display:block; border:1px solid #3a4853; border-radius:.25rem; background:#101820;
+}
+#editor-learning-loop .el-passage-head {
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.3rem; width:100%; margin:.32rem 0;
+}
+#editor-learning-loop .el-passage-head p { font:500 .77rem/1.2 var(--el-font); color:#b8c4ca; }
+#editor-learning-loop .el-quote {
+  display:block; border-left:2px solid #cfb279; padding-left:.6rem;
+  color:#efeee8; font:400 clamp(1rem,1.7cqw,1.2rem)/1.36 Lora,Georgia,serif;
+}
+#editor-learning-loop .el-quote mark {
+  color:inherit; background:linear-gradient(to top, #9e7b3e65 0 66%, transparent 66%) no-repeat;
+  background-size:calc(var(--el-underline,1) * 100%) 100%;
+}
+#editor-learning-loop .el-mark {
+  min-height:34px; display:inline-flex; align-items:center; gap:.4rem; text-align:left;
+  background:transparent; border:1px solid #6e6654; border-radius:.28rem; padding:.3rem .48rem;
+  color:#dfcba5; font:530 .84rem/1.14 var(--el-font);
+}
+#editor-learning-loop .el-mark svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.4; }
+#editor-learning-loop .el-mark:hover, #editor-learning-loop .el-mark[aria-pressed="true"] { border-color:#ceb075; background:#332e25; color:#f4deb8; }
+#editor-learning-loop .el-return {
+  position:relative; display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+  padding:.42rem .74rem; border-top:1px dashed #547066; border-radius:0 0 .48rem .48rem;
+  color:#b7cec3; background:#1c2c2e; font:520 .82rem/1.27 var(--el-font);
+}
+#editor-learning-loop .el-return small { font:450 .73rem/1.2 var(--el-font); white-space:nowrap; color:#abc6b8; }
+#editor-learning-loop .el-arrived .el-return { color:#d4f4e2; background:#294637; }
+#editor-learning-loop .el-exit-port, #editor-learning-loop .el-return-port {
+  position:absolute; width:7px; height:7px; right:-3.5px; border:1.5px solid #f1cb89; border-radius:50%; background:#273543;
+}
+#editor-learning-loop .el-exit-port { bottom:4.5rem; }
+#editor-learning-loop .el-return-port { top:calc(50% - 3.5px); border-color:#a0d0b6; }
+#editor-learning-loop .el-cycle {
+  min-width:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-areas:'label label' 'note trial' 'review compare';
+  grid-template-rows:auto 1fr 1fr; justify-items:center; align-items:center; row-gap:1.1rem; column-gap:1.2rem;
+}
+#editor-learning-loop .el-cycle-label { grid-area:label; align-self:start; justify-self:start; color:#adc4d2; }
+#editor-learning-loop .el-node-1 { grid-area:note; }
+#editor-learning-loop .el-node-2 { grid-area:trial; }
+#editor-learning-loop .el-node-3 { grid-area:compare; }
+#editor-learning-loop .el-node-4 { grid-area:review; }
+#editor-learning-loop .el-stage {
+  position:relative; z-index:2; display:grid; justify-items:center; align-content:center; gap:.15rem;
+  min-width:0; min-height:54px; padding:.12rem .2rem; border:0; border-radius:.3rem;
+  text-align:center; background:transparent; color:#d1dde3; font:500 .95rem/1.25 var(--el-font);
+}
+#editor-learning-loop .el-stage small { color:#a8bdc8; font:450 .78rem/1.25 var(--el-font); }
+#editor-learning-loop .el-stage span { text-wrap:balance; border-bottom:1px solid transparent; }
+#editor-learning-loop .el-stage:hover span, #editor-learning-loop .el-stage[aria-pressed="true"] span { border-color:#d8bb86; color:#f3d7a3; }
+#editor-learning-loop .el-icon { display:block; width:clamp(47px,7cqw,73px); height:auto; overflow:visible; }
+#editor-learning-loop .el-icon path, #editor-learning-loop .el-icon rect, #editor-learning-loop .el-icon circle {
+  fill:#142632; stroke:#91b6c6; stroke-width:1.55; stroke-linecap:round; stroke-linejoin:round;
+}
+#editor-learning-loop .el-stage .el-front-sheet { transform:translate(calc(3px * var(--el-lift,0)), calc(-2px * var(--el-lift,0))); }
+#editor-learning-loop .el-stage .el-copy-sheet { opacity:.65; }
+#editor-learning-loop .el-node-4 .el-icon path { stroke:#97c6ad; }
+#editor-learning-loop .el-stage[aria-pressed="true"] .el-icon :is(path,rect,circle) { stroke:#edca88; }
+#editor-learning-loop .el-stage .el-chart-guide { stroke:#607f8e; }
+#editor-learning-loop .el-trace path { fill:none; stroke-dasharray:1; stroke-dashoffset:calc(1 - var(--el-draw,1)); }
+#editor-learning-loop .el-trace path:last-child { stroke:#97cbb3; stroke-dasharray:.1 .06; stroke-dashoffset:0; }
+#editor-learning-loop .el-caption {
+  padding:.73rem 1rem .8rem; border-top:1px solid #3b4c58; min-height:3.75rem;
+  background:#152431; color:#d9e4e7; font:450 .96rem/1.42 var(--el-font);
+}
+
+@container (max-width: 615px) {
+  #editor-learning-loop .el-header { padding:.5rem .62rem; gap:.45rem; }
+  #editor-learning-loop #el-title { font-size:1rem; }
+  #editor-learning-loop .el-controls { gap:.22rem; }
+  #editor-learning-loop .el-controls button { min-height:35px; padding:.26rem .36rem; font-size:.76rem; }
+  #editor-learning-loop .el-workspace {
+    --el-stacked: 1; grid-template-columns:1fr; gap:.52rem; padding:.7rem .65rem .64rem 1.25rem;
+  }
+  #editor-learning-loop .el-editor { width:100%; }
+  #editor-learning-loop .el-record-label { padding:.34rem .58rem; }
+  #editor-learning-loop .el-proposal { display:block; padding:.34rem .5rem .4rem; }
+  #editor-learning-loop .el-saved-ui { width:100%; }
+  #editor-learning-loop .el-passage-head { margin:.22rem 0; gap:.2rem; }
+  #editor-learning-loop .el-passage-head p { font-size:.71rem; }
+  #editor-learning-loop .el-quote { font-size:.96rem; line-height:1.28; padding-left:.42rem; }
+  #editor-learning-loop .el-mark { padding:.15rem .35rem; min-height:30px; font-size:.76rem; }
+  #editor-learning-loop .el-mark svg { flex:none; width:12px; }
+  #editor-learning-loop .el-return { padding:.3rem .58rem; font-size:.77rem; }
+  #editor-learning-loop .el-exit-port { top:auto; bottom:2.8rem; right:-3.5px; }
+  #editor-learning-loop .el-return-port { left:-4px; right:auto; }
+  #editor-learning-loop .el-cycle { column-gap:.8rem; row-gap:.72rem; align-items:start; }
+  #editor-learning-loop .el-cycle-label { justify-self:end; font-size:.69rem; padding-top:.12rem; }
+  #editor-learning-loop .el-stage { min-height:46px; gap:.04rem; font-size:.82rem; padding:.08rem; }
+  #editor-learning-loop .el-stage small { display:none; }
+  #editor-learning-loop .el-icon { width:46px; }
+  #editor-learning-loop .el-caption { min-height:4.3rem; padding:.52rem .65rem .58rem; font-size:.85rem; line-height:1.4; }
+}
+@container (max-width: 305px) {
+  #editor-learning-loop .el-stage { font-size:.78rem; }
+  #editor-learning-loop .el-header { padding-block:.36rem; }
+  #editor-learning-loop .el-workspace { padding-top:.4rem; gap:.44rem; }
+  #editor-learning-loop .el-cycle { row-gap:.58rem; }
+  #editor-learning-loop .el-record-label, #editor-learning-loop .el-return { padding-block:.22rem; }
+  #editor-learning-loop .el-caption { min-height:4.4rem; padding-block:.38rem; }
+}
+@media print {
+  #editor-learning-loop .el-controls, #editor-learning-loop .el-flight, #editor-learning-loop .el-traveler { display:none; }
+}
+@media (max-width:350px) and (max-height:600px) {
+  #editor-learning-loop .el-saved-ui {height:47px}
+  #editor-learning-loop .el-cycle {row-gap:.4rem}
+  #editor-learning-loop .el-workspace {padding-bottom:.42rem}
+}

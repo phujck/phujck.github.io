@@ -1,83 +1,134 @@
 #nr-project-cover {
-  position: relative;
   min-width: 0;
-  margin: 0;
-  padding: 0;
   overflow: hidden;
-  border: 1px solid #47617a;
-  border-radius: .78rem;
-  background: radial-gradient(ellipse at 51% 42%, #253e55, #0d1a29 79%);
-  color: #cfdbe4;
+  border: 1px solid #49647e;
+  border-radius: .83rem;
+  background: #101e2d;
+  color: #cfdce5;
 }
 
-#nr-project-cover svg {
+#nr-project-cover > svg {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 356px;
 }
 
 #nr-project-cover figcaption {
-  margin: 0;
-  padding: .58rem 4rem .61rem .75rem;
-  border-top: 1px solid #344d65;
-  color: #b9cad6;
-  background: #101e2c;
-  font: 500 .82rem/1.36 Outfit, system-ui, sans-serif;
+  padding: .5rem .78rem;
+  border-top: 1px solid #344a60;
+  color: #b7c9d8;
+  background: #112033;
+  font: 500 .81rem/1.36 Outfit, system-ui, sans-serif;
 }
 
-#nr-project-cover .nr-cover-toggle {
-  position: absolute;
-  right: .54rem;
-  bottom: .37rem;
-  min-width: 3.15rem;
-  min-height: 27px;
-  padding: .1rem .35rem;
-  border: 1px solid #52657a;
+#nr-project-cover .nr-cover-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .5rem .68rem;
+  padding: .56rem .75rem .67rem;
+  border-top: 1px solid #34506a;
+  background: #0d1a2b;
+  font: 500 .8rem/1.32 Outfit, system-ui, sans-serif;
+}
+
+#nr-project-cover .nr-cover-legend,
+#nr-project-cover .nr-cover-inspection,
+#nr-project-cover .nr-cover-receipt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .28rem .7rem;
+}
+
+#nr-project-cover .nr-cover-legend { color: #a8c1d5; }
+#nr-project-cover .nr-cover-legend > span { display: inline-flex; align-items: center; gap: .29rem; white-space: nowrap; }
+#nr-project-cover .nr-cover-legend span::before { width: .84rem; border-top: 2px solid #8fdcda; content: ''; }
+#nr-project-cover .nr-cover-legend .nr-cover-legend-possible::before { border-color: #c4b1ee; border-top-style: dashed; }
+#nr-project-cover .nr-cover-inspection { gap: .34rem; }
+
+#nr-project-cover :is(.nr-cover-toggle, .nr-cover-inspection select) {
+  min-height: 2.1rem;
+  padding: .22rem .48rem;
+  border: 1px solid #536f87;
   border-radius: .33rem;
-  color: #c1d6e4;
-  background: #1c2c3e;
-  font: 550 .71rem/1.22 Outfit, system-ui, sans-serif;
+  color: #d5e4ef;
+  background: #1a2e45;
+  font: 550 .78rem/1.19 Outfit, system-ui, sans-serif;
   cursor: pointer;
 }
 
-#nr-project-cover .nr-cover-toggle[hidden] { display: none; }
-#nr-project-cover .nr-cover-toggle:hover { color: #f1d498; border-color: #bb9a65; }
-#nr-project-cover .nr-cover-toggle:focus-visible { outline: 2px solid #c6e2ed; outline-offset: 2px; }
-#nr-project-cover .nr-cover-plane { fill: #20423f; fill-opacity: .48; stroke: #5a9e92; stroke-width: 1.1px; }
-#nr-project-cover .nr-cover-plane--right { fill: #294166; stroke: #779cce; }
-#nr-project-cover .nr-cover-plane--shadow { fill: #0a1928; stroke: #425b73; opacity: .76; }
-#nr-project-cover .nr-cover-stem,
-#nr-project-cover .nr-cover-front,
-#nr-project-cover .nr-cover-bridge,
-#nr-project-cover .nr-cover-bridge-track { fill: none; stroke-linecap: round; }
-#nr-project-cover .nr-cover-stem { stroke: #75bcbb; stroke-width: 1.9px; }
-#nr-project-cover .nr-cover-stem--fine { stroke: #7da5bb; stroke-width: 1.35px; }
-#nr-project-cover .nr-cover-front { stroke: #f0c989; stroke-width: 1.4px; stroke-dasharray: 3 5; }
-#nr-project-cover .nr-cover-bridge { stroke: #b5b3d1; stroke-width: 1.5px; stroke-dasharray: 4 5; }
-#nr-project-cover .nr-cover-bridge-track { stroke: #d7b87c; stroke-width: 1.7px; }
-#nr-project-cover .nr-cover-node-shadow { fill: #193146; stroke: #385b70; stroke-width: .8px; }
-#nr-project-cover .nr-cover-node-top { fill: #2d6473; stroke: #94c7cb; stroke-width: 1.1px; }
-#nr-project-cover .nr-cover-node--root .nr-cover-node-top { fill: #306d76; stroke: #a7dee1; }
-#nr-project-cover .nr-cover-node--leaf .nr-cover-node-top { fill: #6588a5; stroke: #a7c6db; }
-#nr-project-cover .nr-cover-node--package .nr-cover-node-top { fill: #765538; stroke: #f4d195; }
-#nr-project-cover .nr-cover-node--package .nr-cover-node-shadow { fill: #382f2e; stroke: #ab8456; }
-#nr-project-cover .nr-cover-distinction { fill: #ffdda2; stroke: #fff2c4; stroke-width: .9px; }
-#nr-project-cover .nr-cover-halo { fill: #d7b07224; stroke: #dcba7d; stroke-width: 1.05px; }
-#nr-project-cover .nr-cover-project,
-#nr-project-cover .nr-cover-annotation {
-  fill: #dcebf0;
-  stroke: #132437;
-  stroke-width: 3px;
-  paint-order: stroke fill;
-  text-anchor: middle;
-  font: 550 18px/1.28 Outfit, system-ui, sans-serif;
-}
-#nr-project-cover .nr-cover-annotation { fill: #edc88d; font-size: 17px; }
+#nr-project-cover .nr-cover-toggle { min-width: 3.9rem; }
+#nr-project-cover .nr-cover-toggle:hover { color: #f3d4a2; border-color: #bb9a65; }
+#nr-project-cover .nr-cover-receipt { grid-column: 1 / -1; min-height: 1.5rem; border-top: 1px solid #29435a; padding-top: .45rem; }
+#nr-project-cover .nr-cover-receipt span { color: #d4e2ed; }
+#nr-project-cover .nr-cover-receipt a { color: #efcb91; text-decoration: underline; text-underline-offset: .2em; }
+#nr-project-cover [hidden] { display: none !important; }
+#nr-project-cover :is(button, select, a):focus-visible { outline: 2px solid #aee3df; outline-offset: 3px; }
 
-@media (max-width: 580px) {
-  #nr-project-cover svg { max-height: 203px; }
-  #nr-project-cover .nr-cover-project { font-size: 22px; }
-  #nr-project-cover .nr-cover-annotation { font-size: 22px; }
-  #nr-project-cover figcaption { font-size: .79rem; }
+#nr-project-cover .nr-cover-project-boundary {
+  fill: #193d4d;
+  fill-opacity: .42;
+  stroke: #689fac;
+  stroke-width: 1.2;
+  stroke-dasharray: 6 5;
+}
+
+#nr-project-cover .nr-cover-floor-top { fill: #234748; fill-opacity: .48; stroke: #5f9f9a; stroke-width: 1.2; }
+#nr-project-cover .nr-cover-floor-shadow { fill: #0a1b29; stroke: #355b72; stroke-width: 1.1; }
+#nr-project-cover .nr-cover-object-hull { fill: #1f3e4f; stroke: #779fac; stroke-width: 1.6; }
+#nr-project-cover .nr-cover-object--cost .nr-cover-object-hull { fill: #225062; stroke: #9bcfd6; }
+#nr-project-cover .nr-cover-object--possible .nr-cover-object-hull { fill: #262f4d; stroke: #877ba8; }
+#nr-project-cover .nr-cover-object-mark { fill: #c3eced; }
+#nr-project-cover .nr-cover-object--possible .nr-cover-object-mark { fill: #c1b3dd; }
+#nr-project-cover .nr-cover-peer-ports { fill: none; stroke: #9c8fb4; stroke-width: 1.5; }
+#nr-project-cover .nr-cover-mini-floor { fill: #203f4b; fill-opacity: .57; stroke: #578484; stroke-width: .95; }
+#nr-project-cover .nr-cover-mini-wire { fill: none; stroke: #92bbc2; stroke-width: 1.35; }
+#nr-project-cover .nr-cover-mini-wire--fine { stroke-width: .96; }
+#nr-project-cover .nr-cover-mini--possible .nr-cover-mini-floor { fill: #302e4a; stroke: #746a98; }
+#nr-project-cover .nr-cover-mini--possible .nr-cover-mini-wire { stroke: #a098c6; }
+
+#nr-project-cover :is(.nr-cover-stem, .nr-cover-front, .nr-cover-cited, .nr-cover-possible, .nr-cover-proof-leg) {
+  fill: none;
+  stroke-linecap: round;
+}
+
+#nr-project-cover .nr-cover-stem { stroke: #86c3cb; stroke-width: 2.15; }
+#nr-project-cover .nr-cover-stem--fine { stroke: #8eacc9; stroke-width: 1.45; }
+#nr-project-cover .nr-cover-front { stroke: #d7cc92; stroke-width: 1.4; stroke-dasharray: 4 5; }
+#nr-project-cover .nr-cover-cited { stroke: #81bfbf; stroke-width: 2.3; }
+#nr-project-cover .nr-cover-cited--track { stroke: #c0eeeb; stroke-width: 2.8; }
+#nr-project-cover .nr-cover-possible { stroke: #bfaff0; stroke-width: 1.8; stroke-dasharray: 5 6; }
+#nr-project-cover .nr-cover-proof-leg { stroke: #edbf79; stroke-width: 2.3; }
+#nr-project-cover .nr-cover-possible-pulse { fill: #1e2b46; stroke: #d9c6fe; stroke-width: 2; }
+#nr-project-cover .nr-cover-citation-packet { fill: #c2f4ef; stroke: #eefffd; stroke-width: 1.4; }
+
+#nr-project-cover .nr-cover-node-shadow { fill: #1a3348; stroke: #416a7e; stroke-width: .95; }
+#nr-project-cover .nr-cover-node-top { fill: #356c79; stroke: #a0d0d7; stroke-width: 1.05; }
+#nr-project-cover .nr-cover-node--leaf .nr-cover-node-top { fill: #658dad; stroke: #afcce9; }
+#nr-project-cover .nr-cover-node--peer .nr-cover-node-top { fill: #49486f; stroke: #aea5d0; }
+#nr-project-cover .nr-cover-node--package .nr-cover-node-top { fill: #a9804c; stroke: #ffdda0; }
+#nr-project-cover .nr-cover-node--package .nr-cover-node-shadow { fill: #4d3e35; stroke: #c99e6c; }
+#nr-project-cover .nr-cover-distinction { fill: #ffe4a9; stroke: #fff0c7; stroke-width: .9; }
+#nr-project-cover .nr-cover-halo { fill: #dfba7633; stroke: #efc580; stroke-width: 1.25; }
+
+#nr-project-cover :is(.nr-cover-project, .nr-cover-annotation, .nr-cover-group-label) {
+  fill: #e6f2f8;
+  paint-order: stroke fill;
+  stroke: #112538;
+  stroke-width: 4px;
+  text-anchor: middle;
+  font: 600 20px/1.24 Outfit, system-ui, sans-serif;
+}
+
+#nr-project-cover .nr-cover-annotation { fill: #f2cb8b; font-size: 18px; }
+#nr-project-cover .nr-cover-group-label { fill: #b5d4e7; font-size: 16px; font-weight: 520; }
+
+@media (max-width: 650px) {
+  #nr-project-cover .nr-cover-project { font-size: 21px; }
+  #nr-project-cover .nr-cover-annotation { font-size: 20px; }
+  #nr-project-cover .nr-cover-group-label { font-size: 17px; }
+  #nr-project-cover .nr-cover-footer { grid-template-columns: 1fr; gap: .39rem; padding-inline: .59rem; }
+  #nr-project-cover .nr-cover-inspection select { min-width: 0; max-width: 100%; }
+  #nr-project-cover .nr-cover-receipt { gap: .14rem .48rem; }
 }

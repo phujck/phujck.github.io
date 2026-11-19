@@ -5,21 +5,25 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#101824">
-  <meta name="description" content="Two manuscripts share a versioned piece of evidence. Explore how query diffusion, sparse connections and an author’s correction could make research reusable across projects.">
+  <meta name="description" content="Explore how a research project can share its evidence, how a human edit captures expert judgement, and how a network of projects could test what it learns.">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="What can one research project teach another? · EigenEngine">
-  <meta property="og:description" content="Follow a query between two papers, inspect the evidence that travels, and see how a human correction can change what a research system remembers.">
+  <meta property="og:title" content="A network of research projects · EigenEngine">
+  <meta property="og:description" content="Open a research project, follow a versioned link to its evidence, and trace the learning loop from an edit to a future project.">
   <meta property="og:url" content="https://gmccaul.co.uk/eigenengine/networked-research/">
   <meta property="og:image" content="https://gmccaul.co.uk/assets/img/eigen/networked-research.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://gmccaul.co.uk/eigenengine/networked-research/">
-  <title>What can one research project teach another? · EigenEngine</title>
+  <title>A network of research projects · EigenEngine</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./article.css">
   <link rel="stylesheet" href="./project-figure.css">
   <link rel="stylesheet" href="./project-cover.css">
+  <link rel="stylesheet" href="./editor-loop.css">
+  <link rel="stylesheet" href="./query-routes.css">
+  <script defer src="./editor-loop.js"></script>
+  <script defer src="./query-routes.js"></script>
   <script defer src="./project-cover.js"></script>
   <script defer src="./transfer-test.js"></script>
   <script defer src="./project-figure.js"></script>
@@ -37,105 +41,111 @@
     <header class="nr-hero">
       <div class="nr-width nr-disclosure"><p class="release-notice"><strong>EigenEngine is pre-release.</strong> <span>This page is generated algorithmically by <b>Eigen</b> under Gerard McCaul’s direction.</span> <a href="mailto:eigen@gmccaul.co.uk">eigen@gmccaul.co.uk</a></p></div>
       <div class="nr-width nr-lead">
-        <div class="nr-headline"><p class="nr-eyebrow">Research architecture</p><h1>What can one research project teach another?</h1>
-          <p class="nr-intro">An author sends back a shortened explanation. The equation is still there, but the reader can no longer see which guesses the machine erases. That intervention contains something the next project can use.</p>
-          <p>A later project could recover the reason for that edit and ask <em>“When is this record actually erased?”</em> of a different machine.</p>
+        <div class="nr-headline">
+          <h1>A network of research projects</h1>
+          <p class="nr-intro">A research project can be shared as one object. Open it and its manuscript, evidence and editing history become a graph of connected records.</p>
+          <p>One project can link to the exact figure it used in another. An editor’s correction could travel the same way, carrying the reason a claim changed.</p>
         </div>
-        <figure id="nr-project-cover" aria-label="A correction inside a project and its route into another project"><svg viewBox="0 0 480 280" aria-hidden="true"><g fill="none" stroke="#759caf" stroke-width="2"><path d="M68 83 135 138 68 198M135 138 202 83M135 138 202 198M135 138 329 138 407 83M329 138 407 198"/></g><g fill="#dfbc80"><circle cx="135" cy="138" r="11"/><circle cx="329" cy="138" r="11"/></g></svg><figcaption>A project opens into a graph. A correction can travel with a link to its source.</figcaption></figure>
-      </div>
-      <nav class="nr-width nr-index" aria-label="In this article"><a href="#linked-query">Follow a citation</a><a href="#scale">What scales?</a><a href="#judgement">Human judgement</a><a href="#learning">Try the next project</a></nav>
-    </header>
-
-    <section id="linked-query" class="nr-width nr-section" aria-labelledby="nr-link-title">
-      <div class="nr-section-lead">
-        <div><p class="nr-eyebrow">Two papers · One question</p><h2 id="nr-link-title">Choosing a symbol and choosing its layout</h2></div>
-        <div class="nr-section-copy"><p>The real citation between these manuscripts carries a figure about layouts. It shows the route that the <a href="#judgement">author’s correction</a> could take in a future project.</p><p>In <a href="/eigenengine/cost-of-complexity/"><em>The Cost of Complexity</em></a>, four bits identify one of sixteen symbols once a layout is fixed. The companion paper, <a href="/eigenengine/kalmar-constant/"><em>Physical origins of the Kalmár constant</em></a>, counts eight ways to lay out those same symbols. Choosing one of eight layouts takes three more bits. The cited figure shows what the original four bits selected.</p></div>
-      </div>
-      <p class="nr-demo-scope"><strong>Worked example.</strong> These two downloadable objects use public figures. Your browser can compare the follow-up alone with a query that crosses its citation. A network of independently hosted projects would also need discovery and permission checks at each host.</p>
-      <div id="project-network">
-        <div class="nr-static"><h3>Follow the cited result</h3><p>The follow-up’s eight layouts account for the three bits. In the earlier paper, symbol 11 is group 2, position 3 in a 2 × 8 layout, and group 6, position 1 in an 8 × 2 layout. The symbol keeps its identity as its address changes.</p>
-          <div class="nr-links"><a data-source-region="kalmar-fig-1a" href="/assets/docs/physical-origins-of-the-kalmar-constant.pdf#page=3" target="_blank" rel="noopener">Eight layouts in Figure 1</a><a data-source-region="cost-fig-2bc" href="/assets/docs/the-cost-of-complexity.pdf#page=5" target="_blank" rel="noopener">Both addresses in Figure 2</a></div>
-        </div>
-      </div>
-      <div class="nr-explanation">
-        <h3>What makes that link reusable?</h3>
-        <div><p><strong>Query diffusion</strong> gives candidate records a share of a question’s weight. Each step passes some weight to neighbours. A group can be considered as a single object and opened when its contents matter. In the example above, the two small, downloadable project objects contain the routes. Following the citation checks the identity and revision of the file it names, then opens the figure behind the answer.</p>
-        <p>A research handover can carry selected claims, sources, calculations, figures and reviews. The recipient can open a claim and follow its grounds with the same tools used inside the original project. An external dependency stays named until the recipient has permission to resolve it. If a source changes, the citation still identifies the version used and a later use can be reviewed.</p></div>
-      </div>
-      <details class="nr-more"><summary>What has been transferred in practice?</summary>
-        <p>A recorded handover of the Writing App’s <em>Behaviour example</em> contained 335 files and 1,061 selected records. A separate clean-install check reopened retained work, review and replies in the distributed workspace. For comparison, packaging the Cost paper for arXiv took 11 build inputs and reproduced all 21 pages. The handover carries selected working history. The package check answers whether the article can be built.</p>
-        <p>The two files in the figure are a browser example of a link between projects. Discovery across independent installations, permission checks at each host and exchange of later revisions are further steps toward a research network.</p>
-        <a href="/demo/writing/#session-arxiv">Inspect the manuscript package check ↗</a>
-      </details>
-    </section>
-
-    <section id="scale" class="nr-band" aria-labelledby="nr-scale-title"><div class="nr-width nr-section nr-scale">
-      <div class="nr-section-copy"><p class="nr-eyebrow">Scaling</p><h2 id="nr-scale-title">When does local computation pay?</h2>
-        <p>A diffusion update needs the neighbours of each active record. If each of <var>N</var> records keeps at most <var>k</var> neighbours, at most <var>kN</var> outgoing links need storing. A query confined to a few branches need only work along the links it visits. It can cross a named reference when another project holds the evidence.</p>
-        <p>This offers a route to a larger network. Each project can build local structure once and reuse it for many questions. Its neighbours can refer to the parts they need. Broad questions, dense links and many rounds of propagation all increase the work. In a separate scientific-text search test, every candidate had to be opened.</p>
-      </div>
-      <div>
-        <figure class="nr-table"><figcaption><h3>Building a sparse memory</h3><p>The calculation combined neighbouring sources into groups and worked out how weight would pass between them.</p></figcaption>
-          <table><thead><tr><th scope="col">Sources</th><th scope="col">Output bytes</th><th scope="col">Terms summed</th></tr></thead>
-          <tbody><tr><th scope="row">1,024</th><td>59,104</td><td>12,280</td></tr><tr><th scope="row">8,192</th><td>474,848</td><td>98,296</td></tr><tr><th scope="row">65,536</th><td>3,800,800</td><td>786,424</td></tr></tbody></table>
-          <p>With eight times as many sources in the last step, stored output and the number of terms summed both grew about eightfold. The test used a nearest-neighbour chain, groups of eight and two retained coordinates per group. Graph construction and group selection were supplied to this test.</p>
-          <div class="nr-links"><a data-material-viewer="/demo/view/?asset=synthetics&amp;slide=29" href="/talks/synthetics/#/29" target="_blank" rel="noopener">Open the scaling figure ↗</a><a href="./measurements.json" download>Measurement data</a></div>
+        <figure id="nr-project-cover" aria-label="A network of research projects and the evidence inside one project">
+          <svg viewBox="0 0 600 285" role="img" aria-label="Kalmár cites a figure inside the Cost project. Dashed links show how two other projects could join.">
+            <g fill="none" stroke-width="2"><path stroke="#9bcfc7" d="M95 129 271 145 M271 145 335 94 M271 145 341 154 M271 145 330 216"/><path stroke="#d8b97e" stroke-dasharray="6 6" d="M335 94 490 49 M341 154 505 216"/></g>
+            <g fill="#244d56" stroke="#98cac7" stroke-width="2"><path d="m95 114 28 15-28 16-28-16z"/><path d="m271 129 30 16-30 16-30-16z"/><circle cx="335" cy="94" r="6"/><circle cx="341" cy="154" r="6"/><circle cx="330" cy="216" r="6"/></g>
+            <g fill="#3b3540" stroke="#d7b880"><path d="m490 37 24 12-24 13-24-13z"/><path d="m505 203 24 13-24 13-24-13z"/></g>
+            <g fill="#e4e9eb" font-size="16" text-anchor="middle" font-family="system-ui"><text x="95" y="167">Kalmár follow-up</text><text x="271" y="189">Cost manuscript</text><text x="490" y="80">Search project</text><text x="505" y="247">Replication</text></g>
+          </svg>
+          <figcaption>The Kalmár manuscript cites a figure in <em>The Cost of Complexity</em>. Dashed routes show where another project could connect.</figcaption>
         </figure>
-        <details class="nr-more"><summary>What happened when a query could not skip a branch?</summary>
-          <p>In a separate test using passages from scientific papers in QASPER, the search checked every candidate at all four sizes from 1,024 to 8,192 vectors. Direct GPU scoring was faster throughout. Lookup saves work when a branch can be ruled out or a repeated calculation can be reused.</p>
-        </details>
       </div>
-    </div></section>
+      <nav class="nr-width nr-index" aria-label="In this article"><a href="#judgement">The editor’s learning loop ↓</a><a href="#query-diffusion">Follow a question ↓</a><a href="#linked-query">Check a real citation ↓</a></nav>
+    </header>
 
     <section id="judgement" class="nr-width nr-section" aria-labelledby="nr-human-title">
       <div class="nr-section-lead">
-        <div><p class="nr-eyebrow">The long tail of research decisions</p><h2 id="nr-human-title">What did the author choose to keep?</h2></div>
-        <p>An author can agree with an equation and still reject the paragraph around it. A summary of the guessing machine can give its heat bound in one line. Ask <em>which guesses actually have to be erased</em>, and the sequence of operations is essential.</p>
+        <h2 id="nr-human-title">The learning loop runs through the editor</h2>
+        <p>The editor preserves the agent’s proposal beside the author’s correction. Where they differ, we can ask what the expert saw that the agent missed. That distinction can become a question for another project.</p>
       </div>
-      <div class="nr-human-grid">
-        <div class="nr-history"><dl class="nr-trace">
+      <figure id="editor-learning-loop" aria-label="From an author’s edit to a reviewed change in future editor instructions">
+        <figcaption>How a manuscript edit could inform a later editor</figcaption>
+        <ol><li>The author restores a missing step.</li><li>Save the reason with the revision that prompted it.</li><li>Try a candidate instruction in a different project.</li><li>Compare fresh cases under the same conditions.</li><li>A reviewer decides whether the instruction should guide future edits.</li></ol>
+      </figure>
+      <p class="nr-loop-caption">The Writing App can already carry a scoped instruction into later turns. To share one across projects, a reviewer needs its original evidence, the cases where it helps and the conditions under which it should stop applying.</p>
+      <div class="nr-notebook">
+        <details class="nr-more"><summary>Read the author’s correction in <em>The Cost of Complexity</em></summary>
+          <div class="nr-saved-evidence"><dl class="nr-trace" id="saved-openings">
           <div><dt>The author’s request</dt><dd>The author objected that cuts to the later sections made <q>the whole argument harder to follow. Particularly around the guessing machine.</q></dd></div>
           <div><dt>The saved proposal</dt><dd>The sequence of the opening changed.<blockquote><span>Before</span>“We first identify the uncertainty removed by reset, then apply the result to a machine that guesses, tests and discards candidate solutions.”</blockquote><blockquote><span>Proposed</span>“Consider a machine that proposes an answer, checks it, and starts again when the answer is wrong.”</blockquote></dd></div>
           <div><dt>Published manuscript · Section IV</dt><dd>The reader meets the machine, sees it test a guess, and learns when a failed guess is reset. The heat bound uses the distribution of guesses that reach that reset.</dd></div>
         </dl>
-        <a class="nr-source-figure" data-source-region="cost-fig-5" href="/assets/docs/the-cost-of-complexity.pdf#page=12" target="_blank" rel="noopener"><img src="./guessing-machine.webp" width="784" height="432" loading="lazy" alt="Published Figure 5. A guessed candidate is tested. A success halts, while a failure enters reset and returns to the next guess."><span>Figure 5 · The failed guesses enter reset ↗</span></a>
-        </div>
-        <div class="nr-human-reading"><h3>What did the revision preserve?</h3>
-          <p>The published paragraph tells us what survived. The saved edit shows what the author was offered instead, the reason they gave for intervening, and how the proposed opening changed. That is an observable piece of expert judgement. An author can choose to share this particular decision while keeping the rest of the conversation private.</p>
-          <p>The <strong>tail</strong> is relative to a reference distribution. A detail can be marginal across routine questions yet essential once the question is restricted to failed guesses. Human edits can expose precisely those distinctions that an agent’s usual proposals leave out. To estimate how unusual a choice was would require comparable proposals and decisions. Here we can inspect the choice and its stated reason.</p>
-          <a class="nr-single" href="/demo/writing/project-record/">Inspect the project’s editing record ↗</a>
-          <details class="nr-more"><summary>Why does a rare question need finer evidence?</summary>
-            <p>Suppose the question selects cases that carry just 1% of the original weight. Once we condition on those cases, they carry the entire answer. A summary that performed well on average may have discarded exactly the distinction needed here.</p>
-            <p>For a condition of reference mass <var>z</var>, the memory’s error bound multiplies the omitted part of the task by <span class="nr-math">√(1/<var>z</var> − 1)</span>. A loose bound calls for opening finer records or returning to the source. This is a statement about a distribution of questions and evidence.</p>
-            <a data-material-viewer="/demo/view/?asset=synthetics&amp;slide=26" href="/talks/synthetics/#/26" target="_blank" rel="noopener">See the task-error bound in the talk ↗</a>
-          </details>
-        </div>
-      </div>
-    </section>
-
-    <section id="learning" class="nr-band nr-close" aria-labelledby="nr-next-title"><div class="nr-width nr-section nr-close-grid">
-      <div><p class="nr-eyebrow">Guided self-improvement</p><h2 id="nr-next-title">Give the correction a question it must answer.</h2></div>
-      <div class="nr-section-copy"><p>The historical edit restored the guessing machine before its heat cost was calculated. A reusable note can carry a more precise question into another project. Identify the distribution of records that actually enter reset and check what information is retained.</p></div>
-      <div class="nr-transfer" id="transfer-example">
+        <a class="nr-source-figure" data-source-region="cost-fig-5" href="/assets/docs/the-cost-of-complexity.pdf#page=12" target="_blank" rel="noopener"><img src="./guessing-machine.webp" width="784" height="432" loading="lazy" alt="Published Figure 5. A guessed candidate is tested. A success halts, while a failure enters reset and returns to the next guess."><span>Figure 5 · The failed guesses enter reset ↗</span></a></div>
+          <p>Only failed guesses that actually enter reset belong in the erasure calculation. The author’s edit made that distinction possible to follow.</p>
+          <div class="nr-links"><a href="/demo/writing/">Watch the editor in use ↗</a><a href="/demo/writing/project-record/">Inspect the editing record ↗</a></div>
+        </details>
+        <details id="next-project-test" class="nr-more"><summary>Try the correction on a different machine</summary>
+          <div id="learning">      <div class="nr-transfer" id="transfer-example">
         <div class="nr-transfer-note"><p class="nr-eyebrow">A proposed transfer</p><h3>When is the failed guess erased?</h3>
-          <p>The next project studies a search procedure of its own. Change what happens after a failed test. The scientific criterion stays the same.</p>
+          <p>One machine keeps failed attempts. Another clears its register after each failure. Try the same correction on both.</p>
           <div class="nr-log-choice" role="group" aria-label="What the next machine does after failure"><button type="button" data-retention="keep" aria-pressed="true">Keep a log</button><button type="button" data-retention="reset" aria-pressed="false">Reset immediately</button></div>
           <a href="/assets/docs/the-cost-of-complexity.pdf#page=13" data-source-region="cost-eq-42" target="_blank" rel="noopener">Inspect the source bound, Eq. 42 ↗</a>
         </div>
         <div class="nr-transfer-result" aria-live="polite">
           <p class="nr-route" aria-label="Steps in the receiving machine"><span>Failed guess</span><b aria-hidden="true">→</b><span data-event>Stored in log</span><b aria-hidden="true">→</b><span data-next>Log cleared later</span></p>
-          <h4 data-verdict>Price the later reset.</h4>
-          <p data-reason>Rejection leaves a distinguishable record in the log. To use the erasure bound, inspect what is erased when the log is cleared and what information is still available then.</p>
-          <p class="nr-transfer-scope">This is a worked test derived from the revision. The historical record shows the edit to the first manuscript. Learning on a new project would require running the comparison.</p>
+          <h4 data-verdict>Count erasure when the log is cleared.</h4>
+          <p data-reason>The log still distinguishes the failed guesses. The calculation depends on what the later reset clears and what information survives.</p>
+          <p class="nr-transfer-scope">These two cases illustrate the proposed test. An improvement on unfamiliar projects has yet to be measured.</p>
         </div>
       </div>
-      <div class="nr-section-copy nr-learning-method"><h3>What would count as an improvement?</h3>
-        <p>Give the old and revised systems fresh machines with the same evidence budget. Check whether each answer identifies the right reset event and original passage. Include ordinary cases alongside the exceptions so a gain in one place can reveal a loss elsewhere.</p>
-        <p>The extraction rule, routing code and tests can themselves be versioned objects. An agent can propose a repair. A reviewer can inspect what it changes and accept a version that passes. Other projects can then choose to adopt the correction with the reason it was made.</p>
-        <p>The environment has already helped revise its own <em>Living System Guide</em> after an independent reader found unclear passages and figures. Measuring better reasoning on unfamiliar problems is a further test. A preserved decision gives that test a starting point.</p>
-        <div class="nr-links"><a href="/eigenengine.html#memory">See diffusion inside one project ↑</a><a href="/demo/writing/simulation/#simulation-stale">See a changed input trigger review ↗</a></div>
+
+            <p class="nr-method">To test the proposed instruction, give the old and revised systems unfamiliar machines and equal evidence budgets. Score which reset each identifies. Include ordinary cases as well as exceptions before adopting the change.</p>
+          </div>
+        </details>
+        <details class="nr-more"><summary>Why might one rare edit matter?</summary><p>A question about only the rarest 1% of cases puts all its weight on that 1%. A detail that scarcely affected the average answer can determine this one. An expert’s intervention can indicate which distinction to recover. Estimating how unusual the choice was would require other comparable decisions.</p>
+          <a data-material-viewer="/demo/view/?asset=synthetics&amp;slide=26" href="/talks/synthetics/#/26" target="_blank" rel="noopener">See the conditional error bound in Synthetics ↗</a>
+        </details>
+      </div>
+    </section>
+
+    <section id="query-diffusion" class="nr-band" aria-labelledby="nr-query-title"><div class="nr-width nr-section">
+      <div class="nr-section-lead" id="scale"><h2 id="nr-query-title">Let the question find its evidence</h2>
+        <p>A claim can lead to a physical assumption in one project and to a calculation in another. <strong>Query diffusion</strong> gives each route a share of the question’s weight. Ask about the figure and the calculation comes into view. Ask what makes the claim true and the assumption matters more.</p></div>
+      <figure id="nr-query-routes" aria-label="Two questions about one claim follow different routes into connected research projects">
+        <div data-query-fallback><svg viewBox="0 0 520 104" role="img" aria-label="A manuscript claim connects to model assumptions and simulation results in neighbouring projects.">
+          <g fill="none" stroke="#85b7bc" stroke-width="2"><path d="M259 28 149 63 81 80 M259 28 373 63 445 80"/><path d="M259 28 373 63 445 80" stroke="#e5be76" stroke-width="4"/></g>
+          <g fill="#8ac6c6"><circle cx="259" cy="28" r="8"/><circle cx="149" cy="63" r="6"/><circle cx="81" cy="80" r="4"/></g><g fill="#edc98e"><circle cx="373" cy="63" r="7"/><circle cx="445" cy="80" r="6"/></g>
+          <g fill="#e4e9eb" text-anchor="middle" font-family="system-ui" font-size="14"><text x="259" y="15">Manuscript claim</text><text x="87" y="58">Model assumption</text><text x="435" y="57">Simulation result</text></g>
+        </svg></div>
+        <figcaption>In this worked example, the projects keep their own records. Changing the question changes which evidence comes back.</figcaption>
+      </figure>
+      <p class="nr-loop-caption">A new project can contribute a result by linking it to an existing claim. A later researcher can discover the result through that claim and open the source that supports it.</p>
+      <div class="nr-links nr-talk-links"><a data-material-viewer="/demo/view/?asset=synthetics&amp;slide=25" href="/talks/synthetics/#/25" target="_blank" rel="noopener">Watch sources form a diffusion in <em>Synthetics</em> ↗</a><a data-material-viewer="/demo/view/?asset=synthetics&amp;slide=27" href="/talks/synthetics/#/27" target="_blank" rel="noopener">Watch a question become a search ↗</a></div>
+    </div></section>
+
+    <section id="linked-query" aria-labelledby="nr-link-title"><div class="nr-width nr-section">
+      <div class="nr-section-lead"><h2 id="nr-link-title">Follow one real link between two papers</h2>
+        <p>The real citation between these manuscripts carries a figure about layouts. The <a href="/eigenengine/kalmar-constant/">Kalmár follow-up</a> counts eight ways to arrange sixteen symbols. <a href="/eigenengine/cost-of-complexity/"><em>The Cost of Complexity</em></a> shows how the same symbol takes a different address in two of them. Following the link brings both pieces of evidence into one answer.</p>
+      </div>
+      <div id="project-network">
+        <div class="nr-static"><h3>Follow the cited result</h3><p>The follow-up’s eight layouts account for the three bits. In the earlier paper, symbol 11 is group 2, position 3 in a 2 × 8 layout, and group 6, position 1 in an 8 × 2 layout. The symbol keeps its identity as its address changes.</p>
+          <div class="nr-links"><a data-source-region="kalmar-fig-1a" href="/assets/docs/physical-origins-of-the-kalmar-constant.pdf#page=3" target="_blank" rel="noopener">Eight layouts in Figure 1</a><a data-source-region="cost-fig-2bc" href="/assets/docs/the-cost-of-complexity.pdf#page=5" target="_blank" rel="noopener">Both addresses in Figure 2</a></div>
+        </div>
+      </div>
+
+      <div class="nr-notebook">
+        <details class="nr-more"><summary>How does a query cross the project boundary?</summary><p>Query diffusion passes a share of a question’s weight to neighbouring records. One branch reaches the local count. Another reaches a citation, checks the referenced file against its recorded hash, and opens its public figure. The objects below the boundary can be searched in the same way as the project above it.</p>
+          <p>These two browser-readable objects use public evidence. A network spanning independent installations would also need to discover its peers and check permission at each host. Each project could choose what to share and name external dependencies without exposing private records.</p>
+          <a href="/eigenengine.html#memory">See diffusion inside one project ↑</a>
+        </details>
+        <details class="nr-more"><summary>What can be packaged today?</summary><p>A Writing App handover contained 335 files and 1,061 selected records. A separate clean-install check reopened retained work, reviews and replies. Packaging the Cost manuscript for arXiv used 11 build inputs and reproduced all 21 pages.</p>
+          <a href="/demo/writing/#session-arxiv">Inspect the manuscript package check ↗</a>
+        </details>
       </div>
     </div></section>
+
+    <aside class="nr-width nr-experiment" aria-labelledby="experiment-title">
+      <div><p class="nr-eyebrow">Early experiment</p><h2 id="experiment-title"><em>Dynamic Memory</em></h2></div>
+      <div><p class="nr-experiment-warning"><strong>The numbers in this paper are not representative of EigenEngine.</strong></p>
+        <p>The experiments used specific tasks, datasets and hardware. Read the paper for its early account of tracing an answer back to its sources. Its timings and scores cannot predict performance on another research project.</p>
+        <a data-material-viewer="/demo/view/?asset=dynamic-memory" href="/assets/docs/dynamic-memory-early-experiment.pdf" target="_blank" rel="noopener">Read the early experiment (PDF) ↗</a></div>
+    </aside>
   </main>
   <footer class="nr-width nr-footer"><a class="nr-back" href="/eigenengine.html">← Back to EigenEngine</a><a href="/eigenengine/kalmar-constant/">The Kalmár follow-up ↗</a></footer>
 </body>
