@@ -1,0 +1,338 @@
+{
+  "format": "eigenengine/public-research-evidence@1",
+  "title": "Manuscript revisions, a finite calculation and a citation between two projects",
+  "url": "https://gmccaul.co.uk/eigenengine/guide/index.json",
+  "scope": "Selected manuscript source, two public project records and a reproducible numerical example. The editing history is a scoped export from the working record. The full project and conversation remain with the author.",
+  "reading_guide": {
+    "files": "A file key resolves through files. Resolve relative URLs against the index URL. SHA-256 covers the unmodified response body, before text decoding.",
+    "source_slices": "Offsets start at zero; the end is exclusive. Slice the UTF-8 bytes, then compare the slice digest. The section and figure .tex files are original source fragments; document class, bibliography and manuscript preamble live outside them.",
+    "provenance": "The named application and edit counts report the underlying writing record. The public bytes support independent checks of the text, drawings, citation and arithmetic. Historical WebP renders are derived views.",
+    "archive": "Inside the ZIP, use archive_path when supplied. Otherwise use the relative file URL or the site-relative path of an absolute URL."
+  },
+  "files": {
+    "section_before": {
+      "url": "section-before.tex",
+      "sha256": "45252938c2325a5f0d5ef02c29fb87bce39a41f991ffc7626b5617d87da5b858",
+      "bytes": 6585,
+      "kind": "verbatim UTF-8 manuscript excerpt"
+    },
+    "section_after": {
+      "url": "section-after.tex",
+      "sha256": "bb9b171bc18054ac5e783d084e827f62288ff59119d6b546b7d1e71914e4bdd5",
+      "bytes": 18275,
+      "kind": "verbatim UTF-8 manuscript excerpt"
+    },
+    "headings_before": {
+      "url": "figure4-before-headings.tex",
+      "sha256": "1d7b0b152711681b91f95dd7f0d4258288ea6676c7770aa5869e36498d366537",
+      "bytes": 6013,
+      "kind": "verbatim UTF-8 manuscript excerpt"
+    },
+    "headings_after": {
+      "url": "figure4-after-headings.tex",
+      "sha256": "1ecb43d543c0eee3895d7b4ee938d6358f5aa43e0a35620823668b0236285b6e",
+      "bytes": 6122,
+      "kind": "verbatim UTF-8 manuscript excerpt"
+    },
+    "figure4_before": {
+      "url": "figure4-before.webp",
+      "sha256": "f80b68a2516daf61b315c8546abbbe8f6d16bd0b2c71d3f3168b9f1290c8891b",
+      "bytes": 8314,
+      "kind": "byte-identical copy of public source"
+    },
+    "figure4_after": {
+      "url": "figure4-after.webp",
+      "sha256": "3f5025ef3cf830a0e797b7ed39e25fb15aa4d4242eddf89a693c150d1b5f28c4",
+      "bytes": 14318,
+      "kind": "byte-identical copy of public source"
+    },
+    "published_inset": {
+      "url": "figure4-published-inset.webp",
+      "sha256": "ce106a51203033e3b683513b4d4dc7089f7155ddac62a6f372b684687e0dce90",
+      "bytes": 22852,
+      "kind": "byte-identical copy of public source"
+    },
+    "cost_record": {
+      "url": "cost-addresses-v1.json",
+      "sha256": "6a609122932f28d4c5ce19296b919598ca7b213d0e7734ecbf41a47d2dadb737",
+      "bytes": 775,
+      "kind": "byte-identical copy of public source"
+    },
+    "kalmar_record": {
+      "url": "kalmar-layouts-v1.json",
+      "sha256": "b184c1d83a8d22e4eb4e08e59f2ec5eb5ccc1abcf5b1f646441b8878337d67f0",
+      "bytes": 1417,
+      "kind": "byte-identical copy of public source"
+    },
+    "cost_pdf": {
+      "url": "the-cost-of-complexity.pdf",
+      "sha256": "e9c6dabb85d252a81c6e27fc575e7c1bb3e7a90973533fe6b6b3c09c98b9fb98",
+      "bytes": 636644,
+      "kind": "published manuscript PDF",
+      "archive_path": "assets/docs/the-cost-of-complexity.pdf"
+    },
+    "kalmar_pdf": {
+      "url": "physical-origins-of-the-kalmar-constant.pdf",
+      "sha256": "456564aa0c4951035cffb734b65d314e20fe1b0b511215f7907276aae500bb2c",
+      "bytes": 571624,
+      "kind": "published manuscript PDF",
+      "archive_path": "assets/docs/physical-origins-of-the-kalmar-constant.pdf"
+    },
+    "run_record": {
+      "url": "simulation/record.json",
+      "sha256": "8583fd9409e793ba502d1ce47d369d8312bb08dc09b2b0b90d6e0a1b191c235e",
+      "bytes": 2778,
+      "kind": "byte-identical copy of public source"
+    },
+    "run_inputs": {
+      "url": "simulation/inputs.json",
+      "sha256": "2241435d370dc73b4fb045bcdf917464c5352b26ad7895cff455e5d83d029929",
+      "bytes": 46,
+      "kind": "byte-identical copy of public source"
+    },
+    "run_result": {
+      "url": "simulation/result.json",
+      "sha256": "e56fc9d63277efa68d6ad68cc85df2f30dc2614e829a5758dd670b4509d2a75b",
+      "bytes": 1658,
+      "kind": "byte-identical copy of public source"
+    },
+    "run_costs": {
+      "url": "simulation/costs.csv",
+      "sha256": "bfec7ddd2d9480064ce2a4d09e4401c604dd0441e43ced3ae40364e407b84c74",
+      "bytes": 185,
+      "kind": "byte-identical copy of public source"
+    },
+    "run_subdivide": {
+      "url": "simulation/subdivide.py",
+      "sha256": "aa5c4116ba8a7a16d1edecd593965cf09069b368844c6174e9fb646ff24e3c21",
+      "bytes": 3998,
+      "kind": "byte-identical copy of public source"
+    },
+    "project_counts": {
+      "url": "cost-project-record.json",
+      "sha256": "f30528c4ad6a1e42f75d74a39b286566077e05bf9ecaf75341093eb671f6d38a",
+      "bytes": 6449,
+      "kind": "aggregate public Writing App counts",
+      "archive_path": "assets/data/cost-project-record.json"
+    }
+  },
+  "editing_history": [
+    {
+      "application_id": "WA-dfddf578ef44413c8f6f4626ca239823",
+      "utc": "2026-11-18T01:31:59.843Z",
+      "status": "Applied in the working manuscript",
+      "approval_mode": "generated-candidate",
+      "recorded_edits": 8,
+      "source_files": 2,
+      "section_iii_edits": 7,
+      "author_direction": "Rework the Hilbert argument and figures to give the cost correction a geometric interpretation.",
+      "published_selection": {
+        "original_manuscript_file": "sections/03_rank_logrank.tex",
+        "original_lines_inclusive": [
+          387,
+          495
+        ],
+        "before": "section_before",
+        "after": "section_after"
+      },
+      "scope": "Eight edits distributed across Section III and the discussion. The two public excerpts contain the complete before and after fields of the selected Section III replacement."
+    },
+    {
+      "application_id": "WA-7b546d4524074b999ef49385cfa98d6c",
+      "utc": "2026-11-18T10:20:19.478Z",
+      "status": "Applied in the working manuscript",
+      "approval_mode": "generated-candidate",
+      "recorded_edits": 52,
+      "source_files": 8,
+      "section_iii_edits": 8,
+      "author_direction": "Add a schematic of the recursive nesting to the dimension and cost-exponent figure.",
+      "published_selection": "The two exact replacement pairs in inset_reconstruction introduce the schematic and its caption within a larger application.",
+      "scope": "52 applied edits across eight source files. The count describes this application, independently of saved proposal counts."
+    },
+    {
+      "application_id": "WA-4278385dcdab4f88883a81b3e8f80397",
+      "utc": "2026-11-18T10:28:56.565Z",
+      "status": "Applied in the working manuscript",
+      "approval_mode": "current-basis-resolution",
+      "recorded_edits": 1,
+      "source_files": 1,
+      "section_iii_edits": 1,
+      "published_selection": {
+        "before": "headings_before",
+        "after": "headings_after"
+      },
+      "change": "The preimage already contains the nested inset. The successor introduces the panel (a) heading and revises the lower heading to identify panel (b).",
+      "decision": "The working session applied a successor after author feedback. Its predecessor was marked resolved into successor."
+    }
+  ],
+  "figure4_sources": {
+    "before": {
+      "source": "section_before",
+      "figure_environment": {
+        "start_byte": 3446,
+        "end_byte_exclusive": 6585,
+        "sha256": "0c5d174592e64edc786306ac5ca8d4d4c7a5aa5f4a73e95b8779df458154dec0"
+      },
+      "drawing_with_color_definitions": {
+        "start_byte": 3480,
+        "end_byte_exclusive": 5928,
+        "sha256": "82ce21463ba418dc6f5650ea36a44a5adc26ce802670817d6b1f836e1a8ade16"
+      },
+      "tikzpicture": {
+        "start_byte": 3594,
+        "end_byte_exclusive": 5928,
+        "sha256": "b8e01f35d59dbe0b6542d5e4a3d8ae19b0216d9a88b39e0662f5312da9862f4e"
+      },
+      "rendered_image": "figure4_before"
+    },
+    "after": {
+      "source": "section_after",
+      "figure_environment": {
+        "start_byte": 14233,
+        "end_byte_exclusive": 18275,
+        "sha256": "bb9a138c893eda7ee25f387440da18157ab0df69edf66df4831e0619d9f6c9fd"
+      },
+      "drawing_with_color_definitions": {
+        "start_byte": 14267,
+        "end_byte_exclusive": 17269,
+        "sha256": "aff7b10d5f61476241e8ba27e12bf288f9ce101defad6b253bed1d9d3a6161fd"
+      },
+      "tikzpicture": {
+        "start_byte": 14418,
+        "end_byte_exclusive": 17269,
+        "sha256": "4207400eba6825ae3044b7911ee7aca5b99469182623facc1daed3104dc8ae66"
+      },
+      "rendered_image": "figure4_after"
+    }
+  },
+  "inset_reconstruction": {
+    "base_slice": "figure4_sources.after.figure_environment in section_after",
+    "method": "Decode the exact byte slice as UTF-8. For each replacement below, require its before string to occur once and replace that occurrence with its after string. Append one LF, which ends the next application’s recorded figure field. Compare the resulting UTF-8 bytes with headings_before.",
+    "replacements": [
+      {
+        "selection": "inset_graphics",
+        "before": "    \\node[text=fink!75] at (\\hsq/2,-0.85) {$\\alpha=\\alab$};\n   \\end{scope}\n  }\n  \\end{tikzpicture}",
+        "after": "    \\node[text=fink!75] at (\\hsq/2,-0.85) {$\\alpha=\\alab$};\n   \\end{scope}\n  }\n  % Enlarged address chain: the selected child is a register at the next level.\n  \\node[anchor=west,text=fink,font=\\bfseries\\small] at (0,-1.6)\n    {The same nested choice at every dimension};\n  \\foreach \\xx/\\lev/\\widthlab in {1.3/0/{1},6.5/1/{s^{-1}},11.7/2/{s^{-2}}} {\n    \\begin{scope}[shift={(\\xx,-4.35)}]\n      \\fill[forange!22] (1,1) rectangle (2,2);\n      \\draw[fink,line width=0.7pt] (0,0) rectangle (2,2);\n      \\draw[forange,line width=0.7pt] (1,0)--(1,2) (0,1)--(2,1);\n      \\draw[fblue,line width=1pt] (0.5,0.5)--(0.5,1.5)--(1.5,1.5)--(1.5,0.5);\n      \\foreach \\xxp/\\yyp/\\lab in {0.5/0.5/1,0.5/1.5/2,1.5/1.5/3,1.5/0.5/4}\n        \\node[fill=white,inner sep=1pt,text=fblue,font=\\scriptsize] at (\\xxp,\\yyp) {\\lab};\n      \\draw[fverm,line width=1pt] (1,1) rectangle (2,2);\n      \\node[text=fink,font=\\footnotesize] at (1,-0.35) {depth $\\lev$, width $\\widthlab$};\n    \\end{scope}\n  }\n  \\draw[->,fverm,line width=0.8pt,>={stealth}]\n    (3.3,-2.85) -- (6.3,-2.85)\n    node[midway,above,font=\\footnotesize,align=center] {select child $3$\\\\enlarge};\n  \\draw[->,fverm,line width=0.8pt,>={stealth}]\n    (8.5,-2.85) -- (11.5,-2.85)\n    node[midway,above,font=\\footnotesize,align=center] {select child $3$\\\\enlarge};\n  \\node[anchor=west,text=fink,font=\\footnotesize,align=left] at (14.2,-3.2)\n    {Each selected symbol\\\\becomes the register\\\\for the next choice.};\n  \\node[text=fink!80,font=\\footnotesize,align=center] at (8.1,-5.25)\n    {Equal drawing sizes indicate magnification. Physical widths shrink by $s^{-1}$ per level.\\\\\n     The inset shows the address hierarchy. Gaps and orientations are displayed in the panels above.};\n  \\end{tikzpicture}"
+      },
+      {
+        "selection": "inset_caption",
+        "before": "    is totally disconnected and the blue path is a guide joining\n    consecutive ranks rather than part of the set.}",
+        "after": "    is totally disconnected and the blue path is a guide joining\n    consecutive ranks rather than part of the set. The enlarged inset\n    follows one address through three levels: the selected child\n    (red frame) becomes the register for the next four-way choice.\n    This is the same recursion at every $d$, although its physical\n    contraction factor $s^{-1}$ differs. Equal inset sizes are\n    magnifications, not equal physical register widths.}"
+      }
+    ],
+    "expected_file": "headings_before"
+  },
+  "manuscript_checks": {
+    "geometric_cost": {
+      "pdf": "cost_pdf",
+      "page": 9,
+      "locator": "Equations (35) and (36)",
+      "claim": "For dimension d and a split priced by width to the power γ, α = 1 − γ/d. The retained section shows how α enters the composition correction."
+    },
+    "paired_figure": {
+      "pdf": "cost_pdf",
+      "page": 11,
+      "locator": "Figure 4(a)",
+      "claim": "The five dimension settings are shared by the two recorded drawings. The revised figure adds cuts and cost exponents. For d = 3/2 and length pricing (γ = 1), α = 1/3."
+    },
+    "fine_adjustment": {
+      "pdf": "cost_pdf",
+      "page": 11,
+      "locator": "Figure 4(b)",
+      "claim": "The selected third child becomes the next register. The three equal-size drawings represent widths 1, s⁻¹ and s⁻².",
+      "derived_crop": {
+        "file": "published_inset",
+        "pdf_points_xyxy_top_left": [
+          61,
+          192,
+          558,
+          317
+        ],
+        "render_dpi": 180,
+        "method": "Crop the page-11 raster to the given bounds, rounded at 2.5 pixels per point; store as lossless RGB WebP."
+      }
+    }
+  },
+  "citation_check": {
+    "source_record": "kalmar_record",
+    "target_record": "cost_record",
+    "source_node": "ref-1",
+    "target_node": "address-in-two-layouts",
+    "citing_pdf": "kalmar_pdf",
+    "citing_page": 3,
+    "citing_locator": "Figure 1(a) caption",
+    "bibliography_page": 8,
+    "bibliography_locator": "Reference [1], The Cost of Complexity",
+    "cited_pdf": "cost_pdf",
+    "cited_page": 5,
+    "cited_locator": "Figure 2(b,c)",
+    "verify": "Find the reference on the source node. Resolve its relative file beside the citing JSON. Match the target bytes to reference.sha256 and verify the project id, revision, entry node, its child evidence id, source figure and page. Match each document.file PDF digest to document.sha256.",
+    "result": {
+      "symbols": 16,
+      "ordered_layouts": 8,
+      "layout_choice_bits": 3,
+      "symbol_rank": 11,
+      "one_based_addresses": [
+        {
+          "registers": 2,
+          "positions_per_register": 8,
+          "register": 2,
+          "position": 3
+        },
+        {
+          "registers": 8,
+          "positions_per_register": 2,
+          "register": 6,
+          "position": 1
+        }
+      ]
+    },
+    "access": "The browser example uses two intentionally public objects. Closing the citation scope leaves the local eight-layout result available. A missing or mismatched target supplies no cross-project answer. In a deployment the receiving host must also authorize access; a reference or matching digest establishes identity only.",
+    "weights": "The 0.6 and 0.4 shares belong to the worked routing example. The two paper captions supply the scientific evidence."
+  },
+  "finite_calculation": {
+    "basis": "A separate deterministic check created for the Writing App walkthrough. The published Figure 3 is its scientific reference.",
+    "record": "run_record",
+    "producer": "run_subdivide",
+    "inputs": "run_inputs",
+    "result": "run_result",
+    "table": "run_costs",
+    "reproduce": "With inputs.json next to subdivide.py, run python3 subdivide.py --result output/result.json in a new directory. Compare the resulting result.json and costs.csv with the file hashes and the original record.files pins.",
+    "expected": {
+      "depth": 4,
+      "final_cells": 256,
+      "total_parent_splits": 85,
+      "area_total": 4,
+      "wall_length_total": 15,
+      "units": "Each series uses the cost of its own first split."
+    },
+    "reference": {
+      "pdf": "cost_pdf",
+      "page": 10,
+      "locator": "Figure 3"
+    }
+  },
+  "recorded_project_counts": {
+    "file": "project_counts",
+    "period_utc": "Through 18 November 2026, inclusive",
+    "check": "Sum tools[].total and the read, action and failure receipt types independently. Each sums to 1,580 attempts across 39 turns. The 85 saved proposal versions and the separate decision counts measure other stages of the work."
+  },
+  "proposed_transfer": {
+    "status": "Worked teaching example; cross-project improvement is unmeasured.",
+    "candidate_instruction": "Check the scale in each panel before inferring physical size from drawing size.",
+    "cases": {
+      "image_width_pixels": 40,
+      "reference_micrometres_per_pixel": 1,
+      "reference_width_micrometres": 40,
+      "comparison_micrometres_per_pixel": [
+        0.5,
+        1
+      ],
+      "comparison_width_micrometres": [
+        20,
+        40
+      ]
+    },
+    "test": "Compare editors with and without the versioned instruction on unfamiliar images with the same evidence. A reviewer decides whether to retain the instruction."
+  }
+}

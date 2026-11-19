@@ -1,0 +1,63 @@
+{
+  "model": "Unit-square subdivision; each parent is divided by a horizontal and a vertical cut.",
+  "normalisation": "Each cost is expressed in units of its own first split.",
+  "inputs": {
+    "unit_square_side": 1,
+    "max_depth": 4
+  },
+  "inputs_sha256": "2241435d370dc73b4fb045bcdf917464c5352b26ad7895cff455e5d83d029929",
+  "table": "costs.csv",
+  "table_sha256": "bfec7ddd2d9480064ce2a4d09e4401c604dd0441e43ced3ae40364e407b84c74",
+  "cells": 256,
+  "splits": 85,
+  "area_cost": 4,
+  "length_cost": 15,
+  "rows": [
+    {
+      "Depth": 0,
+      "Cells": 1,
+      "Parent splits": 0,
+      "Area cost this step": 0,
+      "Length cost this step": 0,
+      "Area-priced cuts": 0,
+      "Cut-length-priced cuts": 0
+    },
+    {
+      "Depth": 1,
+      "Cells": 4,
+      "Parent splits": 1,
+      "Area cost this step": 1,
+      "Length cost this step": 1,
+      "Area-priced cuts": 1,
+      "Cut-length-priced cuts": 1
+    },
+    {
+      "Depth": 2,
+      "Cells": 16,
+      "Parent splits": 4,
+      "Area cost this step": 1,
+      "Length cost this step": 2,
+      "Area-priced cuts": 2,
+      "Cut-length-priced cuts": 3
+    },
+    {
+      "Depth": 3,
+      "Cells": 64,
+      "Parent splits": 16,
+      "Area cost this step": 1,
+      "Length cost this step": 4,
+      "Area-priced cuts": 3,
+      "Cut-length-priced cuts": 7
+    },
+    {
+      "Depth": 4,
+      "Cells": 256,
+      "Parent splits": 64,
+      "Area cost this step": 1,
+      "Length cost this step": 8,
+      "Area-priced cuts": 4,
+      "Cut-length-priced cuts": 15
+    }
+  ],
+  "scope": "Deterministic finite calculation, independent of the order in which squares are visited."
+}

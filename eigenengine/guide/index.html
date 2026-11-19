@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,follow,noarchive">
+  <meta name="description" content="A browser-readable guide to EigenEngine, with records of a manuscript edit, a cross-project citation and a figure whose input changed.">
+  <meta name="theme-color" content="#101b26">
+  <link rel="canonical" href="https://gmccaul.co.uk/eigenengine/guide/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <title>EigenEngine reading guide · Networked Research</title>
+  <link rel="alternate" type="application/json" href="./index.json" title="Evidence manifest">
+  <style>
+    @font-face{font-family:Outfit;src:url('/demo/shared/fonts/outfit-var.woff2') format('woff2');font-weight:100 900;font-display:swap}
+    @font-face{font-family:Lora;src:url('/demo/shared/fonts/lora-var.woff2') format('woff2');font-weight:400 700;font-display:swap}
+    *{box-sizing:border-box}html{color-scheme:dark;background:#0e1823}
+    body{margin:0;color:#ebece4;font:1rem/1.55 Outfit,system-ui,sans-serif}
+    main,nav,footer{width:min(65rem,calc(100% - 2.2rem));margin:auto}
+    header{background:#152331;border-bottom:1px solid #42515c}
+    nav{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;padding:.75rem 0}
+    a{color:#afd3e4;text-underline-offset:.2em}a:hover{color:#eed6a4}a:focus-visible,summary:focus-visible{outline:2px solid #ebca8b;outline-offset:4px}
+    nav a,footer a{font-weight:550;text-decoration:none}.home{color:#edcc91}
+    h1,h2,p,figure{margin:0}h1,h2{font-family:Lora,Georgia,serif;font-weight:400;letter-spacing:-.046em;text-wrap:balance}
+    h1{font-size:clamp(2.7rem,6.3vw,4.9rem);line-height:1.01}h2{font-size:clamp(1.55rem,2.9vw,2.55rem);line-height:1.1}
+    .lead{padding:clamp(2rem,6vw,4.4rem) 0 1.5rem}.lead>p{max-width:62ch;margin-top:.9rem;font-size:1.13rem;color:#d6d9d3}
+    .tools{display:flex;align-items:center;gap:.65rem 1.3rem;flex-wrap:wrap;margin-top:1rem}.tools a{font-weight:570}.download{color:#222627;background:#e7c88e;padding:.49rem .85rem;border-radius:.25rem;text-decoration:none}.download:hover{background:#ffdfab;color:#242624}
+    section.record{display:grid;grid-template-columns:minmax(11rem,.75fr) minmax(0,1.25fr);gap:clamp(.7rem,3vw,2.3rem);border-top:1px solid #3b505e;padding:clamp(1.35rem,3.2vw,2.4rem) 0}
+    .record p+p{margin-top:.65rem}.record p{color:#c6d1d6;max-width:69ch}.record .files{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.55rem}
+    .compare{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1rem}.compare img{display:block;width:100%;height:auto;background:#fff}.compare figcaption{font-size:.86rem;margin:.25rem 0;color:#c9d9da}
+    .excerpts{margin:.85rem 0 .2rem;padding:.8rem 1rem;background:#152633;border-left:2px solid #cfb279}
+    .excerpts dt{color:#e8c995;font:.83rem/1.35 Outfit,system-ui,sans-serif}.excerpts dd{margin:.23rem 0 .75rem;color:#e0e7e5}.excerpts dd:last-child{margin-bottom:0}
+    .comparison{margin:.8rem 0;border-collapse:collapse;width:100%;font-size:.92rem}
+    .comparison caption{text-align:left;color:#e9d4ae;margin:.2rem 0}.comparison th,.comparison td{text-align:left;border-bottom:1px solid #40525f;padding:.35rem .4rem .35rem 0}.comparison th{font-weight:550}
+    .comparison code{font-size:.9em;color:#e4d2b0}
+    footer{padding:1rem 0 2rem;border-top:1px solid #3b505e}.context{color:#acbdc7;margin:0 0 1.4rem;max-width:75ch;font-size:.93rem}
+    @media(max-width:650px){section.record{grid-template-columns:1fr}.compare{gap:.4rem}nav{font-size:.9rem}}
+  </style>
+  <script defer src="/assets/js/eigenengine-reading-return.js"></script>
+</head>
+<body>
+  <header><nav aria-label="Return to the research pages"><a class="home" href="/eigenengine.html">← Back to EigenEngine</a><a href="/eigenengine/networked-research/">← Networked Research</a></nav></header>
+  <main>
+    <div class="lead">
+      <h1>EigenEngine and its source records</h1>
+      <p>EigenEngine is an integrated research environment. While an author writes, an agent can inspect sources, check a calculation or propose changes to the same manuscript. Both work on records that remember which version of the evidence a claim or figure used.</p>
+      <div class="tools"><a href="#revision">Follow a manuscript edit ↓</a><a href="#calculation">See what happens when evidence changes ↓</a></div>
+    </div>
+    <section class="record" id="system"><h2>How an agent finds its way</h2><div>
+      <p>Take a sentence in a paper. It belongs to a section, depends on an assumption and points to a figure. EigenEngine calls a container that holds material and records these relationships a <em>conceptric</em>. Each one is a state machine that records its revision, its dependencies and the actions a particular agent may take. An agent can open a section, then a claim inside it, then the evidence behind the claim. An agent with editing permission can propose a revision against the version it read. The author can keep drafting and decide which proposed changes to apply.</p>
+      <p>A question starts with weight on likely sources. Some of that weight passes to neighbouring records along their links. Ask how a figure was calculated and more of that weight can pass toward the simulation and its input table. Ask what assumption makes the claim true and more can pass toward the model. This is query diffusion. The agent can follow a promising branch within its permitted scope. A link into another project identifies the particular record and revision to open there.</p>
+    </div></section>
+    <section class="record" id="revision"><h2>What survives an edit?</h2><div>
+      <p>In <em>The Cost of Complexity</em>, the author asked for a geometric interpretation of a cost correction. The rewrite linked the price of a cut to the shrinking size of a cell and added the cut markings and cost exponents to Figure 4. The author later asked for an inset to show the nesting. Here are three passages from that history.</p>
+      <dl class="excerpts">
+        <dt>Author’s request for the inset</dt><dd>“showing the recursive nesting visually”</dd>
+        <dt>Recorded draft caption</dt><dd>“Equal inset sizes are magnifications, not equal physical register widths.”</dd>
+        <dt>Annotation inside published Figure 4(b), page 11</dt><dd>“Equal drawing sizes indicate magnification. Physical widths shrink by <i>s</i><sup>−1</sup> per level.”</dd>
+      </dl>
+      <p>The drawing follows the third child twice. Each selected child becomes the register for the next choice. The scale explanation appears inside the published drawing. A later edit labelled the two panels after the inset was already present. The record gives a future reader the request, the earlier wording and the result.</p>
+      <div class="files"><a href="./section-before.tex" target="_blank" rel="noopener">Earlier section · TeX</a><a href="./section-after.tex" target="_blank" rel="noopener">Rewritten section · TeX</a><a href="./figure4-before-headings.tex" target="_blank" rel="noopener">Before the heading edit</a><a href="./figure4-after-headings.tex" target="_blank" rel="noopener">After the heading edit</a></div>
+      <div class="compare"><figure><a href="./figure4-before.webp" target="_blank" rel="noopener"><img src="./figure4-before.webp" width="1360" height="320" alt="Earlier drawing with the dimension under each panel"></a><figcaption>Earlier drawing</figcaption></figure>
+        <figure><a href="./figure4-after.webp" target="_blank" rel="noopener"><img src="./figure4-after.webp" width="1360" height="353" alt="Revised drawing with the dividing cuts and cost exponents"></a><figcaption>Applied rewrite</figcaption></figure></div>
+      <div class="files"><a href="./figure4-published-inset.webp" target="_blank" rel="noopener">Published inset</a><a href="./the-cost-of-complexity.pdf#page=9" target="_blank" rel="noopener">Equation 36 · p. 9</a><a href="./the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Figure 4 · p. 11</a></div>
+    </div></section>
+    <section class="record" id="citation"><h2>What travels between projects?</h2><div>
+      <p>The Kalmár paper counts eight layouts for sixteen symbols. The local answer is that three bits select a layout. To see what a layout changes, the project record points into a specific revision of <em>The Cost of Complexity</em>. The citation and the record it names can be compared directly.</p>
+      <dl class="excerpts">
+        <dt>Reference in the Kalmár record</dt><dd>Project <code>cost-addresses</code>, revision <code>1</code>, evidence <code>address-in-two-layouts</code>, Figure 2(b,c), page 5.</dd>
+        <dt>Evidence in that Cost record</dt><dd>Symbol 11, with layouts of 2 registers × 8 positions and 8 registers × 2 positions. Counting from one gives register 2, position 3 in the first and register 6, position 1 in the second.</dd>
+      </dl>
+      <p>Opening that reference adds the two addresses to the layout count. These two public records form a worked example. A network across independently hosted projects would also need to discover peers and check permissions at each host.</p>
+      <div class="files"><a href="./kalmar-layouts-v1.json" target="_blank" rel="noopener">Kalmár project record</a><a href="./cost-addresses-v1.json" target="_blank" rel="noopener">Cost project record</a><a href="./physical-origins-of-the-kalmar-constant.pdf#page=3" target="_blank" rel="noopener">Kalmár Figure 1 · p. 3</a><a href="./the-cost-of-complexity.pdf#page=5" target="_blank" rel="noopener">Cost Figure 2 · p. 5</a></div>
+    </div></section>
+    <section class="record" id="calculation"><h2>A completed run, a figure due for review</h2><div>
+      <p>In a separate walkthrough calculation, a simulation saved each round of subdivision to a table. The plotted figure recorded which table it used. The recorded check changed that table while leaving the manuscript and rendered figure in place. These are the recorded states.</p>
+      <table class="comparison"><caption>From the run and figure record</caption><thead><tr><th scope="col">Input table</th><th scope="col">Run state</th><th scope="col">Figure freshness</th></tr></thead><tbody>
+        <tr><th scope="row">Original</th><td><code>COMPLETE</code></td><td><code>CURRENT</code></td></tr>
+        <tr><th scope="row">Changed</th><td><code>COMPLETE</code></td><td><code>STALE</code></td></tr>
+        <tr><th scope="row">Restored</th><td><code>COMPLETE</code></td><td><code>CURRENT</code></td></tr>
+      </tbody></table>
+      <p>The run still took place. Its existing plot needed review because the version of the input it described had changed. Restoring the original table restored the match. This is how a researcher can see a problem even while the sentence and the figure look the same.</p>
+      <div class="files"><a href="./simulation/inputs.json" target="_blank" rel="noopener">Inputs</a><a href="./simulation/subdivide.py" target="_blank" rel="noopener">Calculation · Python</a><a href="./simulation/costs.csv" target="_blank" rel="noopener">Per-round table · CSV</a><a href="./simulation/result.json" target="_blank" rel="noopener">Result</a><a href="./simulation/record.json" target="_blank" rel="noopener">Run and figure record</a></div>
+    </div></section>
+    <section class="record" id="decision"><h2>What the editor retained</h2><div><p>The project summary counts turns, proposal versions, decisions and tool attempts. A new proposal version can be saved several times before the author decides what to apply. The aggregate counts give the scale of the work. The source comparison above identifies a particular change that reached the manuscript.</p>
+      <div class="files"><a href="./cost-project-record.json" target="_blank" rel="noopener">Editing and tool counts · JSON</a></div>
+    </div></section>
+    <section class="record" id="reuse"><h2>A question for the next project</h2><div><p>The author asked for a visible account of nesting. From the resulting inset, another editor could ask a question that applies elsewhere. What physical width does each panel represent? In a proposed microscopy example, two grains both span 40 pixels. One image has a calibration of 1 µm per pixel, the other 0.5 µm per pixel. The grains are 40 µm and 20 µm wide.</p>
+      <p>Try that instruction on unfamiliar images with known calibrations. Compare the decisions with and without the instruction under the same conditions. The historical record supplies the original correction. Transfer to a new project is an experiment still to run.</p>
+      <div class="files"><a href="/eigenengine/networked-research/#learning">Try the two image scales ↗</a><a href="/eigenengine/networked-research/#verify">Copy the explanation prompt ↗</a></div>
+    </div></section>
+    <section class="record" id="files"><h2>Original files</h2><div><p>The full source excerpts, project records and calculation are available for independent reproduction. The index lists each file’s digest and its place in the record.</p><div class="tools"><a class="download" href="./evidence.zip" download>Download the evidence ZIP ↓</a><a href="./index.json" target="_blank" rel="noopener">Open the machine-readable index ↗</a></div></div></section>
+  </main>
+  <footer><a class="home" href="/eigenengine/networked-research/#verify">← Back to the agent prompt</a></footer>
+</body>
+</html>

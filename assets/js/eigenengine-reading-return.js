@@ -3,10 +3,12 @@
   "use strict";
   const overview = "/eigenengine.html";
   const viewer = "/demo/view/";
+  const guide = "/eigenengine/guide/";
+  const oldGuide = "/assets/data/networked-research/";
   const names = new Map([
     [overview, "EigenEngine"], [viewer, "the viewer"],
     ["/eigenengine/networked-research/", "Networked Research"],
-    ["/assets/data/networked-research/", "the source records"],
+    [guide, "the reading guide"],
     ["/eigenengine/cost-of-complexity/", "The Cost of Complexity"],
     ["/eigenengine/kalmar-constant/", "the Kalmár article"],
     ["/demo/writing/", "the Writing App film"],
@@ -22,6 +24,7 @@
     if (!value) return null;
     try {
       const url = new URL(value, location.href);
+      if (url.origin === location.origin && path(url) === oldGuide) url.pathname = guide;
       return url.origin === location.origin && names.has(path(url)) ? url : null;
     } catch { return null; }
   }
@@ -38,7 +41,7 @@
   let origin = history.state?.eeReadingOrigin;
   try {
     const saved = JSON.parse(sessionStorage.getItem(storeKey));
-    if (saved?.destination === location.href) {
+    if (knownUrl(saved?.destination)?.href === location.href) {
       origin = saved;
       sessionStorage.removeItem(storeKey);
       history.replaceState({ ...history.state, eeReadingOrigin: origin }, "");
@@ -60,7 +63,7 @@
       if (prior && knownUrl(prior.url)?.pathname === source.pathname) {
         event.preventDefault();
         window.navigation.traverseTo(prior.key).finished.catch(() => location.assign(source.href));
-      } else if (origin && referrer?.pathname === source.pathname && history.length > 1 && !window.navigation) {
+      } else if (origin && referrer && path(referrer) === path(source) && history.length > 1 && !window.navigation) {
         event.preventDefault();
         history.back();
       }

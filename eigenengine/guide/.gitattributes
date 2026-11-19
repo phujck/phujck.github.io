@@ -1,0 +1,4 @@
+# The manifest's hashes and offsets refer to the original UTF-8 bytes.
+*.tex -text whitespace=-blank-at-eol
+*.json text eol=lf
+simulation/* -text

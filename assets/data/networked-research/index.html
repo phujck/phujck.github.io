@@ -1,14 +1,16 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <!-- Compatibility view generated from /eigenengine/guide/ by site/build_networked_research_evidence.py. -->
+  <script>location.replace("/eigenengine/guide/" + location.search + location.hash);</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,follow,noarchive">
   <meta name="description" content="A browser-readable guide to EigenEngine, with records of a manuscript edit, a cross-project citation and a figure whose input changed.">
   <meta name="theme-color" content="#101b26">
-  <link rel="canonical" href="https://gmccaul.co.uk/assets/data/networked-research/">
+  <link rel="canonical" href="https://gmccaul.co.uk/eigenengine/guide/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <title>Source records · Networked Research · EigenEngine</title>
+  <title>EigenEngine reading guide · Networked Research</title>
   <link rel="alternate" type="application/json" href="./index.json" title="Evidence manifest">
   <style>
     @font-face{font-family:Outfit;src:url('/demo/shared/fonts/outfit-var.woff2') format('woff2');font-weight:100 900;font-display:swap}
@@ -43,7 +45,7 @@
     <div class="lead">
       <h1>EigenEngine and its source records</h1>
       <p>EigenEngine is an integrated research environment. While an author writes, an agent can inspect sources, check a calculation or propose changes to the same manuscript. Both work on records that remember which version of the evidence a claim or figure used.</p>
-      <div class="tools"><a href="#revision">Follow a manuscript edit ↓</a><a href="#calculation">See what happens when evidence changes ↓</a></div>
+      <div class="tools"><a href="/eigenengine/guide/#revision">Follow a manuscript edit ↓</a><a href="/eigenengine/guide/#calculation">See what happens when evidence changes ↓</a></div>
     </div>
     <section class="record" id="system"><h2>How an agent finds its way</h2><div>
       <p>Take a sentence in a paper. It belongs to a section, depends on an assumption and points to a figure. EigenEngine calls a container that holds material and records these relationships a <em>conceptric</em>. Each one is a state machine that records its revision, its dependencies and the actions a particular agent may take. An agent can open a section, then a claim inside it, then the evidence behind the claim. An agent with editing permission can propose a revision against the version it read. The author can keep drafting and decide which proposed changes to apply.</p>
@@ -60,7 +62,7 @@
       <div class="files"><a href="./section-before.tex" target="_blank" rel="noopener">Earlier section · TeX</a><a href="./section-after.tex" target="_blank" rel="noopener">Rewritten section · TeX</a><a href="./figure4-before-headings.tex" target="_blank" rel="noopener">Before the heading edit</a><a href="./figure4-after-headings.tex" target="_blank" rel="noopener">After the heading edit</a></div>
       <div class="compare"><figure><a href="./figure4-before.webp" target="_blank" rel="noopener"><img src="./figure4-before.webp" width="1360" height="320" alt="Earlier drawing with the dimension under each panel"></a><figcaption>Earlier drawing</figcaption></figure>
         <figure><a href="./figure4-after.webp" target="_blank" rel="noopener"><img src="./figure4-after.webp" width="1360" height="353" alt="Revised drawing with the dividing cuts and cost exponents"></a><figcaption>Applied rewrite</figcaption></figure></div>
-      <div class="files"><a href="./figure4-published-inset.webp" target="_blank" rel="noopener">Published inset</a><a href="../../docs/the-cost-of-complexity.pdf#page=9" target="_blank" rel="noopener">Equation 36 · p. 9</a><a href="../../docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Figure 4 · p. 11</a></div>
+      <div class="files"><a href="./figure4-published-inset.webp" target="_blank" rel="noopener">Published inset</a><a href="/assets/docs/the-cost-of-complexity.pdf#page=9" target="_blank" rel="noopener">Equation 36 · p. 9</a><a href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Figure 4 · p. 11</a></div>
     </div></section>
     <section class="record" id="citation"><h2>What travels between projects?</h2><div>
       <p>The Kalmár paper counts eight layouts for sixteen symbols. The local answer is that three bits select a layout. To see what a layout changes, the project record points into a specific revision of <em>The Cost of Complexity</em>. The citation and the record it names can be compared directly.</p>
@@ -69,7 +71,7 @@
         <dt>Evidence in that Cost record</dt><dd>Symbol 11, with layouts of 2 registers × 8 positions and 8 registers × 2 positions. Counting from one gives register 2, position 3 in the first and register 6, position 1 in the second.</dd>
       </dl>
       <p>Opening that reference adds the two addresses to the layout count. These two public records form a worked example. A network across independently hosted projects would also need to discover peers and check permissions at each host.</p>
-      <div class="files"><a href="./kalmar-layouts-v1.json" target="_blank" rel="noopener">Kalmár project record</a><a href="./cost-addresses-v1.json" target="_blank" rel="noopener">Cost project record</a><a href="../../docs/physical-origins-of-the-kalmar-constant.pdf#page=3" target="_blank" rel="noopener">Kalmár Figure 1 · p. 3</a><a href="../../docs/the-cost-of-complexity.pdf#page=5" target="_blank" rel="noopener">Cost Figure 2 · p. 5</a></div>
+      <div class="files"><a href="./kalmar-layouts-v1.json" target="_blank" rel="noopener">Kalmár project record</a><a href="./cost-addresses-v1.json" target="_blank" rel="noopener">Cost project record</a><a href="/assets/docs/physical-origins-of-the-kalmar-constant.pdf#page=3" target="_blank" rel="noopener">Kalmár Figure 1 · p. 3</a><a href="/assets/docs/the-cost-of-complexity.pdf#page=5" target="_blank" rel="noopener">Cost Figure 2 · p. 5</a></div>
     </div></section>
     <section class="record" id="calculation"><h2>A completed run, a figure due for review</h2><div>
       <p>In a separate walkthrough calculation, a simulation saved each round of subdivision to a table. The plotted figure recorded which table it used. The recorded check changed that table while leaving the manuscript and rendered figure in place. These are the recorded states.</p>
