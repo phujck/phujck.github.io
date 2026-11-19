@@ -5,7 +5,7 @@
   if (!mount || mount.dataset.ready) return;
   mount.dataset.ready = 'true';
 
-  const paper = '/assets/docs/the-cost-of-complexity.pdf';
+  const paper = '/demo/view/?asset=cost-paper';
   const records = {
     section: {
       label: 'Geometry of refinement', kind: 'Section', tone: 'gold',
@@ -456,7 +456,7 @@
         <p>${item.summary}</p>
         ${item.caption ? `<p class="ee-envelope__figure-caption">${item.caption}</p>` : ''}
         ${item.next ? `<div class="ee-envelope__open">${item.next.map(next => `<button type="button" data-open="${next}">Open ${records[next].kind === 'Evidence' ? records[next].label : records[next].kind.toLowerCase()} <span aria-hidden="true">→</span></button>`).join('')}</div>` : ''}
-        <a href="${paper}#page=${item.page}">Read ${item.caption ? 'figure and caption' : 'the source passage'} <span aria-hidden="true">↗</span></a>`,
+        <a href="${paper}&amp;page=${item.page}">Read ${item.caption ? 'figure and caption' : 'the source passage'} <span aria-hidden="true">↗</span></a>`,
     };
   }
 
@@ -520,7 +520,7 @@
       answer.innerHTML = `<p><strong>Area pricing.</strong> Each round divides four times as many squares, each with one quarter of the area. Under wall-length pricing the cost per round doubles.</p>
         <p>${step.status}</p>${sourceWeights(phase + 1)}
         <a href="#refinement">Compare the cost curves ↓</a>
-        <a href="${paper}#page=10">Open Figure 3 ↗</a>`;
+        <a href="${paper}&amp;page=10">Open Figure 3 ↗</a>`;
       if (phase !== phases.length - 1) return;
       select('claim');
       answer.insertAdjacentHTML('beforeend', `<blockquote>“a price set by area (γ = 2) adds the same increment … at every depth”</blockquote>

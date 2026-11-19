@@ -122,7 +122,7 @@
         lightboxImage.width = width;
         lightboxImage.height = image.getAttribute("height") || image.naturalHeight;
         lightboxScroll.style.setProperty("--capture-width", width + "px");
-        lightboxImage.src = link.href;
+        lightboxImage.src = image.currentSrc || image.src;
         lightbox.showModal();
         setZoom(window.matchMedia("(max-width: 600px)").matches);
       });
@@ -138,6 +138,7 @@
   "use strict";
 
   const tour = document.querySelector(".session-tour");
+  const siteHeader = document.querySelector(".site-header");
   const stops = Array.from(tour.querySelectorAll(".tour-stop"));
   const nav = tour.querySelector(".tour-nav");
   const links = Array.from(nav.querySelectorAll("a"));
@@ -177,7 +178,9 @@
         focused = !focused;
         paint(focused, true);
         const bounds = view.getBoundingClientRect();
-        if ((focused || narrowScreen.matches) && (bounds.top < 0 || bounds.bottom > window.innerHeight)) {
+        const aboveView = bounds.top < siteHeader.offsetHeight;
+        const belowView = bounds.bottom > window.innerHeight;
+        if ((focused || narrowScreen.matches) && (aboveView || belowView)) {
           view.scrollIntoView({ block: "center", behavior: reducedMotion.matches ? "instant" : "smooth" });
         }
       });
