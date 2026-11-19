@@ -10,7 +10,7 @@
     button,
     time: Number(button.dataset.time)
   }));
-  const storageKey = "eigenengine-session-film-time";
+  const storageKey = "eigenengine-session-film-revision-atlas";
   let activeChapter = chapters[0];
   let engaged = false;
   let playing = false;
@@ -50,7 +50,7 @@
       // The film still works where storage is unavailable.
     }
     try {
-      window.history.replaceState({ ...window.history.state, sessionFilmTime: time }, "");
+      window.history.replaceState({ ...window.history.state, sessionFilmTime: time, sessionFilmEdition: storageKey }, "");
     } catch {
       // Session storage also carries the position across pages.
     }
@@ -58,7 +58,7 @@
 
   function restore() {
     if (engaged || !film.paused || film.currentTime) return;
-    let savedTime = window.history.state?.sessionFilmTime;
+    let savedTime = window.history.state?.sessionFilmEdition === storageKey ? window.history.state.sessionFilmTime : null;
     try {
       savedTime ??= window.sessionStorage.getItem(storageKey);
     } catch {
@@ -121,6 +121,13 @@
   film.addEventListener("webkitbeginfullscreen", () => setFullscreen(true));
   film.addEventListener("webkitendfullscreen", () => setFullscreen(false));
 
+  function playRevision() {
+    film.preload = "metadata";
+    film.currentTime = Number(frame.querySelector("[data-rewrite-time]").dataset.rewriteTime);
+    film.muted = true;
+    film.play().catch(() => syncTransport());
+  }
+
   function openTranscript() {
     const target = document.getElementById(window.location.hash.slice(1));
     if (target?.matches("details.film-transcript")) target.open = true;
@@ -128,6 +135,7 @@
 
   window.addEventListener("hashchange", () => {
     openTranscript();
+    if (window.location.hash === "#film-rewrite") playRevision();
     if (!window.location.hash || window.location.hash === "#session-film") restore();
   });
   document.addEventListener("eigenengine-source-preview", (event) => {
@@ -160,6 +168,9 @@
     }
     film.muted = true;
     film.play().catch(() => {});
+  } else if (hash === "#film-rewrite") {
+    if (navigationType === "back_forward" && history.state?.sessionFilmEdition === storageKey) restore();
+    else playRevision();
   } else if (!hash || hash === "#session-film") {
     restore();
   }
@@ -585,4 +596,57 @@
     anchorObserver.observe(nav);
   }
   show(Math.max(0, indexFromHash()));
+})();
+
+// The manuscript comparison remains readable as consecutive sections without scripting.
+(() => {
+  const atlas = document.getElementById("revision-atlas");
+  if (!atlas) return;
+  const controls = atlas.querySelector(".revision-choices");
+  const links = [...controls.querySelectorAll("a")];
+  const panels = links.map(link => document.getElementById(link.hash.slice(1)));
+  controls.setAttribute("role", "tablist");
+  links.forEach((link, i) => {
+    link.setAttribute("role", "tab");
+    link.setAttribute("aria-controls", panels[i].id);
+    panels[i].setAttribute("role", "tabpanel");
+    panels[i].tabIndex = 0;
+  });
+  function show(index) {
+    links.forEach((link, i) => {
+      const active = i === index;
+      link.tabIndex = active ? 0 : -1;
+      link.setAttribute("aria-selected", String(active));
+      panels[i].hidden = !active;
+    });
+  }
+  function select(index) {
+    if (links[index].getAttribute("aria-selected") === "true") return;
+    show(index);
+    history.replaceState({ ...history.state, revisionPanel: panels[index].id }, "", links[index].hash);
+  }
+  function restore() {
+    const index = links.findIndex(link => link.hash === location.hash);
+    const remembered = panels.findIndex(panel => panel.id === history.state?.revisionPanel);
+    show(index >= 0 ? index : remembered >= 0 ? remembered : 0);
+  }
+  links.forEach((link, index) => {
+    link.addEventListener("click", event => {
+      if (event.button || event.shiftKey || event.metaKey || event.ctrlKey || event.altKey) return;
+      event.preventDefault();
+      select(index);
+    });
+    link.addEventListener("keydown", event => {
+      const targets = { ArrowLeft: (index + links.length - 1) % links.length,
+        ArrowRight: (index + 1) % links.length, Home: 0, End: links.length - 1 };
+      if (!(event.key in targets)) return;
+      event.preventDefault();
+      const next = targets[event.key];
+      select(next);
+      links[next].focus();
+    });
+  });
+  restore();
+  window.addEventListener("hashchange", restore);
+  window.addEventListener("pageshow", restore);
 })();

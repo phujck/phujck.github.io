@@ -6,22 +6,22 @@
   const svgNS = 'http://www.w3.org/2000/svg';
   const stages = [
     {
-      title: 'Mark the missing step', duration: 3400,
-      detail: 'The old opening began with reset uncertainty. The author wanted readers to see the failed guess first.',
+      title: 'Ask for the inset', duration: 3400,
+      detail: 'After the section rewrite, the author asked to show the same nested choice at each dimension.',
     },
     {
       title: 'Package the edit', subtitle: 'Version and reason', duration: 3000,
-      detail: 'Save the correction with its manuscript version and the author’s reason for changing it.',
+      detail: 'A reusable note could link the figure version to a reminder to label changes of scale.',
       icon: '<g class="el-copy-sheet"><path d="M17 9h26l6 6v23H17z"/></g><g class="el-front-sheet"><path d="M25 5h24l7 7v24H25z"/><path d="M49 5v8h7M31 17h15m-15 6h19m-19 6h10"/></g>',
     },
     {
-      title: 'Try a new project', subtitle: 'A machine that keeps a log', duration: 3000,
-      detail: 'Try the note on a machine that logs its failed guesses. Its reset may come later.',
-      icon: '<rect x="7" y="15" width="14" height="14" rx="2"/><path d="M22 22h9q5 0 8-5l4-6h9m-21 11q5 0 8 5l4 6h9"/><circle cx="58" cy="11" r="5"/><g class="el-log"><rect x="52" y="28" width="13" height="11" rx="1"/><path d="M55 32h6m-6 3h6"/></g>',
+      title: 'Try a new project', subtitle: 'A pair of micrographs', duration: 3000,
+      detail: 'Two micrographs show grains equally wide on screen. Check both scales before comparing the grains.',
+      icon: '<rect x="7" y="6" width="24" height="30" rx="2"/><rect x="41" y="6" width="24" height="30" rx="2"/><path d="m12 19 5-6 8 4-1 7-8 1zm34 0 5-6 8 4-1 7-8 1zM11 31h11m23 0h6"/>',
     },
     {
       title: 'Compare fresh cases', subtitle: 'With and without the note', duration: 3600,
-      detail: 'Give both editors the same fresh cases and evidence. Do their answers locate the right reset?',
+      detail: 'Give both editors fresh images and scale bars. Can each tell whether the physical widths differ?',
       icon: '<path class="el-chart-guide" d="M7 22h6q5 0 5-5v-4h6m-11 9q5 0 5 5v4h6"/><g class="el-trace"><path pathLength="1" d="M24 13h34"/><path pathLength="1" d="M24 31h34"/></g><rect x="29" y="10" width="6" height="6" rx="1"/><rect x="43" y="10" width="6" height="6" rx="1"/><rect x="29" y="28" width="6" height="6" rx="1"/><rect x="43" y="28" width="6" height="6" rx="1"/><path d="M59 10h5v24h-5"/>',
     },
     {
@@ -46,15 +46,23 @@
         <g class="el-traveler"><circle class="el-halo" r="8.5"/><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="1.3"/></g>
       </svg>
       <div class="el-editor">
-        <div class="el-record-label">Recorded edit <span>Writing App</span></div>
+        <div class="el-record-label">Hilbert manuscript revision <span>Writing App</span></div>
         <div class="el-proposal">
-          <svg class="el-saved-ui" viewBox="224 117 1360 480" role="img" aria-label="The Writing App editing workspace. The manuscript is open beside its saved project changes and proposal controls.">
-            <image href="/demo/writing/media/full-changes.webp" width="1600" height="900"/>
-          </svg>
-          <div class="el-passage-head"><p>Revised proposal</p>
-            <button class="el-mark" type="button" data-step="0" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 13 8.3-8.3 3 3L7 16l-4 1zM11 6l3 3"/></svg>Mark the missing step</button>
+          <div class="el-workbench">
+            <svg class="el-saved-ui" viewBox="224 117 1360 480" role="img" aria-label="The manuscript editor and its saved project changes."><image href="/demo/writing/media/full-changes.webp" width="1600" height="900"/></svg>
+            <p>The author asked for prose, maths and figures to explain the cost of a cut.</p>
           </div>
-          <q class="el-quote">Consider a machine that proposes an answer, checks it, and <mark>starts again</mark> when the answer is wrong.</q>
+          <div class="el-versions">
+            <a href="/demo/writing/#revision-figure" aria-label="Compare the original and revised Figure 4 drawings"><img src="/demo/writing/media/hilbert-before-rewrite.webp" alt="Before the section rewrite, five layouts are labeled by their dimension"><span>Before · dimensions ↗</span></a>
+            <span class="el-between" aria-hidden="true">→</span>
+            <a href="/demo/writing/#revision-figure" aria-label="Inspect the revised cuts and costs beside the earlier drawing"><img src="/demo/writing/media/hilbert-after-rewrite.webp" alt="After the rewrite, the same five layouts also show the cuts and their cost exponents"><span>After · cut costs ↗</span></a>
+          </div>
+          <div class="el-passage-head"><p>Next author request</p>
+            <button class="el-mark" type="button" data-step="0" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 13 8.3-8.3 3 3L7 16l-4 1zM11 6l3 3"/></svg>Show the nesting</button>
+          </div>
+          <a class="el-inset-example" data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener" aria-label="Inspect the magnified children and physical width labels in published Figure 4(b)">
+            <img src="/demo/writing/media/hilbert-inset.webp" alt=""><span>Each child is enlarged as its <mark>physical width shrinks</mark>. <b>Figure 4(b) ↗</b></span>
+          </a>
         </div>
         <span class="el-exit-port" aria-hidden="true"></span>
         <div class="el-return"><span class="el-return-port" aria-hidden="true"></span><span>Future editor instructions</span><small>If retained</small></div>
@@ -126,7 +134,7 @@
     const reviewPath = [port(icon(3), 'left'), port(icon(4), 'right')];
     const midX = (out[0] + note[0])/2;
     const belowEditor = get('.el-editor').getBoundingClientRect().bottom - box.y + 6;
-    const rail = narrow ? 8 : (reviewOut[0] + back[0])/2;
+    const rail = narrow ? 8 : back[0] + (reviewOut[0] - back[0]) * .32;
     const linked = [
       narrow ? [out, [box.width-4,out[1]], [box.width-4,belowEditor], [note[0],belowEditor], note] : [out, [midX,out[1]], [midX,note[1]], note],
       runPath, [runOut,testIn], reviewPath,

@@ -427,6 +427,19 @@
         0.405303
       ],
       "image": "/assets/img/eigen/source-pages/kalmar-07.webp"
+    },
+    "cost-eq-36": {
+      "paper": "cost",
+      "page": 9,
+      "label": "Section III · Equation 36",
+      "description": "The cost exponent depends on the dimension of the set and on how the price of a division varies with width. The paragraph following the equation gives the balance condition.",
+      "rect": [
+        0.509804,
+        0.503788,
+        0.415033,
+        0.194444
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-09.webp"
     }
   },
   "defaultByPage": {

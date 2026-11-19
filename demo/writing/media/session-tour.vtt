@@ -5,58 +5,67 @@ The manuscript is in the centre.
 Its saved conversation is on the right.
 
 00:00:04.500 --> 00:00:09.000 align:center
-Gold marks the revised proof wording.
-The conversation stays open beside it.
+The editor keeps the draft and its evidence
+in view while the argument changes.
 
-00:00:09.000 --> 00:00:12.500 align:center
-One proposal covers more than 50 edits
-across eight TeX files.
+00:00:09.000 --> 00:00:14.000 align:center
+One proposal covers eight source files.
+Here it proposes moving a proof.
 
-00:00:12.500 --> 00:00:15.500 align:center
-The proposed proof points to Appendix A.
+00:00:14.000 --> 00:00:21.000 align:center
+The main text keeps the proof outline.
+Appendix A carries the full derivation.
 
-00:00:15.500 --> 00:00:22.000 align:center
-Before and proposed text sit side by side.
-The record links to the later revision.
+00:00:21.000 --> 00:00:27.000 align:center
+The rewrite ties the cost correction
+to the geometry of the cut.
 
-00:00:22.000 --> 00:00:25.667 align:center
-This staged edit asks when
-each round costs the same.
+00:00:27.000 --> 00:00:34.000 align:center
+The revised figure marks the dividing cuts
+and adds a cost exponent to each panel.
 
-00:00:25.667 --> 00:00:30.958 align:center
-The author makes the condition clear.
-Price each split by its area.
+00:00:34.000 --> 00:00:38.000 align:center
+The added inset follows child 3
+into the next register.
 
-00:00:30.958 --> 00:00:38.000 align:center
-Accept saves the author’s wording.
-Undo is still available.
+00:00:38.000 --> 00:00:42.000 align:center
+Price cuts by wall length.
+The exponent is α = 1 − 1/d.
 
-00:00:38.000 --> 00:00:43.000 align:center
+00:00:42.000 --> 00:00:49.000 align:center
+A later edit adds two panel labels.
+Readers can tell each diagram’s job.
+
+00:00:49.000 --> 00:00:55.000 align:center
+One panel compares contraction.
+The other follows a nested choice.
+
+00:00:55.000 --> 00:01:00.000 align:center
 A separate run splits one square
 into 256 cells in four rounds.
 
-00:00:43.000 --> 00:00:48.000 align:center
+00:01:00.000 --> 00:01:05.000 align:center
 The same 85 splits cost 4 by area
 and 15 by wall length, in first-split units.
 
-00:00:48.000 --> 00:00:50.750 align:center
+00:01:05.000 --> 00:01:07.750 align:center
 The CSV saves each round’s totals.
 
-00:00:50.750 --> 00:00:53.500 align:center
+00:01:07.750 --> 00:01:10.500 align:center
 The plot links back to the run.
 
-00:00:53.500 --> 00:01:00.000 align:center
+00:01:10.500 --> 00:01:17.000 align:center
 The rebuilt manuscript contains
 the computed plot and its caption.
 
-00:01:00.000 --> 00:01:08.000 align:center
+00:01:17.000 --> 00:01:25.000 align:center
 In this example, an independent review
 can send the wording back for revision.
 
-00:01:08.000 --> 00:01:14.000 align:center
+00:01:25.000 --> 00:01:31.000 align:center
 The arXiv check rebuilds the saved
 draft from an 11-file package.
 
-00:01:14.000 --> 00:01:20.000 align:center
+00:01:31.000 --> 00:01:37.000 align:center
 Both LaTeX passes succeed.
 All 21 pages reproduce the same text.

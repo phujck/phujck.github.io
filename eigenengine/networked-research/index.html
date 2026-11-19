@@ -66,36 +66,38 @@
       </div>
       <figure id="editor-learning-loop" aria-label="From an author’s edit to a reviewed change in future editor instructions">
         <figcaption>How a manuscript edit could inform a later editor</figcaption>
-        <ol><li>The author restores a missing step.</li><li>Save the reason with the revision that prompted it.</li><li>Try a candidate instruction in a different project.</li><li>Compare fresh cases under the same conditions.</li><li>A reviewer decides whether the instruction should guide future edits.</li></ol>
+        <ol><li>The author reworks the Hilbert section and later requests an inset showing the nested choice.</li><li>Save the reason alongside the figure version.</li><li>Try the distinction between drawing size and physical size in another project.</li><li>Compare fresh cases under the same conditions.</li><li>A reviewer decides whether the instruction should guide future edits.</li></ol>
       </figure>
       <p class="nr-loop-caption">The Writing App can already carry a scoped instruction into later turns. To share one across projects, a reviewer needs its original evidence, the cases where it helps and the conditions under which it should stop applying.</p>
       <div class="nr-notebook">
-        <details class="nr-more"><summary>Read the author’s correction in <em>The Cost of Complexity</em></summary>
-          <div class="nr-saved-evidence"><dl class="nr-trace" id="saved-openings">
-          <div><dt>The author’s request</dt><dd>The author objected that cuts to the later sections made <q>the whole argument harder to follow. Particularly around the guessing machine.</q></dd></div>
-          <div><dt>The saved proposal</dt><dd>The sequence of the opening changed.<blockquote><span>Before</span>“We first identify the uncertainty removed by reset, then apply the result to a machine that guesses, tests and discards candidate solutions.”</blockquote><blockquote><span>Proposed</span>“Consider a machine that proposes an answer, checks it, and starts again when the answer is wrong.”</blockquote></dd></div>
-          <div><dt>Published manuscript · Section IV</dt><dd>The reader meets the machine, sees it test a guess, and learns when a failed guess is reset. The heat bound uses the distribution of guesses that reach that reset.</dd></div>
-        </dl>
-        <a class="nr-source-figure" data-source-region="cost-fig-5" href="/assets/docs/the-cost-of-complexity.pdf#page=12" target="_blank" rel="noopener"><img src="./guessing-machine.webp" width="784" height="432" loading="lazy" alt="Published Figure 5. A guessed candidate is tested. A success halts, while a failure enters reset and returns to the next guess."><span>Figure 5 · The failed guesses enter reset ↗</span></a></div>
-          <p>Only failed guesses that actually enter reset belong in the erasure calculation. The author’s edit made that distinction possible to follow.</p>
-          <div class="nr-links"><a href="/demo/writing/">Watch the editor in use ↗</a><a href="/demo/writing/project-record/">Inspect the editing record ↗</a></div>
+        <details class="nr-more"><summary>See how the author steered the Hilbert revision</summary>
+          <div class="nr-saved-evidence">
+            <dl class="nr-trace" id="saved-openings">
+              <div><dt>The scientific rewrite</dt><dd>The author asked the Hilbert revision to <q>give a geometric interpretation to epsilon</q>, the cost correction <var>ε</var>. The revised drawing kept the same five dimensions and added the cuts and their cost exponents. For a cut priced by length, the paper gives <var>α</var> = 1 − 1/<var>d</var>, falling from ½ to zero as dimension <var>d</var> falls from 2 to 1.</dd></div>
+              <div><dt>The next request</dt><dd>The author then asked for a schematic <q>showing the recursive nesting visually</q>. Panel (b) picks the third child, enlarges it and repeats the choice. The labels give physical widths of 1, 1/<var>s</var> and 1/<var>s</var>² even though the three drawings appear equally wide.</dd></div>
+            </dl>
+            <a class="nr-source-figure" data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener"><img src="/demo/writing/media/hilbert-inset.webp" loading="lazy" alt="The inset selects child 3 twice and labels the shrinking physical widths under three equally wide drawings."><span>Inspect Figure 4(b) in the paper ↗</span></a>
+          </div>
+          <div class="nr-links"><a href="/demo/writing/#revision-atlas">Trace the text, mathematics and figure revisions in the Writing App ↗</a></div>
         </details>
-        <details id="next-project-test" class="nr-more"><summary>Try the correction on a different machine</summary>
-          <div id="learning">      <div class="nr-transfer" id="transfer-example">
-        <div class="nr-transfer-note"><p class="nr-eyebrow">A proposed transfer</p><h3>When is the failed guess erased?</h3>
-          <p>One machine keeps failed attempts. Another clears its register after each failure. Try the same correction on both.</p>
-          <div class="nr-log-choice" role="group" aria-label="What the next machine does after failure"><button type="button" data-retention="keep" aria-pressed="true">Keep a log</button><button type="button" data-retention="reset" aria-pressed="false">Reset immediately</button></div>
-          <a href="/assets/docs/the-cost-of-complexity.pdf#page=13" data-source-region="cost-eq-42" target="_blank" rel="noopener">Inspect the source bound, Eq. 42 ↗</a>
-        </div>
-        <div class="nr-transfer-result" aria-live="polite">
-          <p class="nr-route" aria-label="Steps in the receiving machine"><span>Failed guess</span><b aria-hidden="true">→</b><span data-event>Stored in log</span><b aria-hidden="true">→</b><span data-next>Log cleared later</span></p>
-          <h4 data-verdict>Count erasure when the log is cleared.</h4>
-          <p data-reason>The log still distinguishes the failed guesses. The calculation depends on what the later reset clears and what information survives.</p>
-          <p class="nr-transfer-scope">These two cases illustrate the proposed test. An improvement on unfamiliar projects has yet to be measured.</p>
-        </div>
-      </div>
-
-            <p class="nr-method">To test the proposed instruction, give the old and revised systems unfamiliar machines and equal evidence budgets. Score which reset each identifies. Include ordinary cases as well as exceptions before adopting the change.</p>
+        <details id="next-project-test" class="nr-more"><summary>Try the scale question on two micrographs</summary>
+          <div id="learning"><div class="nr-transfer" id="transfer-example">
+            <div class="nr-transfer-note"><p class="nr-eyebrow">A proposed transfer</p><h3>Are the two grains the same width?</h3>
+              <p>Each grain in these schematic microscope views spans 40 image pixels. The first image represents 1 µm per pixel. Choose the scale of the second.</p>
+              <div class="nr-log-choice" role="group" aria-label="Second image scale" hidden><button type="button" data-pixel-scale="0.5" aria-pressed="true">0.5 µm per pixel</button><button type="button" data-pixel-scale="1" aria-pressed="false">1 µm per pixel</button></div>
+            </div>
+            <div class="nr-transfer-result" aria-live="polite">
+              <svg class="el-micrographs" viewBox="0 0 300 83" role="img" aria-label="Two grains occupy equal widths on screen. A 10-micrometre scale bar appears in each view.">
+                <g transform="translate(1 1)"><rect width="141" height="80" rx="3"/><path class="el-grain" d="m30 32 10-13 24-8 26 6 20 16-9 13-29 5-32-6z"/><path class="el-bar" d="M17 65h20"/><text x="43" y="69">10 µm</text></g>
+                <g transform="translate(157 1)"><rect width="141" height="80" rx="3"/><path class="el-grain" d="m30 32 10-13 24-8 26 6 20 16-9 13-29 5-32-6z"/><path class="el-bar" data-scale-bar d="M17 65h40"/><text data-scale-label x="63" y="69">10 µm</text></g>
+              </svg>
+              <p class="nr-route" aria-label="Physical width of the second grain"><span>40 pixels</span><b aria-hidden="true">×</b><span data-scale>0.5 µm/pixel</span><b aria-hidden="true">=</b><span data-width>20 µm</span></p>
+              <h4 data-verdict>The second grain is half as wide.</h4>
+              <p data-reason>The first grain is 40 µm wide. The second looks just as wide because its image is magnified.</p>
+              <noscript><p>At 1 µm per pixel, the second grain is also 40 µm wide.</p></noscript>
+            </div>
+          </div>
+          <p class="nr-method">These two cases show what the proposed instruction would test. Give editors with and without the note unfamiliar images and the same scale information. Check both their width estimates and whether they flag a change of magnification only when the scales differ.</p>
           </div>
         </details>
         <details class="nr-more"><summary>Why might one rare edit matter?</summary><p>A question about only the rarest 1% of cases puts all its weight on that 1%. A detail that scarcely affected the average answer can determine this one. An expert’s intervention can indicate which distinction to recover. Estimating how unusual the choice was would require other comparable decisions.</p>

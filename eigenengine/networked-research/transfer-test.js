@@ -22,25 +22,24 @@
 
   const example = document.querySelector('#transfer-example');
   if (!example) return;
-  const choices = {
-    keep: {
-      event: 'Stored in log', next: 'Log cleared later', verdict: 'Count erasure when the log is cleared.',
-      reason: 'The log still distinguishes the failed guesses. The calculation depends on what the later reset clears and what information survives.'
-    },
-    reset: {
-      event: 'Register cleared', next: 'Next attempt', verdict: 'Count erasure after each failed test.',
-      reason: 'Each failed candidate is cleared before the next attempt. Use the distribution of guesses that reach this reset, accounting for any information the machine keeps.'
-    }
-  };
-  const buttons = [...example.querySelectorAll('button[data-retention]')];
-  for (const button of buttons) {
-    button.addEventListener('click', () => {
-      if (button.getAttribute('aria-pressed') === 'true') return;
-      buttons.forEach(candidate => candidate.setAttribute('aria-pressed', String(candidate === button)));
-      for (const [field, text] of Object.entries(choices[button.dataset.retention])) {
-        example.querySelector('[data-' + field + ']').textContent = text;
-      }
-      example.dataset.retention = button.dataset.retention;
-    });
-  }
+  const controls = example.querySelector('.nr-log-choice');
+  controls.hidden = false;
+  const buttons = Array.from(controls.querySelectorAll('button[data-pixel-scale]'));
+  buttons.forEach(button => button.addEventListener('click', () => {
+    if (button.getAttribute('aria-pressed') === 'true') return;
+    const scale = Number(button.dataset.pixelScale);
+    const width = 40 * scale;
+    buttons.forEach(candidate => candidate.setAttribute('aria-pressed', String(candidate === button)));
+    example.querySelector('[data-scale]').textContent = scale + ' µm/pixel';
+    example.querySelector('[data-width]').textContent = width + ' µm';
+    // Each drawn grain spans 80 SVG units for its 40 image pixels.
+    const scaleBar = 2 * 10 / scale;
+    example.querySelector('[data-scale-bar]').setAttribute('d', 'M17 65h' + scaleBar);
+    example.querySelector('[data-scale-label]').setAttribute('x', 23 + scaleBar);
+    example.querySelector('[data-verdict]').textContent = width === 40
+      ? 'Both grains are 40 µm wide.' : 'The second grain is half as wide.';
+    example.querySelector('[data-reason]').textContent = width === 40
+      ? 'Both images have the same scale. A span of 40 pixels represents the same physical width in each.'
+      : 'The first grain is 40 µm wide. The second looks just as wide because its image is magnified.';
+  }));
 })();

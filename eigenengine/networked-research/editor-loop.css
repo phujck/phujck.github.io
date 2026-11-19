@@ -59,6 +59,24 @@
 }
 #editor-learning-loop .el-record-label span { color:#bfd0d8; font-weight:450; letter-spacing:normal; }
 #editor-learning-loop .el-proposal { display:grid; justify-items:start; padding:.55rem .78rem .62rem; }
+#editor-learning-loop .el-workbench {
+  width:100%; display:grid; grid-template-columns:minmax(0, .85fr) minmax(0, 1.15fr); gap:.6rem; align-items:center;
+}
+#editor-learning-loop .el-workbench p { color:#d4dbe0; font:450 .87rem/1.32 var(--el-font); }
+#editor-learning-loop .el-versions {
+  width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:.45rem;
+  margin:.56rem 0 .12rem;
+}
+#editor-learning-loop .el-versions a { display:grid; align-self:start; gap:.18rem; min-width:0; }
+#editor-learning-loop .el-versions img {
+  width:100%; height:clamp(62px,6.5cqw,88px); object-fit:contain; background:#fff; border:1px solid #687784; border-radius:.22rem;
+}
+#editor-learning-loop .el-versions a {
+  color:#aed9eb; text-decoration:underline; text-underline-offset:.14em;
+}
+#editor-learning-loop .el-versions span { font:500 .75rem/1.2 var(--el-font); }
+#editor-learning-loop .el-versions .el-between { align-self:center; margin-bottom:.95rem; color:#d7c69d; font-size:1.1rem; }
+#editor-learning-loop a:focus-visible { outline:2px solid #f1cd86; outline-offset:2px; }
 #editor-learning-loop .el-saved-ui {
   width:100%; height:auto; display:block; border:1px solid #3a4853; border-radius:.25rem; background:#101820;
 }
@@ -66,11 +84,13 @@
   display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.3rem; width:100%; margin:.32rem 0;
 }
 #editor-learning-loop .el-passage-head p { font:500 .77rem/1.2 var(--el-font); color:#b8c4ca; }
-#editor-learning-loop .el-quote {
-  display:block; border-left:2px solid #cfb279; padding-left:.6rem;
-  color:#efeee8; font:400 clamp(1rem,1.7cqw,1.2rem)/1.36 Lora,Georgia,serif;
+#editor-learning-loop .el-inset-example {
+  width:100%; display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:.53rem; align-items:center;
+  text-decoration:none; color:#efeee8; font:400 clamp(.87rem,1.4cqw,1.03rem)/1.3 Lora,Georgia,serif;
 }
-#editor-learning-loop .el-quote mark {
+#editor-learning-loop .el-inset-example img { width:100%; height:auto; background:white; border-radius:.15rem; }
+#editor-learning-loop .el-inset-example b { color:#aed9eb; white-space:nowrap; font:500 .79em/1.2 var(--el-font); text-decoration:underline; }
+#editor-learning-loop .el-inset-example mark {
   color:inherit; background:linear-gradient(to top, #9e7b3e65 0 66%, transparent 66%) no-repeat;
   background-size:calc(var(--el-underline,1) * 100%) 100%;
 }
@@ -138,10 +158,15 @@
   #editor-learning-loop .el-editor { width:100%; }
   #editor-learning-loop .el-record-label { padding:.34rem .58rem; }
   #editor-learning-loop .el-proposal { display:block; padding:.34rem .5rem .4rem; }
+  #editor-learning-loop .el-workbench { grid-template-columns:.7fr 1.3fr; gap:.4rem; }
+  #editor-learning-loop .el-workbench p { font-size:.76rem; line-height:1.2; }
+  #editor-learning-loop .el-versions { gap:.22rem; margin:.35rem 0 .06rem; }
+  #editor-learning-loop .el-versions img { height:46px; }
+  #editor-learning-loop .el-versions span { font-size:.68rem; }
   #editor-learning-loop .el-saved-ui { width:100%; }
   #editor-learning-loop .el-passage-head { margin:.22rem 0; gap:.2rem; }
   #editor-learning-loop .el-passage-head p { font-size:.71rem; }
-  #editor-learning-loop .el-quote { font-size:.96rem; line-height:1.28; padding-left:.42rem; }
+  #editor-learning-loop .el-inset-example { grid-template-columns:.74fr 1.26fr; gap:.32rem; font-size:.78rem; line-height:1.2; }
   #editor-learning-loop .el-mark { padding:.15rem .35rem; min-height:30px; font-size:.76rem; }
   #editor-learning-loop .el-mark svg { flex:none; width:12px; }
   #editor-learning-loop .el-return { padding:.3rem .58rem; font-size:.77rem; }
@@ -156,6 +181,9 @@
 }
 @container (max-width: 305px) {
   #editor-learning-loop .el-stage { font-size:.78rem; }
+  #editor-learning-loop .el-workbench { display:block; }
+  #editor-learning-loop .el-workbench .el-saved-ui { display:none; }
+  #editor-learning-loop .el-versions img { height:38px; }
   #editor-learning-loop .el-header { padding-block:.36rem; }
   #editor-learning-loop .el-workspace { padding-top:.4rem; gap:.44rem; }
   #editor-learning-loop .el-cycle { row-gap:.58rem; }
@@ -170,3 +198,10 @@
   #editor-learning-loop .el-cycle {row-gap:.4rem}
   #editor-learning-loop .el-workspace {padding-bottom:.42rem}
 }
+
+#transfer-example .nr-log-choice[hidden] { display:none; }
+#transfer-example .el-micrographs { display:block; width:100%; max-width:25rem; height:auto; }
+#transfer-example .el-micrographs rect { fill:#0c1923; stroke:#405866; }
+#transfer-example .el-grain { fill:#375247; stroke:#acc4ac; stroke-width:1.3; }
+#transfer-example .el-bar { fill:none; stroke:#efdaa9; stroke-width:2.5; }
+#transfer-example .el-micrographs text { fill:#e2d9c8; font:11px Outfit,system-ui,sans-serif; }

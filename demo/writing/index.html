@@ -43,10 +43,10 @@
           <p class="eyebrow">Writing App</p>
           <h1 id="film-title">One workspace for authors and agents</h1>
         </div>
-        <p>While the author writes, an agent can use permitted tools to trace a figure to its simulation or suggest new wording. The author chooses which edits to accept in the editor.</p>
+        <p>While the author writes, an agent can rework an argument, derive its cost law and redraw the accompanying figure. Watch a saved section rewrite, then the smaller change the author requested inside one panel.</p>
       </header>
       <div class="session-film">
-        <div class="film-media">
+        <div class="film-media" id="film-rewrite" data-rewrite-time="21">
           <video controls playsinline muted preload="none" poster="./media/session-tour-poster.webp" aria-label="The Writing App session film">
             <source src="./media/session-tour.mp4" type="video/mp4">
             <a href="./media/session-tour.mp4" download>Download the session film</a>
@@ -56,14 +56,14 @@
       </div>
       <div class="film-chapters" role="group" aria-label="Session film chapters" hidden>
         <button type="button" data-time="0" aria-current="true"><span>0:00</span><b>Editing workspace</b></button>
-        <button type="button" data-time="9"><span>0:09</span><b>Saved revisions</b></button>
-        <button type="button" data-time="22"><span>0:22</span><b>Edit and accept</b></button>
-        <button type="button" data-time="38"><span>0:38</span><b>Simulation to figure</b></button>
-        <button type="button" data-time="60"><span>1:00</span><b>Workflow</b></button>
-        <button type="button" data-time="68"><span>1:08</span><b>arXiv package</b></button>
+        <button type="button" data-time="9"><span>0:09</span><b>Argument and figure</b></button>
+        <button type="button" data-time="42"><span>0:42</span><b>A precise edit</b></button>
+        <button type="button" data-time="55"><span>0:55</span><b>Simulation to figure</b></button>
+        <button type="button" data-time="77"><span>1:17</span><b>Workflow</b></button>
+        <button type="button" data-time="85"><span>1:25</span><b>arXiv package</b></button>
       </div>
       <div class="film-links">
-        <a class="film-inspect" href="#session">Inspect the saved session <span aria-hidden="true">↓</span></a>
+        <a class="film-inspect" href="#revision-atlas">Inspect the section rewrite <span aria-hidden="true">↓</span></a>
         <a href="./media/session-tour.mp4" download>Download film</a>
         <a href="./media/session-tour.vtt" download>Timed captions</a>
         <button type="button" class="film-play-action film-resume" hidden>Resume film</button>
@@ -72,23 +72,86 @@
         <summary>Read the timed transcript</summary>
         <ol>
           <li><time datetime="PT0S">0:00</time><p>The manuscript is in the centre. Its saved conversation is on the right.</p></li>
-          <li><time datetime="PT4.5S">0:04.5</time><p>Gold marks the revised proof wording. The conversation stays open beside it.</p></li>
-          <li><time datetime="PT9S">0:09</time><p>One proposal covers more than 50 edits across eight TeX files.</p></li>
-          <li><time datetime="PT12.5S">0:12.5</time><p>The proposed proof points to Appendix A.</p></li>
-          <li><time datetime="PT15.5S">0:15.5</time><p>Before and proposed text sit side by side. The record links to the later revision.</p></li>
-          <li><time datetime="PT22S">0:22</time><p>This staged edit asks when each round costs the same.</p></li>
-          <li><time datetime="PT25.667S">0:25.667</time><p>The author makes the condition clear. Price each split by its area.</p></li>
-          <li><time datetime="PT30.958S">0:30.958</time><p>Accept saves the author’s wording. Undo is still available.</p></li>
-          <li><time datetime="PT38S">0:38</time><p>A separate run splits one square into 256 cells in four rounds.</p></li>
-          <li><time datetime="PT43S">0:43</time><p>The same 85 splits cost 4 by area and 15 by wall length, in first-split units.</p></li>
-          <li><time datetime="PT48S">0:48</time><p>The CSV saves each round’s totals.</p></li>
-          <li><time datetime="PT50.75S">0:50.75</time><p>The plot links back to the run.</p></li>
-          <li><time datetime="PT53.5S">0:53.5</time><p>The rebuilt manuscript contains the computed plot and its caption.</p></li>
-          <li><time datetime="PT60S">1:00</time><p>In this example, an independent review can send the wording back for revision.</p></li>
-          <li><time datetime="PT68S">1:08</time><p>The arXiv check rebuilds the saved draft from an 11-file package.</p></li>
-          <li><time datetime="PT74S">1:14</time><p>Both LaTeX passes succeed. All 21 pages reproduce the same text.</p></li>
+          <li><time datetime="PT4.5S">0:04.5</time><p>The editor keeps the draft and its evidence in view while the argument changes.</p></li>
+          <li><time datetime="PT9S">0:09</time><p>One proposal covers eight source files. Here it proposes moving a proof.</p></li>
+          <li><time datetime="PT14S">0:14</time><p>The main text keeps the proof outline. Appendix A carries the full derivation.</p></li>
+          <li><time datetime="PT21S">0:21</time><p>The rewrite ties the cost correction to the geometry of the cut.</p></li>
+          <li><time datetime="PT27S">0:27</time><p>The revised figure marks the dividing cuts and adds a cost exponent to each panel.</p></li>
+          <li><time datetime="PT34S">0:34</time><p>The added inset follows child 3 into the next register.</p></li>
+          <li><time datetime="PT38S">0:38</time><p>Price cuts by wall length. The exponent is α = 1 − 1/d.</p></li>
+          <li><time datetime="PT42S">0:42</time><p>A later edit adds two panel labels. Readers can tell each diagram’s job.</p></li>
+          <li><time datetime="PT49S">0:49</time><p>One panel compares contraction. The other follows a nested choice.</p></li>
+          <li><time datetime="PT55S">0:55</time><p>A separate run splits one square into 256 cells in four rounds.</p></li>
+          <li><time datetime="PT60S">1:00</time><p>The same 85 splits cost 4 by area and 15 by wall length, in first-split units.</p></li>
+          <li><time datetime="PT65S">1:05</time><p>The CSV saves each round’s totals.</p></li>
+          <li><time datetime="PT67.75S">1:07.75</time><p>The plot links back to the run.</p></li>
+          <li><time datetime="PT70.5S">1:10.5</time><p>The rebuilt manuscript contains the computed plot and its caption.</p></li>
+          <li><time datetime="PT77S">1:17</time><p>In this example, an independent review can send the wording back for revision.</p></li>
+          <li><time datetime="PT85S">1:25</time><p>The arXiv check rebuilds the saved draft from an 11-file package.</p></li>
+          <li><time datetime="PT91S">1:31</time><p>Both LaTeX passes succeed. All 21 pages reproduce the same text.</p></li>
         </ol>
       </details>
+    </section>
+
+    <section class="revision-atlas" id="revision-atlas" aria-labelledby="revision-title">
+      <header class="revision-intro">
+        <div><p class="eyebrow">Inside a saved rewrite</p><h2 id="revision-title">A section, a derivation, a figure.</h2></div>
+        <p>Gerard asked what the paper’s correction term meant geometrically. The resulting rewrite changed the argument in Section III, brought two figures into it and revised the discussion. A later request came down to one detail in Figure 4. <a href="#film-rewrite">Watch the rewrite at 0:21 ↗</a></p>
+      </header>
+      <nav class="revision-choices" aria-label="Inspect the manuscript revision">
+        <a id="rev-nav-argument" href="#revision-argument">The argument</a>
+        <a id="rev-nav-figure" href="#revision-figure">The drawing</a>
+        <a id="rev-nav-inset" href="#revision-inset">One fine adjustment</a>
+      </nav>
+
+      <article class="revision-sheet" id="revision-argument" aria-labelledby="rev-nav-argument">
+        <div class="revision-columns">
+          <section class="revision-column"><p class="revision-label">Earlier passage</p><h3>Where does each cell belong?</h3>
+            <blockquote>“The rank of a cell therefore specifies a quadrant, then a quadrant within that quadrant, and so on down to the cell itself.”</blockquote>
+            <p>Shrink the quadrants into the corners and the path still visits the cells in the same order. The draft described that hierarchy, then left open what each level of nesting costs.</p>
+          </section>
+          <section class="revision-column is-revised"><p class="revision-label">Applied rewrite</p><h3>What does it cost to split them?</h3>
+            <blockquote>“Refining <i>m</i> registers draws the motif <i>m</i> times, and each copy is narrower by a factor <i>m</i><sup>−1/2</sup> and so cheaper by <i>m</i><sup>−γ/2</sup>.”</blockquote>
+            <p>More cells must be split, but each split costs less as its cell shrinks. The rewrite works out which effect wins. Charging by area on a square makes them balance.</p>
+          </section>
+        </div>
+        <div class="revision-equation"><div class="edition-formula" aria-label="alpha equals one minus gamma divided by d"><i>α</i> = 1 − <span class="edition-fraction"><i>γ</i><i>d</i></span></div>
+          <p><strong>From geometry to the correction.</strong> Dimension <i>d</i> and the price of a split (width raised to <i>γ</i>) fix the exponent <i>α</i>. It determines <i>ε</i>, the difference between the combined register cost and the sum of the separate costs. When <i>γ</i> equals <i>d</i>, every round costs the same and the correction vanishes.</p>
+          <a data-source-region="cost-eq-36" href="/assets/docs/the-cost-of-complexity.pdf#page=9" target="_blank" rel="noopener">Read Eq. 36 in context ↗</a></div>
+        <details class="revision-reader"><summary>Read the two saved passages and the derivation</summary>
+          <p>Selected manuscript paragraphs from before and after the applied section rewrite. Equation, figure and reference numbers follow the linked manuscript.</p>
+          <div class="revision-columns">
+            <section class="revision-column"><h4>Before the rewrite</h4><p>Number the cells <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mi>…</mi><mo>,</mo><msup><mn>4</mn><mi>k</mi></msup></mrow></semantics></math> in the order the path visits them, and take this number as the rank of a symbol. The path finishes each quadrant before it enters the next, so ranks <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>4</mn><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msup></semantics></math> occupy the first quadrant, the next <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>4</mn><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msup></semantics></math> ranks the second, and so on, and the same holds inside every quadrant at every level. The rank of a cell therefore specifies a quadrant, then a quadrant within that quadrant, and so on down to the cell itself. Each quadrant is a register and the position along the path within it is the symbol, so the subdivision of Eq. (6) holds with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><msup><mn>4</mn><mi>j</mi></msup></mrow></semantics></math> at every level <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi></semantics></math> without reordering any rank. Figure 2(b,c) shows two organisations of sixteen symbols on the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow></semantics></math> path, and Fig. 3(a) shows the same square described at successive levels. Because cells that are close along the path are close in space, these curves are used to order data in spatial databases and large matrix computations [47]. For the present argument the curve supplies a concrete organisation in which each register is a symbol of the level above it. It specifies how the distinctions nest but not what each level of nesting costs, and that cost is what <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi></semantics></math> describes.</p>
+<p>The construction does not need the quadrants to fill the square. If each quadrant is shrunk by a factor <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mi>s</mi></mrow></semantics></math> with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>&gt;</mo><mn>2</mn></mrow></semantics></math> and moved into its corner, repeating the construction produces a self-similar Cantor dust of similarity dimension <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>=</mo><mo>log</mo><mn>4</mn><mi>/</mi><mo>log</mo><mi>s</mi></mrow></semantics></math>. The order in which the cells are visited is unchanged, and so is every rank and every register. Figure 4 shows this fractional Hilbert order for dimensions between two, the full square, and one. For <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>&lt;</mo><mn>2</mn></mrow></semantics></math> the set consists of disconnected pieces, so no continuous curve can fill it, and the path drawn in the figure only joins consecutive ranks. The ordering is all the register hierarchy uses, and it is unaffected. Space-filling curves on connected self-similar sets have been constructed systematically [48]. Since <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">g</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></semantics></math> depends only on the number of distinctions, the register budget is the same in every panel. The dimension matters only when distinctions are exchanged for spatial resolution. Resolving a linear scale <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi></semantics></math> requires <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>∼</mo><msup><mi>ε</mi><mrow><mo>−</mo><mi>D</mi></mrow></msup></mrow></semantics></math> distinctions, so under homogeneous refinement each <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>e</mi></semantics></math>-fold improvement in resolution costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mi>D</mi></mrow></semantics></math>, a non-integer multiple of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>κ</mi></semantics></math> whenever <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi></semantics></math> is not an integer.</p>
+</section>
+            <section class="revision-column is-revised"><h4>After the rewrite</h4><p>The path fixes how the distinctions nest. It leaves open the price of each repetition of the motif, and here the geometry has something to say, because every repetition acts on a smaller square. At depth <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi></semantics></math> the registers have width <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>=</mo><msup><mn>2</mn><mrow><mo>−</mo><mi>i</mi></mrow></msup></mrow></semantics></math>, in units of the original square, and there are <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mi>i</mi><mrow><mo>−</mo><mn>2</mn></mrow></msubsup><mo>=</mo><msup><mn>4</mn><mi>i</mi></msup></mrow></semantics></math> of them. Suppose that the price of dividing a register into four depends only on its width, in proportion to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>w</mi><mi>γ</mi></msup></semantics></math>. The exponent records the dimension of whatever the division consumes, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>0</mn></mrow></semantics></math> for a fixed charge per division, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>1</mn></mrow></semantics></math> for walls drawn across the register and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>2</mn></mrow></semantics></math> for a resource spread through its area. Refining from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><msup><mn>4</mn><mi>k</mi></msup></mrow></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>n</mi></mrow></semantics></math> distinctions, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><msup><mn>4</mn><mi>j</mi></msup></mrow></semantics></math>, passes through depths <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>+</mo><mi>j</mi><mo>−</mo><mn>1</mn></mrow></semantics></math>. Since <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>4</mn><mi>i</mi></msup><msubsup><mi>w</mi><mi>i</mi><mi>γ</mi></msubsup><mo>=</mo><msup><mn>4</mn><mrow><mi>i</mi><mi>α</mi></mrow></msup></mrow></semantics></math> with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>1</mn><mo>−</mo><mi>γ</mi><mi>/</mi><mn>2</mn></mrow></semantics></math>, <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Δ</mi><mi>m</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>Δ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>4</mn><mo stretchy="true" form="postfix">)</mo></mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mi>k</mi></mrow><mrow><mi>k</mi><mo>+</mo><mi>j</mi><mo>−</mo><mn>1</mn></mrow></munderover><msup><mn>4</mn><mi>i</mi></msup><msubsup><mi>w</mi><mi>i</mi><mi>γ</mi></msubsup><mo>=</mo><msup><mi>m</mi><mi>α</mi></msup><mspace width="0.167em"></mspace><msub><mi>Δ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow></semantics></math> and the composition correction of Eq. (13) follows at once, <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>m</mi><mo>,</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mo><msup><mi>m</mi><mi>α</mi></msup><mo>−</mo><mn>1</mn><mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mo><mspace width="0.167em"></mspace><msub><mi>Δ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow></semantics></math></p>
+<p>Equation (35) is a statement about copies. Refining <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi></semantics></math> registers draws the motif <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi></semantics></math> times, and each copy is narrower by a factor <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>m</mi><mrow><mo>−</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup></semantics></math> and so cheaper by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>m</mi><mrow><mo>−</mo><mi>γ</mi><mi>/</mi><mn>2</mn></mrow></msup></semantics></math>. The correction <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi></semantics></math> is what the multiplication of copies leaves over once their shrinking has been paid for. The two balance at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>2</mn></mrow></semantics></math>, when dividing a register costs in proportion to its area. The registers at every depth tile the same square, so the total area being divided never changes, and neither does the price of dividing it. This is homogeneous refinement, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>=</mo><mn>0</mn></mrow></semantics></math>. Walls are the natural case of a smaller exponent. A partition priced by the length of wall it draws has <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>1</mn></mrow></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow></semantics></math>. Its excess budget is proportional to the total wall length, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><msqrt><mi>N</mi></msqrt><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></semantics></math> in units of the side, so each new depth costs twice as much as the last and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>&gt;</mo><mn>0</mn></mrow></semantics></math>. A price falling faster than area gives <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>&lt;</mo><mn>0</mn></mrow></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>&lt;</mo><mn>0</mn></mrow></semantics></math>, and divisions become cheaper with depth until arbitrarily fine distinctions cost almost nothing. Figure 3(b) shows the three regimes on the same organisation.</p>
+</section>
+          </div>
+        </details>
+      </article>
+
+      <article class="revision-sheet" id="revision-figure" aria-labelledby="rev-nav-figure">
+        <div class="revision-plates">
+          <figure><figcaption><span class="revision-label">Before the applied rewrite</span><strong>The dimension under each drawing</strong></figcaption>
+            <picture><source media="(max-width: 540px)" srcset="./media/hilbert-before-rewrite-detail.webp"><img src="./media/hilbert-before-rewrite.webp" width="1360" height="320" alt="The saved drawing shows the same ranked path at five dimensions. Only the dimension appears beneath each panel." loading="lazy"></picture><small class="revision-plate-detail">Dimension 3/2</small></figure>
+          <figure><figcaption><span class="revision-label">After the applied rewrite</span><strong>The cuts and what they cost</strong></figcaption>
+            <picture><source media="(max-width: 540px)" srcset="./media/hilbert-after-rewrite-detail.webp"><img src="./media/hilbert-after-rewrite.webp" width="1360" height="353" alt="In the same five diagrams, dashed lines now mark the cuts, and a second row gives each cost exponent." loading="lazy"></picture><small class="revision-plate-detail">Dimension 3/2 · Cost exponent 1/3</small></figure>
+        </div>
+        <p class="revision-bottom"><span class="revision-mobile-detail">Both views show the middle panel enlarged. </span>The order of the 256 ranks stays fixed. At dimension 3/2, the revised drawing shows the dividing cuts and gives their cost exponent, 1/3, when each cut is priced by length. The image and the equation now answer the same question. <a data-source-region="cost-fig-4" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Inspect the final figure ↗</a></p>
+        <details class="revision-reader"><summary>See the first saved drawing and the finished figure</summary>
+          <div class="revision-plates"><figure><figcaption>First saved illustration · 64 ranks at four settings</figcaption><img src="./media/hilbert-early.webp" width="1149" height="318" loading="lazy" alt="The first four-panel illustration, labelled by the shrink factor and dimension."></figure>
+          <figure><figcaption>Final manuscript · 256 ranks and the nested address</figcaption><a data-source-region="cost-fig-4" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener"><img src="./media/hilbert-revised.webp" width="1264" height="670" loading="lazy" alt="The final Figure 4, with physical cuts in its five upper panels and an address sequence beneath them."></a></figure></div>
+        </details>
+      </article>
+
+      <article class="revision-sheet" id="revision-inset" aria-labelledby="rev-nav-inset">
+        <p class="revision-label">A targeted follow-up</p><h3>Show what happens to one selected cell.</h3>
+        <p>The author asked for an inset showing the recursive nesting. A later edit gave the two panels their own headings, identifying what changes with dimension in (a) and what stays the same in (b). Follow child 3 in the original figure. The highlighted cell becomes the whole register for the next choice. It looks the same size on the page because the drawing is magnified each time.</p>
+        <a class="revision-inset-art" data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener"><img src="./media/hilbert-inset.webp" width="1243" height="312" alt="The selected child 3 is enlarged twice. The three equal-size drawings represent physical widths 1, s to the minus one and s to the minus two." loading="lazy"></a>
+        <div class="revision-links"><a data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Enlarge the published inset ↗</a>
+          <a href="/eigenengine/networked-research/#judgement">How could another project use this correction? ↗</a></div>
+      </article>
     </section>
 
     <section class="session-tour" id="session" aria-labelledby="session-title">
