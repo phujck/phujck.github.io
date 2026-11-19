@@ -32,7 +32,7 @@ def archive_files():
     article = (SITE / "eigenengine/networked-research/index.html").read_text()
     match = re.search(r'<textarea id="nr-agent-prompt"[^>]*>(.*?)</textarea>', article, re.S)
     if not match:
-        raise ValueError("Missing public investigation prompt")
+        raise ValueError("Missing public explanation prompt")
     contents["ask-your-agent.txt"] = (unescape(match[1]).strip() + "\n").encode()
 
     # The small evidence download keeps the whole record locally readable.
@@ -45,7 +45,7 @@ def archive_files():
     guide = guide.replace('href="../../docs/', 'href="assets/docs/')
     guide = guide.replace('href="../cost-project-record.json"', 'href="assets/data/cost-project-record.json"')
     guide = guide.replace('href="./evidence.zip" download>Download the evidence ZIP ↓',
-                          'href="./ask-your-agent.txt">Read the investigation prompt')
+                          'href="./ask-your-agent.txt">Read the explanation prompt')
     contents["index.html"] = guide.encode()
     contents["README.txt"] = (
         "Networked Research source records\n\n"
@@ -54,7 +54,7 @@ def archive_files():
         "Relative file URLs in the manifest resolve beside index.json. For an absolute URL\n"
         "on gmccaul.co.uk, use the corresponding assets/ path in this archive.\n"
         "SHA256SUMS.txt lists the checksums of the archive members.\n"
-        "ask-your-agent.txt contains the public investigation prompt.\n"
+        "ask-your-agent.txt contains the public explanation prompt.\n"
     ).encode()
     contents["SHA256SUMS.txt"] = "".join(
         f"{hashlib.sha256(data).hexdigest()}  {name}\n" for name, data in sorted(contents.items())

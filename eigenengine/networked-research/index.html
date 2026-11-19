@@ -57,7 +57,7 @@
           <figcaption>The Kalmár manuscript cites a figure in <em>The Cost of Complexity</em>. Dashed routes show where another project could connect.</figcaption>
         </figure>
       </div>
-      <nav class="nr-width nr-index" aria-label="In this article"><a href="#verify">Check the records ↓</a><a href="#judgement">The editor’s learning loop ↓</a><a href="#query-diffusion">Follow a question ↓</a><a href="#linked-query">Check a real citation ↓</a></nav>
+      <nav class="nr-width nr-index" aria-label="In this article"><a href="#verify">Explore with your agent ↓</a><a href="#judgement">The editor’s learning loop ↓</a><a href="#query-diffusion">Follow a question ↓</a><a href="#linked-query">Check a real citation ↓</a></nav>
     </header>
 
     <section id="verify" class="nr-width nr-verify" aria-labelledby="nr-verify-title">
@@ -67,22 +67,18 @@
           <figure><img src="/demo/writing/media/hilbert-after-rewrite-detail.webp" alt="The same panel with dividing cuts and their cost exponent"><figcaption>Applied change</figcaption></figure>
         </a>
         <div class="nr-verify-copy">
-          <h2 id="nr-verify-title">Ask your agent to check the work</h2>
-          <p>What changed between these drawings, and why? Give your agent the manuscript sources, the linked project records and the simulation inputs. It can reconstruct the edit, follow the citation and tell you what it finds.</p>
+          <h2 id="nr-verify-title">Ask your agent to explain EigenEngine</h2>
+          <p>What would it be like to write a paper here with an agent? Start a conversation about the system. The guide includes short passages from the editing history, the published figure and a simulation record that an agent can read as ordinary text.</p>
           <div class="nr-verify-actions"><button id="nr-copy-prompt" type="button" hidden>Copy the prompt</button>
-            <a href="/assets/data/networked-research/">Browse the source records ↗</a><a href="/assets/data/networked-research/evidence.zip" download>Evidence ZIP ↓</a>
+            <a href="/assets/data/networked-research/">Read the guide and record excerpts ↗</a>
           </div>
         </div>
         <details class="nr-prompt-disclosure" id="nr-prompt-details"><summary>Read or select the prompt</summary>
-          <textarea id="nr-agent-prompt" aria-label="Evidence prompt to paste into your agent" readonly rows="8">Investigate Networked Research at https://gmccaul.co.uk/eigenengine/networked-research/ using the source packet at https://gmccaul.co.uk/assets/data/networked-research/. The packet can be read on its own. If you cannot open its files, ask me to attach the evidence ZIP.
+          <textarea id="nr-agent-prompt" aria-label="Prompt to explain EigenEngine using the readable records" readonly rows="8">Explain EigenEngine in plain language. Imagine I’m considering it for my next paper. While I revise a claim, how could an agent find the relevant evidence, propose a change and tell whether a figure still reflects its inputs? What becomes possible when another project can follow one of those links?
 
-Start with Figure 4 of The Cost of Complexity. Compare the saved TeX before and after the rewrite. What did the author want the reader to understand? Find the mathematical step and its effect on the drawing. Use the recorded replacements to reconstruct the inset, then quote a line changed in the later heading edit. What could you learn only because the earlier version survived?
+Read the guide at https://gmccaul.co.uk/assets/data/networked-research/. Use one detail from the record excerpts on that page to see whether your explanation holds up. If the versions differ, say what the difference means. In a few conversational paragraphs, show me what the working history tells us that the finished paper alone cannot. Explain what a later project could learn from an editor’s decision and what it would take to demonstrate that. Link to the passage you used.
 
-Enter through the Kalmár project next. Follow its citation, check the target revision and its SHA-256 if you can, and recover the two addresses of symbol 11. What can you answer with only the first project in scope, and what becomes possible when you open the second? For the separate subdivision run, work out one subdivision round yourself, then check the area and wall-length totals against the saved table. Use the editing record to explain what a proposal count tells us about the work.
-
-Now take the author’s correction into a different project comparing two microscope images. What would you carry forward, and how would you test whether it helped? Compare this whole sequence with the closest existing research system you can find in primary documentation. Which steps already exist there? Pinpoint what is new in the way the steps connect, if the records support it. What could that change at a researcher’s desk?
-
-Bring me back the most revealing detail you found, with links to the records you inspected. Distinguish what you checked, what the site reports and what remains to be demonstrated. Finish by asking me about a correction I have had to make twice, and suggest how we could test it on a new case.</textarea>
+If the page is unavailable, explain from this supplied context and say so. EigenEngine lets authors and agents work on shared, versioned records with different permissions. A question can follow links from a claim to its evidence. In a recorded check, changing the table used to draw a figure flagged it for review. Reusing an author’s judgement on a new project is a proposed experiment.</textarea>
         </details>
         <span id="nr-copy-status" class="nr-copy-status" role="status"></span>
       </div>
