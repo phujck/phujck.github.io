@@ -66,7 +66,7 @@
   const sequence = [0, 1, 2, 3, 2, 1];
   const stepTime = 1660;
   let clock = 0, travel = .43, last = null, handle = null;
-  let visible = true, paused = false;
+  let visible = true, paused = false, previewOpen = false;
   let paintedCurve = null, paintedGuide = -1;
 
   function draw(dt) {
@@ -117,7 +117,7 @@
     handle = requestAnimationFrame(frame);
   }
   function update() {
-    const running = visible && !paused && !document.hidden;
+    const running = visible && !paused && !document.hidden && !previewOpen;
     if (running && handle === null) { last = null; handle = requestAnimationFrame(frame); }
     if (!running && handle !== null) { cancelAnimationFrame(handle); handle = null; last = null; }
     const label = (paused ? "Resume" : "Pause") + " the animated Hilbert construction";
@@ -128,6 +128,10 @@
   tracer.removeAttribute("visibility");
   art.addEventListener("click", () => { paused = !paused; update(); });
   document.addEventListener("visibilitychange", update);
+  document.addEventListener("eigenengine-source-preview", ({ detail }) => {
+    previewOpen = Boolean(detail?.open);
+    update();
+  });
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; update(); }).observe(art);
   }

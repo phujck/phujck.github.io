@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#0a0e1a">
-  <meta name="description" content="Explore the 18 November 2026 editing session for The Cost of Complexity in the EigenEngine Writing App.">
+  <meta name="description" content="Explore the saved manuscript session for The Cost of Complexity in the EigenEngine Writing App.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Writing App walkthrough · EigenEngine">
   <meta property="og:description" content="See the manuscript, revision history and arXiv export for The Cost of Complexity in the EigenEngine Writing App.">
@@ -21,6 +21,9 @@
   <link rel="stylesheet" href="./walkthrough.css">
   <script src="/assets/js/eigenengine-old-links.js"></script>
   <script src="./walkthrough.js" defer></script>
+  <link rel="stylesheet" href="/assets/css/eigenengine-source-preview.css">
+  <script defer src="/assets/js/eigenengine-source-preview.js"></script>
+  <script defer src="/assets/js/eigenengine-reading-return.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#session-film">Skip to the session film</a>
@@ -29,7 +32,7 @@
       <a class="return-link" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
       <nav aria-label="About this walkthrough">
         <a href="/demo/writing/simulation/">Simulation to figure</a>
-        <a href="/demo/view/?asset=cost-paper&amp;page=10">Read the paper</a>
+        <a data-source-region="cost-fig-3" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">Read the paper</a>
       </nav>
     </div>
   </header>
@@ -37,7 +40,7 @@
     <section class="session-opening" id="session-film" aria-labelledby="film-title">
       <header class="session-intro">
         <div>
-          <p class="eyebrow">Writing App · 18 November 2026</p>
+          <p class="eyebrow">Writing App</p>
           <h1 id="film-title">Inside the Writing App</h1>
         </div>
         <p>Follow the saved session for <em>The Cost of Complexity</em>, with separate worked examples of an edit and a numerical figure.</p>
@@ -46,15 +49,9 @@
         <div class="film-media">
           <video controls playsinline muted preload="none" poster="./media/session-tour-poster.webp" aria-label="The Writing App session film">
             <source src="./media/session-tour.mp4" type="video/mp4">
-            <track kind="captions" srclang="en" label="English" src="./media/session-tour.vtt">
             <a href="./media/session-tour.mp4" download>Download the session film</a>
           </video>
           <button type="button" class="film-play-action film-play" hidden>Play film</button>
-        </div>
-        <div class="film-caption">
-          <p class="film-caption-title">Editing workspace</p>
-          <p class="film-caption-text">The Cost of Complexity asks what it costs to distinguish more outcomes.</p>
-          <button type="button" class="film-play-action film-resume" hidden>Resume film</button>
         </div>
       </div>
       <div class="film-chapters" role="group" aria-label="Session film chapters" hidden>
@@ -69,12 +66,34 @@
         <a class="film-inspect" href="#session">Inspect the saved session <span aria-hidden="true">↓</span></a>
         <a href="./media/session-tour.mp4" download>Download film</a>
         <a href="./media/session-tour.vtt" download>Timed captions</a>
+        <button type="button" class="film-play-action film-resume" hidden>Resume film</button>
       </div>
+      <details class="film-transcript" id="session-film-transcript">
+        <summary>Read the timed transcript</summary>
+        <ol>
+          <li><time datetime="PT0S">0:00</time><p>The manuscript is in the centre. Its saved conversation is on the right.</p></li>
+          <li><time datetime="PT4.5S">0:04.5</time><p>Gold marks the revised proof wording. The conversation stays open beside it.</p></li>
+          <li><time datetime="PT9S">0:09</time><p>One proposal covers more than 50 edits across eight TeX files.</p></li>
+          <li><time datetime="PT12.5S">0:12.5</time><p>The proposed proof points to Appendix A.</p></li>
+          <li><time datetime="PT15.5S">0:15.5</time><p>Before and proposed text sit side by side. The record links to the later revision.</p></li>
+          <li><time datetime="PT22S">0:22</time><p>This staged edit asks when each round costs the same.</p></li>
+          <li><time datetime="PT25.667S">0:25.667</time><p>The author makes the condition clear. Price each split by its area.</p></li>
+          <li><time datetime="PT30.958S">0:30.958</time><p>Accept saves the author’s wording. Undo is still available.</p></li>
+          <li><time datetime="PT38S">0:38</time><p>A separate run splits one square into 256 cells in four rounds.</p></li>
+          <li><time datetime="PT43S">0:43</time><p>The same 85 splits cost 4 by area and 15 by wall length, in first-split units.</p></li>
+          <li><time datetime="PT48S">0:48</time><p>The CSV saves each round’s totals.</p></li>
+          <li><time datetime="PT50.75S">0:50.75</time><p>The plot links back to the run.</p></li>
+          <li><time datetime="PT53.5S">0:53.5</time><p>The rebuilt manuscript contains the computed plot and its caption.</p></li>
+          <li><time datetime="PT60S">1:00</time><p>In this example, an independent review can send the wording back for revision.</p></li>
+          <li><time datetime="PT68S">1:08</time><p>The arXiv check rebuilds the saved draft from an 11-file package.</p></li>
+          <li><time datetime="PT74S">1:14</time><p>Both LaTeX passes succeed. All 21 pages reproduce the same text.</p></li>
+        </ol>
+      </details>
     </section>
 
     <section class="session-tour" id="session" aria-labelledby="session-title">
       <header class="tour-header">
-        <h2 id="session-title">The 18 November session</h2>
+        <h2 id="session-title">Saved manuscript session</h2>
         <div class="tour-controls" hidden>
           <button type="button" class="tour-play">Play tour</button>
           <button type="button" class="tour-previous" aria-label="Previous stop">Previous</button>
@@ -83,7 +102,7 @@
       </header>
       <nav class="tour-nav" aria-label="Editing session stops">
         <a href="#session-overview">Workspace</a>
-        <a href="#session-morning">Morning proposal</a>
+        <a href="#session-morning">Revision proposal</a>
         <a href="#session-changes">Saved changes</a>
         <a href="#session-passage">Manuscript edit</a>
         <a href="#session-history">File history</a>
@@ -98,9 +117,9 @@
           <figcaption>
             <div>
               <h3 id="session-overview-title">The editing workspace</h3>
-              <p>The manuscript outline, working paper and conversation share one screen. These views reopen the saved editing record from 18 November.</p>
+              <p>The manuscript outline, working paper and conversation share one screen. These views reopen the saved editing record.</p>
             </div>
-            <div class="tour-frame-actions"><a href="/demo/view/?asset=full-project">Open screenshot</a></div>
+            <div class="tour-frame-actions"><a data-material-viewer="/demo/view/?asset=full-project" href="/demo/writing/media/full-project.webp" target="_blank" rel="noopener">Open screenshot</a></div>
           </figcaption>
         </figure>
       </article>
@@ -108,15 +127,15 @@
       <article class="tour-stop" id="session-morning" aria-labelledby="session-morning-title" data-region=".581,.384,.377,.146">
         <figure class="tour-frame">
           <div class="tour-window">
-            <div class="tour-scene"><img src="./media/morning-comparison.webp" width="1600" height="900" fetchpriority="low" alt="The saved morning proposal compares a full proof in TeX with an outline that refers readers to Appendix A."></div>
+            <div class="tour-scene"><img src="./media/morning-comparison.webp" width="1600" height="900" fetchpriority="low" alt="The saved proposal compares a full proof in TeX with an outline that refers readers to Appendix A."></div>
           </div>
           <figcaption>
             <div>
               <h3 id="session-morning-title">More than 50 proposed edits</h3>
-              <p>The proposal saved at 10:25 covers eight TeX files. In this comparison, Eigen proposes giving the idea of the proof in the main text and referring readers to Appendix A for the details.</p>
-              <p class="tour-related"><a href="/demo/view/?asset=morning-versions">Open the versions list</a></p>
+              <p>The proposal covers eight TeX files. In this comparison, Eigen proposes giving the idea of the proof in the main text and referring readers to Appendix A for the details.</p>
+              <p class="tour-related"><a data-material-viewer="/demo/view/?asset=morning-versions" href="/demo/writing/media/morning-versions.webp" target="_blank" rel="noopener">Open the versions list</a></p>
             </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a href="/demo/view/?asset=morning-comparison">Open screenshot</a></div>
+            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=morning-comparison" href="/demo/writing/media/morning-comparison.webp" target="_blank" rel="noopener">Open screenshot</a></div>
           </figcaption>
         </figure>
       </article>
@@ -129,9 +148,9 @@
           <figcaption>
             <div>
               <h3 id="session-changes-title">Saved project changes</h3>
-              <p>The 18:50 turn has 34 saved project changes. The list includes a task and a revision proposal, each with links to inspect the action and its receipt.</p>
+              <p>One saved turn has 34 project changes. The list includes a task and a revision proposal, each with links to inspect the action and its receipt.</p>
             </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a href="/demo/view/?asset=full-changes">Open screenshot</a></div>
+            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=full-changes" href="/demo/writing/media/full-changes.webp" target="_blank" rel="noopener">Open screenshot</a></div>
           </figcaption>
         </figure>
       </article>
@@ -146,7 +165,7 @@
               <h3 id="session-passage-title">A changed passage</h3>
               <p>One of nine recorded edits proposes a note distinguishing the free-energy principle’s bound on sensory surprisal from the paper’s comparison at fixed rank cost. The app keeps the original proposal and points to the later revision that resolved it.</p>
             </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a href="/demo/view/?asset=full-passage">Open screenshot</a></div>
+            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=full-passage" href="/demo/writing/media/full-passage.webp" target="_blank" rel="noopener">Open screenshot</a></div>
           </figcaption>
         </figure>
       </article>
@@ -154,14 +173,14 @@
       <article class="tour-stop" id="session-history" aria-labelledby="session-history-title" data-region=".199,.433,.741,.444" data-mobile-region=".203,.438,.267,.207">
         <figure class="tour-frame">
           <div class="tour-window">
-            <div class="tour-scene"><img src="./media/full-history.webp" width="1600" height="900" fetchpriority="low" alt="The Writing App’s file history lists saved author changes to the section source on 18 November 2026."></div>
+            <div class="tour-scene"><img src="./media/full-history.webp" width="1600" height="900" fetchpriority="low" alt="The Writing App’s file history lists saved author changes to the section source."></div>
           </div>
           <figcaption>
             <div>
               <h3 id="session-history-title">The source file’s history</h3>
-              <p>The same section has its own activity record. It shows the author saving changes at 19:50 and again at 22:02.</p>
+              <p>The same section has its own activity record. It shows two versions saved by the author.</p>
             </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a href="/demo/view/?asset=full-history">Open screenshot</a></div>
+            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=full-history" href="/demo/writing/media/full-history.webp" target="_blank" rel="noopener">Open screenshot</a></div>
           </figcaption>
         </figure>
       </article>
@@ -174,9 +193,9 @@
           <figcaption>
             <div>
               <h3 id="session-arxiv-title">Building the arXiv package</h3>
-              <p>The 18 November package reproduced the text on all 21 pages. This capture shows the app repeating the check on the saved manuscript. It compiled the 11-file package in an empty folder, then offered the ZIP and PDF.</p>
+              <p>The app repeats the check on the saved manuscript. It compiles the 11-file package in an empty folder, reproduces the text on all 21 pages, then offers the ZIP and PDF.</p>
             </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a href="/demo/view/?asset=full-arxiv">Open screenshot</a></div>
+            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=full-arxiv" href="/demo/writing/media/full-arxiv.webp" target="_blank" rel="noopener">Open screenshot</a></div>
           </figcaption>
         </figure>
       </article>
@@ -241,7 +260,7 @@
           <h2 id="manuscript-title">Open the manuscript</h2>
           <p class="summary">This copy contains the section on the geometry of refinement. The draft sentence leaves out the assumption that makes the cost equal at each round.</p>
           <figure class="capture" data-focus-x=".31" data-focus-y=".47">
-            <a href="/demo/view/?asset=manuscript">
+            <a data-material-viewer="/demo/view/?asset=manuscript" href="/demo/writing/media/manuscript.webp" target="_blank" rel="noopener">
               <img src="./media/manuscript.webp" width="1440" height="900" alt="The Writing App shows the manuscript excerpt with the draft wording about equal refinement costs.">
               <span class="capture-link">Enlarge screen</span>
             </a>
@@ -253,7 +272,7 @@
           <h2 id="proposal-title">Read the proposal</h2>
           <p class="summary">Switch from Mine to Changes. The app highlights the added condition in the sentence it replaces.</p>
           <figure class="capture" data-focus-x=".31" data-focus-y=".47">
-            <a href="/demo/view/?asset=proposal-changes">
+            <a data-material-viewer="/demo/view/?asset=proposal-changes" href="/demo/writing/media/proposal-changes.webp" target="_blank" rel="noopener">
               <img src="./media/proposal-changes.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App proposal panel shows the draft and a revision that makes the area assumption explicit.">
               <span class="capture-link">Enlarge screen</span>
             </a>
@@ -265,7 +284,7 @@
           <h2 id="edit-title">Edit its wording</h2>
           <p class="summary">Select Edit to specify how the cost of an individual split depends on its area.</p>
           <figure class="capture" data-focus-x=".32" data-focus-y=".48">
-            <a href="/demo/view/?asset=proposal-edit">
+            <a data-material-viewer="/demo/view/?asset=proposal-edit" href="/demo/writing/media/proposal-edit.webp" target="_blank" rel="noopener">
               <img src="./media/proposal-edit.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App opens an editable proposal field containing the author's replacement sentence.">
               <span class="capture-link">Enlarge screen</span>
             </a>
@@ -277,7 +296,7 @@
           <h2 id="accept-title">Accept the edit</h2>
           <p class="summary">Accepting applies the edited sentence to the working copy.</p>
           <figure class="capture" data-focus-x=".33" data-focus-y=".53">
-            <a href="/demo/view/?asset=proposal-accepted">
+            <a data-material-viewer="/demo/view/?asset=proposal-accepted" href="/demo/writing/media/proposal-accepted.webp" target="_blank" rel="noopener">
               <img src="./media/proposal-accepted.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App shows the manuscript after accepting the author's revised sentence.">
               <span class="capture-link">Enlarge screen</span>
             </a>
@@ -289,7 +308,7 @@
           <h2 id="undo-title">Undo the edit</h2>
           <p class="summary">Undo restores the draft sentence and reopens the proposal for review.</p>
           <figure class="capture" data-focus-x=".32" data-focus-y=".49">
-            <a href="/demo/view/?asset=proposal-undo">
+            <a data-material-viewer="/demo/view/?asset=proposal-undo" href="/demo/writing/media/proposal-undo.webp" target="_blank" rel="noopener">
               <img src="./media/proposal-undo.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App shows the original illustrative draft sentence after Undo.">
               <span class="capture-link">Enlarge screen</span>
             </a>
@@ -300,7 +319,7 @@
           <h2 id="workflow-title">Workflow</h2>
           <p class="summary">This workflow design pairs a drafting step with independent evidence review and includes a route back for revision.</p>
           <figure class="capture" data-focus-x=".22" data-focus-y=".63">
-            <a href="/demo/view/?asset=workflow">
+            <a data-material-viewer="/demo/view/?asset=workflow" href="/demo/writing/media/workflow.webp" target="_blank" rel="noopener">
               <img src="./media/workflow.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App's workflow view for the manuscript excerpt.">
               <span class="capture-link">Enlarge screen</span>
             </a>
@@ -311,7 +330,7 @@
           <h2 id="reader-plan-title">Reader plan</h2>
           <p class="summary">The reader plan records what the reader already knows and what the next section should help them understand.</p>
           <figure class="capture" data-focus-x=".57" data-focus-y=".47">
-            <a href="/demo/view/?asset=reader-plan">
+            <a data-material-viewer="/demo/view/?asset=reader-plan" href="/demo/writing/media/reader-plan.webp" target="_blank" rel="noopener">
               <img src="./media/reader-plan.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App's reader plan for the manuscript excerpt.">
               <span class="capture-link">Enlarge screen</span>
             </a>
@@ -322,11 +341,11 @@
           <h2 id="figure-title">How the figure gets its numbers</h2>
           <p class="summary">The plotted points come from a simulation of 85 square splits. In the figure editor, the CSV supplies the two series and <strong>Linked results</strong> leads back to the calculation. <a href="/demo/writing/simulation/">Trace the run, table and manuscript placement.</a></p>
           <figure class="capture" data-focus-x=".44" data-focus-y=".71">
-            <a href="/demo/view/?asset=simulation-binding">
+            <a data-material-viewer="/demo/view/?asset=simulation-binding" href="/demo/writing/media/simulation-binding.webp" target="_blank" rel="noopener">
               <img src="./media/simulation-binding.webp" width="1440" height="900" fetchpriority="low" alt="The app shows the plotted area and wall-length costs, the linked subdivision result, and Place in manuscript.">
               <span class="capture-link">Enlarge screen</span>
             </a>
-            <figcaption>This figure was computed for the walkthrough. <a href="/demo/view/?asset=figure">Inspect the original paper figure used in the editing example.</a></figcaption>
+            <figcaption>This figure was computed for the walkthrough. <a data-material-viewer="/demo/view/?asset=figure" href="/demo/writing/media/figure.webp" target="_blank" rel="noopener">Inspect the original paper figure used in the editing example.</a></figcaption>
           </figure>
         </article>
 
@@ -334,7 +353,7 @@
           <h2 id="reading-options-title">Reading options</h2>
           <p class="summary">The app lets the author adjust the reading width, show their changes and inspect open points.</p>
           <figure class="capture" data-focus-x=".49" data-focus-y=".37">
-            <a href="/demo/view/?asset=reading-options">
+            <a data-material-viewer="/demo/view/?asset=reading-options" href="/demo/writing/media/reading-options.webp" target="_blank" rel="noopener">
               <img src="./media/reading-options.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App shows its reading options for the manuscript.">
               <span class="capture-link">Enlarge screen</span>
             </a>
@@ -343,9 +362,9 @@
 
         <article class="walk-step" id="published-figure" aria-labelledby="published-figure-title">
           <h2 id="published-figure-title">Figure in the PDF</h2>
-          <p class="summary">Compare the working view with <a href="/demo/view/?asset=cost-paper&amp;page=10">Figure 3 in the released paper</a>. Its caption states the pricing assumption for each curve.</p>
+          <p class="summary">Compare the working view with <a data-source-region="cost-fig-3" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">Figure 3 in the released paper</a>. Its caption states the pricing assumption for each curve.</p>
           <figure class="capture" data-focus-x=".31" data-focus-y=".62">
-            <a href="/demo/view/?asset=published-figure">
+            <a data-material-viewer="/demo/view/?asset=published-figure" href="/demo/writing/media/published-figure.webp" target="_blank" rel="noopener">
               <img src="./media/published-figure.webp" width="1554" height="771" fetchpriority="low" alt="Figure 3 from the published paper. Successive Hilbert subdivisions sit above a plot showing the fastest budget growth for wall length, steady increases for area and diminishing increases for cubic pricing.">
               <span class="capture-link">Enlarge figure</span>
             </a>
@@ -362,29 +381,29 @@
       <div class="video-copy">
         <p class="eyebrow">Screen recording</p>
         <h2 id="video-title">Watch the edit</h2>
-        <p>Follow the proposal, author edit, accept and undo in one recording. English captions are available in the video controls.</p>
-        <details>
-          <summary>Read the steps</summary>
+        <p>Follow the proposal, author edit, accept and undo in one recording.</p>
+        <details class="film-transcript" id="edit-film-transcript">
+          <summary>Read the timed transcript</summary>
           <ol>
-            <li>Open the proposal to add the missing assumption about area.</li>
-            <li>Edit the proposal to specify that a split’s cost is proportional to its area.</li>
-            <li>Accept the proposal and check the revised sentence in the manuscript.</li>
-            <li>Undo the edit and check the draft sentence is restored.</li>
+            <li><time datetime="PT0S">0:00</time><p>The draft says the cost stays constant. It leaves out the pricing condition.</p></li>
+            <li><time datetime="PT3.28S">0:03.28</time><p>Green marks the missing condition in the staged proposal.</p></li>
+            <li><time datetime="PT7.8S">0:07.8</time><p>The author rewrites the added phrase. The saved draft stays untouched.</p></li>
+            <li><time datetime="PT13.08S">0:13.08</time><p>Accept saves the author’s wording. Undo is still available.</p></li>
+            <li><time datetime="PT17.72S">0:17.72</time><p>Undo restores the earlier sentence and reopens the proposal.</p></li>
           </ol>
         </details>
-        <p class="video-view"><a href="/demo/view/?asset=proposal-walkthrough">Open recording in viewer</a></p>
+        <p class="video-view"><a data-material-viewer="/demo/view/?asset=proposal-walkthrough" href="/demo/writing/media/proposal-walkthrough.mp4" target="_blank" rel="noopener">Open recording in viewer</a> · <a href="./media/proposal-walkthrough.vtt" download>Timed captions</a></p>
       </div>
       <div class="video-frame">
         <video controls playsinline preload="none" poster="./media/proposal-changes.webp" aria-label="Recording of the proposal, author edit, accept and undo">
           <source src="./media/proposal-walkthrough.mp4" type="video/mp4">
-          <track kind="captions" srclang="en" label="English" src="./media/proposal-walkthrough.vtt" default>
           <a href="./media/proposal-walkthrough.mp4" download>Download the recording</a>
         </video>
       </div>
     </section>
 
     <footer class="sources">
-      <a href="/demo/view/?asset=cost-paper&amp;page=10">
+      <a data-source-region="cost-fig-3" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">
         <span>The source paper</span>
         <strong>The Cost of Complexity</strong>
         <small>Gerard McCaul · Figure 3 in the PDF</small>

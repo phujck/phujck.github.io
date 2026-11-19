@@ -3,7 +3,7 @@
   const images = {
     "full-project": ["The editing workspace", "session-overview"],
     "morning-versions": ["The saved proposal versions", "session-morning"],
-    "morning-comparison": ["The morning proof edit", "session-morning"],
+    "morning-comparison": ["The proposed proof edit", "session-morning"],
     "full-changes": ["Saved project changes", "session-changes"],
     "full-passage": ["A changed passage", "session-passage"],
     "full-history": ["The source file’s history", "session-history"],
@@ -30,8 +30,8 @@
   const assets = Object.assign(Object.create(null), window.eigenExampleViews || {}, {
     "cost-paper": {type: "pdf", title: "The Cost of Complexity", src: "/assets/docs/the-cost-of-complexity.pdf"},
     "kalmar-paper": {type: "pdf", title: "Physical origins of the Kalmár constant", src: "/assets/docs/physical-origins-of-the-kalmar-constant.pdf"},
-    "session-tour": {type: "video", title: "The 18 November editing session", src: "../writing/media/session-tour.mp4", stop:"session-film"},
-    "proposal-walkthrough": {type: "video", title: "One edit up close", src: "../writing/media/proposal-walkthrough.mp4", stop:"video"}
+    "session-tour": {type: "video", title: "Saved manuscript session", src: "../writing/media/session-tour.mp4", poster: "session-tour-poster.webp", stop: "session-film", transcript: "session-film-transcript"},
+    "proposal-walkthrough": {type: "video", title: "One edit up close", src: "../writing/media/proposal-walkthrough.mp4", poster: "proposal-changes.webp", stop: "video", transcript: "edit-film-transcript"}
   });
   for (const [id, [title, stop]] of Object.entries(images)) {
     assets[id] = {type: "image", title, stop, src: "../writing/media/" + id + ".webp"};
@@ -43,12 +43,23 @@
   document.getElementById("title").textContent = item.title;
   const holder = document.getElementById("material");
   const related = document.getElementById("related");
-  if (item.stop) {
+  if (item.stop && !document.querySelector("[data-reading-return]")) {
     related.href = item.stop.startsWith("simulation") ? "/demo/writing/simulation/#" + item.stop : "../writing/#" + item.stop;
     related.textContent = item.stop.startsWith("simulation") ? "Return to the simulation" : "Return to walkthrough";
     related.hidden = false;
   }
+  if (!document.querySelector("[data-reading-return]") && ["cost-paper", "kalmar-paper"].includes(params.get("asset"))) {
+    const context = document.createElement("a");
+    const cost = params.get("asset") === "cost-paper";
+    context.className = "ee-reading-return";
+    context.href = cost ? "/eigenengine/cost-of-complexity/" : "/eigenengine/kalmar-constant/";
+    context.textContent = cost ? "Explore the Cost of Complexity article" : "Explore the Kalmár article";
+    document.querySelector(".return-home").after(context);
+  } else if (!document.querySelector("[data-reading-return]") && item.type === "page") {
+    document.querySelector(".return-home").href = "/eigenengine.html#see";
+  }
   let element;
+  let textOptions;
   if (item.type === "image") {
     element = new Image();
     element.alt = item.title;
@@ -80,9 +91,18 @@
     element.playsInline = true;
     element.preload = "metadata";
     element.src = item.src;
-    const track = document.createElement("track");
-    Object.assign(track, {kind:"captions", srclang:"en", label:"English", src:item.src.replace(/\.mp4$/, ".vtt")});
-    element.append(track);
+    element.poster = "../writing/media/" + item.poster;
+    element.setAttribute("aria-label", item.title);
+    textOptions = document.createElement("div");
+    textOptions.className = "media-text-options";
+    const transcript = document.createElement("a");
+    transcript.href = "../writing/#" + item.transcript;
+    transcript.textContent = "Read the timed transcript";
+    const captions = document.createElement("a");
+    captions.href = item.src.replace(/\.mp4$/, ".vtt");
+    captions.download = "";
+    captions.textContent = "Download captions";
+    textOptions.append(transcript, captions);
   } else {
     element = document.createElement("iframe");
     element.title = item.title;
@@ -108,4 +128,5 @@
     }
   }
   holder.replaceChildren(element);
+  if (textOptions) holder.append(textOptions);
 })();

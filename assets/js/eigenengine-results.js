@@ -78,6 +78,9 @@
   let introVisible = false;
   let introPending = true;
   let introTimer;
+  let introDue;
+  let introRemaining = 850;
+  let previewOpen = false;
   let rule = rules[0];
 
   function svg(parent, name, attrs, label) {
@@ -358,7 +361,7 @@
   }
 
   function scheduleAnimation() {
-    if (animationFrame || document.hidden || !onscreen || playback === "paused") return;
+    if (animationFrame || document.hidden || !onscreen || previewOpen || playback === "paused") return;
     if (progress === 1 && playback !== "playing") {
       frameTime = undefined;
       return;
@@ -381,19 +384,31 @@
     scheduleAnimation();
   }
 
-  function scheduleIntroduction() {
+  function suspendIntroduction() {
+    if (introTimer === undefined) return;
+    introRemaining = Math.max(0, introDue - performance.now());
     window.clearTimeout(introTimer);
-    if (!introPending || !introVisible || document.hidden) return;
+    introTimer = undefined;
+  }
+
+  function scheduleIntroduction() {
+    if (!introPending || !introVisible || document.hidden || previewOpen) {
+      suspendIntroduction();
+      return;
+    }
+    if (introTimer !== undefined) return;
+    introDue = performance.now() + introRemaining;
     introTimer = window.setTimeout(() => {
+      introTimer = undefined;
       introPending = false;
       setRound(2);
       scheduleAnimation();
-    }, 850);
+    }, introRemaining);
   }
 
   function keepManualControl() {
     introPending = false;
-    window.clearTimeout(introTimer);
+    suspendIntroduction();
   }
 
   priceButtons.forEach((button) => button.addEventListener("click", () => {
@@ -454,6 +469,12 @@
 
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) suspendAnimation();
+    else scheduleAnimation();
+    scheduleIntroduction();
+  });
+  document.addEventListener("eigenengine-source-preview", (event) => {
+    previewOpen = event.detail.open;
+    if (previewOpen) suspendAnimation();
     else scheduleAnimation();
     scheduleIntroduction();
   });

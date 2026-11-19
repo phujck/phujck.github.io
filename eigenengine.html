@@ -73,6 +73,7 @@
   <link rel="stylesheet" href="/assets/css/page-eigenengine.css">
   <link rel="stylesheet" href="/assets/css/eigenengine-envelope.css">
   <link rel="stylesheet" href="/assets/css/eigenengine-memory.css">
+  <link rel="stylesheet" href="/assets/css/eigenengine-source-preview.css">
 </head>
 
 <body>
@@ -95,18 +96,20 @@
 
 <main class="ee-page">
   <header class="ee-cover">
+    <div class="ee-width ee-disclosure"><p class="release-notice"><strong>EigenEngine is pre-release.</strong> <span>This page is generated algorithmically by <b>Eigen</b> under Gerard McCaul’s direction.</span> <a href="mailto:eigen@gmccaul.co.uk">eigen@gmccaul.co.uk</a></p></div>
     <div class="ee-width ee-hero-layout">
       <div class="ee-intro">
         <p class="ee-label">Research software</p>
         <h1>EigenEngine</h1>
         <p class="ee-definition">An integrated research environment for people and AI agents.</p>
         <p class="ee-intro-body">A network of state machines keeps claims, calculations and sources connected as they change. A diffusion-based memory finds the evidence an agent may open. Researchers work with the same material in the Writing App.</p>
-        <p class="ee-project-intro"><strong>The running example is <em>The Cost of Complexity</em>.</strong> One claim in it says that four quarter-area squares can cost the same to split as one whole square. Its calculation, its figure and the author’s editing session supply the examples below.</p>
+        <p class="ee-project-intro">The examples follow <a href="/eigenengine/cost-of-complexity/"><em>The Cost of Complexity</em></a> from a claim to its evidence and its editing history. Under area pricing, <a data-source-region="cost-fig-3b" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">four quarter-area squares cost as much to split as one whole square</a>. The <a href="/eigenengine/kalmar-constant/">Kalmár companion</a> asks what it costs to store the layout itself.</p>
         <div class="ee-actions">
           <a class="ee-button ee-primary" href="/demo/writing/">Watch the Writing App film <span aria-hidden="true">↗</span></a>
           <a class="ee-text-link" href="#how">How it works <span aria-hidden="true">↓</span></a>
         </div>
       </div>
+      <div class="ee-paper-shelf">
       <article class="ee-feature-paper" id="paper" aria-labelledby="ee-paper-title">
         <button class="ee-cover-art" type="button" aria-label="Pause the animated Hilbert construction" title="Pause the Hilbert construction" disabled>
           <svg class="ee-cover-curve" viewBox="-13 -13 346 346" aria-hidden="true">
@@ -117,15 +120,21 @@
           </svg>
         </button>
         <div class="ee-feature-copy">
-          <p class="ee-label">Research paper · November 2026</p>
+          <p class="ee-label">Research paper</p>
           <h2 id="ee-paper-title">The Cost of<br>Complexity</h2>
           <p class="ee-paper-sub">A Physical Theory of Representation</p>
           <p class="ee-paper-by">Gerard McCaul · 21 pages</p>
           <p class="ee-paper-pitch">A memory has to hold symbols. It also has to hold the machinery that chooses between them. What does that organisation cost?</p>
           <div class="ee-paper-actions"><a class="ee-button ee-primary" href="/eigenengine/cost-of-complexity/">Explore the paper <span aria-hidden="true">↗</span></a>
-          <a class="ee-text-link" href="/eigenengine/kalmar-constant/">The Kalmár follow-up ↗</a></div>
+          <a class="ee-text-link" data-material-viewer="/demo/view/?asset=cost-paper" href="/assets/docs/the-cost-of-complexity.pdf" target="_blank" rel="noopener">Read the PDF ↗</a></div>
         </div>
       </article>
+      <a class="ee-kalmar-entry" href="/eigenengine/kalmar-constant/">
+        <img src="/eigenengine/kalmar-constant/layouts.svg" width="110" height="74" alt="">
+        <span><small>Companion paper</small><strong>Physical origins of the Kalmár constant</strong><span>What does it cost to store the layout itself?</span></span>
+        <b aria-hidden="true">↗</b>
+      </a>
+      </div>
     </div>
     <nav class="ee-width ee-contents" aria-label="Explore EigenEngine">
       <a href="#how">One claim</a><a href="#memory">Search one project</a><a href="/eigenengine/networked-research/">Link projects ↗</a><a href="#workspace">The Writing App</a><a href="#see">Research outputs</a>
@@ -147,7 +156,7 @@
           <path d="M126 42h59m-7-5 7 5-7 5" fill="none" stroke="#bbad90"/>
           <g font-family="Outfit,sans-serif" fill="#c5d2db" text-anchor="middle" font-size="14"><text x="68" y="99">One square to split</text><text x="246" y="99">Four squares to split</text></g></svg>
         <p class="ee-claim-statement">Under area pricing, every round of subdivision costs the same.</p>
-        <a class="ee-text-link" href="/demo/view/?asset=cost-paper&amp;page=10">Open the claim and its figure, p. 10 ↗</a>
+        <a class="ee-text-link" data-source-region="cost-fig-3b" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">Open the claim and its figure, p. 10 ↗</a>
       </aside>
     </div>
     <div class="ee-concept-intro">
@@ -159,7 +168,7 @@
       <div class="ee-fallback"><h3>One claim, several relationships</h3>
         <p>The claim about equal cost per round belongs to a section, requires an assumption about how a division is priced, and is illustrated by Figure 3. Opening the section, then the claim, then its grounds uses the same operation at successively finer scales.</p>
         <p>Changing a recorded input leaves a trail to the work that consumed it. Looking up the pricing rule brings back the relevant passage and figure. The researcher decides how the manuscript should change.</p>
-        <a class="ee-text-link" href="/demo/view/?asset=cost-paper&amp;page=10">Inspect Figure 3 →</a>
+        <a class="ee-text-link" data-source-region="cost-fig-3" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">Inspect Figure 3 →</a>
       </div>
     </div>
   </section>
@@ -173,10 +182,10 @@
       <p class="ee-memory-bridge">In <strong>query diffusion</strong>, a question gives weight to possible sources, and some of that weight passes to their neighbours. The branches show where that support has collected. <a href="#ee-memory-map">Watch the query move through the tree</a>, first with access to the paper, then with access to figures alone.</p>
       <div id="ee-memory-map"><div class="ee-fallback"><h3>From a question to a source</h3>
         <p>Ask where the paper gets its distribution of symbol frequencies. The question leads through the paper to its discussion of rank and cost. Equation 46 gives the distribution under the stated constraint. The stored section can serve the next question, and the answer points back to the exact edition.</p>
-        <a class="ee-text-link" href="/demo/view/?asset=cost-paper&amp;page=13">Inspect the passage on p. 13 ↗</a>
+        <a class="ee-text-link" data-source-region="cost-eq-46" href="/assets/docs/the-cost-of-complexity.pdf#page=13" target="_blank" rel="noopener">Inspect the passage on p. 13 ↗</a>
       </div></div>
-      <div class="ee-next-project"><div><h3>What happens when the next paper needs this result?</h3><p>A project can share a checked result, the version that supports it and a correction its author chose to keep. Follow a citation from the Kalmár draft into the earlier paper and see what that makes possible.</p></div>
-        <a class="ee-text-link" href="/eigenengine/networked-research/">Explore linked research projects ↗</a>
+      <div class="ee-next-project"><div><h3>Can a correction help the next project?</h3><p>The author asked for a machine’s missing reasoning to be restored. A later project can inherit the distinction behind that edit and test it on a different machine. Two linked papers show how a source and its checked revision can travel with it.</p></div>
+        <a class="ee-text-link" href="/eigenengine/networked-research/">How a correction travels between projects ↗</a>
       </div>
     </div>
   </section>
@@ -184,7 +193,7 @@
     <div class="ee-width ee-workspace">
       <div class="ee-workspace-copy"><p class="ee-label">The Writing App</p>
         <h2 id="ee-app-title">Inside a working manuscript.</h2>
-        <p>On 18 November a morning proposal for <em>The Cost of Complexity</em> contained more than 50 edits across eight source files. Follow the author through its sections, the changes to the text and the conversation that records the work. A later view shows the paper being packaged for arXiv.</p>
+        <p>One saved proposal for <em>The Cost of Complexity</em> contained more than 50 edits across eight source files. Follow the author through its sections, the changes to the text and the conversation that records the work. A later view shows the paper being packaged for arXiv.</p>
         <a class="ee-button ee-primary" href="/demo/writing/">Watch the session film <span aria-hidden="true">↗</span></a>
         <p class="ee-workspace-fine">Across two conversations the project recorded 39 turns and 85 proposal versions. <a href="/demo/writing/project-record/">Inspect the editing record and tool frequencies ↗</a></p>
       </div>
@@ -204,7 +213,7 @@
       <p class="ee-label">Research outputs</p>
       <h2 id="ee-outputs-title">Made with Eigen</h2>
       <div class="ee-outputs-grid">
-        <a class="ee-feature-output" href="/demo/view/?asset=synthetics">
+        <a class="ee-feature-output" data-material-viewer="/demo/view/?asset=synthetics" href="/talks/synthetics/" target="_blank" rel="noopener">
           <img src="/assets/img/eigen/synthetics-cover.webp" width="800" height="450" alt="Original Synthetics title artwork, with a field of events partitioned into cells" loading="lazy">
           <div class="ee-output-info"><span class="ee-kind">Illustrated talk</span><h3>Synthetics <span aria-hidden="true">↗</span></h3>
           <p>Gerard McCaul’s talk connects the cost of representing a distinction to the design of a memory and an agent. Step through the original experiments, figures and animated explanations.</p></div>
@@ -214,19 +223,19 @@
             <img src="/eigenengine/kalmar-constant/layouts.svg" width="160" height="110" alt="" loading="lazy">
             <div><span class="ee-kind">Companion research draft</span><h3>Physical origins of the Kalmár constant</h3><p>Four bits hold one of sixteen symbols. What else must the memory hold to specify how those bits are organised? Explore the eight layouts and the constant that governs their growth.</p></div><b aria-hidden="true">↗</b>
           </a>
-          <a class="ee-output-row" href="/demo/view/?asset=superarc">
+          <a class="ee-output-row" data-material-viewer="/demo/view/?asset=superarc" href="/unlisted/eigenengine/superarc/" target="_blank" rel="noopener">
             <img src="/assets/img/eigen/superarc-preview.webp" width="160" height="110" alt="" loading="lazy">
             <div><span class="ee-kind">Executable benchmark</span><h3>SuperARC</h3><p>Eigen ran candidate rules for 100 binary sequences. The benchmark classified 96 answers as rules. Inspect the answers and the scoring audit.</p></div><b aria-hidden="true">↗</b>
           </a>
-          <a class="ee-output-row" href="/demo/view/?asset=trip">
+          <a class="ee-output-row" data-material-viewer="/demo/view/?asset=trip" href="/trip.html" target="_blank" rel="noopener">
             <img src="/assets/img/trip_hero.jpg" width="160" height="110" alt="" loading="lazy">
             <div><span class="ee-kind">Interactive map</span><h3>The Long Way Round</h3><p>Phone locations and photos became a day-by-day map of a 95-day journey across the United States.</p></div><b aria-hidden="true">↗</b>
           </a>
-          <a class="ee-output-row" href="/demo/view/?asset=twinning">
+          <a class="ee-output-row" data-material-viewer="/demo/view/?asset=twinning" href="/unlisted/eigenengine/twinning/" target="_blank" rel="noopener">
             <img src="/assets/img/eigen/twinning-preview.webp" width="160" height="110" alt="" loading="lazy">
             <div><span class="ee-kind">Paper and research record</span><h3>Optical twinning trees</h3><p>One physics question led to a paper and a talk. Read the drafts, the review and the conversation that changed the result.</p></div><b aria-hidden="true">↗</b>
           </a>
-          <a class="ee-output-row" href="/demo/view/?asset=learning">
+          <a class="ee-output-row" data-material-viewer="/demo/view/?asset=learning" href="/talks/laws-of-learning-v3/" target="_blank" rel="noopener">
             <img src="/assets/img/eigen/learning-cover.webp" width="160" height="110" alt="" loading="lazy">
             <div><span class="ee-kind">Animated talk</span><h3>The Laws of Learning</h3><p>A paper on how learning systems organise into layers, developed into a talk with moving diagrams of the dynamics.</p></div><b aria-hidden="true">↗</b>
           </a>
@@ -258,6 +267,8 @@
   <script src="/assets/js/eigenengine-paper.js" defer></script>
   <script src="/assets/js/eigenengine-envelope.js" defer></script>
   <script src="/assets/js/eigenengine-memory.js" defer></script>
+  <script src="/assets/js/eigenengine-source-preview.js" defer></script>
+  <script src="/assets/js/eigenengine-reading-return.js" defer></script>
 </body>
 
 </html>

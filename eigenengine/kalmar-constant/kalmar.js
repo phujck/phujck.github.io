@@ -13,6 +13,96 @@
 
   const ease = t => 1 - (1 - t) ** 3;
   const between = (a, b, t) => a + (b - a) * t;
+  const clocks = [];
+  let previewOpen = false;
+
+  function animationClock() {
+    let frame = null;
+    let paint;
+    let duration;
+    let elapsed;
+    let previous;
+
+    function suspend() {
+      cancelAnimationFrame(frame);
+      frame = null;
+      previous = undefined;
+    }
+
+    function resume() {
+      if (paint && frame === null && !previewOpen) frame = requestAnimationFrame(tick);
+    }
+
+    function tick(now) {
+      frame = null;
+      elapsed += now - (previous ?? now);
+      previous = now;
+      const progress = Math.min(1, elapsed / duration);
+      paint(progress);
+      if (progress === 1) paint = null;
+      resume();
+    }
+
+    clocks.push({ suspend, resume });
+    return {
+      start(milliseconds, draw) {
+        suspend();
+        elapsed = 0;
+        duration = milliseconds;
+        paint = draw;
+        resume();
+      },
+      cancel() {
+        suspend();
+        paint = null;
+      }
+    };
+  }
+
+  function delayClock() {
+    let timer = null;
+    let action;
+    let remaining;
+    let due;
+
+    function suspend() {
+      if (timer === null) return;
+      clearTimeout(timer);
+      timer = null;
+      remaining = Math.max(0, due - performance.now());
+    }
+
+    function resume() {
+      if (!action || timer !== null || previewOpen) return;
+      due = performance.now() + remaining;
+      timer = setTimeout(() => {
+        const complete = action;
+        action = null;
+        timer = null;
+        complete();
+      }, remaining);
+    }
+
+    clocks.push({ suspend, resume });
+    return {
+      start(milliseconds, run) {
+        suspend();
+        remaining = milliseconds;
+        action = run;
+        resume();
+      },
+      cancel() {
+        suspend();
+        action = null;
+      },
+      get pending() { return Boolean(action); }
+    };
+  }
+
+  document.addEventListener('eigenengine-source-preview', event => {
+    previewOpen = event.detail.open;
+    clocks.forEach(clock => previewOpen ? clock.suspend() : clock.resume());
+  });
 
   function factorsFor(mask) {
     const result = [];
@@ -150,21 +240,16 @@
     const current = arrangement(factorsFor(mask));
     let points = current.points;
     frameLayer(current.boxes, mask);
-    let timer = null;
-    let animation = null;
+    const cue = delayClock();
+    const animation = animationClock();
     let engaged = false;
     let witnessed = false;
-
-    function clearPending() {
-      clearTimeout(timer);
-      timer = null;
-    }
 
     function choose(next, animate = true) {
       const factors = factorsFor(next);
       const target = arrangement(factors);
       const start = points;
-      cancelAnimationFrame(animation);
+      animation.cancel();
       const layers = [...frames.children];
       let layer = layers.find(node => Number(node.dataset.frameMask) === next);
       if (!layer) {
@@ -178,7 +263,6 @@
       }
 
       function finish() {
-        animation = null;
         frames.replaceChildren(layer);
         layer.setAttribute('opacity', 1);
         points = target.points;
@@ -194,9 +278,7 @@
 
       const opacityAtStart = layers.map(node => Number(node.getAttribute('opacity') ?? 1));
       description.textContent = 'Regrouping the same symbols';
-      const began = performance.now();
-      function step(now) {
-        const time = Math.min(1, (now - began) / 1160);
+      animation.start(1160, time => {
         if (time === 1) {
           finish();
           return;
@@ -215,22 +297,17 @@
           node.setAttribute('opacity', between(opacityAtStart[i], node === layer ? 1 : 0, fade));
         });
         place(points);
-        animation = requestAnimationFrame(step);
-      }
-      animation = requestAnimationFrame(step);
+      });
     }
 
     panel.addEventListener('click', event => {
       const button = event.target.closest('button');
       if (!button) return;
       engaged = true;
-      clearPending();
+      cue.cancel();
       if (button === replay) {
         choose(1, false);
-        timer = setTimeout(() => {
-          timer = null;
-          choose(4);
-        }, 660);
+        cue.start(660, () => choose(4));
       } else if (button.hasAttribute('data-layout')) {
         const next = Number(button.dataset.layout);
         if (next !== mask) choose(next);
@@ -245,13 +322,12 @@
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver(([entry]) => {
         if (entry.intersectionRatio < .62) {
-          if (!engaged) clearPending();
-        } else if (!engaged && !witnessed && timer === null) {
-          timer = setTimeout(() => {
+          if (!engaged && !previewOpen) cue.cancel();
+        } else if (!engaged && !witnessed && !cue.pending) {
+          cue.start(1100, () => {
             witnessed = true;
-            timer = null;
             choose(4);
-          }, 1100);
+          });
         }
       }, { threshold: [0, .62], rootMargin: '-52px 0px -20px 0px' });
       observer.observe(graph);
@@ -311,7 +387,7 @@
     const marker = svg(axis, 'circle', { r: 7.3, class: 'km-case-marker' });
     const graph = axis.closest('svg');
     let at = { x: x(0), y: y(Number(cases[0].value)) };
-    let frame = null;
+    const animation = animationClock();
     let activeCase;
 
     function place(next) {
@@ -336,21 +412,16 @@
           : 'Every additional register pays the charge again.';
       graph.setAttribute('aria-label', `Growth exponent falls toward one. At cost ${item.label}, it is ${item.value}.`);
       buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
-      cancelAnimationFrame(frame);
       const target = { x: x(item.x), y: y(Number(item.value)) };
       if (!animate) {
-        frame = null;
+        animation.cancel();
         place(target);
         return;
       }
       const start = at;
-      const began = performance.now();
-      function tick(now) {
-        const t = Math.min(1, (now - began) / 370);
+      animation.start(370, t => {
         place({ x: between(start.x, target.x, ease(t)), y: between(start.y, target.y, ease(t)) });
-        frame = t < 1 ? requestAnimationFrame(tick) : null;
-      }
-      frame = requestAnimationFrame(tick);
+      });
     }
 
     buttons.forEach((button, i) => button.addEventListener('click', () => choose(i, true)));
@@ -363,7 +434,7 @@
     const total = panel.querySelector('[data-bit-total]');
     const replay = panel.querySelector('[data-bit-replay]');
     const counts = [4, 3, 2, 1];
-    let timer = null;
+    const timer = delayClock();
     let acted = false;
 
     function count(levels) {
@@ -374,16 +445,13 @@
     }
 
     function play() {
-      clearInterval(timer);
       let level = 1;
       count(level);
-      timer = setInterval(() => {
+      function advance() {
         count(++level);
-        if (level === counts.length) {
-          clearInterval(timer);
-          timer = null;
-        }
-      }, 610);
+        if (level < counts.length) timer.start(610, advance);
+      }
+      timer.start(610, advance);
     }
 
     replay.addEventListener('click', () => {

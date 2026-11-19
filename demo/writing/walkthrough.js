@@ -4,23 +4,18 @@
   const frame = document.querySelector(".session-film");
   const film = frame.querySelector("video");
   const play = frame.querySelector(".film-play");
-  const resume = frame.querySelector(".film-resume");
-  const captions = frame.querySelector(".film-caption-text");
-  const captionTitle = frame.querySelector(".film-caption-title");
-  const trackElement = film.querySelector("track");
-  const track = trackElement.track;
+  const resume = document.querySelector(".film-resume");
   const chapterList = document.querySelector(".film-chapters");
   const chapters = Array.from(chapterList.querySelectorAll("button"), (button) => ({
     button,
-    time: Number(button.dataset.time),
-    title: button.querySelector("b").textContent
+    time: Number(button.dataset.time)
   }));
   const storageKey = "eigenengine-session-film-time";
   let activeChapter = chapters[0];
   let engaged = false;
   let playing = false;
   let fullscreen = false;
-  let restoreRibbon = false;
+  let resumeAfterPreview = [];
 
   function syncTransport() {
     const atStart = film.currentTime < .25;
@@ -37,29 +32,14 @@
     if (selected !== activeChapter) {
       activeChapter.button.removeAttribute("aria-current");
       selected.button.setAttribute("aria-current", "true");
-      captionTitle.textContent = selected.title;
       activeChapter = selected;
     }
-    const cues = Array.from(track.cues || []);
-    const cue = time >= film.duration
-      ? cues.at(-1)
-      : cues.find(({ startTime, endTime }) => startTime <= time && time < endTime);
-    if (cue && captions.textContent !== cue.text) captions.textContent = cue.text;
-    frame.toggleAttribute("data-native-captions", track.mode === "showing");
     syncTransport();
   }
 
   function setFullscreen(active) {
-    if (active === fullscreen) return;
     fullscreen = active;
-    if (active && track.mode !== "showing") {
-      restoreRibbon = true;
-      track.mode = "showing";
-    } else if (!active && restoreRibbon) {
-      restoreRibbon = false;
-      track.mode = "hidden";
-    }
-    sync();
+    syncTransport();
   }
 
   function remember(time = film.currentTime) {
@@ -97,8 +77,7 @@
     chapter.button.addEventListener("click", () => {
       if (chapter === activeChapter) return;
       film.preload = "metadata";
-      // Seek inside the cue so native captions also clear the preceding line.
-      const time = chapter.time ? chapter.time + .001 : 0;
+      const time = chapter.time;
       film.currentTime = time;
       engaged = true;
       remember(time);
@@ -113,13 +92,6 @@
     });
   }
 
-  track.mode = "hidden";
-  trackElement.addEventListener("load", sync);
-  track.addEventListener("cuechange", sync);
-  film.textTracks.addEventListener("change", () => {
-    if (track.mode === "disabled") track.mode = "hidden";
-    sync();
-  });
   film.addEventListener("timeupdate", sync);
   film.addEventListener("playing", () => {
     engaged = true;
@@ -148,8 +120,24 @@
   document.addEventListener("fullscreenchange", () => setFullscreen(document.fullscreenElement === film));
   film.addEventListener("webkitbeginfullscreen", () => setFullscreen(true));
   film.addEventListener("webkitendfullscreen", () => setFullscreen(false));
+
+  function openTranscript() {
+    const target = document.getElementById(window.location.hash.slice(1));
+    if (target?.matches("details.film-transcript")) target.open = true;
+  }
+
   window.addEventListener("hashchange", () => {
+    openTranscript();
     if (!window.location.hash || window.location.hash === "#session-film") restore();
+  });
+  document.addEventListener("eigenengine-source-preview", (event) => {
+    if (event.detail.open) {
+      resumeAfterPreview = Array.from(document.querySelectorAll("video")).filter(video => !video.paused);
+      resumeAfterPreview.forEach(video => video.pause());
+    } else {
+      if (!document.hidden) resumeAfterPreview.forEach(video => video.play().catch(() => {}));
+      resumeAfterPreview = [];
+    }
   });
   if ("IntersectionObserver" in window) {
     const visibility = new IntersectionObserver(([entry]) => {
@@ -175,6 +163,7 @@
   } else if (!hash || hash === "#session-film") {
     restore();
   }
+  openTranscript();
   syncTransport();
 })();
 
@@ -341,6 +330,8 @@
   let playRemaining = null;
   let autoplayEntry = false;
   let camera;
+  let previewCamera;
+  let previewDelay;
 
   const clamped = (value, min, max) => Math.max(min, Math.min(max, value));
   const atLastStop = () => current === stops.length - 1;
@@ -554,6 +545,28 @@
   });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) pause(true);
+  });
+  document.addEventListener("eigenengine-source-preview", (event) => {
+    if (event.detail.open) {
+      if (camera?.playState === "running") {
+        const frame = camera.currentTime;
+        camera.pause();
+        camera.currentTime = frame;
+        previewCamera = camera;
+      }
+      if (timer !== null) {
+        pause(true);
+        previewDelay = playRemaining;
+      }
+    } else {
+      if (!document.hidden && previewCamera === camera) previewCamera?.play();
+      if (!document.hidden && previewDelay !== undefined) {
+        playRemaining = null;
+        scheduleNext(previewDelay);
+      }
+      previewCamera = undefined;
+      previewDelay = undefined;
+    }
   });
   window.addEventListener("hashchange", () => {
     pause();

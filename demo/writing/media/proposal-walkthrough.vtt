@@ -1,21 +1,21 @@
 WEBVTT
 
-00:00:00.000 --> 00:00:03.500
-Mine shows the illustrative draft.
-Its claim needs the area-pricing condition.
+00:00:00.000 --> 00:00:03.280 align:center
+The draft says the cost stays constant.
+It leaves out the pricing condition.
 
-00:00:03.500 --> 00:00:08.200
-Changes shows the staged suggestion in the manuscript.
-The added wording names the condition.
+00:00:03.280 --> 00:00:07.800 align:center
+Green marks the missing condition
+in the staged proposal.
 
-00:00:08.200 --> 00:00:13.200
-Edit lets the author put the condition in their own words
-before saving anything to the manuscript.
+00:00:07.800 --> 00:00:13.080 align:center
+The author rewrites the added phrase.
+The saved draft stays untouched.
 
-00:00:13.200 --> 00:00:18.300
-Accept saves the author's version to the excerpt.
-The app offers Undo.
+00:00:13.080 --> 00:00:17.720 align:center
+Accept saves the author’s wording.
+Undo is still available.
 
-00:00:18.300 --> 00:00:22.300
-Undo restores the original wording
-and reopens the suggestion.
+00:00:17.720 --> 00:00:22.360 align:center
+Undo restores the earlier sentence
+and reopens the proposal.

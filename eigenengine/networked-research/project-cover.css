@@ -1,0 +1,83 @@
+#nr-project-cover {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #47617a;
+  border-radius: .78rem;
+  background: radial-gradient(ellipse at 51% 42%, #253e55, #0d1a29 79%);
+  color: #cfdbe4;
+}
+
+#nr-project-cover svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 356px;
+}
+
+#nr-project-cover figcaption {
+  margin: 0;
+  padding: .58rem 4rem .61rem .75rem;
+  border-top: 1px solid #344d65;
+  color: #b9cad6;
+  background: #101e2c;
+  font: 500 .82rem/1.36 Outfit, system-ui, sans-serif;
+}
+
+#nr-project-cover .nr-cover-toggle {
+  position: absolute;
+  right: .54rem;
+  bottom: .37rem;
+  min-width: 3.15rem;
+  min-height: 27px;
+  padding: .1rem .35rem;
+  border: 1px solid #52657a;
+  border-radius: .33rem;
+  color: #c1d6e4;
+  background: #1c2c3e;
+  font: 550 .71rem/1.22 Outfit, system-ui, sans-serif;
+  cursor: pointer;
+}
+
+#nr-project-cover .nr-cover-toggle[hidden] { display: none; }
+#nr-project-cover .nr-cover-toggle:hover { color: #f1d498; border-color: #bb9a65; }
+#nr-project-cover .nr-cover-toggle:focus-visible { outline: 2px solid #c6e2ed; outline-offset: 2px; }
+#nr-project-cover .nr-cover-plane { fill: #20423f; fill-opacity: .48; stroke: #5a9e92; stroke-width: 1.1px; }
+#nr-project-cover .nr-cover-plane--right { fill: #294166; stroke: #779cce; }
+#nr-project-cover .nr-cover-plane--shadow { fill: #0a1928; stroke: #425b73; opacity: .76; }
+#nr-project-cover .nr-cover-stem,
+#nr-project-cover .nr-cover-front,
+#nr-project-cover .nr-cover-bridge,
+#nr-project-cover .nr-cover-bridge-track { fill: none; stroke-linecap: round; }
+#nr-project-cover .nr-cover-stem { stroke: #75bcbb; stroke-width: 1.9px; }
+#nr-project-cover .nr-cover-stem--fine { stroke: #7da5bb; stroke-width: 1.35px; }
+#nr-project-cover .nr-cover-front { stroke: #f0c989; stroke-width: 1.4px; stroke-dasharray: 3 5; }
+#nr-project-cover .nr-cover-bridge { stroke: #b5b3d1; stroke-width: 1.5px; stroke-dasharray: 4 5; }
+#nr-project-cover .nr-cover-bridge-track { stroke: #d7b87c; stroke-width: 1.7px; }
+#nr-project-cover .nr-cover-node-shadow { fill: #193146; stroke: #385b70; stroke-width: .8px; }
+#nr-project-cover .nr-cover-node-top { fill: #2d6473; stroke: #94c7cb; stroke-width: 1.1px; }
+#nr-project-cover .nr-cover-node--root .nr-cover-node-top { fill: #306d76; stroke: #a7dee1; }
+#nr-project-cover .nr-cover-node--leaf .nr-cover-node-top { fill: #6588a5; stroke: #a7c6db; }
+#nr-project-cover .nr-cover-node--package .nr-cover-node-top { fill: #765538; stroke: #f4d195; }
+#nr-project-cover .nr-cover-node--package .nr-cover-node-shadow { fill: #382f2e; stroke: #ab8456; }
+#nr-project-cover .nr-cover-distinction { fill: #ffdda2; stroke: #fff2c4; stroke-width: .9px; }
+#nr-project-cover .nr-cover-halo { fill: #d7b07224; stroke: #dcba7d; stroke-width: 1.05px; }
+#nr-project-cover .nr-cover-project,
+#nr-project-cover .nr-cover-annotation {
+  fill: #dcebf0;
+  stroke: #132437;
+  stroke-width: 3px;
+  paint-order: stroke fill;
+  text-anchor: middle;
+  font: 550 18px/1.28 Outfit, system-ui, sans-serif;
+}
+#nr-project-cover .nr-cover-annotation { fill: #edc88d; font-size: 17px; }
+
+@media (max-width: 580px) {
+  #nr-project-cover svg { max-height: 203px; }
+  #nr-project-cover .nr-cover-project { font-size: 22px; }
+  #nr-project-cover .nr-cover-annotation { font-size: 22px; }
+  #nr-project-cover figcaption { font-size: .79rem; }
+}

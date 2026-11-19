@@ -1,0 +1,454 @@
+{
+  "papers": {
+    "cost": {
+      "title": "The Cost of Complexity",
+      "asset": "/assets/docs/the-cost-of-complexity.pdf",
+      "sha256": "e9c6dabb85d252a81c6e27fc575e7c1bb3e7a90973533fe6b6b3c09c98b9fb98"
+    },
+    "kalmar": {
+      "title": "Physical origins of the Kalmár constant",
+      "asset": "/assets/docs/physical-origins-of-the-kalmar-constant.pdf",
+      "sha256": "456564aa0c4951035cffb734b65d314e20fe1b0b511215f7907276aae500bb2c"
+    }
+  },
+  "regions": {
+    "cost-fig-2": {
+      "paper": "cost",
+      "page": 5,
+      "label": "Figure 2",
+      "description": "Symbol 11 has two addresses among the same sixteen symbols. Each layout divides the choice between a register and a position inside it.",
+      "rect": [
+        0.078431,
+        0.059343,
+        0.849673,
+        0.464646
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-05.webp"
+    },
+    "cost-fig-2bc": {
+      "paper": "cost",
+      "page": 5,
+      "label": "Figure 2(b, c)",
+      "description": "Two registers of eight give symbol 11 the address (2, 3). Eight registers of two give it the address (6, 1).",
+      "rect": [
+        0.132353,
+        0.103535,
+        0.699346,
+        0.263889
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-05.webp"
+    },
+    "cost-theorem-3": {
+      "paper": "cost",
+      "page": 7,
+      "label": "Theorem 3 · Equations 25–26",
+      "description": "When positional register costs add, repeated use of any fixed digit bounds the cost from above. The ratio of cost to log range approaches a limiting price.",
+      "rect": [
+        0.509804,
+        0.083333,
+        0.418301,
+        0.186869
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-07.webp"
+    },
+    "cost-theorem-4": {
+      "paper": "cost",
+      "page": 8,
+      "label": "Theorem 4 · Cost of a symbol",
+      "description": "The cost of reaching a rank is bounded below by the cost of its whole prefix. A positional construction with a terminator approaches the same limiting rate.",
+      "rect": [
+        0.078431,
+        0.352273,
+        0.419935,
+        0.253788
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-08.webp"
+    },
+    "cost-geometry": {
+      "paper": "cost",
+      "page": 9,
+      "label": "Section III · The geometry of refinement",
+      "description": "A rank names a quadrant, then a smaller quadrant, down to a single cell. Each square serves as a register for the cells it contains.",
+      "rect": [
+        0.078431,
+        0.270202,
+        0.419935,
+        0.246212
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-09.webp"
+    },
+    "cost-width": {
+      "paper": "cost",
+      "page": 9,
+      "label": "Section III · Register widths",
+      "description": "At depth i there are four to the power i squares. Their widths halve with each level, so each square occupies one quarter of its parent’s area.",
+      "rect": [
+        0.078431,
+        0.516414,
+        0.419935,
+        0.261364
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-09.webp"
+    },
+    "cost-fig-3": {
+      "paper": "cost",
+      "page": 10,
+      "label": "Figure 3",
+      "description": "The upper panel follows the Hilbert path through successive subdivisions. The lower panel compares the cost of splitting by wall length, area and width cubed.",
+      "rect": [
+        0.078431,
+        0.058081,
+        0.849673,
+        0.467172
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-10.webp"
+    },
+    "cost-fig-3a": {
+      "paper": "cost",
+      "page": 10,
+      "label": "Figure 3(a)",
+      "description": "The Hilbert path visits each cell once. Each subdivision turns one cell into four and halves the width of each child.",
+      "rect": [
+        0.109477,
+        0.059343,
+        0.789216,
+        0.143939
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-10.webp"
+    },
+    "cost-fig-3b": {
+      "paper": "cost",
+      "page": 10,
+      "label": "Figure 3(b)",
+      "description": "The area-priced curve gains the same amount at each step. Wall-length pricing doubles the increment, while width-cubed pricing halves it.",
+      "rect": [
+        0.111111,
+        0.200758,
+        0.79085,
+        0.184343
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-10.webp"
+    },
+    "cost-fig-4": {
+      "paper": "cost",
+      "page": 11,
+      "label": "Figure 4",
+      "description": "The same ranked path visits increasingly disconnected sets. The lower inset tracks one address through three levels of the hierarchy.",
+      "rect": [
+        0.078431,
+        0.058081,
+        0.849673,
+        0.479798
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-11.webp"
+    },
+    "cost-fig-4b": {
+      "paper": "cost",
+      "page": 11,
+      "label": "Figure 4(b)",
+      "description": "The red frame selects child 3. Enlarging that child reveals the next four-way register inside it.",
+      "rect": [
+        0.102941,
+        0.238636,
+        0.803922,
+        0.161616
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-11.webp"
+    },
+    "cost-fig-5": {
+      "paper": "cost",
+      "page": 12,
+      "label": "Figure 5 · The guessing machine",
+      "description": "The machine tests a candidate and halts on success. A failed candidate enters the reset ensemble before the next guess.",
+      "rect": [
+        0.078431,
+        0.059343,
+        0.419935,
+        0.22601
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-12.webp"
+    },
+    "cost-eq-38": {
+      "paper": "cost",
+      "page": 12,
+      "label": "Equation 38 · The cost of a reset",
+      "description": "For a complete classical reset, the heat bound depends on the uncertainty of the states entering reset and the initial temperature of the bath.",
+      "rect": [
+        0.078431,
+        0.626263,
+        0.419935,
+        0.159091
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-12.webp"
+    },
+    "cost-eq-41": {
+      "paper": "cost",
+      "page": 12,
+      "label": "Equation 41 · The heat bound",
+      "description": "Ordering the erased states by probability bounds their mean log-rank by their entropy. This gives a lower bound on the mean heat released on reset.",
+      "rect": [
+        0.509804,
+        0.316919,
+        0.418301,
+        0.147727
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-12.webp"
+    },
+    "cost-eq-46": {
+      "paper": "cost",
+      "page": 13,
+      "label": "Equation 46 · The rank distribution",
+      "description": "A logarithmic price turns the maximum-entropy weight into a power of rank. Equation 47 gives the finite sum that normalises it.",
+      "rect": [
+        0.509804,
+        0.431818,
+        0.418301,
+        0.194444
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-13.webp"
+    },
+    "cost-theorem-5": {
+      "paper": "cost",
+      "page": 13,
+      "label": "Theorem 5 · Zipf equilibrium",
+      "description": "For a finite register at fixed mean logarithmic cost, the maximum-entropy distribution is a power law. The mean cost determines the multiplier.",
+      "rect": [
+        0.509804,
+        0.627525,
+        0.418301,
+        0.097222
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-13.webp"
+    },
+    "cost-eq-42": {
+      "paper": "cost",
+      "page": 13,
+      "label": "Equation 42 · Heat per attempt",
+      "description": "The probability of failure weights the heat cost per attempt. The distribution entering reset is the distribution of guesses conditioned on failure.",
+      "rect": [
+        0.078431,
+        0.061869,
+        0.419935,
+        0.20202
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-13.webp"
+    },
+    "cost-fig-6": {
+      "paper": "cost",
+      "page": 14,
+      "label": "Figure 6 · The finite-cutoff Zipf family",
+      "description": "Four panels compare rank distributions, response functions, partition sums and susceptibilities. The divergence occurs in the infinite-vocabulary limit.",
+      "rect": [
+        0.509804,
+        0.056818,
+        0.418301,
+        0.450758
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-14.webp"
+    },
+    "cost-eq-51": {
+      "paper": "cost",
+      "page": 14,
+      "label": "Equation 51 · The infinite-vocabulary limit",
+      "description": "With an unlimited vocabulary, the partition sum is the Riemann zeta function and converges for multipliers greater than one.",
+      "rect": [
+        0.078431,
+        0.763889,
+        0.419935,
+        0.09596
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-14.webp"
+    },
+    "cost-fidelity": {
+      "paper": "cost",
+      "page": 15,
+      "label": "Equations 56–57 · Representational fidelity",
+      "description": "The optimisation weighs register cost, occupation entropy and the information that the code retains about a target.",
+      "rect": [
+        0.509804,
+        0.061869,
+        0.418301,
+        0.238636
+      ],
+      "image": "/assets/img/eigen/source-pages/cost-15.webp"
+    },
+    "kalmar-eq-12": {
+      "paper": "kalmar",
+      "page": 2,
+      "label": "Equation 12 · Kalmár’s theorem",
+      "description": "The count of ordered factorisations across ranges up to x grows as a constant times x to the power ρ, where ζ(ρ) = 2.",
+      "rect": [
+        0.509804,
+        0.137626,
+        0.418301,
+        0.092172
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-02.webp"
+    },
+    "kalmar-eq-15": {
+      "paper": "kalmar",
+      "page": 2,
+      "label": "Equation 15 · Capacity of organisation",
+      "description": "The fixed charge per register sets a unique critical multiplier. With zero fixed charge, the multiplier returns to Kalmár’s constant.",
+      "rect": [
+        0.509804,
+        0.723485,
+        0.418301,
+        0.198232
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-02.webp"
+    },
+    "kalmar-fig-1": {
+      "paper": "kalmar",
+      "page": 3,
+      "label": "Figure 1",
+      "description": "Eight ordered layouts can hold the same sixteen symbols. The graph compares how many layouts exist for each range up to one million.",
+      "rect": [
+        0.078431,
+        0.066919,
+        0.849673,
+        0.32702
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-03.webp"
+    },
+    "kalmar-fig-1a": {
+      "paper": "kalmar",
+      "page": 3,
+      "label": "Figure 1(a) · Eight layouts",
+      "description": "Each row groups the same sixteen ranked symbols into an ordered sequence of registers. The orange lines show the successive register boundaries.",
+      "rect": [
+        0.094771,
+        0.069444,
+        0.397059,
+        0.210859
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-03.webp"
+    },
+    "kalmar-fig-1-caption": {
+      "paper": "kalmar",
+      "page": 3,
+      "label": "Figure 1 caption · Reference [1]",
+      "description": "The caption identifies the 2 × 8 and 8 × 2 layouts as the two panels in Figure 2 of The Cost of Complexity.",
+      "rect": [
+        0.078431,
+        0.32702,
+        0.849673,
+        0.064394
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-03.webp"
+    },
+    "kalmar-table-1": {
+      "paper": "kalmar",
+      "page": 3,
+      "label": "Table I · Critical multiplier",
+      "description": "The critical multiplier falls as the fixed charge increases. The table gives numerical values from zero to eight units of fixed cost.",
+      "rect": [
+        0.509804,
+        0.417929,
+        0.418301,
+        0.183081
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-03.webp"
+    },
+    "kalmar-fig-2": {
+      "paper": "kalmar",
+      "page": 4,
+      "label": "Figure 2 · The ensemble",
+      "description": "The panels show the critical line, the number of organisations at a given budget and the mean depth of the ensemble.",
+      "rect": [
+        0.078431,
+        0.069444,
+        0.849673,
+        0.289141
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-04.webp"
+    },
+    "kalmar-theorem-2": {
+      "paper": "kalmar",
+      "page": 4,
+      "label": "Theorem 2 · Structure of the ensemble",
+      "description": "Above the critical multiplier the depth is geometric. At each fixed depth the register ranges are independent draws from a power law.",
+      "rect": [
+        0.078431,
+        0.483586,
+        0.419935,
+        0.212121
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-04.webp"
+    },
+    "kalmar-table-2": {
+      "paper": "kalmar",
+      "page": 5,
+      "label": "Table II · Organisation towers",
+      "description": "For sixteen symbols, the number of layouts falls from eight to four, two and one as each layout is itself recorded. Other ranges can end in a fixed point or a cycle.",
+      "rect": [
+        0.509804,
+        0.069444,
+        0.418301,
+        0.185606
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-05.webp"
+    },
+    "kalmar-eq-31": {
+      "paper": "kalmar",
+      "page": 5,
+      "label": "Equation 31 · The reflective hierarchy",
+      "description": "Theorem 4 gives the closure cost for a binary register at each reflective level as a binomial coefficient.",
+      "rect": [
+        0.509804,
+        0.784091,
+        0.418301,
+        0.092172
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-05.webp"
+    },
+    "kalmar-fig-3": {
+      "paper": "kalmar",
+      "page": 6,
+      "label": "Figure 3 · The reflective hierarchy",
+      "description": "The left panel compares the cost of closing organisation towers. The right panel plots the cost of a binary register at reflective levels one through four.",
+      "rect": [
+        0.078431,
+        0.068182,
+        0.849673,
+        0.305556
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-06.webp"
+    },
+    "kalmar-limits": {
+      "paper": "kalmar",
+      "page": 7,
+      "label": "Outlook and acknowledgments",
+      "description": "The draft describes its static model, identifies a branching prediction that awaits data, and records how the author and Claude developed the results.",
+      "rect": [
+        0.078431,
+        0.111111,
+        0.419935,
+        0.405303
+      ],
+      "image": "/assets/img/eigen/source-pages/kalmar-07.webp"
+    }
+  },
+  "defaultByPage": {
+    "cost": {
+      "5": "cost-fig-2",
+      "7": "cost-theorem-3",
+      "8": "cost-theorem-4",
+      "9": "cost-geometry",
+      "10": "cost-fig-3",
+      "11": "cost-fig-4",
+      "12": "cost-fig-5",
+      "13": "cost-eq-46",
+      "14": "cost-fig-6",
+      "15": "cost-fidelity"
+    },
+    "kalmar": {
+      "2": "kalmar-eq-12",
+      "3": "kalmar-fig-1",
+      "4": "kalmar-fig-2",
+      "5": "kalmar-table-2",
+      "6": "kalmar-fig-3",
+      "7": "kalmar-limits"
+    }
+  }
+}

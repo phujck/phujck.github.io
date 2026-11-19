@@ -19,35 +19,42 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./article.css">
   <link rel="stylesheet" href="./project-figure.css">
+  <link rel="stylesheet" href="./project-cover.css">
+  <script defer src="./project-cover.js"></script>
+  <script defer src="./transfer-test.js"></script>
   <script defer src="./project-figure.js"></script>
+  <link rel="stylesheet" href="/assets/css/eigenengine-source-preview.css">
+  <script defer src="/assets/js/eigenengine-source-preview.js"></script>
+  <script defer src="/assets/js/eigenengine-reading-return.js"></script>
 </head>
 <body>
   <a class="nr-skip" href="#article">Skip to the article</a>
   <header class="nr-bar"><nav class="nr-width" aria-label="Page navigation">
     <a class="nr-back" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
-    <a href="/demo/writing/">Writing App film <span aria-hidden="true">↗</span></a>
+    <span class="nr-paper-nav"><a href="/eigenengine/cost-of-complexity/">Cost paper</a><a href="/eigenengine/kalmar-constant/">Kalmár paper <span aria-hidden="true">↗</span></a></span>
   </nav></header>
   <main id="article">
     <header class="nr-hero">
+      <div class="nr-width nr-disclosure"><p class="release-notice"><strong>EigenEngine is pre-release.</strong> <span>This page is generated algorithmically by <b>Eigen</b> under Gerard McCaul’s direction.</span> <a href="mailto:eigen@gmccaul.co.uk">eigen@gmccaul.co.uk</a></p></div>
       <div class="nr-width nr-lead">
-        <div><p class="nr-eyebrow">Research architecture</p><h1>What can one research project teach another?</h1></div>
-        <div class="nr-deck">
-          <p>A paper can cite an earlier result in a sentence. To use it in a new calculation, someone still has to recover the assumptions, the evidence and the version that was checked.</p>
-          <p>In EigenEngine’s design, a whole project can be a conceptric. Its exterior names a result, its revision and the operations available to a reader. Inside are the claims, calculations and decisions that made the result usable.</p>
+        <div class="nr-headline"><p class="nr-eyebrow">Research architecture</p><h1>What can one research project teach another?</h1>
+          <p class="nr-intro">An author sends back a shortened explanation. The equation is still there, but the reader can no longer see which guesses the machine erases. That intervention contains something the next project can use.</p>
+          <p>A later project could recover the reason for that edit and ask <em>“When is this record actually erased?”</em> of a different machine.</p>
         </div>
+        <figure id="nr-project-cover" aria-label="A correction inside a project and its route into another project"><svg viewBox="0 0 480 280" aria-hidden="true"><g fill="none" stroke="#759caf" stroke-width="2"><path d="M68 83 135 138 68 198M135 138 202 83M135 138 202 198M135 138 329 138 407 83M329 138 407 198"/></g><g fill="#dfbc80"><circle cx="135" cy="138" r="11"/><circle cx="329" cy="138" r="11"/></g></svg><figcaption>A project opens into a graph. A correction can travel with a link to its source.</figcaption></figure>
       </div>
-      <nav class="nr-width nr-index" aria-label="In this article"><a href="#linked-query">Follow a citation</a><a href="#scale">What scales?</a><a href="#judgement">Human judgement</a><a href="#learning">Testing an improvement</a></nav>
+      <nav class="nr-width nr-index" aria-label="In this article"><a href="#linked-query">Follow a citation</a><a href="#scale">What scales?</a><a href="#judgement">Human judgement</a><a href="#learning">Try the next project</a></nav>
     </header>
 
     <section id="linked-query" class="nr-width nr-section" aria-labelledby="nr-link-title">
       <div class="nr-section-lead">
         <div><p class="nr-eyebrow">Two papers · One question</p><h2 id="nr-link-title">Choosing a symbol and choosing its layout</h2></div>
-        <p>In <em>The Cost of Complexity</em>, four bits identify one of sixteen symbols once a layout is fixed. Its follow-up draft counts eight ways to lay out those same symbols. Choosing one of eight layouts takes three more bits. The follow-up cites the earlier figure to show exactly what the original four bits selected.</p>
+        <div class="nr-section-copy"><p>The real citation between these manuscripts carries a figure about layouts. It shows the route that the <a href="#judgement">author’s correction</a> could take in a future project.</p><p>In <a href="/eigenengine/cost-of-complexity/"><em>The Cost of Complexity</em></a>, four bits identify one of sixteen symbols once a layout is fixed. The companion paper, <a href="/eigenengine/kalmar-constant/"><em>Physical origins of the Kalmár constant</em></a>, counts eight ways to lay out those same symbols. Choosing one of eight layouts takes three more bits. The cited figure shows what the original four bits selected.</p></div>
       </div>
       <p class="nr-demo-scope"><strong>Worked example.</strong> These two downloadable objects use public figures. Your browser can compare the follow-up alone with a query that crosses its citation. A network of independently hosted projects would also need discovery and permission checks at each host.</p>
       <div id="project-network">
         <div class="nr-static"><h3>Follow the cited result</h3><p>The follow-up’s eight layouts account for the three bits. In the earlier paper, symbol 11 is group 2, position 3 in a 2 × 8 layout, and group 6, position 1 in an 8 × 2 layout. The symbol keeps its identity as its address changes.</p>
-          <div class="nr-links"><a href="/demo/view/?asset=kalmar-paper&amp;page=3">Eight layouts in Figure 1</a><a href="/demo/view/?asset=cost-paper&amp;page=5">Both addresses in Figure 2</a></div>
+          <div class="nr-links"><a data-source-region="kalmar-fig-1a" href="/assets/docs/physical-origins-of-the-kalmar-constant.pdf#page=3" target="_blank" rel="noopener">Eight layouts in Figure 1</a><a data-source-region="cost-fig-2bc" href="/assets/docs/the-cost-of-complexity.pdf#page=5" target="_blank" rel="noopener">Both addresses in Figure 2</a></div>
         </div>
       </div>
       <div class="nr-explanation">
@@ -72,7 +79,7 @@
           <table><thead><tr><th scope="col">Sources</th><th scope="col">Output bytes</th><th scope="col">Terms summed</th></tr></thead>
           <tbody><tr><th scope="row">1,024</th><td>59,104</td><td>12,280</td></tr><tr><th scope="row">8,192</th><td>474,848</td><td>98,296</td></tr><tr><th scope="row">65,536</th><td>3,800,800</td><td>786,424</td></tr></tbody></table>
           <p>With eight times as many sources in the last step, stored output and the number of terms summed both grew about eightfold. The test used a nearest-neighbour chain, groups of eight and two retained coordinates per group. Graph construction and group selection were supplied to this test.</p>
-          <div class="nr-links"><a href="/demo/view/?asset=synthetics&amp;slide=29">Open the scaling figure ↗</a><a href="./measurements.json" download>Measurement data</a></div>
+          <div class="nr-links"><a data-material-viewer="/demo/view/?asset=synthetics&amp;slide=29" href="/talks/synthetics/#/29" target="_blank" rel="noopener">Open the scaling figure ↗</a><a href="./measurements.json" download>Measurement data</a></div>
         </figure>
         <details class="nr-more"><summary>What happened when a query could not skip a branch?</summary>
           <p>In a separate test using passages from scientific papers in QASPER, the search checked every candidate at all four sizes from 1,024 to 8,192 vectors. Direct GPU scoring was faster throughout. Lookup saves work when a branch can be ruled out or a repeated calculation can be reused.</p>
@@ -87,11 +94,11 @@
       </div>
       <div class="nr-human-grid">
         <div class="nr-history"><dl class="nr-trace">
-          <div><dt>18 November · 15:44 UTC</dt><dd>The author objected that cuts to the later sections made <q>the whole argument harder to follow. Particularly around the guessing machine.</q></dd></div>
-          <div><dt>15:55 UTC · Saved proposal</dt><dd>The sequence of the opening changed.<blockquote><span>Before</span>“We first identify the uncertainty removed by reset, then apply the result to a machine that guesses, tests and discards candidate solutions.”</blockquote><blockquote><span>Proposed</span>“Consider a machine that proposes an answer, checks it, and starts again when the answer is wrong.”</blockquote></dd></div>
+          <div><dt>The author’s request</dt><dd>The author objected that cuts to the later sections made <q>the whole argument harder to follow. Particularly around the guessing machine.</q></dd></div>
+          <div><dt>The saved proposal</dt><dd>The sequence of the opening changed.<blockquote><span>Before</span>“We first identify the uncertainty removed by reset, then apply the result to a machine that guesses, tests and discards candidate solutions.”</blockquote><blockquote><span>Proposed</span>“Consider a machine that proposes an answer, checks it, and starts again when the answer is wrong.”</blockquote></dd></div>
           <div><dt>Published manuscript · Section IV</dt><dd>The reader meets the machine, sees it test a guess, and learns when a failed guess is reset. The heat bound uses the distribution of guesses that reach that reset.</dd></div>
         </dl>
-        <a class="nr-source-figure" href="/demo/view/?asset=cost-paper&amp;page=12"><img src="./guessing-machine.webp" width="784" height="432" loading="lazy" alt="Published Figure 5. A guessed candidate is tested. A success halts, while a failure enters reset and returns to the next guess."><span>Figure 5 · The failed guesses enter reset ↗</span></a>
+        <a class="nr-source-figure" data-source-region="cost-fig-5" href="/assets/docs/the-cost-of-complexity.pdf#page=12" target="_blank" rel="noopener"><img src="./guessing-machine.webp" width="784" height="432" loading="lazy" alt="Published Figure 5. A guessed candidate is tested. A success halts, while a failure enters reset and returns to the next guess."><span>Figure 5 · The failed guesses enter reset ↗</span></a>
         </div>
         <div class="nr-human-reading"><h3>What did the revision preserve?</h3>
           <p>The published paragraph tells us what survived. The saved edit shows what the author was offered instead, the reason they gave for intervening, and how the proposed opening changed. That is an observable piece of expert judgement. An author can choose to share this particular decision while keeping the rest of the conversation private.</p>
@@ -100,7 +107,7 @@
           <details class="nr-more"><summary>Why does a rare question need finer evidence?</summary>
             <p>Suppose the question selects cases that carry just 1% of the original weight. Once we condition on those cases, they carry the entire answer. A summary that performed well on average may have discarded exactly the distinction needed here.</p>
             <p>For a condition of reference mass <var>z</var>, the memory’s error bound multiplies the omitted part of the task by <span class="nr-math">√(1/<var>z</var> − 1)</span>. A loose bound calls for opening finer records or returning to the source. This is a statement about a distribution of questions and evidence.</p>
-            <a href="/demo/view/?asset=synthetics&amp;slide=26">See the task-error bound in the talk ↗</a>
+            <a data-material-viewer="/demo/view/?asset=synthetics&amp;slide=26" href="/talks/synthetics/#/26" target="_blank" rel="noopener">See the task-error bound in the talk ↗</a>
           </details>
         </div>
       </div>
@@ -108,9 +115,24 @@
 
     <section id="learning" class="nr-band nr-close" aria-labelledby="nr-next-title"><div class="nr-width nr-section nr-close-grid">
       <div><p class="nr-eyebrow">Guided self-improvement</p><h2 id="nr-next-title">Give the correction a question it must answer.</h2></div>
-      <div class="nr-section-copy"><p>The edit improves this manuscript. A useful test of learning changes the machine. Suppose the next project keeps a log of every failed guess. When does the erasure bound apply? The distinction the new answer needs is <em>which event actually resets the record</em>. Rejection leaves a stored guess in the log. The bound applies when that information is erased, under the conditions of the reset.</p>
-        <p>The extraction rule, retrieval code and tests can themselves be versioned research objects. An agent can propose a change, run both versions on fresh questions with the same evidence budget, and show a reviewer which answers have the right supporting passages. The test needs familiar questions as well as exceptional ones, so a repair can reveal what it costs elsewhere. An accepted version can then be shared with other projects. Each recipient chooses whether to adopt it.</p>
-        <p>The environment has already been used to revise its own <em>Living System Guide</em>. An independent reader identified difficult passages and figures, the guide was rebuilt, and the weak sections were read again. Extending that practice to the memory means testing whether a changed rule retrieves better evidence on unfamiliar problems. A saved author correction supplies a starting case for that experiment.</p>
+      <div class="nr-section-copy"><p>The historical edit restored the guessing machine before its heat cost was calculated. A reusable note can carry a more precise question into another project. Identify the distribution of records that actually enter reset and check what information is retained.</p></div>
+      <div class="nr-transfer" id="transfer-example">
+        <div class="nr-transfer-note"><p class="nr-eyebrow">A proposed transfer</p><h3>When is the failed guess erased?</h3>
+          <p>The next project studies a search procedure of its own. Change what happens after a failed test. The scientific criterion stays the same.</p>
+          <div class="nr-log-choice" role="group" aria-label="What the next machine does after failure"><button type="button" data-retention="keep" aria-pressed="true">Keep a log</button><button type="button" data-retention="reset" aria-pressed="false">Reset immediately</button></div>
+          <a href="/assets/docs/the-cost-of-complexity.pdf#page=13" data-source-region="cost-eq-42" target="_blank" rel="noopener">Inspect the source bound, Eq. 42 ↗</a>
+        </div>
+        <div class="nr-transfer-result" aria-live="polite">
+          <p class="nr-route" aria-label="Steps in the receiving machine"><span>Failed guess</span><b aria-hidden="true">→</b><span data-event>Stored in log</span><b aria-hidden="true">→</b><span data-next>Log cleared later</span></p>
+          <h4 data-verdict>Price the later reset.</h4>
+          <p data-reason>Rejection leaves a distinguishable record in the log. To use the erasure bound, inspect what is erased when the log is cleared and what information is still available then.</p>
+          <p class="nr-transfer-scope">This is a worked test derived from the revision. The historical record shows the edit to the first manuscript. Learning on a new project would require running the comparison.</p>
+        </div>
+      </div>
+      <div class="nr-section-copy nr-learning-method"><h3>What would count as an improvement?</h3>
+        <p>Give the old and revised systems fresh machines with the same evidence budget. Check whether each answer identifies the right reset event and original passage. Include ordinary cases alongside the exceptions so a gain in one place can reveal a loss elsewhere.</p>
+        <p>The extraction rule, routing code and tests can themselves be versioned objects. An agent can propose a repair. A reviewer can inspect what it changes and accept a version that passes. Other projects can then choose to adopt the correction with the reason it was made.</p>
+        <p>The environment has already helped revise its own <em>Living System Guide</em> after an independent reader found unclear passages and figures. Measuring better reasoning on unfamiliar problems is a further test. A preserved decision gives that test a starting point.</p>
         <div class="nr-links"><a href="/eigenengine.html#memory">See diffusion inside one project ↑</a><a href="/demo/writing/simulation/#simulation-stale">See a changed input trigger review ↗</a></div>
       </div>
     </div></section>

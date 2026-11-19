@@ -66,6 +66,7 @@
   });
 
   const state = {
+    sourceOpen: false,
     role: 'paper', time: 0, frame: null, priorTime: null, phase: -1,
     visible: false, begun: false, playing: false,
     drawn: -1,
@@ -532,8 +533,8 @@
       ? '<strong>Sections and figures admitted</strong><p>A separate collection stays closed.</p>'
       : '<strong>Only figures admitted</strong><p>Section text stays closed.</p>';
     if (phase === 3) return '<strong>One unit of query mass</strong><p>Gold shows its distribution over eligible branches.</p>';
-    if (!full) return `<strong>Figure 6 · context only</strong><p>No original passage returned. <a href="${paper}&amp;page=14">Open page 14</a></p>`;
-    return `<strong>A power law</strong><p class="ee-memory__compact-formula">p(r | λ) = r<sup>−λ</sup> / Z<sub>R</sub>(λ)</p><p><a href="${paper}&amp;page=13">Open the original · Eq. 46, p. 13</a></p>`;
+    if (!full) return `<strong>Figure 6 · context only</strong><p>No original passage returned. <a data-source-region="cost-fig-6" target="_blank" rel="noopener" href="${paper}&amp;page=14">Open page 14</a></p>`;
+    return `<strong>A power law</strong><p class="ee-memory__compact-formula">p(r | λ) = r<sup>−λ</sup> / Z<sub>R</sub>(λ)</p><p><a data-source-region="cost-eq-46" target="_blank" rel="noopener" href="${paper}&amp;page=13">Open the original · Eq. 46, p. 13</a></p>`;
   }
 
   function body(phase) {
@@ -548,7 +549,7 @@
       ? '<div class="ee-memory__comparison"><strong>Same question and PDF edition</strong><p>Public paper · 1 original passage<br>Figures only · 0 original passages</p></div>'
       : '';
     if (!full) {
-      return `<h3>Figure 6 gives context</h3><p>The figure plots examples. The section text carries the general formula, so this read returns no supporting passage.</p><p class="ee-memory__detail">Public paper · Figure 6, p. 14 · ${versionLabel}</p><a href="${paper}&amp;page=14">Open Figure 6 in the public PDF <span aria-hidden="true">↗</span></a>${comparison}<button type="button" data-repeat>Repeat question</button>`;
+      return `<h3>Figure 6 gives context</h3><p>The figure plots examples. The section text carries the general formula, so this read returns no supporting passage.</p><p class="ee-memory__detail">Public paper · Figure 6, p. 14 · ${versionLabel}</p><a data-source-region="cost-fig-6" target="_blank" rel="noopener" href="${paper}&amp;page=14">Open Figure 6 in the public PDF <span aria-hidden="true">↗</span></a>${comparison}<button type="button" data-repeat>Repeat question</button>`;
     }
     return `<h3>A power law</h3>
       <p>Frequency falls as a power of rank, the symbol’s position when listed from most to least common.</p>
@@ -556,7 +557,7 @@
       <p>For a finite list of symbols, this is the maximum-entropy distribution when the average logarithm of rank is set.</p>
       <blockquote>“the exponential in cost becomes a power law in rank.”</blockquote>
       <dl class="ee-memory__receipt"><div><dt>Delivered</dt><dd>One original passage</dd></div><div><dt>PDF edition</dt><dd>${versionLabel}</dd></div></dl>
-      <a href="${paper}&amp;page=13">Open page 13, Equation 46 <span aria-hidden="true">↗</span></a>${comparison}<button type="button" data-repeat>Repeat question</button>`;
+      <a data-source-region="cost-eq-46" target="_blank" rel="noopener" href="${paper}&amp;page=13">Open page 13, Equation 46 <span aria-hidden="true">↗</span></a>${comparison}<button type="button" data-repeat>Repeat question</button>`;
   }
 
   function render(time) {
@@ -611,7 +612,7 @@
   }
 
   function tick(now) {
-    if (!state.visible || document.hidden || !state.playing) {
+    if (!state.visible || document.hidden || state.sourceOpen || !state.playing) {
       suspend();
       return;
     }
@@ -626,7 +627,7 @@
   }
 
   function continueInView() {
-    if (state.frame !== null || !state.playing || !state.visible || document.hidden) return;
+    if (state.frame !== null || !state.playing || !state.visible || document.hidden || state.sourceOpen) return;
     state.frame = requestAnimationFrame(tick);
   }
 
@@ -711,6 +712,11 @@
     }
   });
   narrow.addEventListener('change', fitDiagram);
+  document.addEventListener('eigenengine-source-preview', ({ detail }) => {
+    state.sourceOpen = detail.open;
+    if (state.sourceOpen) suspend();
+    else continueInView();
+  });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) suspend();
     else continueInView();
@@ -730,7 +736,7 @@
       clearTimeout(timer);
       if (framed && !state.begun && !document.hidden) {
         timer = setTimeout(() => {
-          if (framed && !state.begun && !document.hidden) play();
+          if (framed && !state.begun && !document.hidden && !state.sourceOpen) play();
         }, 500);
       }
     }
@@ -742,6 +748,7 @@
       startWhenSettled();
     }, { rootMargin: '-62px 0px -4px 0px', threshold: [0, .42, .96] });
     observer.observe(exhibit);
+    document.addEventListener('eigenengine-source-preview', event => { if (!event.detail.open) startWhenSettled(); });
     window.addEventListener('scroll', startWhenSettled, {passive:true});
   } else {
     state.visible = true;

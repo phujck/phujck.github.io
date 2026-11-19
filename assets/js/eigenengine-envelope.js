@@ -8,47 +8,47 @@
   const paper = '/demo/view/?asset=cost-paper';
   const records = {
     section: {
-      label: 'Geometry of refinement', kind: 'Section', tone: 'gold',
+      region: 'cost-geometry', label: 'Geometry of refinement', kind: 'Section', tone: 'gold',
       summary: 'Each square is a register for its children and a symbol in its parent register. Open a quadrant to repeat the same four-way choice.',
       next: ['register', 'claim'], page: 9,
     },
     register: {
-      label: 'Four-way split', kind: 'Construction', tone: 'gold',
+      region: 'cost-fig-3a', label: 'Four-way split', kind: 'Construction', tone: 'gold',
       summary: 'The Hilbert path visits all the cells in one quadrant before entering the next. The path repeats inside each quadrant, rotated or reflected to keep consecutive cells adjacent.',
       next: ['cell', 'count'], page: 10,
     },
     cell: {
-      label: 'Selected cell', kind: 'Detail', tone: 'gold',
+      region: 'cost-fig-4b', label: 'Selected cell', kind: 'Detail', tone: 'gold',
       summary: 'Following one branch identifies a cell. Figure 4 follows the third child through three levels, with each selected child becoming the register for the next choice.',
       page: 11,
     },
     count: {
-      label: 'Four times as many', kind: 'Premise', tone: 'blue',
+      region: 'cost-fig-3a', label: 'Four times as many', kind: 'Premise', tone: 'blue',
       summary: 'At each level every register divides into four. The next level therefore has four times as many divisions to pay for.',
       page: 10,
     },
     width: {
-      label: 'Width per register', kind: 'Premise', tone: 'blue',
+      region: 'cost-width', label: 'Width per register', kind: 'Premise', tone: 'blue',
       summary: 'On the square, each child is half as wide as its parent. That leaves one quarter of its area. Figure 4 keeps the same nesting and varies the width contraction.',
       next: ['fig3', 'fig4'], page: 9,
     },
     price: {
-      label: 'Area or wall length', kind: 'Condition', tone: 'blue',
+      region: 'cost-fig-3b', label: 'Area or wall length', kind: 'Condition', tone: 'blue',
       summary: 'A division can be priced by the area being divided or by the length of the walls that divide it. On the square, area quarters but wall length halves with each step down.',
       next: ['fig3'], page: 10,
     },
     claim: {
-      label: 'Constant cost per level', kind: 'Claim', tone: 'teal',
+      region: 'cost-fig-3b', label: 'Constant cost per level', kind: 'Claim', tone: 'teal',
       summary: 'On the square, area pricing makes each round cost the same. Four times as many divisions cost one quarter as much each. Wall-length pricing makes each round cost twice as much.',
       next: ['fig3', 'fig4'], page: 10,
     },
     fig3: {
-      label: 'Figure 3', kind: 'Evidence', tone: 'teal',
+      region: 'cost-fig-3', label: 'Figure 3', kind: 'Evidence', tone: 'teal',
       summary: 'The upper panels show successive levels on the square. Below, the blue area-priced curve rises by the same amount each time. The orange wall-length curve has increments of 1, 2 and 4.',
       caption: 'The composition correction as geometry', page: 10,
     },
     fig4: {
-      label: 'Figure 4', kind: 'Evidence', tone: 'teal',
+      region: 'cost-fig-4', label: 'Figure 4', kind: 'Evidence', tone: 'teal',
       summary: 'A related construction keeps the rank order and nesting while thinning the geometry. At dimension one, even wall-length pricing gives a constant increment because the width quarters.',
       caption: 'The Hilbert order at non-integer dimension', page: 11,
     },
@@ -127,7 +127,7 @@
     lens: 'membership', selected: 'claim', role: 'reader', phase: -1,
     source: 0, accepted: 0, prior: null, preview: false,
     yaw: baseAngle.membership, pitch: defaultTilt, spinning: null, drag: null,
-    positions: structuredClone(lenses.membership.positions), timers: [],
+    positions: structuredClone(lenses.membership.positions), question: null,
     pulseFrame: null, engaged: false, visible: false, story: null, storyFrame: null,
     scene: 'sealed', flap: 0, extraction: 0, cardScale: 1, turn: 1,
     size: { width: 1, height: 1, card: 90 },
@@ -451,15 +451,21 @@
     layers.stations.innerHTML = markers;
   }
 
+  let sourceOpenedAt = null;
+  let sourceReadingTime = 0;
+  let resumeTurn, resumePulse;
+  const animationTime = now => (sourceOpenedAt ?? now) - sourceReadingTime;
+
   function moveTo(lens, yaw = state.yaw, pitch = state.pitch, duration = 780, regroup = false) {
     cancelAnimationFrame(state.spinning);
-    const start = performance.now();
+    const start = animationTime(performance.now());
     const from = { yaw: state.yaw, pitch: state.pitch, positions: structuredClone(state.positions) };
     const destination = lenses[lens].positions;
     const turn = Math.atan2(Math.sin(yaw - from.yaw), Math.cos(yaw - from.yaw));
     const initialScale = state.cardScale;
     function step(now) {
-      const t = clamp((now - start) / duration);
+      if (sourceOpenedAt !== null) { resumeTurn = step; return; }
+      const t = clamp((animationTime(now) - start) / duration);
       const weight = ease(t);
       state.yaw = from.yaw + turn * weight;
       state.pitch = mix(from.pitch, pitch, weight);
@@ -481,9 +487,10 @@
   function pulseEdges(edges, tone) {
     cancelAnimationFrame(state.pulseFrame);
     layers.pulse.innerHTML = '';
-    const start = performance.now();
+    const start = animationTime(performance.now());
     function frame(now) {
-      const elapsed = now - start;
+      if (sourceOpenedAt !== null) { resumePulse = frame; return; }
+      const elapsed = animationTime(now) - start;
       layers.pulse.innerHTML = edges.map(([source, target], index) => {
         const t = Math.max(0, Math.min(1, (elapsed - index * 95) / 700));
         const a = state.projected[source];
@@ -553,7 +560,7 @@
     const story = state.story;
     if (!story) return;
     state.storyFrame = null;
-    if (!state.visible || document.hidden) {
+    if (!state.visible || document.hidden || sourceOpenedAt !== null) {
       story.tick = null;
       return;
     }
@@ -598,7 +605,7 @@
         <p>${item.summary}</p>
         ${item.caption ? `<p class="ee-envelope__figure-caption">${item.caption}</p>` : ''}
         ${item.next ? `<div class="ee-envelope__open">${item.next.map(next => `<button type="button" data-open="${next}">Open ${records[next].kind === 'Evidence' ? records[next].label : records[next].kind.toLowerCase()} <span aria-hidden="true">→</span></button>`).join('')}</div>` : ''}
-        <a href="${paper}&amp;page=${item.page}">Read ${item.caption ? 'figure and caption' : 'the source passage'} <span aria-hidden="true">↗</span></a>`,
+        <a data-source-region="${item.region}" target="_blank" rel="noopener" href="${paper}&amp;page=${item.page}">Read ${item.caption ? 'figure and caption' : 'the source passage'} <span aria-hidden="true">↗</span></a>`,
     };
   }
 
@@ -627,12 +634,14 @@
     picker.value = id;
     const shortResult = $('[data-object-result]');
     shortResult.textContent = shortResults[id];
-    if (id === 'fig3' || id === 'fig4') {
-      const source = document.createElement('a');
-      source.href = paper + '&page=' + records[id].page;
-      source.textContent = 'Open ' + records[id].label + ' ↗';
-      shortResult.append(' ', source);
-    }
+    const item = records[id];
+    const source = document.createElement('a');
+    source.dataset.sourceRegion = item.region;
+    source.target = '_blank';
+    source.rel = 'noopener';
+    source.href = paper + '&page=' + item.page;
+    source.textContent = item.caption ? 'Open ' + item.label + ' ↗' : 'Read p. ' + item.page + ' ↗';
+    shortResult.append(' ', source);
     const view = detail(id);
     $('.ee-envelope__crumb').innerHTML = view.path;
     const selected = $('.ee-envelope__detail');
@@ -647,9 +656,9 @@
   }
 
   function stopQuestion() {
-    if (state.timers.length && state.phase === 0) $('.ee-envelope__query-result').textContent = '';
-    state.timers.forEach(clearTimeout);
-    state.timers = [];
+    if (state.question && state.phase === 0) $('.ee-envelope__query-result').textContent = '';
+    clearTimeout(state.question?.timer);
+    state.question = null;
     if (state.phase >= 0) {
       state.phase = -1;
       cancelAnimationFrame(state.pulseFrame);
@@ -657,6 +666,19 @@
       draw();
     }
     $('[data-run]').disabled = false;
+  }
+
+  function scheduleQuestion() {
+    const q = state.question;
+    if (!q) return;
+    if (sourceOpenedAt !== null) {
+      clearTimeout(q.timer);
+      if (q.timer !== null) q.remaining = Math.max(0, q.remaining - (performance.now() - q.started));
+      q.timer = null;
+    } else {
+      q.started = performance.now();
+      q.timer = setTimeout(q.next, q.remaining);
+    }
   }
 
   function runQuestion() {
@@ -680,7 +702,7 @@
       answer.innerHTML = `<p><strong>Area pricing.</strong> Each round divides four times as many squares, each with one quarter of the area. Under wall-length pricing the cost per round doubles.</p>
         <p>${step.status}</p>
         <a href="/eigenengine/cost-of-complexity/#refinement">Compare the cost curves in the paper ↗</a>
-        <a href="${paper}&amp;page=10">Open Figure 3 ↗</a>`;
+        <a data-source-region="cost-fig-3" target="_blank" rel="noopener" href="${paper}&amp;page=10">Open Figure 3 ↗</a>`;
       if (phase !== phases.length - 1) return;
       select('fig3');
       answer.insertAdjacentHTML('beforeend', `<blockquote>“a price set by area (γ = 2) adds the same increment … at every depth”</blockquote>
@@ -688,10 +710,11 @@
       const run = $('[data-run]');
       run.textContent = 'Trace again';
       run.disabled = false;
-      state.timers = [];
+      state.question = null;
     };
     advance(0);
-    state.timers.push(setTimeout(() => advance(1), 1900));
+    state.question = { next: () => advance(1), remaining: 1900, timer: null };
+    scheduleQuestion();
   }
 
   function revision() {
@@ -822,7 +845,7 @@
       if (delta) moveTo(state.lens, state.yaw + delta * 0.38);
       else moveTo(state.lens, baseAngle[state.lens], defaultTilt);
     } else if (button.dataset.point) {
-      if (state.selected === button.dataset.point && !state.timers.length) return;
+      if (state.selected === button.dataset.point && !state.question) return;
       stopQuestion();
       select(button.dataset.point);
     } else if (button.dataset.open) {
@@ -864,7 +887,7 @@
   new ResizeObserver(measure).observe(stage);
   function syncStoryClock() {
     if (!state.story) return;
-    if (!state.visible || document.hidden) {
+    if (!state.visible || document.hidden || sourceOpenedAt !== null) {
       cancelAnimationFrame(state.storyFrame);
       state.storyFrame = null;
       state.story.tick = null;
@@ -873,6 +896,19 @@
     }
   }
   document.addEventListener('visibilitychange', syncStoryClock);
+  document.addEventListener('eigenengine-source-preview', ({ detail }) => {
+    if (detail.open) {
+      sourceOpenedAt = performance.now();
+    } else if (sourceOpenedAt !== null) {
+      sourceReadingTime += performance.now() - sourceOpenedAt;
+      sourceOpenedAt = null;
+      if (resumeTurn) state.spinning = requestAnimationFrame(resumeTurn);
+      if (resumePulse) state.pulseFrame = requestAnimationFrame(resumePulse);
+      resumeTurn = resumePulse = null;
+    }
+    syncStoryClock();
+    scheduleQuestion();
+  });
 
   if ('IntersectionObserver' in window) {
     let started = false;

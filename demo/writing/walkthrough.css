@@ -139,8 +139,6 @@ button, select, summary { cursor: pointer; }
   object-fit: contain;
 }
 
-.session-film video::cue { background: #101723e8; color: #f2efea; }
-
 .film-play-action {
   display: inline-flex;
   align-items: center;
@@ -173,25 +171,7 @@ button, select, summary { cursor: pointer; }
 
 .film-play:hover { background: #f0d4a0; }
 
-.film-caption {
-  display: grid;
-  grid-template: "title caption action" minmax(2.5rem, auto) / minmax(8.5rem, .22fr) minmax(0, 1fr) minmax(6.7rem, max-content);
-  align-items: center;
-  gap: .2rem 1rem;
-  min-height: 4.2rem;
-  padding: .78rem 1rem;
-  border-top: 1px solid #3d4e64;
-  background: #182235;
-}
-
-.film-caption p { margin: 0; }
-.film-caption-title { grid-area: title; color: var(--gold); font: 600 .94rem/1.35 var(--display); }
-.film-caption-text { grid-area: caption; color: var(--ink); font: 400 clamp(.91rem, 1.25vw, 1.06rem)/1.48 var(--body); }
-.session-film[data-native-captions] .film-caption-text { visibility: hidden; }
-
 .film-resume {
-  grid-area: action;
-  justify-self: end;
   min-height: 2.5rem;
   padding: .32rem .62rem;
   border: 1px solid #8e7957;
@@ -232,12 +212,42 @@ button, select, summary { cursor: pointer; }
 .film-links {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: .4rem 1.12rem;
   margin-top: .65rem;
   font: 500 .9rem/1.4 var(--display);
 }
 
 .film-inspect { margin-right: auto; color: var(--gold); }
+
+.film-transcript {
+  max-width: 53rem;
+  margin-top: .8rem;
+  border: 1px solid var(--line);
+  border-radius: .5rem;
+  background: var(--panel);
+  overflow-wrap: anywhere;
+}
+
+.film-transcript summary {
+  padding: .58rem .75rem;
+  color: var(--blue);
+  cursor: pointer;
+  font: 550 .9rem/1.4 var(--display);
+}
+
+.film-transcript ol { margin: 0; padding: 0 .75rem .55rem; list-style: none; }
+.film-transcript li {
+  display: grid;
+  grid-template-columns: 4.65rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: .35rem .7rem;
+  padding-block: .55rem;
+  border-top: 1px solid var(--line);
+}
+
+.film-transcript time { color: var(--teal); font: 500 .82rem/1.45 var(--display); font-variant-numeric: tabular-nums; }
+.film-transcript li p { margin: 0; color: var(--ink); font: 400 .91rem/1.5 var(--body); }
 
 .session-tour {
   border: 1px solid var(--line);
@@ -780,12 +790,6 @@ h1 {
 @media (max-width: 660px) {
   .session-intro { grid-template-columns: 1fr; }
   .session-intro > p { font-size: .88rem; }
-  .film-caption {
-    grid-template: "title action" minmax(2.5rem, auto) "caption caption" auto / 1fr max-content;
-    align-content: start;
-    min-height: 6.8rem;
-    padding: .62rem .7rem;
-  }
   .film-chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .film-chapters button { padding-inline: .4rem; font-size: .86rem; }
 }
@@ -816,10 +820,6 @@ h1 {
   .lightbox { width: calc(100% - .55rem); }
   .lightbox-controls { font-size: .9rem; padding-inline: .35rem; }
   .lightbox-controls button { padding-inline: .44rem; }
-}
-
-@media (max-width: 360px) {
-  .film-caption { min-height: 8rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
