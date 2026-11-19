@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,follow,noarchive">
+  <meta name="description" content="Source files for checking an applied manuscript revision, a cross-project citation and a numerical experiment in EigenEngine.">
+  <meta name="theme-color" content="#101b26">
+  <link rel="canonical" href="https://gmccaul.co.uk/assets/data/networked-research/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <title>Source records · Networked Research · EigenEngine</title>
+  <link rel="alternate" type="application/json" href="./index.json" title="Evidence manifest">
+  <style>
+    @font-face{font-family:Outfit;src:url('/demo/shared/fonts/outfit-var.woff2') format('woff2');font-weight:100 900;font-display:swap}
+    @font-face{font-family:Lora;src:url('/demo/shared/fonts/lora-var.woff2') format('woff2');font-weight:400 700;font-display:swap}
+    *{box-sizing:border-box}html{color-scheme:dark;background:#0e1823}
+    body{margin:0;color:#ebece4;font:1rem/1.55 Outfit,system-ui,sans-serif}
+    main,nav,footer{width:min(65rem,calc(100% - 2.2rem));margin:auto}
+    header{background:#152331;border-bottom:1px solid #42515c}
+    nav{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;padding:.75rem 0}
+    a{color:#afd3e4;text-underline-offset:.2em}a:hover{color:#eed6a4}a:focus-visible,summary:focus-visible{outline:2px solid #ebca8b;outline-offset:4px}
+    nav a,footer a{font-weight:550;text-decoration:none}.home{color:#edcc91}
+    h1,h2,p,figure{margin:0}h1,h2{font-family:Lora,Georgia,serif;font-weight:400;letter-spacing:-.046em;text-wrap:balance}
+    h1{font-size:clamp(2.7rem,6.3vw,4.9rem);line-height:1.01}h2{font-size:clamp(1.55rem,2.9vw,2.55rem);line-height:1.1}
+    .lead{padding:clamp(2rem,6vw,4.4rem) 0 1.5rem}.lead>p{max-width:62ch;margin-top:.9rem;font-size:1.13rem;color:#d6d9d3}
+    .tools{display:flex;align-items:center;gap:.65rem 1.3rem;flex-wrap:wrap;margin-top:1rem}.tools a{font-weight:570}.download{color:#222627;background:#e7c88e;padding:.49rem .85rem;border-radius:.25rem;text-decoration:none}.download:hover{background:#ffdfab;color:#242624}
+    section.record{display:grid;grid-template-columns:minmax(11rem,.75fr) minmax(0,1.25fr);gap:clamp(.7rem,3vw,2.3rem);border-top:1px solid #3b505e;padding:clamp(1.35rem,3.2vw,2.4rem) 0}
+    .record p{color:#c6d1d6;max-width:69ch}.record .files{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.55rem}
+    .compare{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1rem}.compare img{display:block;width:100%;height:auto;background:#fff}.compare figcaption{font-size:.86rem;margin:.25rem 0;color:#c9d9da}
+    footer{padding:1rem 0 2rem;border-top:1px solid #3b505e}.context{color:#acbdc7;margin:0 0 1.4rem;max-width:75ch;font-size:.93rem}
+    @media(max-width:650px){section.record{grid-template-columns:1fr}.compare{gap:.4rem}nav{font-size:.9rem}}
+  </style>
+  <script defer src="/assets/js/eigenengine-reading-return.js"></script>
+</head>
+<body>
+  <header><nav aria-label="Return to the research pages"><a class="home" href="/eigenengine.html">← Back to EigenEngine</a><a href="/eigenengine/networked-research/">← Networked Research</a></nav></header>
+  <main>
+    <div class="lead">
+      <h1>Networked Research source records</h1>
+      <p>A project can be opened as a graph of claims, figures, calculations and edits. The author works in an editor while an agent uses permitted tools on those same versioned objects. Here you can follow one claim across a project boundary and another back to the edit that changed it.</p>
+      <div class="tools"><a class="download" href="./evidence.zip" download>Download the evidence ZIP ↓</a><a href="./index.json" target="_blank" rel="noopener">Open the machine-readable index ↗</a></div>
+    </div>
+    <p class="context">The index identifies each file by its SHA-256 digest. It also records the order of the selected edits, the source passages they affected, and the published pages where their results can be read.</p>
+
+    <section class="record" id="revision"><h2>An author changes the argument</h2><div>
+      <p>Compare the Hilbert section before and after the rewrite. Follow the derivation of the cost correction into the dashed cuts and cost exponents in Figure 4. The later inset follows one selected cell as it becomes the next register. The two heading files isolate a subsequent edit to the labels.</p>
+      <div class="files"><a href="./section-before.tex" target="_blank" rel="noopener">Earlier section · TeX</a><a href="./section-after.tex" target="_blank" rel="noopener">Rewritten section · TeX</a><a href="./figure4-before-headings.tex" target="_blank" rel="noopener">Before the heading edit</a><a href="./figure4-after-headings.tex" target="_blank" rel="noopener">After the heading edit</a></div>
+      <div class="compare"><figure><a href="./figure4-before.webp" target="_blank" rel="noopener"><img src="./figure4-before.webp" width="1360" height="320" alt="Earlier drawing with the dimension under each panel"></a><figcaption>Earlier drawing</figcaption></figure>
+        <figure><a href="./figure4-after.webp" target="_blank" rel="noopener"><img src="./figure4-after.webp" width="1360" height="353" alt="Revised drawing with the dividing cuts and cost exponents"></a><figcaption>Applied rewrite</figcaption></figure></div>
+      <div class="files"><a href="./figure4-published-inset.webp" target="_blank" rel="noopener">Published inset</a><a href="../../docs/the-cost-of-complexity.pdf#page=9" target="_blank" rel="noopener">Equation 36 · p. 9</a><a href="../../docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Figure 4 · p. 11</a></div>
+    </div></section>
+    <section class="record" id="citation"><h2>A citation opens another project</h2><div><p>Begin in the Kalmár project at the question about sixteen symbols. One branch counts layouts. Another identifies a particular version of the Cost project and the evidence for two addresses of symbol 11. Check the target file against the digest in the citation, then use its register sizes to reconstruct both addresses. The route in the first project splits its weight between a local result and a citation. In local scope the result is the layout count. Opening the referenced project adds the cited addresses. Both records in this worked example are public.</p>
+      <div class="files"><a href="./kalmar-layouts-v1.json" target="_blank" rel="noopener">Kalmár project record</a><a href="./cost-addresses-v1.json" target="_blank" rel="noopener">Cost project record</a><a href="../../docs/physical-origins-of-the-kalmar-constant.pdf#page=3" target="_blank" rel="noopener">Kalmár Figure 1 · p. 3</a><a href="../../docs/the-cost-of-complexity.pdf#page=5" target="_blank" rel="noopener">Cost Figure 2 · p. 5</a></div>
+    </div></section>
+    <section class="record" id="calculation"><h2>A calculation you can repeat</h2><div><p>A separate simulation splits every square at each round. Recalculate the accumulated costs when a split is priced first by area and then by wall length. Compare the per-round values with the table and trace the result through the run record. This calculation was made for the walkthrough.</p>
+      <div class="files"><a href="./simulation/inputs.json" target="_blank" rel="noopener">Inputs</a><a href="./simulation/subdivide.py" target="_blank" rel="noopener">Calculation · Python</a><a href="./simulation/costs.csv" target="_blank" rel="noopener">Per-round table · CSV</a><a href="./simulation/result.json" target="_blank" rel="noopener">Result</a><a href="./simulation/record.json" target="_blank" rel="noopener">Run and figure record</a></div>
+    </div></section>
+    <section class="record" id="decision"><h2>What the editor retained</h2><div><p>The project summary counts turns, proposal versions, decisions and tool attempts. A new proposal version can be saved several times before the author decides what to apply. The aggregate counts give the scale of the work. The source comparison above identifies a particular change that reached the manuscript.</p>
+      <div class="files"><a href="../cost-project-record.json" target="_blank" rel="noopener">Editing and tool counts · JSON</a></div>
+    </div></section>
+    <section class="record" id="reuse"><h2>A question for the next project</h2><div><p>The author asked to make the nesting visible. In the finished inset, equally wide drawings show successively smaller physical regions. A candidate instruction for another editor is to check the scale before inferring physical size. Two marks can each span 40 pixels and represent different widths.</p>
+      <p>Try that instruction on unfamiliar images with known calibrations. Compare the decisions with and without the instruction under the same conditions. The historical record supplies the original correction. Transfer to a new project is an experiment still to run.</p>
+      <div class="files"><a href="/eigenengine/networked-research/#learning">Try the two image scales ↗</a><a href="/eigenengine/networked-research/#verify">Copy the investigation prompt ↗</a></div>
+    </div></section>
+  </main>
+  <footer><a class="home" href="/eigenengine/networked-research/#verify">← Back to the agent prompt</a></footer>
+</body>
+</html>

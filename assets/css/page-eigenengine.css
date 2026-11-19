@@ -317,3 +317,34 @@
 .ee-workspace-views figcaption {margin-top:.65rem;color:#becbd4;font:.9rem/1.45 var(--font-display);max-width:71ch}
 
 .ee-next-project p a {color:var(--ee-blue);text-underline-offset:.16em}
+
+
+/* The paper keeps the opening spread. The project network is the next feature. */
+.ee-top-network {margin-left:.8rem;color:#bddbe6;letter-spacing:normal;text-transform:none;text-underline-offset:.2em}
+.ee-contents a.ee-network-jump {color:#f0d49b;font-weight:600}
+.ee-network-feature {scroll-margin-top:calc(var(--nav-height) + .6rem);margin-top:clamp(1.05rem,2.8vw,2.1rem);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:clamp(1rem,2.2vw,2.15rem);padding:clamp(1rem,2vw,1.65rem);border:1px solid #4b656e;border-radius:.48rem;background:linear-gradient(113deg,#19333a,#172735 68%,#17232d)}
+.ee-network-lead {display:grid;grid-template-columns:minmax(0,1.18fr) minmax(11rem,.82fr);align-items:center;gap:clamp(.8rem,2.15vw,2.2rem);color:var(--ee-ink);text-decoration:none;min-width:0}
+.ee-network-feature .ee-network-feature-copy h2 {font-size:clamp(1.7rem,3.55vw,3.1rem);letter-spacing:-.048em;line-height:1.09;text-align:left}
+.ee-network-feature h2 span {color:var(--ee-gold);font:400 .55em var(--font-display);vertical-align:middle}
+.ee-network-feature-copy p {margin-top:.42rem;color:#c6d6df;font:.96rem/1.45 var(--font-display);max-width:62ch}
+.ee-network-art {display:block;width:100%;height:auto;max-height:110px}
+.ee-network-check {max-width:12.5rem;padding:.55rem 0 .55rem 1rem;border-left:1px solid #50636d;color:#ead3a4;text-decoration:underline;text-underline-offset:.21em;font:500 .91rem/1.45 var(--font-display)}
+.ee-network-lead:hover h2,.ee-network-check:hover {color:#ffdda1}
+.ee-network-scope { fill: #142838; stroke: #58768a; stroke-width: 1; }
+.ee-network-stems { fill: none; stroke: #8eb7c7; stroke-width: 1.55; stroke-linecap: round; }
+.ee-network-route { fill: none; stroke: #f1c581; stroke-width: 2.15; stroke-linecap: round; stroke-linejoin: round; }
+.ee-network-branch { fill: #2b5263; stroke: #a4d0db; stroke-width: 1.4; }
+.ee-network-selection { fill: #a07a46; stroke: #f7dca7; stroke-width: 1.4; }
+.ee-network-edit path:first-child { fill: #f0c984; stroke: #ffecbf; stroke-width: 1.2; stroke-linejoin: round; }
+.ee-network-edit path:last-child { fill: none; stroke: #52402c; stroke-width: 1.3; stroke-linecap: round; }
+.ee-network-art-label { fill: #c9dde7; text-anchor: middle; font: 500 15px var(--font-display); }
+.ee-network-art-label text:nth-child(2) { fill: #f3c98d; }
+
+@media (max-width:900px) {
+  .ee-network-feature {grid-template-columns:minmax(0,1fr);gap:.65rem}
+  .ee-network-check {max-width:none;padding:.48rem 0 .04rem;border-left:0;border-top:1px solid #43575f}
+}
+@media (max-width:600px) {
+  .ee-network-lead {grid-template-columns:minmax(0,1fr);gap:.65rem}
+  .ee-network-art {max-width:23rem;max-height:92px}
+}

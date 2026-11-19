@@ -5,7 +5,8 @@
   const viewer = "/demo/view/";
   const names = new Map([
     [overview, "EigenEngine"], [viewer, "the viewer"],
-    ["/eigenengine/networked-research/", "Networked research"],
+    ["/eigenengine/networked-research/", "Networked Research"],
+    ["/assets/data/networked-research/", "the source records"],
     ["/eigenengine/cost-of-complexity/", "The Cost of Complexity"],
     ["/eigenengine/kalmar-constant/", "the Kalmár article"],
     ["/demo/writing/", "the Writing App film"],

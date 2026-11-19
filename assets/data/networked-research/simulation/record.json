@@ -1,0 +1,81 @@
+{
+  "basis": "New deterministic finite subdivision check authored for this Writing App walkthrough.",
+  "producer": {
+    "id": "subdivision-cost-check",
+    "mode": "smoke",
+    "args": {},
+    "code": "subdivide.py",
+    "input": "inputs.json"
+  },
+  "run": {
+    "id": "run-7c18bd3fd53e4dc2",
+    "state": "COMPLETE",
+    "exit_code": 0,
+    "cleanup": "VERIFIED"
+  },
+  "files": {
+    "subdivide.py": {
+      "sha256": "aa5c4116ba8a7a16d1edecd593965cf09069b368844c6174e9fb646ff24e3c21"
+    },
+    "inputs.json": {
+      "sha256": "2241435d370dc73b4fb045bcdf917464c5352b26ad7895cff455e5d83d029929"
+    },
+    "result.json": {
+      "sha256": "e56fc9d63277efa68d6ad68cc85df2f30dc2614e829a5758dd670b4509d2a75b"
+    },
+    "costs.csv": {
+      "sha256": "bfec7ddd2d9480064ce2a4d09e4401c604dd0441e43ced3ae40364e407b84c74"
+    }
+  },
+  "result_binding": {
+    "id": "result:subdivision-cost-check",
+    "revision": "sha256:3bc326693a6494047c3d9e7737260bc4f4fb35e6612af43866c26e0400c8cc08",
+    "status": "CURRENT",
+    "claim_id": "claim:area-pricing-check"
+  },
+  "figure": {
+    "id": "subdivision-cost-check",
+    "input": "costs.csv",
+    "input_sha256": "bfec7ddd2d9480064ce2a4d09e4401c604dd0441e43ced3ae40364e407b84c74",
+    "drawing_freshness": "CURRENT",
+    "evidence_binding_status": "CURRENT",
+    "result_id": "result:subdivision-cost-check",
+    "tex_label": "fig:subdivision-cost-check",
+    "placement": {
+      "state": "COMMITTED",
+      "file": "excerpt.tex",
+      "after_line": 62,
+      "before_sha256": "bd020234c3794a8d97e57262290c24b4d0154ad4174827d1c25fb87c083d1470",
+      "after_sha256": "22a70690abc7d7bc8d715068716442a302c6e2b293041f802667704f6c38ac90"
+    }
+  },
+  "changed_input_check": {
+    "original": {
+      "record_currentness": "CURRENT",
+      "run_state": "COMPLETE",
+      "drawing_freshness": "CURRENT",
+      "evidence_binding_status": "CURRENT",
+      "actual_csv_sha256": "bfec7ddd2d9480064ce2a4d09e4401c604dd0441e43ced3ae40364e407b84c74",
+      "figure_outputs_unchanged": true,
+      "manuscript_source_unchanged": true
+    },
+    "changed": {
+      "record_currentness": "STALE",
+      "run_state": "COMPLETE",
+      "drawing_freshness": "STALE",
+      "evidence_binding_status": "STALE",
+      "actual_csv_sha256": "9ee1865c519ec4cb7ca6fe044419201899275398692d3964113ca18002102d3e",
+      "figure_outputs_unchanged": true,
+      "manuscript_source_unchanged": true
+    },
+    "restored": {
+      "record_currentness": "CURRENT",
+      "run_state": "COMPLETE",
+      "drawing_freshness": "CURRENT",
+      "evidence_binding_status": "CURRENT",
+      "actual_csv_sha256": "bfec7ddd2d9480064ce2a4d09e4401c604dd0441e43ced3ae40364e407b84c74",
+      "figure_outputs_unchanged": true,
+      "manuscript_source_unchanged": true
+    }
+  }
+}

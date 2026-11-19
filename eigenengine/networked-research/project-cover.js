@@ -9,6 +9,7 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const narrow = window.matchMedia('(max-width: 650px)');
   const duration = 9300;
+  const masthead = document.querySelector('.nr-bar');
   const stages = [
     { label: 'Whole network', time: 0 },
     { label: 'Follow the citation', time: 2050 },
@@ -152,7 +153,7 @@
     projects.forEach(drawObject);
     const clusters = family.map((point, index) => {
       const group = svg(nodes, 'g', { class: 'nr-cover-cluster' });
-      const root = shape(group, 'family', index === 1 ? 12 : 10);
+      shape(group, 'family', index === 1 ? 12 : 10);
       const label = svg(group, 'text', { class: 'nr-cover-group-label', y: -15 }, ['Claims', 'Figures', 'Notes'][index]);
       const edge = svg(edges, 'path', { class: 'nr-cover-stem' });
       const leaves = offsets.map((shift, leafIndex) => {
@@ -161,12 +162,12 @@
         const node = shape(nodes, 'leaf', 7.5);
         return { leaf, stem, node };
       });
-      return { point, group, root, label, edge, leaves };
+      return { point, group, label, edge, leaves };
     });
 
     const citationPacket = svg(overlays, 'circle', { r: 5.9, class: 'nr-cover-citation-packet' });
     const proofPacket = svg(overlays, 'g', { class: 'nr-cover-packet' });
-    svg(proofPacket, 'circle', { r: 15, class: 'nr-cover-halo' });
+    const proofHalo = svg(proofPacket, 'circle', { r: 15, class: 'nr-cover-halo' });
     shape(proofPacket, 'package', 8);
     svg(proofPacket, 'circle', { r: 2.9, class: 'nr-cover-distinction' });
 
@@ -177,19 +178,26 @@
       x: evidencePoint[0], y: evidencePoint[1] + (phone ? 29 : 25),
       class: 'nr-cover-annotation'
     }, 'Figure 2');
+    const currents = [
+      { path: cited, type: 'citation', lap: 3300, delay: 500 },
+      { path: proofLegs[1], type: 'evidence', lap: 4600, delay: 1550 },
+      ...possibilities.map(({ path }, index) => ({ path, type: 'possible', lap: 5200, delay: 2400 + index * 1430 }))
+    ].map(current => ({ ...current, mark: svg(overlays, 'circle', {
+      r: 5.3, class: `nr-cover-current nr-cover-current--${current.type}`, opacity: 0
+    }) }));
     return { phone, cx, cy, cost, floorPath, floorTop, boundary, front, cited, verified, possibilities,
-      clusters, citationPacket, proofPacket, proofLegs, evidenceMark, evidencePoint };
+      clusters, citationPacket, proofPacket, proofLegs, proofHalo, evidenceMark, currents };
   }
 
-  function pointOn(path, progress) {
-    const point = path.getPointAtLength(path.getTotalLength() * clamp(progress));
+  function pointOn(path, progress, length = path.getTotalLength()) {
+    const point = path.getPointAtLength(length * clamp(progress));
     return [point.x, point.y];
   }
 
   function draw(time) {
-    const citation = smooth((time - 210) / 1810);
-    const open = smooth((time - 1450) / 2450);
-    const leaves = smooth((time - 2500) / 1750);
+    const citation = clamp(time / 1750);
+    const open = .19 * smooth(time / 690) + .81 * smooth((time - 1040) / 2570);
+    const leaves = .13 * smooth(time / 940) + .87 * smooth((time - 2130) / 2090);
     const proof = smooth((time - 4220) / 1810);
     const finished = smooth((time - 5750) / 540);
     const peers = smooth((time - 6560) / 2650);
@@ -210,7 +218,7 @@
     const [linkX, linkY] = pointOn(scene.cited, citation);
     scene.citationPacket.setAttribute('cx', linkX);
     scene.citationPacket.setAttribute('cy', linkY);
-    scene.citationPacket.setAttribute('opacity', Math.min(1, Math.sin(citation * Math.PI) * 1.8));
+    scene.citationPacket.setAttribute('opacity', citation < 1 ? Math.min(1, .56 + Math.sin(citation * Math.PI) * .85) * (1 - smooth((citation - .83) / .17)) : 0);
 
     let networkExit = cost.point;
     scene.clusters.forEach((cluster, index) => {
@@ -255,6 +263,42 @@
     canvas.dataset.peers = peers.toFixed(4);
   }
 
+  function drawCurrents(time) {
+    const emergence = smooth(time / 680);
+    scene.currents.forEach(current => {
+      const phase = ((time + current.delay) % current.lap) / current.lap;
+      current.length ??= current.path.getTotalLength();
+      const [x, y] = pointOn(current.path, phase, current.length);
+      current.mark.setAttribute('cx', x);
+      current.mark.setAttribute('cy', y);
+      current.mark.setAttribute('opacity', Math.sin(phase * Math.PI) * emergence * (current.type === 'possible' ? .8 : .96));
+    });
+    scene.proofHalo.setAttribute('r', 15 + emergence * 2.4 * Math.sin(time / 410));
+    canvas.dataset.ambient = time.toFixed(1);
+  }
+
+  function clearCurrents() {
+    scene.currents.forEach(current => {
+      current.mark.setAttribute('opacity', 0);
+      delete current.length;
+    });
+    scene.proofHalo.setAttribute('r', 15);
+    delete canvas.dataset.ambient;
+  }
+
+  function drawHighlights(time) {
+    const step = Math.floor(time / 3100);
+    const focus = step % 3;
+    const previous = (focus + 2) % 3;
+    const reveal = step ? smooth((time % 3100) / 780) : 1;
+    const emphasis = index => index === focus ? reveal : index === previous ? 1 - reveal : 0;
+    scene.verified.setAttribute('opacity', .43 + .45 * emphasis(0));
+    scene.proofHalo.setAttribute('opacity', .43 + .47 * emphasis(1));
+    scene.proofLegs.forEach(path => path.setAttribute('opacity', .56 + .34 * emphasis(1)));
+    scene.possibilities.forEach(({ path }) => path.setAttribute('opacity', .55 + .33 * emphasis(2)));
+    canvas.dataset.highlight = String(focus);
+  }
+
   const footer = document.createElement('div');
   footer.className = 'nr-cover-footer';
   footer.innerHTML = `
@@ -264,6 +308,7 @@
         ${stages.map(({ label }, index) => `<option value="${index}">${label}</option>`).join('')}
       </select>
       <button type="button" class="nr-cover-toggle"></button>
+      <button type="button" class="nr-cover-replay" aria-label="Trace the research network again">Trace again</button>
     </div>
     <div class="nr-cover-receipt">
       <span data-cover-status role="status"></span>
@@ -273,43 +318,62 @@
   cover.append(footer);
   const fallbackCaption = cover.querySelector('figcaption');
   if (fallbackCaption) fallbackCaption.hidden = true;
-  const toggle = footer.querySelector('button');
+  const toggle = footer.querySelector('.nr-cover-toggle');
+  const replay = footer.querySelector('.nr-cover-replay');
   const select = footer.querySelector('select');
   const status = footer.querySelector('[data-cover-status]');
   const source = footer.querySelector('a');
 
   let scene = makeScene(narrow.matches);
   let time = reduced.matches ? duration : 0;
-  let active = !reduced.matches;
+  let ambientTime = 0;
+  let highlightTime = 0;
+  let drawnTime = -1;
+  let active = true;
   let inView = false;
+  let optedIn = false;
   let previewOpen = Boolean(document.querySelector('.ee-source-preview[open]'));
   let request = 0;
+  let visibilityRequest = 0;
   let prior = null;
   let shownState = '';
+  const motionAllowed = () => !reduced.matches || optedIn;
 
   function controls() {
-    toggle.hidden = reduced.matches;
-    const label = time >= duration ? 'Trace again' : active ? 'Pause' : 'Resume';
+    const moving = motionAllowed();
+    const label = active ? 'Pause' : 'Resume';
+    const toggleName = label + ' the research network ' + (moving ? 'animation' : 'highlights');
+    const replayLabel = moving ? 'Trace again' : 'Play animation';
     if (toggle.textContent !== label) toggle.textContent = label;
-    toggle.setAttribute('aria-label', time >= duration ? 'Trace the research network again' : label + ' the research network animation');
+    if (toggle.getAttribute('aria-label') !== toggleName) toggle.setAttribute('aria-label', toggleName);
+    if (replay.textContent !== replayLabel) {
+      replay.textContent = replayLabel;
+      replay.setAttribute('aria-label', moving ? 'Trace the research network again' : 'Play the research network animation');
+    }
     const stage = time < 1450 ? 0 : time < 5400 ? 1 : time < 6560 ? 2 : 3;
     const pinned = canvas.dataset.evidence === 'pinned';
-    const state = `${stage}:${pinned}`;
+    const highlight = canvas.dataset.highlight;
+    const state = `${stage}:${pinned}:${highlight ?? ''}`;
+    if (select.value !== String(stage) && (document.activeElement !== select || !active)) select.value = String(stage);
     if (shownState === state) return;
     shownState = state;
-    select.value = String(stage);
     const messages = [
       'Two documented projects and two possible peers.',
       'The citation opens the Cost manuscript.',
       pinned ? 'Recovered the figure from the pinned manuscript.' : 'Opening Figure 2 in the pinned manuscript.',
       'Kalmár cites Figure 2 in Cost. Two other projects could reuse it.'
     ];
-    status.textContent = messages[stage];
+    const highlights = [
+      'Documented citation: Kalmár points to Cost.',
+      'Pinned evidence: the Cost manuscript supplies Figure 2.',
+      'Possible links: Search and Replication could reuse the figure.'
+    ];
+    status.textContent = highlight === undefined ? messages[stage] : highlights[Number(highlight)];
     source.hidden = !pinned;
   }
 
   function resume() {
-    const canPlay = active && inView && !previewOpen && !document.hidden && !reduced.matches && time < duration;
+    const canPlay = active && inView && !previewOpen && !document.hidden;
     if (canPlay && !request) request = window.requestAnimationFrame(tick);
     if (!canPlay) {
       window.cancelAnimationFrame(request);
@@ -319,69 +383,126 @@
   }
 
   function paint() {
-    draw(time);
+    const quiet = !motionAllowed() && time >= duration && highlightTime > 0;
+    if (!quiet && canvas.dataset.highlight !== undefined) {
+      delete canvas.dataset.highlight;
+      scene.proofHalo.removeAttribute('opacity');
+      drawnTime = -1;
+    }
+    if (drawnTime !== time) {
+      draw(time);
+      drawnTime = time;
+    }
+    if (time >= duration && ambientTime && motionAllowed()) drawCurrents(ambientTime);
+    else if (canvas.dataset.ambient) clearCurrents();
+    if (quiet) drawHighlights(highlightTime);
     controls();
   }
 
   function tick(now) {
     request = 0;
-    if (prior !== null) time = Math.min(duration, time + Math.max(0, Math.min(90, now - prior)));
+    if (prior !== null) {
+      const elapsed = Math.max(0, Math.min(90, now - prior));
+      if (motionAllowed()) {
+        const reached = time + elapsed;
+        time = Math.min(duration, reached);
+        ambientTime += Math.max(0, reached - duration);
+      } else {
+        highlightTime += elapsed;
+      }
+    }
     prior = now;
     paint();
     resume();
   }
 
+  function measureVisibility() {
+    visibilityRequest = 0;
+    const bounds = canvas.getBoundingClientRect();
+    const height = document.documentElement.clientHeight;
+    const nav = masthead ? masthead.getBoundingClientRect().bottom : 0;
+    const top = Math.max(0, nav);
+    const space = Math.max(0, height - top);
+    const exposed = Math.min(bounds.bottom, height) - Math.max(bounds.top, top);
+    // A short desktop pane may never fit half a tall drawing. Start once a
+    // useful part can be read, and suspend while the picture is out of sight.
+    const threshold = Math.min(96, bounds.height * .3, space * .43);
+    inView = threshold > 0 && exposed >= threshold && bounds.right > 0 && bounds.left < window.innerWidth;
+    resume();
+  }
+
+  function measureSoon() {
+    if (!visibilityRequest) visibilityRequest = window.requestAnimationFrame(measureVisibility);
+  }
+
+  function bringIntoView() {
+    measureVisibility();
+    if (!inView) canvas.scrollIntoView({ block: 'center' });
+  }
+
+  function traceAgain() {
+    time = ambientTime = highlightTime = 0;
+    prior = null;
+    active = true;
+    paint();
+    bringIntoView();
+  }
+
   toggle.addEventListener('click', () => {
-    if (time >= duration) {
-      time = 0;
-      active = true;
-    } else {
-      active = !active;
+    active = !active;
+    if (active && !motionAllowed() && time < duration) {
+      time = duration;
+      highlightTime = 0;
     }
     paint();
-    resume();
+    if (active) bringIntoView();
+    else resume();
+  });
+  replay.addEventListener('click', () => {
+    if (reduced.matches) optedIn = true;
+    traceAgain();
   });
 
   select.addEventListener('change', () => {
     time = stages[Number(select.value)].time;
+    ambientTime = 0;
+    highlightTime = 0;
     active = false;
     paint();
-    resume();
+    bringIntoView();
   });
 
-  select.addEventListener('focus', () => {
-    if (!active || time >= duration) return;
-    active = false;
-    controls();
-    resume();
-  });
+  select.addEventListener('blur', controls);
+  window.addEventListener('scroll', measureSoon, { passive: true });
+  window.addEventListener('resize', measureSoon);
+  window.addEventListener('pageshow', measureSoon);
 
   if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(([entry]) => {
-      inView = entry.intersectionRatio >= .54;
-      resume();
-    }, { threshold: .54 });
+    const observer = new IntersectionObserver(measureSoon, { threshold: [0, .25, .5, .75, 1] });
     observer.observe(canvas);
-  } else {
-    inView = true;
   }
+  if ('ResizeObserver' in window) new ResizeObserver(measureSoon).observe(canvas);
 
   narrow.addEventListener('change', () => {
     scene = makeScene(narrow.matches);
+    drawnTime = -1;
     paint();
+    measureSoon();
   });
   reduced.addEventListener('change', () => {
     time = reduced.matches ? duration : 0;
-    active = !reduced.matches;
+    ambientTime = 0;
+    highlightTime = 0;
+    optedIn = false;
     paint();
     resume();
   });
-  document.addEventListener('visibilitychange', resume);
+  document.addEventListener('visibilitychange', measureVisibility);
   document.addEventListener('eigenengine-source-preview', event => {
     previewOpen = Boolean(event.detail?.open);
     resume();
   });
 
   paint();
-  resume();
+  measureVisibility();
 })();

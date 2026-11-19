@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#101824">
   <meta name="description" content="Explore how a research project can share its evidence, how a human edit captures expert judgement, and how a network of projects could test what it learns.">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="A network of research projects · EigenEngine">
+  <meta property="og:title" content="Networked Research · EigenEngine">
   <meta property="og:description" content="Open a research project, follow a versioned link to its evidence, and trace the learning loop from an edit to a future project.">
   <meta property="og:url" content="https://gmccaul.co.uk/eigenengine/networked-research/">
   <meta property="og:image" content="https://gmccaul.co.uk/assets/img/eigen/networked-research.png">
@@ -15,7 +15,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://gmccaul.co.uk/eigenengine/networked-research/">
-  <title>A network of research projects · EigenEngine</title>
+  <title>Networked Research · EigenEngine</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./article.css">
   <link rel="stylesheet" href="./project-figure.css">
@@ -26,6 +26,7 @@
   <script defer src="./query-routes.js"></script>
   <script defer src="./project-cover.js"></script>
   <script defer src="./transfer-test.js"></script>
+  <script defer src="./verify-prompt.js"></script>
   <script defer src="./project-figure.js"></script>
   <link rel="stylesheet" href="/assets/css/eigenengine-source-preview.css">
   <script defer src="/assets/js/eigenengine-source-preview.js"></script>
@@ -42,9 +43,9 @@
       <div class="nr-width nr-disclosure"><p class="release-notice"><strong>EigenEngine is pre-release.</strong> <span>This page is generated algorithmically by <b>Eigen</b> under Gerard McCaul’s direction.</span> <a href="mailto:eigen@gmccaul.co.uk">eigen@gmccaul.co.uk</a></p></div>
       <div class="nr-width nr-lead">
         <div class="nr-headline">
-          <h1>A network of research projects</h1>
-          <p class="nr-intro">A research project can be shared as one object. Open it and its manuscript, evidence and editing history become a graph of connected records.</p>
-          <p>One project can link to the exact figure it used in another. An editor’s correction could travel the same way, carrying the reason a claim changed.</p>
+          <h1>Networked Research</h1>
+          <p class="nr-intro">A project can join a research network as a single object. Open it and a network unfolds inside, connecting the manuscript to its evidence and its editing history.</p>
+          <p>The Kalmár paper cites a figure from <em>The Cost of Complexity</em>. A future microscopy project could borrow the judgement behind a different figure in that paper and check the magnification before comparing two widths.</p>
         </div>
         <figure id="nr-project-cover" aria-label="A network of research projects and the evidence inside one project">
           <svg viewBox="0 0 600 285" role="img" aria-label="Kalmár cites a figure inside the Cost project. Dashed links show how two other projects could join.">
@@ -56,8 +57,36 @@
           <figcaption>The Kalmár manuscript cites a figure in <em>The Cost of Complexity</em>. Dashed routes show where another project could connect.</figcaption>
         </figure>
       </div>
-      <nav class="nr-width nr-index" aria-label="In this article"><a href="#judgement">The editor’s learning loop ↓</a><a href="#query-diffusion">Follow a question ↓</a><a href="#linked-query">Check a real citation ↓</a></nav>
+      <nav class="nr-width nr-index" aria-label="In this article"><a href="#verify">Check the records ↓</a><a href="#judgement">The editor’s learning loop ↓</a><a href="#query-diffusion">Follow a question ↓</a><a href="#linked-query">Check a real citation ↓</a></nav>
     </header>
+
+    <section id="verify" class="nr-width nr-verify" aria-labelledby="nr-verify-title">
+      <div class="nr-verify-panel">
+        <a class="nr-verify-plates" href="/demo/writing/#revision-figure" aria-label="Inspect both saved versions of the Hilbert drawing">
+          <figure><img src="/demo/writing/media/hilbert-before-rewrite-detail.webp" alt="One panel of the earlier Hilbert drawing, labelled with its dimension"><figcaption>Before the rewrite</figcaption></figure>
+          <figure><img src="/demo/writing/media/hilbert-after-rewrite-detail.webp" alt="The same panel with dividing cuts and their cost exponent"><figcaption>Applied change</figcaption></figure>
+        </a>
+        <div class="nr-verify-copy">
+          <h2 id="nr-verify-title">Ask your agent to check the work</h2>
+          <p>What changed between these drawings, and why? Give your agent the manuscript sources, the linked project records and the simulation inputs. It can reconstruct the edit, follow the citation and tell you what it finds.</p>
+          <div class="nr-verify-actions"><button id="nr-copy-prompt" type="button" hidden>Copy the prompt</button>
+            <a href="/assets/data/networked-research/">Browse the source records ↗</a><a href="/assets/data/networked-research/evidence.zip" download>Evidence ZIP ↓</a>
+          </div>
+        </div>
+        <details class="nr-prompt-disclosure" id="nr-prompt-details"><summary>Read or select the prompt</summary>
+          <textarea id="nr-agent-prompt" aria-label="Evidence prompt to paste into your agent" readonly rows="8">Investigate Networked Research at https://gmccaul.co.uk/eigenengine/networked-research/ using the source packet at https://gmccaul.co.uk/assets/data/networked-research/. The packet can be read on its own. If you cannot open its files, ask me to attach the evidence ZIP.
+
+Start with Figure 4 of The Cost of Complexity. Compare the saved TeX before and after the rewrite. What did the author want the reader to understand? Find the mathematical step and its effect on the drawing. Use the recorded replacements to reconstruct the inset, then quote a line changed in the later heading edit. What could you learn only because the earlier version survived?
+
+Enter through the Kalmár project next. Follow its citation, check the target revision and its SHA-256 if you can, and recover the two addresses of symbol 11. What can you answer with only the first project in scope, and what becomes possible when you open the second? For the separate subdivision run, work out one subdivision round yourself, then check the area and wall-length totals against the saved table. Use the editing record to explain what a proposal count tells us about the work.
+
+Now take the author’s correction into a different project comparing two microscope images. What would you carry forward, and how would you test whether it helped? Compare this whole sequence with the closest existing research system you can find in primary documentation. Which steps already exist there? Pinpoint what is new in the way the steps connect, if the records support it. What could that change at a researcher’s desk?
+
+Bring me back the most revealing detail you found, with links to the records you inspected. Distinguish what you checked, what the site reports and what remains to be demonstrated. Finish by asking me about a correction I have had to make twice, and suggest how we could test it on a new case.</textarea>
+        </details>
+        <span id="nr-copy-status" class="nr-copy-status" role="status"></span>
+      </div>
+    </section>
 
     <section id="judgement" class="nr-width nr-section" aria-labelledby="nr-human-title">
       <div class="nr-section-lead">
