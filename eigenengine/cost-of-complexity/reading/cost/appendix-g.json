@@ -1,0 +1,13 @@
+{
+  "id": "appendix-g",
+  "label": "Appendix G",
+  "title": "Maximum-entropy rank ensembles",
+  "kind": "appendix",
+  "pages": [
+    19,
+    19
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-g.json",
+  "text": "With fixed rank labels, normalisation and a mean cost $\\ell$, the entropy Lagrangian is\n\n$$\n\\frac{\\partial}{\\partial p(r)}\\Bigl[\n    S[p] - \\alpha\\bigl(\\textstyle\\sum p(r)-1\\bigr)\n         - \\lambda\\bigl(\\textstyle\\sum p(r)\\log r - \\ell\\bigr)\n  \\Bigr] = 0 \\tag{G1}\n$$\n\nIts stationary condition is $-\\ln p(r)-1-\\alpha-\\lambda\\ln r=0$. Normalisation gives Eq. (46). Strict concavity of entropy gives the unique maximiser for an interior feasible mean. The derivative $dC/d\\lambda=-\\operatorname{Var}_{\\lambda}(\\ln r)<0$ for finite $R\\ge2$ and finite $\\lambda$ gives uniqueness of the multiplier. The endpoint ensembles follow as $\\lambda\\to\\pm\\infty$. If ranks must also follow decreasing occupation probability, $\\lambda\\ge0$ and the maximum mean is the uniform value $\\ln(R!)/R$.\n\nFor the scale-covariant cost of Eq. (D5), the same calculation gives\n\n$$\np_\\alpha(r\\mid\\lambda)\n  =\n  \\frac{1}{Z_{R,\\alpha}(\\lambda)}\n  \\exp\\!\\left[-\\lambda\\,\\frac{r^{\\alpha}-1}{\\alpha}\\right]. \\tag{G2}\n$$\n\nwith the logarithmic limit at $\\alpha=0$. For $\\alpha>0$ and $\\lambda>0$ the large-rank weights decay as $\\exp[-(\\lambda/\\alpha)r^\\alpha]$, giving finite normalisation and mean cost. For $\\alpha<0$ the cost tends to $1/|\\alpha|$, so the weights tend to a positive constant for every finite $\\lambda$ and the infinite sum diverges. Within this exact scale-covariant family, the logarithmic member has the finite positive normalisation boundary discussed in the main text.",
+  "figures": []
+}

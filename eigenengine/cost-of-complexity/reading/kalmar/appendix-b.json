@@ -1,0 +1,13 @@
+{
+  "id": "appendix-b",
+  "label": "Appendix B",
+  "title": "Proof of Theorem 1",
+  "kind": "appendix",
+  "pages": [
+    7,
+    7
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-b.json",
+  "text": "Let $s_n=k_0+\\ln n$ for $n\\ge2$ and let $\\nu=\\sum_{n\\ge2}\\delta_{s_n}$. An organisation is a finite sequence of steps $s_{n_i}$ and its budget is their sum, so $\\Omega(b)=\\sum_{k\\ge0}\\nu^{*k}([0,b])$. The Laplace transform of ν is\n\n$$ q(\\lambda)=\\int e^{-\\lambda s}\\,\\nu(ds)=e^{-\\lambda k_0}\\bigl(\\zeta(\\lambda)-1\\bigr), \\tag{B1} $$\n\nwhich is finite for λ > 1, continuous and strictly decreasing, with q → ∞ as λ ↓ 1 and q → 0 as λ → ∞. There is therefore a unique λ_c > 1 with q(λ_c) = 1. Since q(ρ) = exp(−ρ k₀) ≤ 1, λ_c ≤ ρ with equality only at k₀ = 0, and λ_c decreases with $k_0$. From $\\zeta(\\lambda)-1<\\int_1^\\infty x^{-\\lambda}\\,dx=1/(\\lambda-1)$ we get $e^{\\lambda_c k_0}<1/(\\lambda_c-1)$, which gives Eq. (18).\n\nThe tilted measure $P^*(ds)=e^{-\\lambda_c s}\\nu(ds)$ is a probability distribution on $(0,\\infty)$ with mean\n\n$$ m=\\sum_{n\\ge2}(k_0+\\ln n)\\,e^{-\\lambda_c k_0}n^{-\\lambda_c}=k_0-\\frac{\\zeta^{\\prime}(\\lambda_c)}{\\zeta(\\lambda_c)-1}<\\infty. \\tag{B2} $$\n\nIt is non-arithmetic, because s₃ − s₂ = ln(3/2) and s₄ − $s_2=\\ln2$ are incommensurable. Let $U=\\sum_{k\\ge0}P^{*k}$ be its renewal measure. Then $\\Omega(db)=e^{\\lambda_c b}U(db)$ and\n\n$$ e^{-\\lambda_c b}\\Omega(b)=\\int_0^b e^{-\\lambda_c(b-s)}\\,U(ds)\\longrightarrow\\frac1m\\int_0^\\infty e^{-\\lambda_c t}\\,dt=\\frac1{\\lambda_c m} \\tag{B3} $$\n\nby the key renewal theorem [20], since exp(−λ_c t) is directly Riemann integrable. At k₀ = 0, m = −ζ′(ρ) and b = ln x, which is Eq. (12).",
+  "figures": []
+}

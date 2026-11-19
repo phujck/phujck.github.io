@@ -1,0 +1,13 @@
+{
+  "id": "appendix-i",
+  "label": "Appendix I",
+  "title": "Stability of the convergence threshold",
+  "kind": "appendix",
+  "pages": [
+    19,
+    19
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-i.json",
+  "text": "Write $f(r)=\\ln r+h(r)$ with $h(r)=o(\\ln r)$ and suppose $\\ln w(r)=o(\\ln r)$. For any fixed finite $\\lambda$ and any $\\delta>0$, there is a sufficiently large $r_0$ such that\n\n$$\nr^{-\\lambda-\\delta}\n \\le w(r)e^{-\\lambda f(r)}\n \\le r^{-\\lambda+\\delta},\n \\qquad r\\ge r_0. \\tag{I1}\n$$\n\nFor $\\lambda>1$, choose $\\delta<\\lambda-1$ to obtain convergence. For $\\lambda<1$, choose $\\delta<1-\\lambda$ to obtain divergence. The same upper comparison with an additional power of $\\ln r$ gives finite log-rank moments of every fixed order for $\\lambda>1$. At $\\lambda=1$ neither comparison decides convergence. For $f(r)=\\ln r$ and $w(r)=[\\ln(r+1)]^{-b}$, the integral test applied to $r^{-1}(\\ln r)^{j-b}$ gives a finite $j$th log-rank moment precisely when $b>j+1$. Normalisation is the case $j=0$.",
+  "figures": []
+}

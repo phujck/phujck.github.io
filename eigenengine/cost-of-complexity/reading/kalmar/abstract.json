@@ -1,0 +1,13 @@
+{
+  "id": "abstract",
+  "label": "",
+  "title": "Abstract",
+  "kind": "abstract",
+  "pages": [
+    1,
+    1
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/abstract.json",
+  "text": "The register theory of Ref. [1] compares the organisations of a representation from outside. Its efficient budget is an infimum over admissible organisations, and the selection of the organisation is not itself priced. We price it. The mixed-radix positional organisations of N distinctions are the ordered factorisations of N. With the logarithmic cost law and an existence cost K₀ per register, the number of organisations of budget at most B grows as exp(λ_c B/κ), where ζ(λ_c) = 1+exp(λ_c K₀/κ). This is the capacity, in the sense of Shannon’s noiseless channel, of a register whose letters are registers. For free registers λ_c is Kalmár’s constant ρ = 1.7286 …, the solution of ζ(ρ) = 2. As K₀/κ → ∞ it approaches the pole of ζ at one, the normalisation boundary of the Zipf family. The maximum-entropy ensemble of organisations has geometric depth and register ranges distributed as n^(−λ), and its mean depth diverges on the critical line. A register that holds the choice of its own organisation needs range $NH(N)$, with $H(N)\\le N^\\rho$. Closing that account for a binary register of k digits costs k(k + 1)/2 digits. Iterating the construction gives a hierarchy with cost $\\binom{k+n-1}{n}$ at level n, whose generating function is a power law in N.",
+  "figures": []
+}

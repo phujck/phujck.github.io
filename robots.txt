@@ -6,6 +6,7 @@ Disallow: /memories/
 Disallow: /registers/
 Allow: /eigenengine.html
 Allow: /eigenengine/guide/
+Allow: /eigenengine/cost-of-complexity/reading/
 Disallow: /eigenengine/
 Disallow: /talks/optical-twinning-trees/
 Disallow: /demo/

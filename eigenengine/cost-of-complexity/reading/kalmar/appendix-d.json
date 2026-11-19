@@ -1,0 +1,13 @@
+{
+  "id": "appendix-d",
+  "label": "Appendix D",
+  "title": "Self-indexing and closure",
+  "kind": "appendix",
+  "pages": [
+    8,
+    8
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-d.json",
+  "text": "Theorem 3. The lower bound is Eq. (3) at range NH(N). The upper bound is Eq. (2). The range of θ follows from Eq. (13), with strict inequality for N > 1, and from the lower bounds of Refs. [6, 10].\n\nProposition 4. (i) $\\ln N_{t+1}\\le\\theta\\ln N_t$ gives $\\ln N_t\\le\\theta^t\\ln N$. The ranges are integers, so the tower reaches one, and the geometric series gives Eq. (26). (ii) $H(p^k)=2^{k-1}$, the number of compositions of k, for every prime p. (iii) is immediate.",
+  "figures": []
+}

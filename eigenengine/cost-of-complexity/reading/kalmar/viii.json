@@ -1,0 +1,13 @@
+{
+  "id": "viii",
+  "label": "VIII",
+  "title": "Outlook",
+  "kind": "section",
+  "pages": [
+    6,
+    7
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/viii.json",
+  "text": "The infimum that defines K_reg in Ref. [1] is taken from outside the register. When the choice of organisation is brought inside, the count of organisations enters the budget. For positional organisations that count is the number of ordered factorisations, and Kalmár’s constant acquires a physical reading: it is the capacity of organisation of free registers, in nats of organisational choice per nat of budget. Existence cost moves this capacity along Eq. (15) to the content value one.\n\nThe self-consistency asserted in Ref. [1] is conditional. A register can hold its own organisation at logarithmic cost only while its architectural freedom stays below one. A binary register is marginal and pays a cost quadratic in ln N. A range with H(N) ≥ N may not close at all.\n\nSeveral limits of the present account should be stated. The organisations counted are mixed-radix: all subregisters at a level have the same range. If subregisters may be divided unequally, the organisations of N ranked symbols are the plane trees with N leaves and no unary nodes. Their number grows exponentially, as $(3+2\\sqrt2)^N$ up to a power of N [18], and the organisation register then costs a budget linear in N. Positional organisation is what keeps the count polynomial.\n\nThe budget of Eq. (14) assumes homogeneous refinement. A composition correction ϵ(m, n) ≠ 0 changes the weights in Eq. (19).\n\nThe window of Eq. (23) is a prediction for branching factors in hierarchies that organise themselves. It has not been compared with data, and the conditions of Proposition 3 would have to be established for any candidate system.\n\nThe number theory used here is classical [4–6, 8, 10, 19]. We have not found the reading of ρ as a capacity of organisation, the critical line of Eq. (15), or the closure results in the literature we searched. That search was not exhaustive.\n\nThe account is static, as in Ref. [1]. It gives the budget of holding an organisation, and says nothing about the cost of changing it.",
+  "figures": []
+}

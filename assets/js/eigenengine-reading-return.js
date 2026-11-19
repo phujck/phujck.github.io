@@ -10,6 +10,7 @@
     ["/eigenengine/networked-research/", "Networked Research"],
     [guide, "the reading guide"],
     ["/eigenengine/cost-of-complexity/", "The Cost of Complexity"],
+    ["/eigenengine/cost-of-complexity/reading/", "the paired reading"],
     ["/eigenengine/kalmar-constant/", "the Kalmár article"],
     ["/demo/writing/", "the Writing App film"],
     ["/demo/writing/simulation/", "the simulation"],

@@ -1,0 +1,13 @@
+{
+  "id": "appendix-c",
+  "label": "Appendix C",
+  "title": "Pinning",
+  "kind": "appendix",
+  "pages": [
+    7,
+    7
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-c.json",
+  "text": "Proposition 1. For f Lipschitz on [0, 1], comparison of the sum with the integral gives\n\n$$ \\sum_{r=1}^R\\frac1r f\\left(\\frac{\\ln r}{L}\\right)=L\\int_0^1 f(t)\\,dt+O(1). \\tag{C1} $$\n\nAt $\\lambda=1+x/L$ the weight is $r^{-\\lambda}=r^{-1}e^{-x\\ln r/L}$. Taking $f(t)=e^{-xt}$ and $f(t)=te^{-xt}$,\n\n$$ \\frac{C_R}{L}=\\frac{\\int_0^1te^{-xt}\\,dt}{\\int_0^1e^{-xt}\\,dt}+O(1/L)=\\frac1x-\\frac1{e^x-1}+O(1/L). \\tag{C2} $$\n\nThe right-hand side is the mean of an exponential distribution truncated to [0, 1], which decreases from one to zero in x.\n\nProposition 2. Since ln r = − ln h(r) − ln H_R,\n\n$$ \\langle K\\rangle_p=K_0-\\kappa\\ln H_R-\\kappa\\sum_r p(r)\\ln h(r), \\tag{C3} $$\n\nand $-\\sum_r p\\ln h=H(p)+D(p\\Vert h)$.\n\nProposition 3. With the cutoff, the weight of budgets in $db$ is $e^{-\\lambda b}\\Omega(db)=e^{-(\\lambda-\\lambda_c)b}U(db)$. By the renewal theorem $U([a,a+h])\\to h/m$, so for continuous g on [0, 1], $L^{-1}\\int_0^L g(b/L)\\,U(db)\\to m^{-1}\\int_0^1g(t)\\,dt$. At $\\lambda=\\lambda_c+x/L$ the weight is $e^{-xb/L}$ and the calculation above applies.",
+  "figures": []
+}

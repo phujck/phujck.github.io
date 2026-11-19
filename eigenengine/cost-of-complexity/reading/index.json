@@ -1,0 +1,413 @@
+{
+  "format": "eigenengine/sequential-manuscripts@1",
+  "papers": [
+    {
+      "id": "cost",
+      "title": "The Cost of Complexity: A Physical Theory of Representation",
+      "pdf": "/eigenengine/guide/the-cost-of-complexity.pdf",
+      "sha256": "e9c6dabb85d252a81c6e27fc575e7c1bb3e7a90973533fe6b6b3c09c98b9fb98",
+      "abstract": "Every representation must be embodied in matter, including the structures that organise its symbols. The same distinctions can nevertheless be prohibitively expensive in one organisation and accessible in another. We ask what constrains this freedom when the apparatus that organises a representation must itself be represented. Our central observation is recursive: a register holds distinctions at one level and is itself selected by a distinction at the next. With additive positional composition and a positive limiting price per nat, we derive logarithmic growth of the efficient register budget and show that symbol costs can approach the same asymptotic rate. We demonstrate this bound is universal, but the rate at which it can be approached depend on the particular representation. Homogeneous refinement makes the logarithmic law exact, while maximum entropy at fixed mean logarithmic rank cost yields the Zipf family of distributions. We then independently show that this result can be observed in a thermodynamic computer, where the mean log probability rank gives a lower bound on the heat of erasure. Requiring fidelity to a target extends the account to the information a representation must preserve. The resulting theory makes the physical organisation of information an object of optimisation, providing a static foundation for representation learning and systems that can revise their own architecture.",
+      "abstractUrl": "/eigenengine/cost-of-complexity/reading/cost/abstract.json",
+      "sourceNote": "Prose and mathematical expressions from the submission TeX. Its compiled text was checked on all 21 published pages. Figure images are crops of the published PDF.",
+      "sections": [
+        {
+          "id": "i",
+          "label": "I",
+          "title": "Introduction",
+          "kind": "section",
+          "pages": [
+            1,
+            2
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/i.json"
+        },
+        {
+          "id": "ii",
+          "label": "II",
+          "title": "Representations in Matter",
+          "kind": "section",
+          "pages": [
+            2,
+            4
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/ii.json"
+        },
+        {
+          "id": "iii",
+          "label": "III",
+          "title": "The Cost of Complexity",
+          "kind": "section",
+          "pages": [
+            4,
+            11
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/iii.json"
+        },
+        {
+          "id": "iv",
+          "label": "IV",
+          "title": "The Guessing Machine",
+          "kind": "section",
+          "pages": [
+            10,
+            13
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/iv.json"
+        },
+        {
+          "id": "v",
+          "label": "V",
+          "title": "The Canonical Cost Curve",
+          "kind": "section",
+          "pages": [
+            13,
+            15
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/v.json"
+        },
+        {
+          "id": "vi",
+          "label": "VI",
+          "title": "Outlook",
+          "kind": "section",
+          "pages": [
+            15,
+            16
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/vi.json"
+        },
+        {
+          "id": "acknowledgments",
+          "label": "",
+          "title": "Acknowledgments",
+          "kind": "acknowledgments",
+          "pages": [
+            16,
+            16
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/acknowledgments.json"
+        },
+        {
+          "id": "appendix-a",
+          "label": "Appendix A",
+          "title": "Homogeneous register cost",
+          "kind": "appendix",
+          "pages": [
+            17,
+            17
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-a.json"
+        },
+        {
+          "id": "appendix-b",
+          "label": "Appendix B",
+          "title": "Asymptotic price of a distinction",
+          "kind": "appendix",
+          "pages": [
+            17,
+            17
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-b.json"
+        },
+        {
+          "id": "appendix-c",
+          "label": "Appendix C",
+          "title": "Cost of a symbol",
+          "kind": "appendix",
+          "pages": [
+            17,
+            17
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-c.json"
+        },
+        {
+          "id": "appendix-d",
+          "label": "Appendix D",
+          "title": "Scale-covariant register budgets",
+          "kind": "appendix",
+          "pages": [
+            17,
+            18
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-d.json"
+        },
+        {
+          "id": "appendix-e",
+          "label": "Appendix E",
+          "title": "Diophantine search and witness encoding",
+          "kind": "appendix",
+          "pages": [
+            18,
+            18
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-e.json"
+        },
+        {
+          "id": "appendix-f",
+          "label": "Appendix F",
+          "title": "Scale-dependent erasure costs",
+          "kind": "appendix",
+          "pages": [
+            18,
+            19
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-f.json"
+        },
+        {
+          "id": "appendix-g",
+          "label": "Appendix G",
+          "title": "Maximum-entropy rank ensembles",
+          "kind": "appendix",
+          "pages": [
+            19,
+            19
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-g.json"
+        },
+        {
+          "id": "appendix-h",
+          "label": "Appendix H",
+          "title": "Critical response of the rank ensemble",
+          "kind": "appendix",
+          "pages": [
+            19,
+            19
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-h.json"
+        },
+        {
+          "id": "appendix-i",
+          "label": "Appendix I",
+          "title": "Stability of the convergence threshold",
+          "kind": "appendix",
+          "pages": [
+            19,
+            19
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-i.json"
+        },
+        {
+          "id": "appendix-j",
+          "label": "Appendix J",
+          "title": "The cost–entropy–fidelity functional",
+          "kind": "appendix",
+          "pages": [
+            19,
+            20
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-j.json"
+        },
+        {
+          "id": "references",
+          "label": "",
+          "title": "References",
+          "kind": "references",
+          "pages": [
+            20,
+            21
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/cost/references.json"
+        }
+      ],
+      "author": "Gerard McCaul",
+      "affiliation": "EigenEngine",
+      "correspondence": "eigen@gmccaul.co.uk",
+      "readingUrl": "/eigenengine/cost-of-complexity/reading/cost/",
+      "pages": 21,
+      "sourceDate": "18 November 2026"
+    },
+    {
+      "id": "kalmar",
+      "title": "Physical origins of the Kalmár constant",
+      "pdf": "/eigenengine/guide/physical-origins-of-the-kalmar-constant.pdf",
+      "sha256": "456564aa0c4951035cffb734b65d314e20fe1b0b511215f7907276aae500bb2c",
+      "abstract": "The register theory of Ref. [1] compares the organisations of a representation from outside. Its efficient budget is an infimum over admissible organisations, and the selection of the organisation is not itself priced. We price it. The mixed-radix positional organisations of N distinctions are the ordered factorisations of N. With the logarithmic cost law and an existence cost K₀ per register, the number of organisations of budget at most B grows as exp(λ_c B/κ), where ζ(λ_c) = 1+exp(λ_c K₀/κ). This is the capacity, in the sense of Shannon’s noiseless channel, of a register whose letters are registers. For free registers λ_c is Kalmár’s constant ρ = 1.7286 …, the solution of ζ(ρ) = 2. As K₀/κ → ∞ it approaches the pole of ζ at one, the normalisation boundary of the Zipf family. The maximum-entropy ensemble of organisations has geometric depth and register ranges distributed as n^(−λ), and its mean depth diverges on the critical line. A register that holds the choice of its own organisation needs range $NH(N)$, with $H(N)\\le N^\\rho$. Closing that account for a binary register of k digits costs k(k + 1)/2 digits. Iterating the construction gives a hierarchy with cost $\\binom{k+n-1}{n}$ at level n, whose generating function is a power law in N.",
+      "abstractUrl": "/eigenengine/cost-of-complexity/reading/kalmar/abstract.json",
+      "sourceNote": "Transcribed from the published eight-page PDF (draft of 19 November 2026). Mathematical typography is represented in linear text and TeX. Figure images are crops of the PDF.",
+      "sections": [
+        {
+          "id": "i",
+          "label": "I",
+          "title": "Introduction",
+          "kind": "section",
+          "pages": [
+            1,
+            1
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/i.json"
+        },
+        {
+          "id": "ii",
+          "label": "II",
+          "title": "Setting",
+          "kind": "section",
+          "pages": [
+            1,
+            2
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/ii.json"
+        },
+        {
+          "id": "iii",
+          "label": "III",
+          "title": "Organisations of a positional register",
+          "kind": "section",
+          "pages": [
+            2,
+            3
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/iii.json"
+        },
+        {
+          "id": "iv",
+          "label": "IV",
+          "title": "The capacity of organisation",
+          "kind": "section",
+          "pages": [
+            2,
+            3
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/iv.json"
+        },
+        {
+          "id": "v",
+          "label": "V",
+          "title": "The ensemble of organisations",
+          "kind": "section",
+          "pages": [
+            3,
+            4
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/v.json"
+        },
+        {
+          "id": "vi",
+          "label": "VI",
+          "title": "Self-indexing registers",
+          "kind": "section",
+          "pages": [
+            4,
+            5
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/vi.json"
+        },
+        {
+          "id": "vii",
+          "label": "VII",
+          "title": "The reflective hierarchy",
+          "kind": "section",
+          "pages": [
+            5,
+            6
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/vii.json"
+        },
+        {
+          "id": "viii",
+          "label": "VIII",
+          "title": "Outlook",
+          "kind": "section",
+          "pages": [
+            6,
+            7
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/viii.json"
+        },
+        {
+          "id": "acknowledgments",
+          "label": "",
+          "title": "Acknowledgments",
+          "kind": "acknowledgments",
+          "pages": [
+            7,
+            7
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/acknowledgments.json"
+        },
+        {
+          "id": "appendix-a",
+          "label": "Appendix A",
+          "title": "The bound on H(N)",
+          "kind": "appendix",
+          "pages": [
+            7,
+            7
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-a.json"
+        },
+        {
+          "id": "appendix-b",
+          "label": "Appendix B",
+          "title": "Proof of Theorem 1",
+          "kind": "appendix",
+          "pages": [
+            7,
+            7
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-b.json"
+        },
+        {
+          "id": "appendix-c",
+          "label": "Appendix C",
+          "title": "Pinning",
+          "kind": "appendix",
+          "pages": [
+            7,
+            7
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-c.json"
+        },
+        {
+          "id": "appendix-d",
+          "label": "Appendix D",
+          "title": "Self-indexing and closure",
+          "kind": "appendix",
+          "pages": [
+            8,
+            8
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-d.json"
+        },
+        {
+          "id": "appendix-e",
+          "label": "Appendix E",
+          "title": "Proof of Theorem 4",
+          "kind": "appendix",
+          "pages": [
+            8,
+            8
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-e.json"
+        },
+        {
+          "id": "appendix-f",
+          "label": "Appendix F",
+          "title": "Numerical checks",
+          "kind": "appendix",
+          "pages": [
+            8,
+            8
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-f.json"
+        },
+        {
+          "id": "references",
+          "label": "",
+          "title": "References",
+          "kind": "references",
+          "pages": [
+            8,
+            8
+          ],
+          "url": "/eigenengine/cost-of-complexity/reading/kalmar/references.json"
+        }
+      ],
+      "author": "Gerard McCaul",
+      "affiliation": "EigenEngine",
+      "correspondence": "eigen@gmccaul.co.uk",
+      "readingUrl": "/eigenengine/cost-of-complexity/reading/kalmar/",
+      "pages": 8,
+      "sourceDate": "Draft of 19 November 2026"
+    }
+  ]
+}

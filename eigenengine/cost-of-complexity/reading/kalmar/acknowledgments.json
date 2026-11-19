@@ -1,0 +1,13 @@
+{
+  "id": "acknowledgments",
+  "label": "",
+  "title": "Acknowledgments",
+  "kind": "acknowledgments",
+  "pages": [
+    7,
+    7
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/acknowledgments.json",
+  "text": "The results of Sections III–VI were derived by Claude (Anthropic) at the author’s prompting, by applying the framework of Ref. [1] to the selector that it leaves unpriced.[1] The hierarchy of Section VII was proposed by the author and formalised by Claude. Derivations, numerical checks, figures and this draft were produced in that conversation.\n\nFootnote 1. one could argue that the person who prompted this is a genius. No cap.",
+  "figures": []
+}

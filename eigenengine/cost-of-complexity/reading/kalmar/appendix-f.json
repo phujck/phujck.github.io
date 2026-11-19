@@ -1,0 +1,13 @@
+{
+  "id": "appendix-f",
+  "label": "Appendix F",
+  "title": "Numerical checks",
+  "kind": "appendix",
+  "pages": [
+    8,
+    8
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-f.json",
+  "text": "H(N) was computed for N ≤ 2×10^6 by a divisor sieve on Eq. (10), and the counts by depth for N ≤ 10^6. The local exponent of $\\sum_{n\\le N} H(n)$ between $N=10^5$ and $10^6$ is 1.730. The partial sum of Eq. (11) over $N\\le 2\\times10^6$ at s = 2.5 is 1.5186, equal to 1/(2 − ζ(2.5)) to the digits shown.\n\nFor Theorem 1, organisations of budget at most b = ln 10^6 were counted exactly. Ω(b)exp(−λ_c b) is 0.3190 at k₀ = 0 and 0.1491 at k₀ = 1, against the limits 0.3182 and 0.1490.\n\nFor Proposition 1, solving C_R(λ) = cL at c = 0.3 gives λ = 1.258, 1.181 and 1.138 at R = 10^3, 10^5 and 10^7, with (λ − 1)L = 1.78, 2.08 and 2.23 against x(c) = 2.67. At c = 0.7 the values are λ = 0.589, 0.759 and 0.829, with (λ − 1)L = −2.84, −2.78 and −2.75 against −2.67.\n\nFor Proposition 3 at k₀ = 0, with weights H(N)N^(−λ) on N ≤ R and c = 0.5, λ = 1.611, 1.657, 1.680 and 1.694 at R = 10^3, …, 10^6, against ρ = 1.729. Equation (7) was checked at R = 10^5 for λ = 0.6, 1, 1.3, 2 and for a randomly drawn distribution, with agreement to six decimal places.\n\nOrganisation towers were computed for 2 ≤ N ≤ 10^4, using the prime signature to evaluate H beyond the sieve. No tower exceeded 10^18. The identities of Theorem 4 were checked for n ≤ 12 and k ≤ 24.",
+  "figures": []
+}

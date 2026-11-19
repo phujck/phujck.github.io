@@ -1,0 +1,13 @@
+{
+  "id": "appendix-a",
+  "label": "Appendix A",
+  "title": "Homogeneous register cost",
+  "kind": "appendix",
+  "pages": [
+    17,
+    17
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-a.json",
+  "text": "The proof of Theorem 2 uses only monotonicity and multiplicative additivity.\n\nProof. The function $g$ defined in Eq. (18) is nondecreasing, satisfies $g(1)=0$, and obeys Eq. (19). For any fixed $n\\ge2$ and positive integer $k$, set\n\n$$\na_k\n  :=\n  \\left\\lfloor\n    k\\frac{\\log n}{\\log 2}\n  \\right\\rfloor. \\tag{A1}\n$$\n\nThen\n\n$$\n2^{a_k}\\le n^k<2^{a_k+1}. \\tag{A2}\n$$\n\nMonotonicity and repeated use of Eq. (19) give\n\n$$\na_k g(2)\n  \\le\n  k g(n)\n  \\le\n  (a_k+1)g(2). \\tag{A3}\n$$\n\nDividing by $k$ and taking $k\\to\\infty$ yields\n\n$$\ng(n)\n  =\n  \\frac{g(2)}{\\log 2}\\log n\n  =\n  \\kappa\\log n. \\tag{A4}\n$$\n\nThe result also holds at $n=1$, and restoring $K_0$ proves Eq. (20).",
+  "figures": []
+}

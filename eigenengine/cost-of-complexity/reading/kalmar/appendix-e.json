@@ -1,0 +1,13 @@
+{
+  "id": "appendix-e",
+  "label": "Appendix E",
+  "title": "Proof of Theorem 4",
+  "kind": "appendix",
+  "pages": [
+    8,
+    8
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-e.json",
+  "text": "(i) $\\binom{k+n-1}{n}$ satisfies Pascal’s rule $\\binom{k+n-1}{n}=\\binom{k+n-2}{n-1}+\\binom{k+n-2}{n}$, which is Eq. (30), and equals one at k = 1 and at n = 0. (ii) $A_n(k+1)=\\binom{k+n}{n}=\\binom{k+n}{k}=A_k(n+1)$.\n\n(iii) By the Vandermonde identity,\n\n$$ \\binom{k+n-1}{n}=\\sum_{j=0}^n\\binom{n-1}{n-j}\\binom{k}{j}, \\tag{E1} $$\n\nwith coefficient one at $j=n$. The change from $\\{\\binom{k}{j}\\}$ to $\\{A_n\\}$ is therefore unitriangular over the integers, and the binomial coefficients $\\binom{k}{j}$ are a basis for the integer-valued polynomials [21]. (iv) is the negative binomial series, and $(1-x)^{-k}=2^{k\\log_2[1/(1-x)]}$.",
+  "figures": []
+}

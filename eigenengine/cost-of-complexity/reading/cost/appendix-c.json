@@ -1,0 +1,13 @@
+{
+  "id": "appendix-c",
+  "label": "Appendix C",
+  "title": "Cost of a symbol",
+  "kind": "appendix",
+  "pages": [
+    17,
+    17
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-c.json",
+  "text": "The proof of Theorem 4 compares a typicality prefix with a self-delimiting positional construction.\n\nProof. For (i), the $r$ most typical symbols are realised by $\\mathcal R$ at a largest cost of $f_{\\mathcal R}(r)$, since $f_{\\mathcal R}$ is nondecreasing. As in the proof of Theorem 1, an efficient register for $r$ distinctions cannot need a larger budget than an available alternative, so $K_{\\mathrm{reg}}(r)\\le f_{\\mathcal R}(r)$, and the lower bound of Eq. (26) completes the chain. For (ii), use an alphabet of $b$ letters together with one terminator, each held in a digit of range $b+1$. There are $b^l$ words of $l$ letters, so at least $b^L$ words have at most $L$ letters. Assign ranks in order of increasing length. The symbol at rank $r$ then has at most $\\lceil\\log_b r\\rceil\\le\\log_b r+1$ letters and, with its terminator, occupies at most $\\log_b r+2$ digits, each of budget $K_{\\mathrm{reg}}(b+1)$. Its cost is nondecreasing in rank, which gives Eq. (30). The rate of this organisation is $K_{\\mathrm{reg}}(b+1)/\\log b$, which tends to $\\kappa_\\infty$ as $b\\to\\infty$ by Eq. (25), while by (i) no organisation has a rate below $\\kappa_\\infty$.",
+  "figures": []
+}

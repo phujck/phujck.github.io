@@ -1,0 +1,13 @@
+{
+  "id": "appendix-e",
+  "label": "Appendix E",
+  "title": "Diophantine search and witness encoding",
+  "kind": "appendix",
+  "pages": [
+    18,
+    18
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-e.json",
+  "text": "A set is recursively enumerable when an algorithm can confirm membership of each element, although it may run indefinitely on non-members [49]. The DPRM theorem supplies the polynomial witness relation of Eq. (37) for every such set [50, 51]. The input $u$ fixes the parameters, and a witness tuple $x$ certifies membership when $D(u,x)=0$. Once supplied, a witness can be checked by finite polynomial evaluation.\n\nA Diophantine guessing machine consists of the parameter and witness spaces, the polynomial $D$, and a family of guess distributions $p_u$. Independent guesses find a solution almost surely whenever the satisfying witnesses have positive probability. Exhaustive enumeration is another possible search strategy. These choices implement the same logical relation through different processes.\n\nAn invertible Gödelisation of witness tuples preserves the Shannon entropy of a fixed ensemble by relabelling its probabilities. Numerical log-magnitude need not be preserved: Cantor pairing can send $(x_1,x_2)$ with $x_1\\gg x_2$ to a label of order $x_1^2$ [66]. The probability ranking used in Eq. (41) survives this relabelling. Any apparatus or ancillary memory needed to implement the conversion belongs to the physical account of the process.",
+  "figures": []
+}

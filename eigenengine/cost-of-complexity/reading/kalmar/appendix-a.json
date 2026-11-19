@@ -1,0 +1,13 @@
+{
+  "id": "appendix-a",
+  "label": "Appendix A",
+  "title": "The bound on H(N)",
+  "kind": "appendix",
+  "pages": [
+    7,
+    7
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/appendix-a.json",
+  "text": "Equation (11) follows by counting organisations by depth. The Dirichlet series of the indicator of n ≥ 2 is ζ(s) − 1, and organisations of depth k are ordered k-fold products.\n\nFor Eq. (13) we follow Refs. [8, 9]. The bound holds at N = 1. If it holds below N, Eq. (10) gives\n\n$$ H(N)\\le\\sum_{d\\mid N,\\,d>1}\\left(\\frac{N}{d}\\right)^\\rho<N^\\rho\\sum_{d\\ge2}d^{-\\rho}=N^\\rho\\bigl(\\zeta(\\rho)-1\\bigr)=N^\\rho. \\tag{A1} $$",
+  "figures": []
+}

@@ -1,0 +1,20 @@
+{
+  "id": "iii",
+  "label": "III",
+  "title": "Organisations of a positional register",
+  "kind": "section",
+  "pages": [
+    2,
+    3
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/iii.json",
+  "text": "Definition 1. A positional organisation of N ≥ 2 distinctions is a tuple (n₁, …, nₖ) of integers nᵢ ≥ 2 with n₁ n₂ · · · nₖ = N. The symbol of rank r is addressed by digits (j₁, …, jₖ), 1 ≤ jᵢ ≤ nᵢ, through\n\n$$ r=1+\\sum_{i=1}^{k}(j_i-1)\\prod_{l>i}n_l. \\tag{9} $$\n\nThe integer k is the depth. The empty tuple is the organisation of N = 1.\n\nFor k = 2, Eq. (9) is the positional encoding r = n(i − 1)+j of Ref. [1]: a choice among n₁ subregisters followed by a choice among n₂ symbols. For general k each digit selects a subregister of the register chosen by the digit before it. The tuple is ordered. The organisations (2, 8) and (8, 2) of sixteen symbols are the two panels of Fig. 2 in Ref. [1].\n\nThe number of positional organisations of N is therefore the number H(N) of ordered factorisations of N into factors greater than one, with H(1) = 1 [7]. Choosing the first factor gives\n\n$$ H(N)=\\sum_{d\\mid N,\\,d>1}H(N/d). \\tag{10} $$\n\nOrganisations of depth k are k-fold products, so\n\n$$ \\sum_{N\\ge 1}\\frac{H(N)}{N^s}=\\sum_{k\\ge 0}\\bigl(\\zeta(s)-1\\bigr)^k=\\frac{1}{2-\\zeta(s)}. \\tag{11} $$\n\nThe series converges for Re s > ρ, where ρ = 1.7286472 … is the solution of ζ(ρ) = 2. Kalmár [4, 5] obtained\n\n$$ \\sum_{N\\le x}H(N)=\\frac{x^\\rho}{-\\rho\\zeta^{\\prime}(\\rho)}\\bigl(1+o(1)\\bigr), \\tag{12} $$\n\nwith −1/(ρζ′(ρ)) = 0.31817 …. For individual N,\n\n$$ H(N)\\le N^\\rho \\tag{13} $$\n\n[8, 9], and the exponent cannot be lowered: H(N) > N^(ρ−ε) for infinitely many N [6, 10]. A short proof of Eq. (13) is given in Appendix A.\n\nThree special cases are used below. A prime range has H(p) = 1: a monolithic register is its only organisation. A prime power has H(p^k) = 2^(k−1), the number of compositions of k. In particular the sixteen symbols of Ref. [1] have eight organisations, one of depth one, three of depth two, three of depth three and one of depth four [Fig. 1(a)]. For N = 2^k an organisation is fixed by stating which of the k − 1 positions between adjacent binary digits is a register boundary.\n\nFigure 1. (a) The eight positional organisations of sixteen ranked symbols, labelled by their ordered factorisation and depth k. Orange lines are register boundaries, drawn shorter at each deeper level. The organisations 2 · 8 and 8 · 2 are panels (b) and (c) of Fig. 2 in Ref. [1]. (b) Number of positional organisations H(N) for $2 \\le N \\le 10^6$ (grey points), computed from Eq. (10). Blue line: the bound $N^\\rho$ of Eq. (13). Black line: H = N. Orange markers: the six ranges in this interval with H(N) = N.",
+  "figures": [
+    {
+      "label": "Figure 1",
+      "page": 3,
+      "caption": "(a) The eight positional organisations of sixteen ranked symbols, labelled by their ordered factorisation and depth k. Orange lines are register boundaries, drawn shorter at each deeper level. The organisations 2 · 8 and 8 · 2 are panels (b) and (c) of Fig. 2 in Ref. [1]. (b) Number of positional organisations H(N) for $2 \\le N \\le 10^6$ (grey points), computed from Eq. (10). Blue line: the bound $N^\\rho$ of Eq. (13). Black line: H = N. Orange markers: the six ranges in this interval with H(N) = N.",
+      "image": "/eigenengine/cost-of-complexity/reading/kalmar/figure-1.webp"
+    }
+  ]
+}

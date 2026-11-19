@@ -1,0 +1,13 @@
+{
+  "id": "i",
+  "label": "I",
+  "title": "Introduction",
+  "kind": "section",
+  "pages": [
+    1,
+    1
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/i.json",
+  "text": "Reference [1] assigns a cost to the organisation of a representation as well as to its symbols. Its starting observation is that a register holds distinctions at one level and is itself selected by a distinction at the next. With additive positional composition, the efficient register budget K_reg(N) grows logarithmically in the number N of distinctions supported, and under homogeneous refinement K_reg(N) = K₀ + κ ln N.\n\nThe quantity K_reg is defined as an infimum over a class 𝒜_N of admissible organisations. Every selector inside an organisation is priced. The selection of the organisation from 𝒜_N is not. It is made by whoever takes the infimum. For a designed register this is appropriate. For a system that revises its own architecture [2, 3], the choice of organisation is a distinction that the system must hold, and Ref. [1] states that its accounting admits no exceptions.\n\nWhat does it cost to hold that choice? The answer depends on how many organisations there are. For the positional organisations used throughout Ref. [1] the count is a classical arithmetic function, the number H(N) of ordered factorisations of N [4–6]. Its growth is governed by Kalmár’s constant ρ = 1.7286 …, the solution of ζ(ρ) = 2.\n\nWe obtain four results. Section IV shows that the number of organisations of budget at most B grows as exp(λ_c B/κ), with λ_c fixed by the existence cost through ζ(λ_c) = 1 + exp(λ_c K₀/κ). Section V gives the maximum-entropy ensemble of organisations and its critical line. Section VI prices a register that holds its own organisation and gives the condition under which that account closes. Section VII iterates the construction and resums the resulting hierarchy. Section II recalls what is needed from Ref. [1], and Section III the number theory. Proofs are collected in the appendices.",
+  "figures": []
+}

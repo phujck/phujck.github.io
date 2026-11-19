@@ -1,0 +1,20 @@
+{
+  "id": "v",
+  "label": "V",
+  "title": "The ensemble of organisations",
+  "kind": "section",
+  "pages": [
+    3,
+    4
+  ],
+  "url": "/eigenengine/cost-of-complexity/reading/kalmar/v.json",
+  "text": "Section V of Ref. [1] infers occupation statistics from the cost law by maximum entropy at fixed mean cost. The same inference applies one level up. If the mean budget of an organisation is specified and nothing else, the maximum-entropy distribution over organisations, relative to counting measure, is\n\n$$ P(n_1,\\ldots,n_k)=\\frac{1}{\\Xi}\\prod_{i=1}^k z\\,n_i^{-\\lambda},\\qquad z=e^{-\\lambda k_0}, \\tag{19} $$\n\nwith\n\n$$ \\Xi(\\lambda)=\\sum_{k\\ge0}q^k=\\frac{1}{1-q},\\qquad q=e^{-\\lambda k_0}\\bigl(\\zeta(\\lambda)-1\\bigr). \\tag{20} $$\n\nAt k₀ = 0 this is the Dirichlet series of Eq. (11). The sum converges when q < 1, that is for λ > λ_c.\n\nTheorem 2 (Structure of the ensemble). For λ > λ_c:\n\n1. The depth is geometric,\n\n$$ P(k)=(1-q)q^k,\\qquad\\langle k\\rangle=\\frac{q}{1-q}. \\tag{21} $$\n\n2. Given the depth, the register ranges are independent with\n\n$$ P(n)=\\frac{n^{-\\lambda}}{\\zeta(\\lambda)-1},\\qquad n\\ge2. \\tag{22} $$\n\n3. As λ ↓ λ_c, the mean depth and the mean budget diverge as ⟨k⟩ ≃ 1/[m(λ−λ_c)] and ⟨b⟩ ≃ 1/(λ−λ_c).\n\nThe ensemble of ranks in Ref. [1] has one singular point, the pole of ζ at λ = 1. The ensemble of organisations has a line of them, Eq. (15), running from ρ at K₀ = 0 to one as K₀/κ → ∞ [Fig. 2(a)]. Above the line, existence cost outweighs the number of ways to subdivide and organisations are shallow. On the line the two balance: λK₀/κ = ln[ζ(λ) − 1]. Below it no normalised ensemble exists without a cutoff.\n\nThe pinning argument of Proposition 1 carries over, because the density of organisations is exponential in budget.\n\nProposition 3 (Pinning on the critical line). Restrict the ensemble to organisations of budget at most L. For fixed real x, the mean budget satisfies ⟨b⟩/L → c(x) at λ = λ_c + x/L as L → ∞, with c as in Eq. (6). If the mean budget is a fixed fraction c ∈ (0, 1) of the cutoff, then λ → λ_c.\n\nAppendix F reports the approach to this limit for k₀ = 0. It is slow, with corrections of order 1/L.\n\nA consequence can be stated without reference to the ensemble’s derivation. Consider a hierarchy that sets its own depth and register ranges, is not bounded in size, and uses a fraction of its budget cutoff that is neither zero nor one. By Proposition 3 and Eq. (22) its register ranges, that is its branching factors, are distributed as n^(−λ_c) with\n\n$$ 1<\\lambda_c\\le\\rho=1.7286\\ldots, \\tag{23} $$\n\nand the exponent determines the existence cost through K₀/κ = ln[ζ(λ_c)−1]/λ_c. We have not tested this against data.\n\nFigure 2. (a) Critical multiplier $\\lambda_c$ against existence cost $K_0/\\kappa$, from Eq. (15). Above the line the ensemble of organisations is normalised and has finite mean depth. In the shaded region the partition sum of Eq. (20) diverges. (b) Number of organisations $\\Omega(b)$ of budget at most b, multiplied by $e^{-\\lambda_c b}$, counted exactly for ranges up to $10^6$. Horizontal lines: the limits $1/(\\lambda_c m)$ of Theorem 1. (c) Mean depth $\\langle k\\rangle=q/(1-q)$ of the ensemble, Eq. (21). Vertical lines mark $\\lambda_c$.",
+  "figures": [
+    {
+      "label": "Figure 2",
+      "page": 4,
+      "caption": "(a) Critical multiplier $\\lambda_c$ against existence cost $K_0/\\kappa$, from Eq. (15). Above the line the ensemble of organisations is normalised and has finite mean depth. In the shaded region the partition sum of Eq. (20) diverges. (b) Number of organisations $\\Omega(b)$ of budget at most b, multiplied by $e^{-\\lambda_c b}$, counted exactly for ranges up to $10^6$. Horizontal lines: the limits $1/(\\lambda_c m)$ of Theorem 1. (c) Mean depth $\\langle k\\rangle=q/(1-q)$ of the ensemble, Eq. (21). Vertical lines mark $\\lambda_c$.",
+      "image": "/eigenengine/cost-of-complexity/reading/kalmar/figure-2.webp"
+    }
+  ]
+}
