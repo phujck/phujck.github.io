@@ -42,13 +42,23 @@
       <h1>The Cost of Complexity</h1>
       <p class="er-paper-subtitle">A Physical Theory of Representation</p>
       <p class="er-paper-byline">Gerard McCaul · EigenEngine · 21 pages</p>
-      <aside class="paper-agent-entry" id="agent-reading" aria-labelledby="agent-reading-title">
-        <div><h2 id="agent-reading-title">Have your agent explain both papers</h2>
-          <p>Pair this paper with the Kalmár draft. What changes when the apparatus must hold its own layout? Give a fresh agent just the abstracts and save its expectations before sharing the proofs.</p></div>
-        <div class="paper-agent-actions"><button type="button" data-copy-opening hidden>Copy opening prompt</button><a href="/eigenengine/cost-of-complexity/reading/" data-open-reader>Start the paired reading ↗</a>
-          <span role="status" data-opening-status></span></div>
-        <textarea readonly aria-label="Opening prompt with both abstracts" data-opening-text hidden></textarea>
-      </aside>
+      <section class="paper-agent-entry" id="agent-reading" data-paired-review aria-labelledby="agent-reading-title">
+        <div class="paper-agent-intro"><h2 id="agent-reading-title">Have your agent explain both papers</h2><p>In our trial, an agent checked the proofs yet gave a passing remark too much weight. These prompts record its expectations first, then ask which conclusions an objection would actually change. <a href="https://arxiv.org/abs/2610.02022" target="_blank" rel="noopener">Research on how framing shifts novelty judgements ↗</a></p></div>
+        <div class="paper-agent-steps">
+          <div class="paper-agent-step"><strong>1 · Before the proofs</strong><span>Fresh chat. Send only the two abstracts and the question.</span>
+            <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/opening.txt" data-prompt-url="opening">Open first message</a><button type="button" data-copy-message="opening" hidden>Copy first prompt</button></div>
+          <div class="paper-agent-step"><strong>2 · After the reply</strong><span>Same chat. Enable browsing or attach the papers.</span>
+            <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/follow-up.txt" data-prompt-url="follow-up">Open follow-up</a><button type="button" data-copy-message="follow-up" hidden>Copy follow-up</button></div>
+        </div>
+        <p class="paper-agent-status" data-paired-status role="status"></p>
+        <textarea data-paired-selection hidden readonly aria-label="Selected message to copy manually"></textarea>
+        <div class="paper-agent-links"><a href="/eigenengine/cost-of-complexity/reading/#why">Why two messages?</a><a href="/eigenengine/cost-of-complexity/reading/papers.zip" download>Download both papers (ZIP) ↓</a></div>
+        <details class="paper-agent-access"><summary>Other ways to give it the papers</summary>
+          <p>With web access, the follow-up contains both manuscript links. If your agent accepts uploads, attach the ZIP or the <a href="/eigenengine/guide/the-cost-of-complexity.pdf" target="_blank" rel="noopener">21-page paper</a> and <a href="/eigenengine/guide/physical-origins-of-the-kalmar-constant.pdf" target="_blank" rel="noopener">8-page draft</a> to message 2. For a text-only chat with room for both papers, copy the follow-up and manuscripts together.</p>
+          <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/follow-up-with-papers.txt" data-prompt-url="with-papers">Open follow-up with manuscript text</a><button type="button" data-copy-message="with-papers" hidden>Copy follow-up with manuscript text</button>
+          <p class="paper-agent-small">Plain text editions: <a href="/eigenengine/cost-of-complexity/reading/the-cost-of-complexity.txt" target="_blank" rel="noopener">The Cost of Complexity</a> · <a href="/eigenengine/cost-of-complexity/reading/physical-origins-of-the-kalmar-constant.txt" target="_blank" rel="noopener">Physical origins of the Kalmár constant</a>.</p>
+        </details>
+      </section>
       <p class="er-paper-summary">A physical system can distinguish more things by putting them into groups and then choosing within a group. The paper asks what the apparatus that makes those choices costs. Its Hilbert example shows how one arrangement can have different costs depending on what each split consumes.</p>
       <div class="er-paper-actions">
         <a class="er-paper-return" data-material-viewer="/demo/view/?asset=cost-paper" href="/assets/docs/the-cost-of-complexity.pdf" target="_blank" rel="noopener">Read the paper <span class="er-paper-format">PDF</span></a>

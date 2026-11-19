@@ -1,28 +1,48 @@
-(async () => {
-  const box = document.querySelector(".paper-agent-entry");
-  if (!box) return;
-  const button = box.querySelector("[data-copy-opening]");
-  const link = box.querySelector("[data-open-reader]");
-  const field = box.querySelector("[data-opening-text]");
-  const status = box.querySelector("[data-opening-status]");
-  try {
-    const embedded = box.querySelector('script[type="text/plain"]');
-    if (embedded) field.value = embedded.textContent.trim();
-    else {
-      const response = await fetch(new URL("opening.txt", link.href));
-      if (!response.ok) return;
-      field.value = (await response.text()).trim();
+(() => {
+  "use strict";
+  for (const box of document.querySelectorAll("[data-paired-review]")) {
+    const status = box.querySelector("[data-paired-status]");
+    const field = box.querySelector("[data-paired-selection]");
+    const alternatives = box.querySelector(".paper-agent-access");
+    const ready = new Map();
+    async function prepare(key) {
+      if (ready.has(key)) return;
+      const link = box.querySelector(`[data-prompt-url="${key}"]`);
+      const button = box.querySelector(`[data-copy-message="${key}"]`);
+      if (!link || !button) return;
+      try {
+        const embedded = box.querySelector(`script[type="text/plain"][data-embedded-message="${key}"]`);
+        let value;
+        if (embedded) value = embedded.textContent.trim();
+        else {
+          const response = await fetch(link.href);
+          if (!response.ok) return;
+          value = (await response.text()).trim();
+        }
+        if (!value) return;
+        ready.set(key, value);
+        button.hidden = false;
+        link.hidden = true;
+      } catch { /* The ordinary link opens the message even when scripting or fetch is unavailable. */ }
     }
-  } catch { return; }
-  button.hidden = false;
-  link.textContent = "Open the reading notebook ↗";
-  button.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(field.value);
-      status.textContent = "Copied. Send it in a fresh chat, then save the reply in the notebook.";
-    } catch {
-      field.hidden = false; field.focus(); field.select();
-      status.textContent = "Opening prompt selected. Use your browser’s Copy command.";
+    for (const button of box.querySelectorAll("[data-copy-message]")) {
+      const key = button.dataset.copyMessage;
+      button.addEventListener("click", async () => {
+        const value = ready.get(key);
+        if (!value) return;
+        try {
+          await navigator.clipboard.writeText(value);
+          field.hidden = true;
+          status.textContent = key === "opening" ? "Copied. Send this in a fresh chat with no papers attached." :
+            "Copied. Send this after the first reply, in the same chat.";
+        } catch {
+          field.hidden = false; field.value = value; field.focus(); field.select();
+          status.textContent = "Message selected. Use your browser’s Copy command.";
+        }
+      });
     }
-  });
+    prepare("opening");
+    prepare("follow-up");
+    alternatives.addEventListener("toggle", () => { if (alternatives.open) prepare("with-papers"); });
+  }
 })();

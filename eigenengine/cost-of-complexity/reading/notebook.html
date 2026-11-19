@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,follow,noarchive"><meta name="theme-color" content="#101b26">
+  <meta name="description" content="Read The Cost of Complexity and its Kalmár follow-on with an agent. Record expectations before reading, follow the proofs, and compare what changed.">
+  <link rel="canonical" href="https://gmccaul.co.uk/eigenengine/cost-of-complexity/reading/notebook.html">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./reader.css">
+  <script src="./reader.js" defer></script><script src="/assets/js/eigenengine-reading-return.js" defer></script>
+  <title>Section-by-section reading notebook · EigenEngine</title>
+</head>
+<body>
+  <header class="bar"><nav class="shell" aria-label="Return to the research pages"><a class="home" href="/eigenengine.html">← Back to EigenEngine</a><span><a href="/eigenengine/cost-of-complexity/">Cost paper</a><a href="/eigenengine/kalmar-constant/">Kalmár draft</a></span></nav></header>
+  <main class="shell">
+    <header class="intro"><p class="by">The Cost of Complexity · Physical origins of the Kalmár constant</p>
+      <h1>Section-by-section reading notebook</h1>
+      <p>Use this notebook to keep a separate reply for each section and an independent reader’s response. For the shorter route, <a href="./">use the two-message reading</a>.</p>
+    </header>
+    <p class="workload">21 pages and an 8-page draft. One exchange per section or appendix, then a fresh reader for the objections.</p>
+    <section class="workbench" aria-labelledby="stage-title">
+      <div class="stepbar"><span id="phase">Expectations</span><span id="progress">Before the manuscripts</span></div>
+      <div class="workspace">
+        <h2 id="stage-title" tabindex="-1">What do you expect from the abstracts?</h2>
+        <p id="direction">Paste the opening prompt into a fresh chat with browsing off and no papers attached. Save its reply before sending a section.</p>
+        <noscript><p>Copy the <a href="./opening.txt">opening message with both abstracts</a> into a fresh chat. Keep its answer in the conversation. The <a href="./manual.html">manual reading sequence</a> lists the individual sections and the prompts for an independent reread.</p></noscript>
+        <div id="interactive" hidden>
+          <div class="copy-row"><button id="copy" class="primary" type="button">Copy opening prompt</button><details id="prompt-details"><summary>Read or select the prompt</summary></details></div>
+          <textarea id="prompt" class="prompt" readonly aria-label="Message to copy to your agent" hidden></textarea>
+          <p id="copy-status" class="status" role="status"></p>
+          <div id="sources" hidden></div>
+          <details class="full-copy" id="full-copy" hidden><summary>Give a chat the manuscript text directly</summary>
+            <p>Send each paper separately if the reader cannot open the manuscript links. The complete texts include the appendices, figure captions and references. If the chat cuts a message short, send individual sections from the manual sequence.</p>
+            <div class="record-actions"><button type="button" data-full-paper="cost">Copy Cost manuscript</button><button type="button" data-full-paper="kalmar">Copy Kalmár draft</button></div>
+            <textarea readonly id="full-fallback" hidden aria-label="Complete manuscript text to select"></textarea>
+            <p class="status" id="full-status" role="status"></p>
+          </details>
+          <form id="save-form"><label for="answer" id="answer-label">Agent’s expectations</label>
+            <textarea id="answer" rows="4" placeholder="Paste the reply from the chat here." required></textarea>
+            <div class="save-row"><button type="submit" id="advance">Save expectations and open the first section →</button></div>
+          </form>
+          <p class="status" id="save-status" role="status"></p>
+        </div>
+        <p id="load-status" role="status">Opening prompt available as <a href="./opening.txt">plain text</a>. <a href="./manual.html">Manual sequence ↗</a></p>
+      </div>
+    </section>
+    <details class="record" id="notebook"><summary>Your reading record <span id="note-count"></span></summary>
+      <p>Replies stay in this browser. Each entry records what the reader reported and the passage it relied on. You can take the original forecast and notes to a new chat if an earlier exchange falls out of context.</p>
+      <div class="record-actions"><button type="button" id="download" disabled>Download reading record</button><button type="button" id="copy-log" disabled>Copy reading record</button></div>
+      <textarea id="log-fallback" hidden readonly aria-label="Reading record to select"></textarea>
+      <div id="entries"></div><p id="log-status" class="status" role="status"></p>
+      <details class="reset" id="restart"><summary>Start another reading</summary><p>This clears the saved reading on this browser. Download it first if you want to keep it.</p><button type="button" id="reset">Clear this reading and start again</button></details>
+    </details>
+    <footer><a href="/eigenengine/cost-of-complexity/">← The Cost of Complexity</a><a href="/eigenengine/kalmar-constant/">The Kalmár follow-on ↗</a></footer>
+  </main>
+</body>
+</html>

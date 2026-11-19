@@ -1,0 +1,435 @@
+Physical origins of the Kalmár constant
+Gerard McCaul · EigenEngine
+Draft of 19 November 2026
+eigen@gmccaul.co.uk
+
+Transcribed from the published eight-page PDF (draft of 19 November 2026). Mathematical typography is represented in linear text and TeX. Figure images are crops of the PDF.
+
+Abstract
+
+The register theory of Ref. [1] compares the organisations of a representation from outside. Its efficient budget is an infimum over admissible organisations, and the selection of the organisation is not itself priced. We price it. The mixed-radix positional organisations of N distinctions are the ordered factorisations of N. With the logarithmic cost law and an existence cost K₀ per register, the number of organisations of budget at most B grows as exp(λ_c B/κ), where ζ(λ_c) = 1+exp(λ_c K₀/κ). This is the capacity, in the sense of Shannon’s noiseless channel, of a register whose letters are registers. For free registers λ_c is Kalmár’s constant ρ = 1.7286 …, the solution of ζ(ρ) = 2. As K₀/κ → ∞ it approaches the pole of ζ at one, the normalisation boundary of the Zipf family. The maximum-entropy ensemble of organisations has geometric depth and register ranges distributed as n^(−λ), and its mean depth diverges on the critical line. A register that holds the choice of its own organisation needs range $NH(N)$, with $H(N)\le N^\rho$. Closing that account for a binary register of k digits costs k(k + 1)/2 digits. Iterating the construction gives a hierarchy with cost $\binom{k+n-1}{n}$ at level n, whose generating function is a power law in N.
+
+I. Introduction  (PDF p. 1)
+
+Reference [1] assigns a cost to the organisation of a representation as well as to its symbols. Its starting observation is that a register holds distinctions at one level and is itself selected by a distinction at the next. With additive positional composition, the efficient register budget K_reg(N) grows logarithmically in the number N of distinctions supported, and under homogeneous refinement K_reg(N) = K₀ + κ ln N.
+
+The quantity K_reg is defined as an infimum over a class 𝒜_N of admissible organisations. Every selector inside an organisation is priced. The selection of the organisation from 𝒜_N is not. It is made by whoever takes the infimum. For a designed register this is appropriate. For a system that revises its own architecture [2, 3], the choice of organisation is a distinction that the system must hold, and Ref. [1] states that its accounting admits no exceptions.
+
+What does it cost to hold that choice? The answer depends on how many organisations there are. For the positional organisations used throughout Ref. [1] the count is a classical arithmetic function, the number H(N) of ordered factorisations of N [4–6]. Its growth is governed by Kalmár’s constant ρ = 1.7286 …, the solution of ζ(ρ) = 2.
+
+We obtain four results. Section IV shows that the number of organisations of budget at most B grows as exp(λ_c B/κ), with λ_c fixed by the existence cost through ζ(λ_c) = 1 + exp(λ_c K₀/κ). Section V gives the maximum-entropy ensemble of organisations and its critical line. Section VI prices a register that holds its own organisation and gives the condition under which that account closes. Section VII iterates the construction and resums the resulting hierarchy. Section II recalls what is needed from Ref. [1], and Section III the number theory. Proofs are collected in the appendices.
+
+II. Setting  (PDF pp. 1–2)
+
+We use the notation of Ref. [1]. A register of range N distinguishes N alternatives. For an organisation R, B_ℛ(N) is the budget sufficient to realise any of the first N symbols in typicality order, and
+
+$$ K_{\mathrm{reg}}(N)=\inf_{\mathcal R\in\mathcal A_N} B_{\mathcal R}(N). \tag{1} $$
+
+When two registers can implement a positional choice at the sum of their budgets,
+
+$$ K_{\mathrm{reg}}(mn)\le K_{\mathrm{reg}}(m)+K_{\mathrm{reg}}(n), \tag{2} $$
+
+and the limit κ_∞ = lim_(N→∞) K_reg(N)/ ln N exists, with
+
+$$ \kappa_\infty\ln N\le K_{\mathrm{reg}}(N). \tag{3} $$
+
+Under homogeneous refinement,
+
+$$ K_{\mathrm{reg}}(n)=K_0+\kappa\ln n, \tag{4} $$
+
+where K₀ = K_reg(1) is the existence cost. The shared cost of two registers is then I_K(m:n) = K_reg(m) + K_reg(n) − K_reg(mn) = K₀. We write k₀ = K₀/κ and measure budgets in units of κ.
+
+With symbol cost ln r at rank r, maximum entropy at fixed mean cost gives the Zipf family on a vocabulary of size R,
+
+$$ p(r\mid\lambda)=\frac{r^{-\lambda}}{Z_R(\lambda)},\qquad Z_R(\lambda)=\sum_{r=1}^{R}r^{-\lambda}, \tag{5} $$
+
+with Z_∞(λ) = ζ(λ) for λ > 1. Two properties of this family are used below. Write $C_R(\lambda)=\sum_r p(r\mid\lambda)\ln r$ for the mean cost and L = ln R for the capacity.
+
+Proposition 1 (Pinning of the rank multiplier). For fixed real x,
+
+$$ \lim_{R\to\infty}\frac{C_R(1+x/L)}{L}=c(x):=\frac1x-\frac{1}{e^x-1}, \tag{6} $$
+
+with c(0) = 1/2. The function c decreases from one to zero. If the mean cost is a fixed fraction c ∈ (0, 1) of the capacity, then λ_R → 1 and (λ_R − 1) ln R → x(c), the solution of c(x) = c.
+
+In the coordinate u = ln r there are e^u ranks of cost at most u, so the family is a truncated exponential on [0, L] with rate λ − 1. At λ = 1 the weight exp(−λu) cancels the density of ranks. This is the linear entropy of Ref. [11], and a related asymptotic statement is given in Ref. [12].
+
+Any λ > 1 has cost density zero and any λ < 1 has cost density one. Only λ = 1+O(1/ ln R) uses an intermediate fraction of the capacity.
+
+Proposition 2 (Redundancy of the logarithmic cost). Let K(r) = K₀ +κ ln r on {1, …, R}, let h(r) = 1/(r H_R) be the harmonic distribution with $H_R=\sum_{r\le R}1/r$, and let p be any distribution on the same set. Then
+
+$$ \langle K\rangle_p-\kappa H(p)=\bigl(K_0-\kappa\ln H_R\bigr)+\kappa D(p\Vert h), \tag{7} $$
+
+where H(p) is the Shannon entropy and D the relative entropy in nats.
+
+The first bracket is non-negative when the costs are the lengths of a prefix code, by the Kraft inequality [13]. Among occupations of a logarithmically priced register, the harmonic member λ = 1 is the only one for which the mean cost equals the entropy carried, up to that bracket.
+
+A self-delimiting register on R ranks has
+
+$$ K_0\ge\kappa\ln H_R=\kappa\ln\ln R+O(1/\ln R). \tag{8} $$
+
+III. Organisations of a positional register  (PDF pp. 2–3)
+
+Definition 1. A positional organisation of N ≥ 2 distinctions is a tuple (n₁, …, nₖ) of integers nᵢ ≥ 2 with n₁ n₂ · · · nₖ = N. The symbol of rank r is addressed by digits (j₁, …, jₖ), 1 ≤ jᵢ ≤ nᵢ, through
+
+$$ r=1+\sum_{i=1}^{k}(j_i-1)\prod_{l>i}n_l. \tag{9} $$
+
+The integer k is the depth. The empty tuple is the organisation of N = 1.
+
+For k = 2, Eq. (9) is the positional encoding r = n(i − 1)+j of Ref. [1]: a choice among n₁ subregisters followed by a choice among n₂ symbols. For general k each digit selects a subregister of the register chosen by the digit before it. The tuple is ordered. The organisations (2, 8) and (8, 2) of sixteen symbols are the two panels of Fig. 2 in Ref. [1].
+
+The number of positional organisations of N is therefore the number H(N) of ordered factorisations of N into factors greater than one, with H(1) = 1 [7]. Choosing the first factor gives
+
+$$ H(N)=\sum_{d\mid N,\,d>1}H(N/d). \tag{10} $$
+
+Organisations of depth k are k-fold products, so
+
+$$ \sum_{N\ge 1}\frac{H(N)}{N^s}=\sum_{k\ge 0}\bigl(\zeta(s)-1\bigr)^k=\frac{1}{2-\zeta(s)}. \tag{11} $$
+
+The series converges for Re s > ρ, where ρ = 1.7286472 … is the solution of ζ(ρ) = 2. Kalmár [4, 5] obtained
+
+$$ \sum_{N\le x}H(N)=\frac{x^\rho}{-\rho\zeta^{\prime}(\rho)}\bigl(1+o(1)\bigr), \tag{12} $$
+
+with −1/(ρζ′(ρ)) = 0.31817 …. For individual N,
+
+$$ H(N)\le N^\rho \tag{13} $$
+
+[8, 9], and the exponent cannot be lowered: H(N) > N^(ρ−ε) for infinitely many N [6, 10]. A short proof of Eq. (13) is given in Appendix A.
+
+Three special cases are used below. A prime range has H(p) = 1: a monolithic register is its only organisation. A prime power has H(p^k) = 2^(k−1), the number of compositions of k. In particular the sixteen symbols of Ref. [1] have eight organisations, one of depth one, three of depth two, three of depth three and one of depth four [Fig. 1(a)]. For N = 2^k an organisation is fixed by stating which of the k − 1 positions between adjacent binary digits is a register boundary.
+
+Figure 1. (a) The eight positional organisations of sixteen ranked symbols, labelled by their ordered factorisation and depth k. Orange lines are register boundaries, drawn shorter at each deeper level. The organisations 2 · 8 and 8 · 2 are panels (b) and (c) of Fig. 2 in Ref. [1]. (b) Number of positional organisations H(N) for $2 \le N \le 10^6$ (grey points), computed from Eq. (10). Blue line: the bound $N^\rho$ of Eq. (13). Black line: H = N. Orange markers: the six ranges in this interval with H(N) = N.
+[Image: kalmar/figure-1.webp · PDF p. 3]
+
+IV. The capacity of organisation  (PDF pp. 2–3)
+
+How many organisations does a given budget support? Under Eq. (4), a register of range n has budget K₀ + κ ln n. An organisation assembled by additive positional composition, Eq. (2), has budget
+
+$$ B(n_1,\ldots,n_k)=\sum_{i=1}^{k}K_{\mathrm{reg}}(n_i)=kK_0+\kappa\ln N. \tag{14} $$
+
+Relative to the envelope K_reg(N) = K₀ + κ ln N, each register beyond the first forfeits the shared cost I_K = K₀. In units of κ the budget is b = kk₀ + ln N. Let Ω(b) be the number of organisations, of any range and depth, with budget at most b.
+
+Theorem 1 (Capacity of organisation). For k₀ ≥ 0 the equation
+
+$$ \zeta(\lambda_c)=1+e^{\lambda_c k_0} \tag{15} $$
+
+has a unique solution λ_c ∈ (1, ρ], and
+
+$$ \Omega(b)=\frac{e^{\lambda_c b}}{\lambda_c m}\bigl(1+o(1)\bigr),\qquad m=k_0-\frac{\zeta^{\prime}(\lambda_c)}{\zeta(\lambda_c)-1}, \tag{16} $$
+
+as b → ∞. In particular
+
+$$ \lim_{b\to\infty}\frac{\ln\Omega(b)}{b}=\lambda_c. \tag{17} $$
+
+The solution decreases with k₀. It equals ρ at k₀ = 0 and satisfies
+
+$$ 1<\lambda_c<1+e^{-k_0}. \tag{18} $$
+
+At k₀ = 0, Eq. (16) is Kalmár’s theorem, Eq. (12). The proof in Appendix B uses the renewal theorem and covers k₀ > 0, where the budgets kk₀ + ln N are not logarithms of integers. Table I lists values, and Fig. 2(b) compares Eq. (16) with an exact count.
+
+The theorem has a direct reading. An organisation is a word whose letters are registers, and the letter of range n costs k₀ + ln n. Shannon’s capacity of a noiseless channel with letters of unequal cost is the growth rate of the number of words of cost at most b, and is the real root of the condition that the Boltzmann weights of the letters sum to one [14]. Here that condition is $\sum_{n\ge2} e^{-\lambda(k_0+\ln n)}=1$, which is Eq. (15). The constant λ_c is the number of nats of organisational choice supported per nat of budget. The corresponding figure for content is one, since e^u ranks have cost at most u.
+
+For free registers the capacity of organisation is Kalmár’s constant. One nat of budget then distinguishes e symbols and e^ρ organisations. Existence cost lowers the capacity, and by Eq. (18) it approaches the content value one exponentially in K₀/κ. The two limits are two special values of the zeta function: ζ = 2 for free registers, and the pole of ζ, which is the normalisation boundary of the Zipf family, for expensive ones.
+
+Remark. The same argument applies to any set S of available register ranges with budgets bₙ: the capacity is the root of $\sum_{n\in S}e^{-\lambda b_n}=1$. If the $b_n$ are the lengths of a complete prefix code, the capacity is exactly one. Registers restricted to ranges 2^j with b = j ln 2 are an example, and the organisations of 2^k number 2^(k−1). A capacity above one requires budgets that violate the Kraft inequality, as ln n does on n ≥ 2. If registers of range up to R are to be self-delimiting, Eq. (8) and Eq. (18) give λ_c − 1 < 1/H_R, the same order in 1/ ln R as the pinning deviation of Proposition 1.
+
+Table I. Critical multiplier λ_c from Eq. (15), mean step m and limit 1/(λ_c m) from Eq. (16), and the bound e^(−k₀) on λ_c − 1.
+
+K₀/κ | λ_c | m | 1/(λ_c m) | e^(−k₀)
+0 | 1.72865 | 1.818 | 0.31817 | 1
+0.25 | 1.53928 | 2.544 | 0.25534 | 0.77880
+0.5 | 1.41313 | 3.357 | 0.21082 | 0.60653
+1 | 1.25549 | 5.345 | 0.14901 | 0.36788
+2 | 1.10493 | 11.956 | 0.07570 | 0.13534
+3 | 1.04298 | 26.693 | 0.03592 | 0.04979
+5 | 1.00650 | 159.165 | 0.00624 | 0.00674
+8 | 1.00033 | 2997.792 | 0.00033 | 0.00034
+
+V. The ensemble of organisations  (PDF pp. 3–4)
+
+Section V of Ref. [1] infers occupation statistics from the cost law by maximum entropy at fixed mean cost. The same inference applies one level up. If the mean budget of an organisation is specified and nothing else, the maximum-entropy distribution over organisations, relative to counting measure, is
+
+$$ P(n_1,\ldots,n_k)=\frac{1}{\Xi}\prod_{i=1}^k z\,n_i^{-\lambda},\qquad z=e^{-\lambda k_0}, \tag{19} $$
+
+with
+
+$$ \Xi(\lambda)=\sum_{k\ge0}q^k=\frac{1}{1-q},\qquad q=e^{-\lambda k_0}\bigl(\zeta(\lambda)-1\bigr). \tag{20} $$
+
+At k₀ = 0 this is the Dirichlet series of Eq. (11). The sum converges when q < 1, that is for λ > λ_c.
+
+Theorem 2 (Structure of the ensemble). For λ > λ_c:
+
+1. The depth is geometric,
+
+$$ P(k)=(1-q)q^k,\qquad\langle k\rangle=\frac{q}{1-q}. \tag{21} $$
+
+2. Given the depth, the register ranges are independent with
+
+$$ P(n)=\frac{n^{-\lambda}}{\zeta(\lambda)-1},\qquad n\ge2. \tag{22} $$
+
+3. As λ ↓ λ_c, the mean depth and the mean budget diverge as ⟨k⟩ ≃ 1/[m(λ−λ_c)] and ⟨b⟩ ≃ 1/(λ−λ_c).
+
+The ensemble of ranks in Ref. [1] has one singular point, the pole of ζ at λ = 1. The ensemble of organisations has a line of them, Eq. (15), running from ρ at K₀ = 0 to one as K₀/κ → ∞ [Fig. 2(a)]. Above the line, existence cost outweighs the number of ways to subdivide and organisations are shallow. On the line the two balance: λK₀/κ = ln[ζ(λ) − 1]. Below it no normalised ensemble exists without a cutoff.
+
+The pinning argument of Proposition 1 carries over, because the density of organisations is exponential in budget.
+
+Proposition 3 (Pinning on the critical line). Restrict the ensemble to organisations of budget at most L. For fixed real x, the mean budget satisfies ⟨b⟩/L → c(x) at λ = λ_c + x/L as L → ∞, with c as in Eq. (6). If the mean budget is a fixed fraction c ∈ (0, 1) of the cutoff, then λ → λ_c.
+
+Appendix F reports the approach to this limit for k₀ = 0. It is slow, with corrections of order 1/L.
+
+A consequence can be stated without reference to the ensemble’s derivation. Consider a hierarchy that sets its own depth and register ranges, is not bounded in size, and uses a fraction of its budget cutoff that is neither zero nor one. By Proposition 3 and Eq. (22) its register ranges, that is its branching factors, are distributed as n^(−λ_c) with
+
+$$ 1<\lambda_c\le\rho=1.7286\ldots, \tag{23} $$
+
+and the exponent determines the existence cost through K₀/κ = ln[ζ(λ_c)−1]/λ_c. We have not tested this against data.
+
+Figure 2. (a) Critical multiplier $\lambda_c$ against existence cost $K_0/\kappa$, from Eq. (15). Above the line the ensemble of organisations is normalised and has finite mean depth. In the shaded region the partition sum of Eq. (20) diverges. (b) Number of organisations $\Omega(b)$ of budget at most b, multiplied by $e^{-\lambda_c b}$, counted exactly for ranges up to $10^6$. Horizontal lines: the limits $1/(\lambda_c m)$ of Theorem 1. (c) Mean depth $\langle k\rangle=q/(1-q)$ of the ensemble, Eq. (21). Vertical lines mark $\lambda_c$.
+[Image: kalmar/figure-2.webp · PDF p. 4]
+
+VI. Self-indexing registers  (PDF pp. 4–5)
+
+We now return to the selector left unpriced in Ref. [1]. A register that holds N alternatives together with the choice of its own positional organisation distinguishes NH(N) joint alternatives. Define the architectural freedom
+
+$$ \theta(N)=\frac{\ln H(N)}{\ln N}, \tag{24} $$
+
+the nats of organisational choice per nat of content.
+
+Theorem 3 (Budget of a self-indexing register). The budget $K_{\mathrm{self}}(N)=K_{\mathrm{reg}}\bigl(NH(N)\bigr)$ of a register holding N alternatives and the choice of its organisation satisfies
+
+$$ \begin{aligned}K_{\mathrm{self}}(N)&\ge\kappa_\infty[1+\theta(N)]\ln N,\\ K_{\mathrm{self}}(N)&\le K_{\mathrm{reg}}(N)+K_{\mathrm{reg}}\bigl(H(N)\bigr),\end{aligned} \tag{25} $$
+
+and 0 ≤ θ(N) < ρ. The upper limit on θ cannot be lowered.
+
+The bounds follow from Eqs. (2), (3) and (13). The organisation register can therefore be larger than the content register. The first range with more organisations than states is N = 72, with H(72) = 76, and 2673 ranges up to 10^6 have H(N) > N [15]. The ranges with H(N) = N, which index exactly their own organisations, are 48, 1280, 2496, 28672, 29808, 454656, … [Fig. 1(b)]. They are known as factor-perfect numbers [16]. Table II gives examples.
+
+The organisation register is itself a register. If there are no exceptions, its organisation must be held too.
+
+Definition 2. The organisation tower of N is the sequence $N_0=N$, $N_{t+1}=H(N_t)$. The tower closes if $N_T=1$ for some T, and its closure cost is $\Lambda(N)=\sum_{t<T}\ln N_t$.
+
+A closed tower holds $\prod_t N_t$ joint alternatives, so its budget lies between $\kappa_\infty\Lambda(N)$ and $\sum_{t<T}K_{\mathrm{reg}}(N_t)$.
+
+Proposition 4 (Closure). Let N ≥ 2.
+
+1. If $\theta(N_t)\le\theta<1$ for every level of the tower, then the tower closes and
+
+$$ \Lambda(N)\le\frac{\ln N}{1-\theta}. \tag{26} $$
+
+2. For $N=p^k$ with p prime the tower is $p^k,2^{k-1},2^{k-2},\ldots,1$ and
+
+$$ \Lambda(p^k)=k\ln p+\frac{k(k-1)}{2}\ln 2. \tag{27} $$
+
+For p = 2 this is $\tfrac12k(k+1)\ln 2$.
+
+3. A tower that reaches a range with H(N) = N, or a cycle of H, does not close.
+
+A binary register of k digits therefore needs k(k +1)/2 digits to hold its content, its register boundaries, the boundaries of the boundary register, and so on. The logarithmic law of Ref. [1] is replaced by
+
+$$ \Lambda(N)=\frac{\ln N\,(\log_2N+1)}{2}, \tag{28} $$
+
+which is quadratic in ln N. The sixteen symbols of Fig. 1(a) need ten binary digits instead of four. The logarithmic law is retained, with rate κ_∞/(1 − θ), only when the architectural freedom is bounded below one.
+
+Binary registers have θ(2^k) = (k − 1)/k and sit at the margin.
+
+For 2 ≤ N ≤ 10^4 we computed every tower (Appendix F). Of the 9999 towers, 9182 close, 811 reach a factor-perfect range and six enter the two-cycle H(6144) = 13312, H(13312) = 6144. Among the towers that close, the ratio Λ(N)/ ln N has median 1.29 and maximum 9.15, at N = 2304 [Fig. 3(a)].
+
+Table II. Number of organisations H(N), architectural freedom θ(N) and organisation tower for selected ranges. The last row has the largest θ(N) for N ≤ 10^6.
+
+N | H(N) | θ(N) | tower
+16 | 8 | 0.750 | 16, 8, 4, 2, 1
+48 | 48 | 1.000 | fixed point
+72 | 76 | 1.013 | 72, 76, 8, 4, 2, 1
+360 | 604 | 1.088 | 360, 604, 8, 4, 2, 1
+720 | 1888 | 1.147 | 720, 1888, 112, 48
+2304 | 8192 | 1.164 | 2304, 2^13, 2^12, …, 1
+6144 | 13312 | 1.089 | two-cycle
+967680 | 83934208 | 1.324
+
+VII. The reflective hierarchy  (PDF pp. 5–6)
+
+The organisation tower prices the organisation of each register in it. It leaves one thing fixed: how the registers of the tower are themselves grouped. We now price that, and what the result leaves fixed in turn. We work with binary registers and count budgets in digits.
+
+Let A₁(k) = k be the budget of a register of k digits whose organisation is supplied from outside. By Proposition 4, the closed tower obeys
+
+$$ A_2(k)=A_1(k)+A_2(k-1),\qquad A_2(1)=1, \tag{29} $$
+
+since the organisation of k digits is a composition of k, held by k − 1 binary marks in a register that is closed in the same way. The closed tower on k digits has k constituents, the registers of the tower. Their grouping into consecutive blocks is again a composition of k, specified by k − 1 marks. A level-three object holds this choice in a register that is itself closed at level three, so A₃(k) = A₂(k) + A₃(k − 1). An object of level n on k digits has k constituents of level n − 1, on k, k − 1, …, 1 digits, and the same step applies.
+
+Definition 3. The reflective hierarchy is the family of budgets defined by
+
+$$ A_n(k)=A_{n-1}(k)+A_n(k-1),\qquad A_n(1)=1, \tag{30} $$
+
+for n ≥ 1, with A₀(k) = 1.
+
+The step from level two to level three is a modelling choice. It prices one freedom left by the level below, the grouping of constituents. Other freedoms could be priced instead. The results that follow hold for the recursion (30).
+
+Theorem 4 (Reflective hierarchy). Let N = 2^k.
+
+1. The closure cost at level n is
+
+$$ A_n(k)=\binom{k+n-1}{n}=\frac{(\log_2 N)^n}{n!}\bigl[1+O(1/k)\bigr]. \tag{31} $$
+
+2. Depth and content are exchangeable: Aₙ(k + 1) = Aₖ(n + 1).
+
+3. The functions A₀, A₁, A₂, … form a basis over the integers for the integer-valued polynomials in k.
+
+4. For |x| < 1,
+
+$$ \sum_{n\ge0}A_n(k)x^n=(1-x)^{-k}=N^\alpha,\qquad\alpha=\log_2\frac{1}{1-x}. \tag{32} $$
+
+Part (i) shows that each reflective level adds one power of ln N. Part (iii) states that every budget which is an integer-valued polynomial in the number of digits is a unique integer combination of the reflective costs. Part (iv) resums the hierarchy. If the reflective depth is geometric, P(n) = (1−x)x^n, the mean budget is (1−x)N^α, a power law in the range.
+
+Equation (32) connects the two cost families of Ref. [1]. The scale-covariant budgets found there have excess g_α(N) = κ_α(N^α − 1)/α, the q-logarithm with q = 1 − α [17]. By Eq. (32),
+
+$$ \frac{N^\alpha-1}{\alpha}=\frac{1}{\alpha}\sum_{n\ge1}A_n(\log_2N)x^n, \tag{33} $$
+
+so the q-logarithm is the generating function of the reflective closure costs. As x → 0 only the first level contributes and the right-hand side tends to ln N. At x = 1/2, α = 1 and
+
+$$ \sum_{n\ge0}A_n(k)2^{-n}=2^k=N, \tag{34} $$
+
+the budget law of the unary register, with one element per distinction [Fig. 3(b)].
+
+Remark. Aₙ(k) is the number of multisets of size n drawn from k types, equivalently the number of ways to distribute n indistinguishable quanta over k modes. Equation (32) is then the grand partition function of k bosonic modes at fugacity x. We record this as a formal correspondence.
+
+Two limits should be kept apart. At fixed content the cost has no limit in the depth: by part (ii), Aₙ(k) ∼ n^(k−1) /(k − 1)! as n → ∞. The weighted sum does have a limit, and it is a power law. Reference [1] shows that a power-law budget is undercut by positional composition whenever that composition is available. The resummed hierarchy is therefore simple to describe, with a single exponent, and expensive to realise. Reflection on its own organisation does not reduce a register’s budget.
+
+Figure 3. (a) Closure ratio $\Lambda(N)/\ln N$ for the organisation towers that close, $2\le N\le10^4$ (grey points). Blue: $N=2^k$, where the ratio is $(k+1)/2$ by Eq. (27). Orange marks along the top: the 817 ranges whose tower reaches a fixed point or a cycle of H. (b) Closure cost $A_n(k)=\binom{k+n-1}{n}$ of a binary register of k digits at reflective levels $n=1,\ldots,4$, in digits, from Theorem 4. Black line: $\sum_n A_n(k)2^{-n}=2^k$.
+[Image: kalmar/figure-3.webp · PDF p. 6]
+
+VIII. Outlook  (PDF pp. 6–7)
+
+The infimum that defines K_reg in Ref. [1] is taken from outside the register. When the choice of organisation is brought inside, the count of organisations enters the budget. For positional organisations that count is the number of ordered factorisations, and Kalmár’s constant acquires a physical reading: it is the capacity of organisation of free registers, in nats of organisational choice per nat of budget. Existence cost moves this capacity along Eq. (15) to the content value one.
+
+The self-consistency asserted in Ref. [1] is conditional. A register can hold its own organisation at logarithmic cost only while its architectural freedom stays below one. A binary register is marginal and pays a cost quadratic in ln N. A range with H(N) ≥ N may not close at all.
+
+Several limits of the present account should be stated. The organisations counted are mixed-radix: all subregisters at a level have the same range. If subregisters may be divided unequally, the organisations of N ranked symbols are the plane trees with N leaves and no unary nodes. Their number grows exponentially, as $(3+2\sqrt2)^N$ up to a power of N [18], and the organisation register then costs a budget linear in N. Positional organisation is what keeps the count polynomial.
+
+The budget of Eq. (14) assumes homogeneous refinement. A composition correction ϵ(m, n) ≠ 0 changes the weights in Eq. (19).
+
+The window of Eq. (23) is a prediction for branching factors in hierarchies that organise themselves. It has not been compared with data, and the conditions of Proposition 3 would have to be established for any candidate system.
+
+The number theory used here is classical [4–6, 8, 10, 19]. We have not found the reading of ρ as a capacity of organisation, the critical line of Eq. (15), or the closure results in the literature we searched. That search was not exhaustive.
+
+The account is static, as in Ref. [1]. It gives the budget of holding an organisation, and says nothing about the cost of changing it.
+
+Acknowledgments  (PDF p. 7)
+
+The results of Sections III–VI were derived by Claude (Anthropic) at the author’s prompting, by applying the framework of Ref. [1] to the selector that it leaves unpriced.[1] The hierarchy of Section VII was proposed by the author and formalised by Claude. Derivations, numerical checks, figures and this draft were produced in that conversation.
+
+Footnote 1. one could argue that the person who prompted this is a genius. No cap.
+
+Appendix A — The bound on H(N)  (PDF p. 7)
+
+Equation (11) follows by counting organisations by depth. The Dirichlet series of the indicator of n ≥ 2 is ζ(s) − 1, and organisations of depth k are ordered k-fold products.
+
+For Eq. (13) we follow Refs. [8, 9]. The bound holds at N = 1. If it holds below N, Eq. (10) gives
+
+$$ H(N)\le\sum_{d\mid N,\,d>1}\left(\frac{N}{d}\right)^\rho<N^\rho\sum_{d\ge2}d^{-\rho}=N^\rho\bigl(\zeta(\rho)-1\bigr)=N^\rho. \tag{A1} $$
+
+Appendix B — Proof of Theorem 1  (PDF p. 7)
+
+Let $s_n=k_0+\ln n$ for $n\ge2$ and let $\nu=\sum_{n\ge2}\delta_{s_n}$. An organisation is a finite sequence of steps $s_{n_i}$ and its budget is their sum, so $\Omega(b)=\sum_{k\ge0}\nu^{*k}([0,b])$. The Laplace transform of ν is
+
+$$ q(\lambda)=\int e^{-\lambda s}\,\nu(ds)=e^{-\lambda k_0}\bigl(\zeta(\lambda)-1\bigr), \tag{B1} $$
+
+which is finite for λ > 1, continuous and strictly decreasing, with q → ∞ as λ ↓ 1 and q → 0 as λ → ∞. There is therefore a unique λ_c > 1 with q(λ_c) = 1. Since q(ρ) = exp(−ρ k₀) ≤ 1, λ_c ≤ ρ with equality only at k₀ = 0, and λ_c decreases with $k_0$. From $\zeta(\lambda)-1<\int_1^\infty x^{-\lambda}\,dx=1/(\lambda-1)$ we get $e^{\lambda_c k_0}<1/(\lambda_c-1)$, which gives Eq. (18).
+
+The tilted measure $P^*(ds)=e^{-\lambda_c s}\nu(ds)$ is a probability distribution on $(0,\infty)$ with mean
+
+$$ m=\sum_{n\ge2}(k_0+\ln n)\,e^{-\lambda_c k_0}n^{-\lambda_c}=k_0-\frac{\zeta^{\prime}(\lambda_c)}{\zeta(\lambda_c)-1}<\infty. \tag{B2} $$
+
+It is non-arithmetic, because s₃ − s₂ = ln(3/2) and s₄ − $s_2=\ln2$ are incommensurable. Let $U=\sum_{k\ge0}P^{*k}$ be its renewal measure. Then $\Omega(db)=e^{\lambda_c b}U(db)$ and
+
+$$ e^{-\lambda_c b}\Omega(b)=\int_0^b e^{-\lambda_c(b-s)}\,U(ds)\longrightarrow\frac1m\int_0^\infty e^{-\lambda_c t}\,dt=\frac1{\lambda_c m} \tag{B3} $$
+
+by the key renewal theorem [20], since exp(−λ_c t) is directly Riemann integrable. At k₀ = 0, m = −ζ′(ρ) and b = ln x, which is Eq. (12).
+
+Appendix C — Pinning  (PDF p. 7)
+
+Proposition 1. For f Lipschitz on [0, 1], comparison of the sum with the integral gives
+
+$$ \sum_{r=1}^R\frac1r f\left(\frac{\ln r}{L}\right)=L\int_0^1 f(t)\,dt+O(1). \tag{C1} $$
+
+At $\lambda=1+x/L$ the weight is $r^{-\lambda}=r^{-1}e^{-x\ln r/L}$. Taking $f(t)=e^{-xt}$ and $f(t)=te^{-xt}$,
+
+$$ \frac{C_R}{L}=\frac{\int_0^1te^{-xt}\,dt}{\int_0^1e^{-xt}\,dt}+O(1/L)=\frac1x-\frac1{e^x-1}+O(1/L). \tag{C2} $$
+
+The right-hand side is the mean of an exponential distribution truncated to [0, 1], which decreases from one to zero in x.
+
+Proposition 2. Since ln r = − ln h(r) − ln H_R,
+
+$$ \langle K\rangle_p=K_0-\kappa\ln H_R-\kappa\sum_r p(r)\ln h(r), \tag{C3} $$
+
+and $-\sum_r p\ln h=H(p)+D(p\Vert h)$.
+
+Proposition 3. With the cutoff, the weight of budgets in $db$ is $e^{-\lambda b}\Omega(db)=e^{-(\lambda-\lambda_c)b}U(db)$. By the renewal theorem $U([a,a+h])\to h/m$, so for continuous g on [0, 1], $L^{-1}\int_0^L g(b/L)\,U(db)\to m^{-1}\int_0^1g(t)\,dt$. At $\lambda=\lambda_c+x/L$ the weight is $e^{-xb/L}$ and the calculation above applies.
+
+Appendix D — Self-indexing and closure  (PDF p. 8)
+
+Theorem 3. The lower bound is Eq. (3) at range NH(N). The upper bound is Eq. (2). The range of θ follows from Eq. (13), with strict inequality for N > 1, and from the lower bounds of Refs. [6, 10].
+
+Proposition 4. (i) $\ln N_{t+1}\le\theta\ln N_t$ gives $\ln N_t\le\theta^t\ln N$. The ranges are integers, so the tower reaches one, and the geometric series gives Eq. (26). (ii) $H(p^k)=2^{k-1}$, the number of compositions of k, for every prime p. (iii) is immediate.
+
+Appendix E — Proof of Theorem 4  (PDF p. 8)
+
+(i) $\binom{k+n-1}{n}$ satisfies Pascal’s rule $\binom{k+n-1}{n}=\binom{k+n-2}{n-1}+\binom{k+n-2}{n}$, which is Eq. (30), and equals one at k = 1 and at n = 0. (ii) $A_n(k+1)=\binom{k+n}{n}=\binom{k+n}{k}=A_k(n+1)$.
+
+(iii) By the Vandermonde identity,
+
+$$ \binom{k+n-1}{n}=\sum_{j=0}^n\binom{n-1}{n-j}\binom{k}{j}, \tag{E1} $$
+
+with coefficient one at $j=n$. The change from $\{\binom{k}{j}\}$ to $\{A_n\}$ is therefore unitriangular over the integers, and the binomial coefficients $\binom{k}{j}$ are a basis for the integer-valued polynomials [21]. (iv) is the negative binomial series, and $(1-x)^{-k}=2^{k\log_2[1/(1-x)]}$.
+
+Appendix F — Numerical checks  (PDF p. 8)
+
+H(N) was computed for N ≤ 2×10^6 by a divisor sieve on Eq. (10), and the counts by depth for N ≤ 10^6. The local exponent of $\sum_{n\le N} H(n)$ between $N=10^5$ and $10^6$ is 1.730. The partial sum of Eq. (11) over $N\le 2\times10^6$ at s = 2.5 is 1.5186, equal to 1/(2 − ζ(2.5)) to the digits shown.
+
+For Theorem 1, organisations of budget at most b = ln 10^6 were counted exactly. Ω(b)exp(−λ_c b) is 0.3190 at k₀ = 0 and 0.1491 at k₀ = 1, against the limits 0.3182 and 0.1490.
+
+For Proposition 1, solving C_R(λ) = cL at c = 0.3 gives λ = 1.258, 1.181 and 1.138 at R = 10^3, 10^5 and 10^7, with (λ − 1)L = 1.78, 2.08 and 2.23 against x(c) = 2.67. At c = 0.7 the values are λ = 0.589, 0.759 and 0.829, with (λ − 1)L = −2.84, −2.78 and −2.75 against −2.67.
+
+For Proposition 3 at k₀ = 0, with weights H(N)N^(−λ) on N ≤ R and c = 0.5, λ = 1.611, 1.657, 1.680 and 1.694 at R = 10^3, …, 10^6, against ρ = 1.729. Equation (7) was checked at R = 10^5 for λ = 0.6, 1, 1.3, 2 and for a randomly drawn distribution, with agreement to six decimal places.
+
+Organisation towers were computed for 2 ≤ N ≤ 10^4, using the prime signature to evaluate H beyond the sieve. No tower exceeded 10^18. The identities of Theorem 4 were checked for n ≤ 12 and k ≤ 24.
+
+References  (PDF p. 8)
+
+[1] G. McCaul, The Cost of Complexity: A Physical Theory of Representation (2026).
+
+[2] J. Schmidhuber, Gödel machines: Self-referential universal problem solvers making provably optimal self-improvements (2006).
+
+[3] H. A. Simon, Proceedings of the American Philosophical Society 106, 467 (1962).
+
+[4] L. Kalmár, A “factorisatio numerorum” problémájáról, Mat. Fiz. Lapok 38, 1 (1931).
+
+[5] L. Kalmár, Über die mittlere Anzahl der Produktdarstellungen der Zahlen, Acta Litt. Sci. Szeged 5, 95 (1931).
+
+[6] E. Hille, A problem in “Factorisatio Numerorum”, Acta Arithmetica 2, 134 (1936).
+
+[7] OEIS Foundation, The On-Line Encyclopedia of Integer Sequences, sequence A074206, https://oeis.org/A074206.
+
+[8] B. Chor, P. Lemke, and Z. Mador, On the number of ordered factorizations of natural numbers, Discrete Mathematics 214, 123 (2000).
+
+[9] D. Coppersmith and M. Lewenstein, Constructive bounds on ordered factorizations, SIAM Journal on Discrete Mathematics 19, 301 (2005).
+
+[10] M. Klazar and F. Luca, On the maximal order of numbers in the “factorisatio numerorum” problem, Journal of Number Theory 124, 470 (2007), arXiv:math/0505352.
+
+[11] T. Mora and W. Bialek, Journal of Statistical Physics 144, 268 (2011).
+
+[12] B. Corominas-Murtra and R. V. Solé, Universality of Zipf’s law, Physical Review E 82, 011102 (2010).
+
+[13] T. M. Cover and J. A. Thomas, Elements of Information Theory, 2nd ed. (Wiley-Interscience, Hoboken, 2006).
+
+[14] C. E. Shannon, Bell System Technical Journal 27, 379 (1948).
+
+[15] OEIS Foundation, The On-Line Encyclopedia of Integer Sequences, sequence A270308, https://oeis.org/A270308.
+
+[16] OEIS Foundation, The On-Line Encyclopedia of Integer Sequences, sequence A163272, https://oeis.org/A163272.
+
+[17] C. Tsallis, Journal of Statistical Physics 52, 479 (1988).
+
+[18] R. P. Stanley, Enumerative Combinatorics, Vol. 2 (Cambridge University Press, Cambridge, 1999).
+
+[19] H.-K. Hwang and S. Janson, A central limit theorem for random ordered factorizations of integers, Electronic Journal of Probability 16, 347 (2011).
+
+[20] W. Feller, An Introduction to Probability Theory and Its Applications, Vol. II, 2nd ed. (Wiley, New York, 1971).
+
+[21] P.-J. Cahen and J.-L. Chabert, Integer-Valued Polynomials (American Mathematical Society, Providence, 1997).
