@@ -1,417 +1,164 @@
-  <style>
-    .ee-lede { max-width: 62ch; }
-    .ee-lede p { color: var(--text-secondary); line-height: 1.8; margin-bottom: var(--space-md); }
-    .ee-lede strong { color: var(--text-primary); }
-    .ee-slide { display: grid; grid-template-columns: minmax(0, 30ch) minmax(0, 1fr); gap: var(--space-xl); align-items: start; max-width: 100ch; }
-    .ee-slide .say { color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; }
-    .ee-slide .say p { margin: 0 0 var(--space-md); }
-    .ee-slide .say strong { color: var(--text-primary); }
-    .ee-slide .fig { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-sm); min-width: 0; }
-    .ee-fig { display: block; width: 100%; height: auto; }
-    .ee-graph-wrap { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); max-width: 100ch; }
-    #ee-graph { display: block; width: 100%; height: auto; cursor: crosshair; }
-    .ee-graph-readout { min-height: 2.6em; margin-top: var(--space-sm); font-size: 0.85rem; color: var(--text-primary); line-height: 1.5; }
-    .ee-graph-readout .ee-dim { color: var(--text-muted); }
-    .ee-legend { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-md); margin-top: var(--space-sm); font-size: 0.75rem; color: var(--text-secondary); }
-    .ee-legend .ee-key i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
-    .ee-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-md); max-width: 100ch; margin-top: var(--space-xl); }
-    .ee-card { display: block; background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); text-decoration: none; transition: background var(--transition-base), transform var(--transition-base); }
-    .ee-card:hover { background: var(--bg-card-hover); transform: translateY(-2px); }
-    .ee-card .kicker { display: block; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: var(--space-xs); }
-    .ee-card h3 { font-size: 1rem; color: var(--text-primary); margin-bottom: var(--space-sm); }
-    .ee-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
-    .ee-card .go { display: block; margin-top: var(--space-sm); font-size: 0.8rem; color: var(--link); }
-    .ee-disclaimer { max-width: 100ch; margin-top: var(--space-md); font-size: 0.78rem; color: var(--text-muted); }
-    .ee-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-md); max-width: 100ch; }
-    .ee-fact { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); }
-    .ee-fact h3 { font-size: 0.95rem; margin-bottom: var(--space-sm); }
-    .ee-fact p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65; margin: 0; }
-    .ee-fact a { color: var(--link); }
-    @media (max-width: 760px) { .ee-slide { grid-template-columns: 1fr; } }
-    .ee-ppp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-lg); max-width: 100ch; margin-top: var(--space-lg); }
-    .ee-ppp h3 { font-size: 0.95rem; margin-bottom: var(--space-xs); color: var(--text-primary); }
-    .ee-ppp p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.65; margin: 0; }
-    .ee-bigfig { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); max-width: 100ch; }
-    .ee-bigfig svg { display: block; width: 100%; height: auto; }
-    @media (max-width: 760px) { .ee-ppp { grid-template-columns: 1fr; } }
-    .ee-attic { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); max-width: 100ch; margin-top: var(--space-lg); }
-    .ee-attic .bar { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-md); }
-    .ee-attic button { font: 600 0.8rem/1 'Outfit', sans-serif; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
-    .ee-attic button.on { background: var(--accent); color: #0a0e1a; border-color: var(--accent); }
-    .ee-attic .q { font-size: 0.9rem; color: var(--text-secondary); margin-left: auto; }
-    .ee-attic .grid { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; }
-    .ee-attic .d { aspect-ratio: 1; border-radius: 3px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); position: relative; transition: background 120ms, border-color 120ms; }
-    .ee-attic .d.lock { border-color: rgba(192,57,43,0.6); }
-    .ee-attic .d.lock::after { content: ''; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; background: rgba(192,57,43,0.8); }
-    .ee-attic .d.read { background: rgba(201,169,110,0.55); border-color: var(--accent); }
-    .ee-attic .d.used { background: rgba(123,211,137,0.6); border-color: #7bd389; }
-    .ee-attic .d.broke { background: rgba(192,57,43,0.55); border-color: #c0392b; }
-    .ee-attic .out { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-md); margin-top: var(--space-md); }
-    .ee-attic .out div { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
-    .ee-attic .out b { display: block; font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-primary); }
-    .ee-attic .out b.bad { color: #c0392b; }
-    .ee-attic .out b.good { color: #7bd389; }
-    .ee-attic .say { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 var(--space-md); min-height: 2.6em; }
-    .ee-attic .note { margin-top: var(--space-sm); font-size: 0.8rem; color: var(--text-muted); }
-    .ee-walk { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); max-width: 100ch; margin-top: var(--space-lg); }
-    .ee-walk .bar { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-md); }
-    .ee-walk button { font: 600 0.8rem/1 'Outfit', sans-serif; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
-    .ee-walk button.on { background: var(--accent); color: #0a0e1a; border-color: var(--accent); }
-    .ee-walk button.small { font-size: 0.72rem; padding: 0.4rem 0.6rem; }
-    .ee-walk .say { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 var(--space-md); min-height: 2.6em; }
-    .ee-walk .stage { display: grid; grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr); gap: var(--space-md); align-items: start; }
-    .ee-walk svg { display: block; width: 100%; height: auto; background: rgba(0,0,0,0.18); border-radius: 8px; }
-    .ee-walk .side { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
-    .ee-walk .side h4 { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 var(--space-xs); }
-    .ee-walk .side .box { border: 1px solid var(--border-glass); border-radius: 8px; padding: var(--space-sm) var(--space-md); margin-bottom: var(--space-sm); }
-    .ee-walk .side .fp { font-family: var(--font-mono); font-size: 0.75rem; color: var(--evidence); }
-    .ee-walk .side .fp.bad { color: #c0392b; }
-    .ee-walk .side .flag { color: #c0392b; font-weight: 600; }
-    .ee-walk .side .ok { color: #7bd389; font-weight: 600; }
-    .ee-walk .g { cursor: pointer; }
-    @media (max-width: 760px) { .ee-walk .stage { grid-template-columns: 1fr; } }
-    .ee-story { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); max-width: 100ch; margin-top: var(--space-lg); }
-    .ee-story .bar { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-md); }
-    .ee-story button { font: 600 0.8rem/1 'Outfit', sans-serif; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
-    .ee-story button.on { background: var(--accent); color: #0a0e1a; border-color: var(--accent); }
-    .ee-story button.small { font-size: 0.72rem; padding: 0.4rem 0.6rem; }
-    .ee-story .say { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 var(--space-md); min-height: 2.6em; }
-    .ee-story .stage { display: grid; grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr); gap: var(--space-md); align-items: start; }
-    .ee-story svg { display: block; width: 100%; height: auto; background: rgba(0,0,0,0.18); border-radius: 8px; }
-    .ee-story .side { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
-    .ee-story .side h4 { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 var(--space-xs); }
-    .ee-story .side .box { border: 1px solid var(--border-glass); border-radius: 8px; padding: var(--space-sm) var(--space-md); margin-bottom: var(--space-sm); }
-    .ee-story .side .n { font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-primary); display: block; }
-    .ee-story .side .n.bad { color: #c0392b; } .ee-story .side .n.good { color: #7bd389; }
-    .ee-story .side .fp { font-family: var(--font-mono); font-size: 0.75rem; color: var(--evidence); }
-    .ee-story .side .fp.bad { color: #c0392b; }
-    .ee-story .side .flag { color: #c0392b; font-weight: 600; } .ee-story .side .ok { color: #7bd389; font-weight: 600; }
-    @media (max-width: 760px) { .ee-story .stage { grid-template-columns: 1fr; } }
-    .ee-problem { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); max-width: 100ch; }
-    .ee-problem .pane { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); }
-    .ee-problem svg { display: block; width: 100%; height: auto; }
-    .ee-problem h3 { font-size: 1rem; margin: var(--space-sm) 0 var(--space-xs); }
-    .ee-problem p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.65; margin: 0; }
-    .ee-bigfig { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); max-width: 100ch; }
-    .ee-bigfig svg { display: block; width: 100%; height: auto; }
-    @media (max-width: 760px) { .ee-problem { grid-template-columns: 1fr; } }
-    .cc-chip { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.7rem; margin-top: var(--space-lg); padding: 0.6rem 1rem; border: 1px solid var(--accent); border-radius: 999px; background: rgba(201,169,110,0.08); color: var(--text-primary); text-decoration: none; font: 500 0.9rem/1.35 'Outfit', sans-serif; transition: background var(--transition-base); }
-    .cc-chip:hover { background: rgba(201,169,110,0.18); }
-    .cc-chip b { color: var(--accent); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.72rem; }
-    .cc-mast { position: relative; overflow: hidden; max-width: 100ch; border: 1px solid var(--border-glass); border-radius: var(--radius-xl); background: linear-gradient(135deg, rgba(201,169,110,0.10), rgba(126,184,218,0.05) 55%, rgba(255,255,255,0.02)); padding: clamp(1.5rem, 4vw, 3.25rem); }
-    .cc-mast .deco { position: absolute; right: -4%; top: 50%; width: min(52%, 430px); transform: translateY(-50%); opacity: 0.5; pointer-events: none; }
-    .cc-mast .deco path { fill: none; stroke: var(--accent); stroke-width: 1.1; stroke-linejoin: round; stroke-linecap: round; }
-    .cc-mast .inner { position: relative; max-width: 46ch; }
-    .cc-mast .kick { display: block; font: 600 0.72rem/1 'Outfit', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: var(--space-md); }
-    .cc-mast h2 { font: 600 clamp(2.1rem, 6vw, 3.6rem)/1.04 'Outfit', sans-serif; letter-spacing: -0.02em; color: var(--text-primary); margin: 0 0 var(--space-sm); }
-    .cc-mast .sub { font: 400 clamp(1.05rem, 2.4vw, 1.35rem)/1.35 'Lora', serif; font-style: italic; color: var(--text-secondary); margin: 0 0 var(--space-lg); }
-    .cc-mast .by { font: 400 0.82rem/1.5 'JetBrains Mono', monospace; color: var(--text-muted); margin: 0 0 var(--space-lg); }
-    .cc-btns { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; }
-    .cc-btn { display: inline-block; font: 600 0.85rem/1 'Outfit', sans-serif; padding: 0.8rem 1.15rem; border-radius: 10px; border: 1px solid var(--border-glass); color: var(--text-primary); background: rgba(10,14,26,0.55); text-decoration: none; transition: background var(--transition-base), transform var(--transition-base); }
-    .cc-btn:hover { background: var(--bg-card-hover); transform: translateY(-1px); }
-    .cc-btn.main { background: var(--accent); border-color: var(--accent); color: #0a0e1a; }
-    .cc-btn.main:hover { background: #d9bc85; }
-    .cc-pending { font: 400 0.8rem/1.4 'JetBrains Mono', monospace; color: var(--text-muted); padding: 0.4rem 0.2rem; }
-    .cc-lede { max-width: 66ch; margin-top: var(--space-xl); }
-    .cc-lede p { color: var(--text-secondary); line-height: 1.8; margin-bottom: var(--space-md); font-size: 1.02rem; }
-    .cc-lede strong { color: var(--text-primary); }
-    .cc-plate { display: grid; grid-template-columns: minmax(0, 31ch) minmax(0, 1fr); gap: var(--space-xl); align-items: start; max-width: 100ch; margin-top: var(--space-3xl); }
-    .cc-plate.mid { align-items: center; }
-    .cc-plate .say .n { display: block; font: 500 0.78rem/1 'JetBrains Mono', monospace; color: var(--accent); margin-bottom: var(--space-sm); }
-    .cc-plate .say h3 { font: 600 1.3rem/1.25 'Outfit', sans-serif; color: var(--text-primary); margin: 0 0 var(--space-md); }
-    .cc-plate .say p { color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin: 0 0 var(--space-md); }
-    .cc-eq { display: block; font: italic 400 1.05rem/1.5 'Lora', serif; color: var(--text-primary); padding: 0.55rem 0.9rem; border-left: 2px solid var(--accent); background: rgba(255,255,255,0.03); border-radius: 0 8px 8px 0; margin: 0 0 var(--space-md); overflow-x: auto; white-space: nowrap; }
-    .cc-eq sub, .cc-eq sup { font-size: 0.7em; font-style: normal; }
-    .cc-fig { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); min-width: 0; }
-    .cc-fig svg { display: block; width: 100%; height: auto; }
-    .cc-fig img { display: block; width: 100%; height: auto; border-radius: 8px; }
-    .cc-bar { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-sm); align-items: center; margin-bottom: var(--space-md); }
-    .cc-bar .lab { font: 500 0.78rem/1 'Outfit', sans-serif; color: var(--text-muted); margin-right: var(--space-xs); }
-    .cc-bar button { font: 600 0.78rem/1 'Outfit', sans-serif; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.55rem 0.75rem; cursor: pointer; }
-    .cc-bar button.on { background: var(--accent); color: #0a0e1a; border-color: var(--accent); }
-    .cc-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-md); align-items: center; }
-    .cc-read { margin-top: var(--space-md); font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); min-height: 3.2em; }
-    .cc-read b { color: var(--text-primary); font-weight: 600; }
-    .cc-cap { margin-top: var(--space-sm); font-size: 0.8rem; line-height: 1.55; color: var(--text-muted); }
-    .cc-nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--space-sm); margin-top: var(--space-md); }
-    .cc-nums div { border: 1px solid var(--border-glass); border-radius: 8px; padding: var(--space-sm) var(--space-md); font-size: 0.78rem; line-height: 1.4; color: var(--text-secondary); }
-    .cc-nums b { display: block; font: 500 1.15rem/1.3 'JetBrains Mono', monospace; color: var(--text-primary); }
-    .cc-slider { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md); font: 500 0.82rem/1 'Outfit', sans-serif; color: var(--text-secondary); }
-    .cc-slider input { flex: 1; min-width: 0; accent-color: #c9a96e; }
-    .cc-slider output { font: 500 0.95rem/1 'JetBrains Mono', monospace; color: var(--accent); min-width: 3.2em; text-align: right; }
-    .cc-coda { max-width: 100ch; border-top: 1px solid var(--border-glass); margin-top: var(--space-4xl); padding-top: var(--space-3xl); }
-    .cc-coda .kick { display: block; font: 600 0.72rem/1 'Outfit', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: #7eb8da; margin-bottom: var(--space-md); }
-    .cc-coda h2 { font: 600 clamp(1.7rem, 4.4vw, 2.5rem)/1.12 'Outfit', sans-serif; letter-spacing: -0.01em; color: var(--text-primary); margin: 0 0 var(--space-sm); }
-    .cc-coda .sub { font: italic 400 1.05rem/1.4 'Lora', serif; color: var(--text-secondary); margin: 0 0 var(--space-md); }
-    .cc-panes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-lg); margin-top: var(--space-xl); }
-    .cc-panes .pane { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-md); }
-    .cc-panes svg { display: block; width: 100%; height: auto; }
-    .cc-panes h3 { font: 600 1.05rem/1.3 'Outfit', sans-serif; margin: var(--space-md) 0 var(--space-xs); color: var(--text-primary); }
-    .cc-panes p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin: 0; }
-    .cc-ten { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-lg); align-items: center; margin-top: var(--space-lg); background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: var(--space-lg); }
-    .cc-ten .big { font: 600 clamp(2rem, 6vw, 3rem)/1 'JetBrains Mono', monospace; color: var(--accent); white-space: nowrap; }
-    .cc-ten .big span { display: block; margin-top: 0.5rem; color: var(--text-muted); font: 500 0.8rem/1 'Outfit', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; }
-    .cc-ten p { font-size: 0.92rem; color: var(--text-secondary); line-height: 1.7; margin: 0; }
-    .cc-note { max-width: 70ch; margin-top: var(--space-lg); }
-    .cc-note p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.75; margin: 0 0 var(--space-md); }
-    @media (max-width: 760px) {
-      .cc-plate { grid-template-columns: 1fr; gap: var(--space-md); margin-top: var(--space-2xl); }
-      .cc-pair, .cc-panes { grid-template-columns: 1fr; }
-      .cc-mast .deco { width: 88%; right: -30%; opacity: 0.22; }
-      .cc-ten { grid-template-columns: 1fr; gap: var(--space-sm); }
-    }
-  </style>
-
-  <!-- Page Header -->
-  <header class="page-hero">
-    <div class="container" style="position: relative;">
-      <h1 class="page-hero-title fade-in">EigenEngine</h1>
-      <p class="page-hero-subtitle fade-in fade-in-delay-1">
-        Eigen is a routing and permission system for AI agents, the programs that answer questions and carry out tasks over an organisation's documents. It stores every passage once, builds a map over the store, routes each question down the map to the three or four passages it needs, enforces who may read what, and returns every answer with its sources. Pre-release. <a href="mailto:eigen@gmccaul.co.uk" style="color:var(--link)">eigen@gmccaul.co.uk</a>
-      </p>
-      <a class="cc-chip fade-in fade-in-delay-2" href="#paper"><b>New · 19 November 2026</b> The cost of complexity, the first public paper produced with Eigen →</a>
+<main class="ee-page">
+  <header class="ee-cover">
+    <div class="ee-width ee-hero-layout">
+      <div class="ee-intro">
+        <p class="ee-label">Research software</p>
+        <h1>EigenEngine</h1>
+        <p class="ee-definition">An integrated research environment for people and AI agents.</p>
+        <p class="ee-intro-body">A manuscript, its calculations and the evidence for its claims stay connected as the work changes. Beneath the writing interface, a network of state machines records those connections. A diffusion-based memory finds the material a question needs.</p>
+        <div class="ee-actions">
+          <a class="ee-button ee-primary" href="/demo/writing/#session">Explore the Writing App <span aria-hidden="true">↗</span></a>
+          <a class="ee-text-link" href="#how">How it works <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+      <figure class="ee-hero-plate">
+        <div class="ee-plate-heading"><span>The Cost of Complexity</span><span>18 Nov 2026</span></div>
+        <div class="ee-plate-switch" role="group" aria-label="Cover illustration" hidden>
+          <button type="button" data-cover="session" aria-pressed="true">Editing session</button>
+          <button type="button" data-cover="figure" aria-pressed="false">Hilbert construction</button>
+        </div>
+        <div id="ee-cover-session"><a href="/demo/writing/#session" class="ee-session-frame">
+          <img src="/demo/writing/media/full-project.webp" width="1600" height="900" alt="The full Cost of Complexity manuscript open beside its saved editing conversation" fetchpriority="high">
+          </a>
+          <a class="ee-app-caption" href="/demo/writing/#session">Inside the author’s editing session <b aria-hidden="true">↗</b></a>
+        </div>
+        <div id="ee-cover-figure" hidden><div class="ee-plate-diagram">
+          <svg viewBox="0 0 540 227" role="img" aria-label="Four successive Hilbert paths, each visiting four times as many cells in the same square">
+            <g class="ee-guides"><path d="M124 89v98m145-147v99m145-50v99m-145-52v97"/></g>
+            <g class="ee-plane ee-plane-1" style="--order:1;--trace:#718caa"><polygon points="269.00,137.00 414.00,185.00 269.00,233.00 124.00,185.00"/><polyline pathLength="1" points="269.00,161.00 196.50,185.00 269.00,209.00 341.50,185.00"/></g><g class="ee-plane ee-plane-2" style="--order:2;--trace:#6fabc5"><polygon points="269.00,105.00 414.00,153.00 269.00,201.00 124.00,153.00"/><polyline pathLength="1" points="269.00,117.00 305.25,129.00 269.00,141.00 232.75,129.00 196.50,141.00 160.25,153.00 196.50,165.00 232.75,153.00 269.00,165.00 232.75,177.00 269.00,189.00 305.25,177.00 341.50,165.00 305.25,153.00 341.50,141.00 377.75,153.00"/></g><g class="ee-plane ee-plane-3" style="--order:3;--trace:#84c7d9"><polygon points="269.00,73.00 414.00,121.00 269.00,169.00 124.00,121.00"/><polyline pathLength="1" points="269.00,79.00 250.88,85.00 269.00,91.00 287.12,85.00 305.25,91.00 323.38,97.00 305.25,103.00 287.12,97.00 269.00,103.00 287.12,109.00 269.00,115.00 250.88,109.00 232.75,103.00 250.88,97.00 232.75,91.00 214.62,97.00 196.50,103.00 214.62,109.00 196.50,115.00 178.38,109.00 160.25,115.00 142.12,121.00 160.25,127.00 178.38,121.00 196.50,127.00 178.38,133.00 196.50,139.00 214.62,133.00 232.75,127.00 214.62,121.00 232.75,115.00 250.88,121.00 269.00,127.00 287.12,133.00 269.00,139.00 250.88,133.00 232.75,139.00 214.62,145.00 232.75,151.00 250.88,145.00 269.00,151.00 250.88,157.00 269.00,163.00 287.12,157.00 305.25,151.00 287.12,145.00 305.25,139.00 323.38,145.00 341.50,139.00 359.62,133.00 341.50,127.00 323.38,133.00 305.25,127.00 287.12,121.00 305.25,115.00 323.38,121.00 341.50,115.00 323.38,109.00 341.50,103.00 359.62,109.00 377.75,115.00 359.62,121.00 377.75,127.00 395.88,121.00"/></g><g class="ee-plane ee-plane-4" style="--order:4;--trace:#e4bf7d"><polygon points="269.00,41.00 414.00,89.00 269.00,137.00 124.00,89.00"/><polyline pathLength="1" points="269.00,44.00 278.06,47.00 269.00,50.00 259.94,47.00 250.88,50.00 241.81,53.00 250.88,56.00 259.94,53.00 269.00,56.00 259.94,59.00 269.00,62.00 278.06,59.00 287.12,56.00 278.06,53.00 287.12,50.00 296.19,53.00 305.25,56.00 296.19,59.00 305.25,62.00 314.31,59.00 323.38,62.00 332.44,65.00 323.38,68.00 314.31,65.00 305.25,68.00 314.31,71.00 305.25,74.00 296.19,71.00 287.12,68.00 296.19,65.00 287.12,62.00 278.06,65.00 269.00,68.00 259.94,71.00 269.00,74.00 278.06,71.00 287.12,74.00 296.19,77.00 287.12,80.00 278.06,77.00 269.00,80.00 278.06,83.00 269.00,86.00 259.94,83.00 250.88,80.00 259.94,77.00 250.88,74.00 241.81,77.00 232.75,74.00 223.69,71.00 232.75,68.00 241.81,71.00 250.88,68.00 259.94,65.00 250.88,62.00 241.81,65.00 232.75,62.00 241.81,59.00 232.75,56.00 223.69,59.00 214.62,62.00 223.69,65.00 214.62,68.00 205.56,65.00 196.50,68.00 187.44,71.00 196.50,74.00 205.56,71.00 214.62,74.00 223.69,77.00 214.62,80.00 205.56,77.00 196.50,80.00 205.56,83.00 196.50,86.00 187.44,83.00 178.38,80.00 187.44,77.00 178.38,74.00 169.31,77.00 160.25,80.00 169.31,83.00 160.25,86.00 151.19,83.00 142.12,86.00 133.06,89.00 142.12,92.00 151.19,89.00 160.25,92.00 151.19,95.00 160.25,98.00 169.31,95.00 178.38,92.00 169.31,89.00 178.38,86.00 187.44,89.00 196.50,92.00 205.56,95.00 196.50,98.00 187.44,95.00 178.38,98.00 169.31,101.00 178.38,104.00 187.44,101.00 196.50,104.00 187.44,107.00 196.50,110.00 205.56,107.00 214.62,104.00 205.56,101.00 214.62,98.00 223.69,101.00 232.75,98.00 241.81,95.00 232.75,92.00 223.69,95.00 214.62,92.00 205.56,89.00 214.62,86.00 223.69,89.00 232.75,86.00 223.69,83.00 232.75,80.00 241.81,83.00 250.88,86.00 241.81,89.00 250.88,92.00 259.94,89.00 269.00,92.00 259.94,95.00 269.00,98.00 278.06,95.00 287.12,98.00 296.19,101.00 287.12,104.00 278.06,101.00 269.00,104.00 278.06,107.00 269.00,110.00 259.94,107.00 250.88,104.00 259.94,101.00 250.88,98.00 241.81,101.00 232.75,104.00 241.81,107.00 232.75,110.00 223.69,107.00 214.62,110.00 205.56,113.00 214.62,116.00 223.69,113.00 232.75,116.00 223.69,119.00 232.75,122.00 241.81,119.00 250.88,116.00 241.81,113.00 250.88,110.00 259.94,113.00 269.00,116.00 278.06,119.00 269.00,122.00 259.94,119.00 250.88,122.00 241.81,125.00 250.88,128.00 259.94,125.00 269.00,128.00 259.94,131.00 269.00,134.00 278.06,131.00 287.12,128.00 278.06,125.00 287.12,122.00 296.19,125.00 305.25,122.00 314.31,119.00 305.25,116.00 296.19,119.00 287.12,116.00 278.06,113.00 287.12,110.00 296.19,113.00 305.25,110.00 296.19,107.00 305.25,104.00 314.31,107.00 323.38,110.00 314.31,113.00 323.38,116.00 332.44,113.00 341.50,110.00 332.44,107.00 341.50,104.00 350.56,107.00 359.62,104.00 368.69,101.00 359.62,98.00 350.56,101.00 341.50,98.00 350.56,95.00 341.50,92.00 332.44,95.00 323.38,98.00 332.44,101.00 323.38,104.00 314.31,101.00 305.25,98.00 314.31,95.00 305.25,92.00 296.19,95.00 287.12,92.00 278.06,89.00 287.12,86.00 296.19,89.00 305.25,86.00 296.19,83.00 305.25,80.00 314.31,83.00 323.38,86.00 314.31,89.00 323.38,92.00 332.44,89.00 341.50,86.00 350.56,83.00 341.50,80.00 332.44,83.00 323.38,80.00 314.31,77.00 323.38,74.00 332.44,77.00 341.50,74.00 332.44,71.00 341.50,68.00 350.56,71.00 359.62,74.00 350.56,77.00 359.62,80.00 368.69,77.00 377.75,80.00 386.81,83.00 377.75,86.00 368.69,83.00 359.62,86.00 350.56,89.00 359.62,92.00 368.69,89.00 377.75,92.00 368.69,95.00 377.75,98.00 386.81,95.00 395.88,92.00 386.81,89.00 395.88,86.00 404.94,89.00"/></g>
+            <g class="ee-leaders"><path d="M360 57h36l19-16h42"/><path d="M184 194h-36l-12 10h-56"/></g>
+            <g class="ee-schematic-labels"><text x="418" y="35">256 cells</text><text x="81" y="198">4 cells</text></g>
+          </svg>
+        </div>
+          <a class="ee-app-caption" href="#paper">Four refinements of the same square <b aria-hidden="true">↓</b></a>
+        </div>
+      </figure>
     </div>
+    <nav class="ee-width ee-contents" aria-label="On this page">
+      <a href="#how">The architecture</a><a href="#workspace">The workspace</a><a href="#project-record">The project record</a><a href="#paper">The paper</a><a href="#see">Research outputs</a>
+    </nav>
   </header>
-
-  <section class="section" id="problem">
-    <div class="container">
-      <span class="section-label fade-in">The problem</span>
-      <h2 class="section-title fade-in">What goes wrong with agents today</h2>
-      <div class="ee-problem fade-in">
-        <div class="pane"><svg viewBox="0 0 480 300" role="img" aria-label="Three days, the document pile growing each day, and the agent reading the whole pile for every question; below, a chain of three agent steps where an error at the first step is carried to the third">
-  <g font-family="Lora, serif" font-size="12" fill="#9ca3af">
-    <text x="60" y="22" text-anchor="middle">Monday</text><text x="180" y="22" text-anchor="middle">Tuesday</text><text x="300" y="22" text-anchor="middle">Wednesday</text>
-  </g>
-  <g fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.18)">
-    <rect x="30" y="110" width="60" height="60" rx="3"/><rect x="150" y="80" width="60" height="90" rx="3"/><rect x="270" y="50" width="60" height="120" rx="3"/>
-  </g>
-  <g fill="#c9a96e" opacity="0.85">
-    <rect x="30" y="110" width="60" height="60" rx="3"/><rect x="150" y="80" width="60" height="90" rx="3"/><rect x="270" y="50" width="60" height="120" rx="3"/>
-  </g>
-  <g font-family="JetBrains Mono, monospace" font-size="11" fill="#e8e6e3">
-    <text x="60" y="186" text-anchor="middle">all 60</text><text x="180" y="186" text-anchor="middle">all 90</text><text x="300" y="186" text-anchor="middle">all 120</text>
-  </g>
-  <text x="180" y="40" text-anchor="middle" font-family="Lora, serif" font-size="11" fill="#9ca3af">the company's documents, growing</text>
-  <text x="352" y="110" font-family="Lora, serif" font-size="12" fill="#e8e6e3">read per question:</text>
-  <text x="352" y="128" font-family="Lora, serif" font-size="12" fill="#c9a96e">the whole pile,</text>
-  <text x="352" y="146" font-family="Lora, serif" font-size="12" fill="#c9a96e">every time</text>
-  <g font-family="Lora, serif" font-size="12" fill="#9ca3af">
-    <text x="30" y="232">step 1</text><text x="185" y="232">step 2</text><text x="340" y="232">step 3</text>
-  </g>
-  <g fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)">
-    <rect x="30" y="242" width="125" height="36" rx="4"/><rect x="185" y="242" width="125" height="36" rx="4"/><rect x="340" y="242" width="125" height="36" rx="4"/>
-  </g>
-  <g stroke="#c0392b" stroke-width="2"><path d="M42 252 L54 268 M54 252 L42 268"/></g>
-  <g stroke="#9ca3af" stroke-width="1.2"><path d="M155 260 L183 260 M310 260 L338 260"/></g>
-  <text x="64" y="264" font-family="Lora, serif" font-size="11" fill="#c0392b">wrong source</text>
-  <text x="196" y="264" font-family="Lora, serif" font-size="11" fill="#9ca3af">acts on it</text>
-  <text x="351" y="264" font-family="Lora, serif" font-size="11" fill="#9ca3af">acts on that</text>
-  <text x="30" y="296" font-family="Lora, serif" font-size="11" fill="#6b7280">step 3 cannot see where its mistake came from</text>
-</svg><h3>It reads everything, every time</h3><p>An agent starts every question from nothing, so it reads every document again, and next week there are more of them. When one agent's answer feeds the next, a wrong source at the first step is carried into every step after it.</p></div>
-        <div class="pane"><svg viewBox="0 0 480 300" role="img" aria-label="An agent holding the user's full access opens documents including private ones; the answer it returns records no sources, and an auditor has nothing to check">
-  <rect x="14" y="40" width="130" height="48" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)"/>
-  <text x="79" y="60" text-anchor="middle" font-family="Lora, serif" font-size="12" fill="#e8e6e3">the agent</text>
-  <text x="79" y="78" text-anchor="middle" font-family="Lora, serif" font-size="11" fill="#9ca3af">must read every file</text>
-  <g fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.18)">
-    <rect x="200" y="30" width="100" height="26" rx="3"/><rect x="200" y="64" width="100" height="26" rx="3"/><rect x="200" y="98" width="100" height="26" rx="3"/><rect x="200" y="132" width="100" height="26" rx="3"/><rect x="200" y="166" width="100" height="26" rx="3"/>
-  </g>
-  <g fill="rgba(192,57,43,0.18)" stroke="#c0392b"><rect x="200" y="98" width="100" height="26" rx="3"/><rect x="200" y="166" width="100" height="26" rx="3"/></g>
-  <g font-family="Lora, serif" font-size="11" fill="#9ca3af">
-    <text x="250" y="47" text-anchor="middle">contract</text><text x="250" y="81" text-anchor="middle">email</text><text x="250" y="115" text-anchor="middle" fill="#c0392b">personnel file</text><text x="250" y="149" text-anchor="middle">report</text><text x="250" y="183" text-anchor="middle" fill="#c0392b">salary review</text>
-  </g>
-  <g stroke="#9ca3af" stroke-width="1"><path d="M144 64 L198 43 M144 64 L198 77 M144 64 L198 145"/></g>
-  <g stroke="#c0392b" stroke-width="1.4"><path d="M144 64 L198 111 M144 64 L198 179"/></g>
-  <text x="310" y="112" font-family="Lora, serif" font-size="11" fill="#c0392b">read, then found not needed</text>
-  <rect x="24" y="200" width="200" height="54" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)"/>
-  <text x="36" y="222" font-family="Lora, serif" font-size="12" fill="#e8e6e3">answer: delivery by 14 March</text>
-  <text x="36" y="242" font-family="Lora, serif" font-size="11" fill="#c0392b">sources recorded: none</text>
-  <rect x="290" y="200" width="166" height="54" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)"/>
-  <text x="373" y="222" text-anchor="middle" font-family="Lora, serif" font-size="12" fill="#e8e6e3">the auditor</text>
-  <text x="373" y="242" text-anchor="middle" font-family="Lora, serif" font-size="11" fill="#9ca3af">nothing to check it against</text>
-  <g stroke="#9ca3af" stroke-width="1" stroke-dasharray="3 3"><path d="M224 227 L288 227"/></g>
-  <text x="24" y="290" font-family="Lora, serif" font-size="11" fill="#6b7280">a file cannot be judged irrelevant, or kept private, without being opened</text>
-</svg><h3>Nobody can check the answer</h3><p>To find anything, an agent has to read everything. A question about a supplier reads the personnel files too, because there is no way to know a file is irrelevant, or private, without opening it. Nothing records which files were read, so nobody can check the answer against them.</p></div>
+  <section class="ee-width ee-chapter ee-architecture" id="how" aria-labelledby="ee-how-title">
+    <div id="problem" class="ee-problem-intro">
+      <div><p class="ee-label">The architecture</p>
+        <h2 id="ee-how-title">A calculation changes.<br>Which claims need another look?</h2></div>
+      <p>A paragraph can survive a dozen revisions while the calculation behind it has moved on. An agent handed a folder of drafts has to reconstruct that history. A researcher needs to know exactly which version a sentence used.</p>
+    </div>
+    <div class="ee-concept-intro"><p>A claim lives in a container called a <strong>conceptric</strong>. From the outside, an agent can read its summary, see what it depends on and find the tools it may use. Those tools are verbs. Some open a source. Others change the object and record a new version. Each conceptric is a state machine in the wider network. Opening a chapter returns objects an agent can open in turn, down to the passage or figure it needs.</p></div>
+    <div id="story"></div>
+    <div id="ee-envelope">
+      <div class="ee-fallback"><h3>One claim, several relationships</h3>
+        <p>The claim about equal cost per round belongs to a section, requires an assumption about how a division is priced, and is illustrated by Figure 3. Opening the section, then the claim, then its grounds uses the same operation at successively finer scales.</p>
+        <p>Changing a recorded input leaves a trail to the work that consumed it. Looking up the pricing rule brings back the relevant passage and figure. The researcher decides how the manuscript should change.</p>
+        <a class="ee-text-link" href="/assets/docs/the-cost-of-complexity.pdf#page=10">Inspect Figure 3 →</a>
+      </div>
+    </div>
+  </section>
+  <section class="ee-band" id="workspace" aria-labelledby="ee-app-title">
+    <div class="ee-width ee-workspace">
+      <div class="ee-workspace-copy"><p class="ee-label">The Writing App</p>
+        <h2 id="ee-app-title">Inside a working manuscript.</h2>
+        <p>On 18 November a morning proposal for <em>The Cost of Complexity</em> contained more than 50 edits across eight source files. Follow the author through its sections, the changes to the text and the conversation that records the work. A later view shows the paper being packaged for arXiv.</p>
+        <a class="ee-button ee-primary" href="/demo/writing/#session">Follow the session <span aria-hidden="true">↗</span></a>
+        <p class="ee-workspace-fine">In the <a href="#project-record">project record</a>, the same work is visible as turns, tool calls and decisions.</p>
+      </div>
+      <div class="ee-workspace-views">
+        <a class="ee-workspace-shot" href="/demo/writing/#session" aria-label="Explore the full editing session"><img src="/demo/writing/media/full-changes.webp" width="1600" height="900" alt="A retained multi-part proposal in the Cost of Complexity editing session" loading="lazy"></a>
+        <div class="ee-workspace-links"><a href="/demo/writing/#proposal">One edit up close ↗</a><a href="https://github.com/phujck/laplace-writing-evaluation/releases/tag/evaluation-2026-11-18">Run the public app ↗</a></div>
       </div>
     </div>
   </section>
 
-  <section class="section highlights" id="how">
-    <div class="container">
-      <span class="section-label fade-in">How Eigen works</span>
-      <h2 class="section-title fade-in">A routing and permission system on a recursive graph</h2>
-      <div class="ee-lede fade-in">
-        <p>Eigen reads the documents once and stores every passage. Over the store it builds a map, a graph: each passage is linked to the passages it shares a name, a date or a subject with; linked passages form a group; groups link to groups. Zoom into any group and you find the same shape again, passages linked to passages, which is what makes the graph recursive. A question is matched against the top of the map, then against the groups underneath, with permission checked at each step, and the answer comes back with the passages it used.</p>
-      </div>
-      <div class="ee-bigfig fade-in"><svg viewBox="0 0 1000 400" role="img" aria-label="Sources are stored once as the record; an index over the record is descended by a question, opening one branch, skipping one, and refusing one the agent may not read; evidence returns with the passages used and a fingerprint of each, and is flagged if a passage has changed">
-  <defs>
-    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/></marker>
-    <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a96e"/></marker>
-    <marker id="ahe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7bd389"/></marker>
-  </defs>
-  <g font-family="Outfit, sans-serif" font-size="15" font-weight="600" fill="#e8e6e3">
-    <text x="70" y="34">sources</text>
-    <text x="300" y="34" fill="#c9a96e">the record</text>
-    <text x="560" y="34" fill="#7eb8da">the map</text>
-    <text x="830" y="34" fill="#7bd389">the answer</text>
-  </g>
-  <!-- sources: a stack of pages -->
-  <g stroke="#9ca3af" fill="#0f172a" stroke-width="1.2">
-    <rect x="40" y="70" width="80" height="100" rx="3"/>
-    <rect x="52" y="60" width="80" height="100" rx="3"/>
-    <rect x="64" y="50" width="80" height="100" rx="3"/>
-  </g>
-  <g stroke="#6b7280" stroke-width="1"><path d="M76 72h56M76 86h56M76 100h40M76 114h56M76 128h30"/></g>
-  <text x="96" y="185" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">documents</text>
-  <!-- store once -->
-  <path d="M152 108 L250 108" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ah)"/>
-  <text x="201" y="98" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">stored once</text>
-  <!-- the record: spans -->
-  <g font-family="Lora, serif" font-size="12.5" fill="#e8e6e3">
-    <rect x="258" y="50" width="200" height="30" rx="4" fill="rgba(201,169,110,0.18)" stroke="#c9a96e"/><text x="358" y="70" text-anchor="middle">a passage of text</text>
-    <rect x="258" y="88" width="200" height="30" rx="4" fill="none" stroke="#c9a96e"/><text x="358" y="108" text-anchor="middle">what it says</text>
-    <rect x="258" y="126" width="200" height="30" rx="4" fill="none" stroke="#c9a96e"/><text x="358" y="146" text-anchor="middle">the names, dates, numbers in it</text>
-    <rect x="258" y="164" width="200" height="30" rx="4" fill="none" stroke="#c9a96e"/><text x="358" y="184" text-anchor="middle">links to other passages</text>
-  </g>
-  <!-- index -->
-  <path d="M466 108 L512 108" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ah)"/>
-  <text x="489" y="98" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">mapped</text>
-  <g stroke="#7eb8da" fill="#0f172a" stroke-width="1.3">
-    <rect x="580" y="52" width="56" height="34" rx="4"/>
-    <rect x="522" y="118" width="56" height="34" rx="4" stroke="#7bd389" fill="rgba(123,211,137,0.16)"/>
-    <rect x="580" y="118" width="56" height="34" rx="4" stroke="#6b7280" stroke-dasharray="3 3"/>
-    <rect x="638" y="118" width="56" height="34" rx="4" stroke="#c0392b" fill="rgba(192,57,43,0.12)"/>
-    <rect x="522" y="184" width="56" height="34" rx="4" stroke="#7bd389" fill="rgba(123,211,137,0.16)"/>
-    <rect x="580" y="184" width="56" height="34" rx="4" stroke="#6b7280" stroke-dasharray="3 3"/>
-  </g>
-  <g stroke="#6b7280" stroke-width="1"><path d="M608 86 L550 118 M608 86 L608 118 M608 86 L666 118 M550 152 L550 184 M550 152 L608 184"/></g>
-  <!-- tiny graphs inside boxes -->
-  <g fill="#9ca3af"><circle cx="596" cy="69" r="2.5"/><circle cx="608" cy="62" r="2.5"/><circle cx="620" cy="72" r="2.5"/><circle cx="538" cy="135" r="2.5"/><circle cx="550" cy="128" r="2.5"/><circle cx="562" cy="138" r="2.5"/><circle cx="538" cy="201" r="2.5"/><circle cx="550" cy="194" r="2.5"/><circle cx="562" cy="204" r="2.5"/></g>
-  <g stroke="#9ca3af" stroke-width="0.8"><path d="M596 69 L608 62 L620 72 M538 135 L550 128 L562 138 M538 201 L550 194 L562 204"/></g>
-    <text x="666" y="108" font-family="Lora, serif" font-size="11.5" fill="#c0392b" text-anchor="middle">private: filtered by policy</text>
-  <text x="608" y="170" font-family="Lora, serif" font-size="11.5" fill="#6b7280" text-anchor="middle">not needed</text>
-  <text x="550" y="236" font-family="Lora, serif" font-size="11.5" fill="#7bd389" text-anchor="middle">opened</text>
-  <text x="608" y="262" font-family="Lora, serif" font-size="12" fill="#9ca3af" text-anchor="middle">each group holds linked passages</text>
-  <!-- question in, answer out -->
-  <path d="M608 24 L608 46" stroke="#c9a96e" stroke-width="1.5" marker-end="url(#ahg)"/>
-  <text x="608" y="16" font-family="Lora, serif" font-size="12.5" fill="#c9a96e" text-anchor="middle">a question</text>
-  <path d="M582 201 L760 201" stroke="#7bd389" stroke-width="1.5" marker-end="url(#ahe)"/>
-  <!-- answer with provenance chain -->
-  <g font-family="Lora, serif" font-size="12.5" fill="#e8e6e3">
-    <rect x="768" y="110" width="190" height="30" rx="4" fill="none" stroke="#7bd389"/><text x="863" y="130" text-anchor="middle">the answer</text>
-    <rect x="768" y="150" width="190" height="30" rx="4" fill="none" stroke="#7bd389"/><text x="863" y="170" text-anchor="middle">the passages it used</text>
-    <rect x="768" y="190" width="190" height="30" rx="4" fill="none" stroke="#7bd389"/><text x="863" y="210" text-anchor="middle">a fingerprint of each</text>
-  </g>
-  <g stroke="#7bd389" stroke-width="1"><path d="M885 140 L885 150 M885 180 L885 190"/></g>
-  <!-- the three words -->
-  <g font-family="Outfit, sans-serif" font-size="13" font-weight="600" letter-spacing="0.08em">
-    <text x="358" y="340" fill="#c9a96e" text-anchor="middle">PERSISTENCE</text>
-    <text x="608" y="340" fill="#7eb8da" text-anchor="middle">PERMISSION</text>
-    <text x="863" y="340" fill="#7bd389" text-anchor="middle">PROVENANCE</text>
-  </g>
-  <g stroke="#2a3344" stroke-width="1"><path d="M258 318 L458 318 M522 318 L694 318 M768 318 L958 318"/></g>
-</svg></div>
-      <div class="ee-ppp fade-in">
-        <div><h3>Persistence</h3><p>Documents are read once and kept as a record of passages: what each says, the names, dates and numbers in it, and its links to other passages. The next question starts from the map instead of reading everything again.</p></div>
-        <div><h3>Permission</h3><p>An agent reaches the record only through the map, and opens only the groups its question needs. A file the agent may not read is never opened for it; if a fact it needs sits in one, Eigen delivers that fact alone, transformed as the rights policy for that agent requires, with a name or a figure removed. The owner of the documents sets the policy.</p></div>
-        <div><h3>Provenance</h3><p>Every answer carries the passages it used and a fingerprint of each. Anyone with the sources can check each passage themselves, and if a passage has changed since, the answer is flagged as no longer supported by its sources.</p></div>
-      </div>
-    </div>
-  </section>
-  <section class="section" id="story">
-    <div class="container">
-      <span class="section-label fade-in">Walk through it</span>
-      <h2 class="section-title fade-in">The same question, twice</h2>
-      <div class="ee-lede fade-in">
-        <p>A company has 128 documents in eight kinds: contracts, emails, invoices, reports, minutes, drafts, policies, and personnel files that this agent may not read. An agent is asked one question about the supplier, first on its own, then through Eigen.</p>
-      </div>
-      <div class="ee-story fade-in" id="story-box">
-        <div class="bar">
-          <button type="button" id="st-1" class="on">1 · Today</button>
-          <button type="button" id="st-2">2 · Asked again next week</button>
-          <button type="button" id="st-3">3 · Eigen reads once</button>
-          <button type="button" id="st-4">4 · The same question, through Eigen</button>
-          <button type="button" id="st-5">5 · The answer, checked</button>
+
+  <section class="ee-width ee-chapter ee-project-record" id="project-record" aria-labelledby="ee-record-title">
+    <div class="ee-record-head"><div><p class="ee-label">The Cost of Complexity · Project record</p>
+      <h2 id="ee-record-title">The work behind the paper.</h2></div>
+      <p>Two Writing App conversations, 17–18 November 2026. Each turn and tool operation left a record that can be counted and inspected.</p></div>
+    <dl class="ee-metrics">
+      <div><dt>Conversation turns</dt><dd>39</dd><span>38 completed · 1 interrupted</span></div>
+      <div><dt>Saved proposal versions</dt><dd>85</dd><span>Across 25 of the 39 turns</span></div>
+      <div><dt>Recorded edit decisions</dt><dd>100</dd><span>77 accepted · 6 rejected · 17 resolved in later versions</span></div>
+    </dl>
+    <div class="ee-record-body">
+      <figure id="tool-frequency" class="ee-frequency">
+        <figcaption><h3>Which tools did the work?</h3><p id="ee-frequency-total">1,580 recorded attempts across 45 tools.</p></figcaption>
+        <div class="ee-frequency-filters" hidden role="group" aria-label="Filter recorded tool attempts">
+          <button type="button" data-count="total" aria-pressed="true">All attempts</button><button type="button" data-count="read" aria-pressed="false">Reads</button><button type="button" data-count="action" aria-pressed="false">Actions</button><button type="button" data-count="failure" aria-pressed="false">Failures</button>
         </div>
-        <p class="say" id="st-say"></p>
-        <p class="say" style="font-size:0.78rem;color:var(--text-muted);min-height:0;margin:0 0 var(--space-sm)"><span style="color:#c9a96e">■</span> opened by the agent &nbsp; <span style="color:#7bd389">■</span> opened through Eigen &nbsp; <span style="color:#c0392b">■</span> private &nbsp; <span style="color:#c9a96e">○</span> one line delivered, filtered</p>
-        <div class="stage">
-          <svg id="st-svg" viewBox="0 0 640 420" role="img" aria-label="128 documents in eight rows by kind; then the same documents as a map of linked passages in groups"></svg>
-          <div class="side" id="st-side"></div>
-        </div>
+        <div class="ee-frequency-legend"><span><i class="ee-bar-read"></i>1,229 reads</span><span><i class="ee-bar-action"></i>257 actions</span><span><i class="ee-bar-failure"></i>94 failures</span></div>
+        <ol id="ee-bars" aria-label="Tools ranked by recorded frequency">
+            <li><span>Preview a proposed edit</span><span class="ee-bar" aria-hidden="true"><i class="ee-bar-read" style="width:98.113%"></i><i class="ee-bar-failure" style="width:1.887%"></i></span><b>265</b></li>
+            <li><span>Read manuscript source</span><span class="ee-bar" aria-hidden="true"><i class="ee-bar-read" style="width:72.453%"></i><i class="ee-bar-failure" style="width:0.377%"></i></span><b>193</b></li>
+            <li><span>Look up tool help</span><span class="ee-bar" aria-hidden="true"><i class="ee-bar-read" style="width:56.226%"></i><i class="ee-bar-failure" style="width:1.509%"></i></span><b>153</b></li>
+            <li><span>Fetch a web page</span><span class="ee-bar" aria-hidden="true"><i class="ee-bar-read" style="width:51.698%"></i><i class="ee-bar-failure" style="width:3.019%"></i></span><b>145</b></li>
+            <li><span>Inspect the repository</span><span class="ee-bar" aria-hidden="true"><i class="ee-bar-read" style="width:38.868%"></i><i class="ee-bar-failure" style="width:1.887%"></i></span><b>108</b></li>
+            <li><span>Import a paper</span><span class="ee-bar" aria-hidden="true"><i class="ee-bar-action" style="width:21.509%"></i><i class="ee-bar-failure" style="width:4.906%"></i></span><b>70</b></li>
+            <li><span>Search the web</span><span class="ee-bar" aria-hidden="true"><i class="ee-bar-read" style="width:24.906%"></i></span><b>66</b></li>
+            <li><span>Check a build</span><span class="ee-bar" aria-hidden="true"><i class="ee-bar-read" style="width:20.755%"></i><i class="ee-bar-failure" style="width:0.755%"></i></span><b>57</b></li>
+        </ol>
+        <div class="ee-frequency-foot"><button type="button" hidden id="ee-all-tools" aria-expanded="false">Show all 45 tools</button><a href="/assets/data/cost-project-record.json">Aggregate data (JSON) ↗</a></div>
+      </figure>
+      <div class="ee-record-reading">
+        <h3>From a count to a decision</h3>
+        <p>Previewing an edit was the most frequent operation. An evening turn alone recorded 34 project changes. Open its saved comparison to see the author distinguish the free-energy principle’s bound on sensory surprisal from the paper’s fixed cost for a rank.</p>
+        <a class="ee-text-link" href="/demo/writing/#session-passage">Inspect the saved passage ↗</a>
+        <h3>When the author changes the instruction</h3>
+        <p>On 18 November the author said an edit had cut too much of the reasoning around the guessing machine. The next reply described restoring the explanation. Section IV of the paper now introduces what the machine does before working out the heat cost of a wrong guess.</p>
+        <a class="ee-text-link" href="/assets/docs/the-cost-of-complexity.pdf#page=10">Read the revised argument ↗</a>
+        <details class="ee-record-note"><summary>How a preference carries forward</summary><p>The guessing-machine request guided this revision in conversation. For longer-lived preferences, the author can give feedback the status of a project or passage instruction. Later turns receive the current version where it applies. An authorised update can also revise a shared writing profile, recording the examples behind the change and its previous version.</p></details>
       </div>
     </div>
+    <details class="ee-record-note"><summary>What the numbers count</summary>
+      <p>These are the retained records for this manuscript project through 18 November, UTC. Each unique native tool receipt is counted once under its recorded operation. A failed attempt has its own receipt. Reading a proposal, producing a new version and accepting an edit are separate events. The count covers these Writing App sessions. <a href="https://github.com/phujck/laplace-writing-evaluation/blob/master/src/laplace/work/author_history_metrics.py">Project analytics implementation ↗</a></p>
+    </details>
   </section>
 
-  <section class="section" id="see">
-    <div class="container">
-      <span class="section-label fade-in">Early prototypes</span>
-      <h2 class="section-title fade-in">Eigen as part of an integrated research environment</h2>
-      <div class="ee-lede fade-in">
-        <p>Eigen's first job has been one research project: it holds the sources, plans and drafts, and writes the papers and talks from them. Eigen built the graph for <a href="/demo/baked/paper_falqon.pdf" style="color:var(--link)">a paper on a quantum-control algorithm</a> it wrote in July 2026, a different paper from the one in the cards below. Each definition, claim, result and limitation in the paper is a dot; the lines are the links between them. Hover or tap a dot to read it.</p>
+  <section class="ee-width ee-chapter" id="paper" aria-labelledby="ee-paper-title">
+    <div class="cc-mast">
+      <svg class="deco" id="cc-deco" viewBox="0 0 320 320" aria-hidden="true"></svg>
+      <div class="inner">
+        <p class="ee-label">Research paper · November 2026</p>
+        <h2 id="ee-paper-title">The Cost of Complexity</h2>
+        <p class="sub">A Physical Theory of Representation</p>
+        <p class="by">Gerard McCaul · EigenEngine · 21 pages</p>
+        <div class="ee-actions"><a class="ee-button ee-primary" href="/assets/docs/the-cost-of-complexity.pdf">Read the paper <span class="ee-format">PDF</span></a>
+          <a class="ee-text-link" href="/talks/synthetics/">Related talk <span aria-hidden="true">↗</span></a></div>
       </div>
-      <div class="ee-graph-wrap fade-in">
-        <canvas id="ee-graph" width="1000" height="620" role="img" aria-label="The concept graph of one paper, coloured by kind"></canvas>
-        <div class="ee-graph-readout" id="ee-graph-readout" aria-live="polite"></div>
-        <div class="ee-legend" id="ee-legend"></div>
-      </div>
-
-      <div class="ee-cards fade-in">
-        <a class="ee-card" href="/unlisted/eigenengine/superarc/">
-          <span class="kicker">Benchmark</span>
-          <h3>SuperARC</h3>
-          <p>A published test gives a model 100 short sequences of ones and zeros and asks for the rule behind each. Eigen ran every proposed rule before answering with it. 96 of its 100 answers were real rules; most of the models in the published results wrote the sequence back out.</p>
-          <span class="go">Open the benchmark →</span>
-        </a>
-        <a class="ee-card" href="/unlisted/eigenengine/twinning/">
-          <span class="kicker">Generated paper</span>
-          <h3>Optical twinning trees</h3>
-          <p>In July 2026 a physicist gave Eigen one research question. Over two days Eigen wrote a 14-page paper and a 15-slide talk, reviewed its own draft, and rewrote it. The whole conversation, including the physicist's corrections, is on the linked page.</p>
-          <span class="go">Open the paper and talk →</span>
-        </a>
-        <a class="ee-card" href="/talks/laws-of-learning-v3/">
-          <span class="kicker">Generated talk</span>
-          <h3>The laws of learning</h3>
-          <p>A talk Eigen generated from a paper on why things that learn, from brains to companies, organise themselves in layers. The diagrams in the slides move.</p>
-          <span class="go">Open the talk →</span>
-        </a>
-        <a class="ee-card" href="/trip.html">
-          <span class="kicker">Generated page</span>
-          <h3>The long way round</h3>
-          <p>95 days around the United States, reconstructed from a phone's location history: days, places and photos cross-linked on one map.</p>
-          <span class="go">Open the page →</span>
-        </a>
-      </div>
-      <p class="ee-disclaimer">The paper, the talks and the trip page were algorithmically generated; not fit for human consumption.</p>
     </div>
-  </section>
-
-  <section class="section highlights" id="paper">
-    <div class="container">
-      <div class="cc-mast fade-in">
-        <svg class="deco" id="cc-deco" viewBox="0 0 320 320" aria-hidden="true"></svg>
-        <div class="inner">
-          <span class="kick">First public paper · November 2026</span>
-          <h2>The cost of complexity</h2>
-          <p class="sub">A physical theory of representation</p>
-          <p class="by">Gerard McCaul, EigenEngine · 21 pages</p>
-          <div class="cc-btns">
-            <a class="cc-btn main" href="/assets/docs/the-cost-of-complexity.pdf">Read the paper (PDF)</a>
-            <a class="cc-btn" href="/talks/synthetics/">Related talk: Synthetics</a>
-            <!-- ARXIV SLOT: when the identifier is issued, replace the span below with
-                 <a class="cc-btn" href="https://arxiv.org/abs/IDENTIFIER">arXiv:IDENTIFIER</a> -->
-            <span class="cc-pending" id="arxiv-slot">arXiv listing to follow</span>
+    <div id="refinement" class="cc-plate ee-paper-result">
+      <div class="say"><p class="ee-label">The geometry of refinement</p>
+        <h3>Four times the cells. What does the next division cost?</h3>
+        <p>Each round divides every square into four. If a division costs its area, there are four times as many divisions to pay for, each a quarter of the price. Every round adds the same amount. That gives a logarithmic budget for the number of cells.</p>
+        <p>Now price each division by wall length. Each cut is half as long, so four times as many cuts double the cost of the next round. The curve visits exactly the same cells.</p>
+        <a class="ee-text-link" href="/assets/docs/the-cost-of-complexity.pdf#page=10">Figure 3 in the paper ↗</a>
+      </div>
+        <div class="cc-fig">
+          <div class="cc-bar" id="cc-hil-bar">
+            <span class="lab">Rounds of division</span>
+            <button type="button" data-k="0">0</button>
+            <button type="button" data-k="1">1</button>
+            <button type="button" data-k="2">2</button>
+            <button type="button" data-k="3" class="on" aria-pressed="true">3</button>
+            <button type="button" data-k="4">4</button>
+            <button type="button" id="cc-play" hidden>Play divisions</button>
           </div>
+          <div class="cc-pair">
+            <svg id="cc-hil-sq" viewBox="0 0 320 320" role="img" aria-label="A square divided repeatedly into four, with a single path visiting every cell once"></svg>
+            <svg id="cc-hil-ch" viewBox="0 0 340 320" role="img" aria-label="Budget against rounds of division for three prices of a division: wall length doubles each round, area adds the same amount each round, and a price falling faster than area levels off"></svg>
+          </div>
+          <p class="cc-read" id="cc-hil-read" aria-live="polite"></p>
+          <noscript><p>Figure 3 in the paper shows the same sequence of divisions and all three cost curves.</p></noscript>
+          <p class="cc-cap">Left: the register after each round. The blue path visits every cell once, in rank order, and completes each quarter before entering the next, so every sub-square holds a run of consecutive ranks. Gold lines are the divisions, fainter at each round. Right: the total spent on dividing, in units of the first round, for three ways of pricing one division.</p>
         </div>
       </div>
 
-      <div class="cc-lede fade-in">
-        <p>This is the first paper produced with Eigen to be released publicly. Its formal derivations, figures and drafting were assisted by Eigen, which ran ChatGPT and Claude models. The author is responsible for the ideas, the interpretation and the correctness of the results.</p>
-        <p>The paper starts from the fact that anything that stores information is built from matter. A memory that holds one of sixteen values needs physical states to hold them, and it needs apparatus to select among them. <strong>The paper asks what that apparatus has to cost.</strong> It calls any physical system whose states stand for alternatives a <em>register</em>, and its argument rests on one observation: a register holds choices at one level and is itself one of the choices at the level above. A drawer in a filing cabinet works this way. It holds files, and it is itself one of the drawers to choose from. Four results follow.</p>
-      </div>
-
-      <div class="cc-plate fade-in">
+    <p class="ee-paper-credit">Eigen assisted with derivations, figures and drafting using ChatGPT and Claude. Gerard McCaul developed the ideas and takes responsibility for their interpretation and correctness.</p>
+    <details class="ee-expand" id="derivations"><summary>The derivations and further results</summary>
+      <div class="ee-expanded">
+        <p class="cc-lede">The paper asks what it costs to organise a physical register when the selector that chooses among registers must also be represented. With additive positional composition, available registers can be reused as digits. The paper derives a logarithmic upper bound on the cheapest budget. A positive limiting price per nat makes that growth logarithmic.</p>
+      <div class="cc-plate">
         <div class="say">
-          <span class="n">Result 1 of 4</span>
+
           <h3>Organisation has a cost of its own</h3>
           <p>Sixteen symbols are numbered by rank, from the most used to the least used. They can sit in one register of sixteen states or be split across smaller registers. Splitting makes the choice inside each register smaller and adds a second choice: which register. The selector that makes this second choice is a register too, so it has to be paid for.</p>
           <span class="cc-eq">K(x) = C(R<sub>x</sub>) + K(x | R<sub>x</sub>)</span>
@@ -427,45 +174,17 @@
             <button type="button" data-m="16">16 of 1</button>
           </div>
           <div class="cc-pair">
-            <svg id="cc-reg-grid" viewBox="0 0 320 320" role="img" aria-label="Sixteen numbered symbols on a four by four grid, joined in rank order by a path, with outlines marking which symbols share a register"></svg>
+            <svg id="cc-reg-grid" viewBox="0 0 320 320" role="group" aria-label="Sixteen numbered symbols on a four by four grid, joined in rank order by a path, with outlines marking which symbols share a register"></svg>
             <svg id="cc-reg-addr" viewBox="0 0 320 320" role="img" aria-label="The address of the selected symbol: which register, then which position inside it"></svg>
           </div>
           <p class="cc-read" id="cc-reg-read" aria-live="polite"></p>
-          <p class="cc-cap">The blue path joins the symbols in rank order. Gold outlines are registers. Click any symbol to see its address. The symbols and what they stand for are the same in every arrangement. The figure shows how the choice divides. What each part costs is the subject of result 2.</p>
+          <p class="cc-cap">The blue path joins the symbols in rank order. Gold outlines are registers. Click any symbol to see its address. The symbols and what they stand for are the same in every arrangement. The figure shows how the choice divides. What each part costs is the subject of the register budget.</p>
         </div>
       </div>
 
-      <div class="cc-plate fade-in">
+      <div class="cc-plate mid">
         <div class="say">
-          <span class="n">Result 2 of 4</span>
-          <h3>Counting with physical registers costs a logarithm</h3>
-          <p>The square is a register. Dividing it into four gives four registers, and each of those can be divided again. After k rounds it distinguishes 4<sup>k</sup> alternatives. What a round costs depends on what dividing consumes.</p>
-          <p>If dividing a register costs in proportion to its area, every round costs the same, and the budget for N alternatives is</p>
-          <span class="cc-eq">K(N) = K<sub>0</sub> + κ log N</span>
-          <p>K<sub>0</sub> is the cost of a register existing at all. κ is the price of one nat of information. A nat is the natural-logarithm unit, one bit is 0.69 nats, and every logarithm on this page is a natural logarithm. If dividing instead costs in proportion to the length of the partition drawn across the register, each round costs twice the one before. If the price falls faster than area, each round costs half the one before and the total levels off.</p>
-          <p>The paper then proves a general statement. Small registers can be reused as the digits of a larger number, as the ten-state wheels of an odometer are. When that is allowed, the cheapest design grows no faster than a logarithm, at a rate set by the best price per nat among the registers available.</p>
-        </div>
-        <div class="cc-fig">
-          <div class="cc-bar" id="cc-hil-bar">
-            <span class="lab">Rounds of division</span>
-            <button type="button" data-k="0">0</button>
-            <button type="button" data-k="1">1</button>
-            <button type="button" data-k="2">2</button>
-            <button type="button" data-k="3" class="on">3</button>
-            <button type="button" data-k="4">4</button>
-          </div>
-          <div class="cc-pair">
-            <svg id="cc-hil-sq" viewBox="0 0 320 320" role="img" aria-label="A square divided repeatedly into four, with a single path visiting every cell once"></svg>
-            <svg id="cc-hil-ch" viewBox="0 0 340 320" role="img" aria-label="Budget against rounds of division for three prices of a division: wall length doubles each round, area adds the same amount each round, and a price falling faster than area levels off"></svg>
-          </div>
-          <p class="cc-read" id="cc-hil-read" aria-live="polite"></p>
-          <p class="cc-cap">Left: the register after each round. The blue path visits every cell once, in rank order, and completes each quarter before entering the next, so every sub-square holds a run of consecutive ranks. Gold lines are the divisions, fainter at each round. Right: the total spent on dividing, in units of the first round, for three ways of pricing one division.</p>
-        </div>
-      </div>
 
-      <div class="cc-plate mid fade-in">
-        <div class="say">
-          <span class="n">Result 3 of 4</span>
           <h3>Erasing a wrong guess releases heat</h3>
           <p>The paper applies the theory to a deliberately simple model of a computer. It guesses an answer, tests it, and erases the guess if the test fails. Erasing is the step with an unavoidable physical price.</p>
           <p>Landauer's principle, an established result in the physics of computing, says the heat Q released by an erasure is at least k<sub>B</sub>T for each nat of uncertainty removed. That uncertainty is the entropy H of the guesses being erased. k<sub>B</sub> is Boltzmann's constant and T is the temperature of the surroundings. The paper adds a second floor that needs only the order of the guesses:</p>
@@ -512,11 +231,11 @@
         </div>
       </div>
 
-      <div class="cc-plate fade-in">
+      <div class="cc-plate">
         <div class="say">
-          <span class="n">Result 4 of 4</span>
+
           <h3>A logarithmic price gives a power law in rank</h3>
-          <p>Take the cost of reaching the symbol of rank r to be log r, the form result 2 gives for a single symbol in the ideal case. Suppose the only other thing known about a system is its average cost. Maximum entropy is the standard rule for this situation: among all distributions with that average, take the one that is otherwise as spread out as possible. It is a power law:</p>
+          <p>Take the cost of reaching the symbol of rank r to be log r, the form obtained under homogeneous refinement. Suppose the only other thing known about a system is its average cost. Maximum entropy is the standard rule for this situation: among all distributions with that average, take the one that is otherwise as spread out as possible. It is a power law:</p>
           <span class="cc-eq">p(r) ∝ r<sup>−λ</sup></span>
           <p>The multiplier λ sets how strongly expensive symbols are avoided. At λ = 1 this is Zipf's law, the pattern that word frequencies follow in many languages. Power laws of this kind have been derived before from other starting points. This derivation needs only the logarithmic cost and the average, and it leaves one free number, λ.</p>
         </div>
@@ -531,16 +250,14 @@
             <div><b id="cc-zipf-s">–</b>entropy H removed by one erasure</div>
             <div><b id="cc-zipf-q">–</b>least heat per erasure at 300 K</div>
           </div>
-          <p class="cc-cap">Left: the derived family for a vocabulary of 500 symbols; move the slider to change λ. If a memory holding one such symbol is erased, result 3 gives the third number; a zeptojoule (zJ) is 10<sup>−21</sup> joules. Right: a measurement. Blue is word frequency against rank in six public-domain English novels, 1,882,701 words in all. Gold is the member of the family that best fits every word (marked MLE), λ = 1.045. Green is a straight-line fit to ranks 10 to 1,000 only (marked LS), which gives 1.09.</p>
+          <p class="cc-cap">Left: the derived family for a vocabulary of 500 symbols; move the slider to change λ. If a memory holding one such symbol is erased, the heat bound gives the third number; a zeptojoule (zJ) is 10<sup>−21</sup> joules. Right: a measurement. Blue is word frequency against rank in six public-domain English novels, 1,882,701 words in all. Gold is the member of the family that best fits every word (marked MLE), λ = 1.045. Green is a straight-line fit to ranks 10 to 1,000 only (marked LS), which gives 1.09.</p>
         </div>
       </div>
-
-      <div class="cc-lede fade-in" style="margin-top: var(--space-3xl)">
-        <p>The paper is a static account. It prices an organisation of information under stated assumptions and does not yet price changing one. Eigen's map of a document store has the shape the paper studies: groups of passages that are themselves selected as members of larger groups. The paper does not analyse that map.</p>
       </div>
-
-      <div class="cc-coda fade-in" id="coda">
-        <span class="kick">Coda · a second paper in one pass</span>
+    </details>
+    <details class="ee-expand" id="coda"><summary>Companion draft · Physical origins of the Kalmár constant</summary>
+      <div class="cc-coda">
+        <span class="kick">Companion draft</span>
         <h2>Physical origins of the Kalmár constant</h2>
         <p class="sub">Draft of 19 November 2026 · 8 pages · not yet reviewed</p>
         <div class="cc-lede" style="margin-top: var(--space-md)">
@@ -612,7 +329,7 @@
               <text x="56" y="14" font-family="Lora, serif" font-size="12.5" fill="#9ca3af">capacity for organisation</text>
             </svg>
             <h3>The draft reads Kalmár's constant as a capacity</h3>
-            <p>If registers cost nothing to exist, each extra nat of budget multiplies the number of symbols a register can hold by e, and the number of ways to organise them by e<sup>ρ</sup>. Give every register the existence cost K<sub>0</sub> of result 2 and the exponent falls below ρ, along the curve shown. It approaches 1, the value of λ at which the Zipf family of result 4 can no longer be normalised for an unlimited vocabulary. The limit on how often symbols can be used in the first paper is therefore also the limit on how many ways expensive registers can be organised.</p>
+            <p>If registers cost nothing to exist, each extra nat of budget multiplies the number of symbols a register can hold by e, and the number of ways to organise them by e<sup>ρ</sup>. Give every register the existence cost K<sub>0</sub> of the register budget and the exponent falls below ρ, along the curve shown. It approaches 1, the value of λ at which the Zipf family of the rank distribution can no longer be normalised for an unlimited vocabulary. The limit on how often symbols can be used in the first paper is therefore also the limit on how many ways expensive registers can be organised.</p>
           </div>
         </div>
 
@@ -626,266 +343,39 @@
           <p>The draft's acknowledgements record who did what. They name Claude, the model Eigen was running. The results on capacity, on the ensemble of organisations and on self-recording registers were derived by the model at the author's prompting. The final hierarchy was proposed by the author and formalised by the model. The question the draft answers is one the first paper leaves open, and Eigen answered it in one pass.</p>
         </div>
       </div>
-    </div>
+    </details>
   </section>
 
-  <script>
-  (function () {
-    var svg = document.getElementById("st-svg"); if (!svg) return;
-    var NS = "http://www.w3.org/2000/svg", N = 128;
-    var KINDS = ["contracts", "emails", "invoices", "reports", "minutes", "drafts", "policies", "personnel files"], PRIV = 7;
-    var seed = 11; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
-    var centers = [[120, 125], [290, 100], [450, 130], [560, 265], [120, 300], [290, 330], [450, 325], [545, 110]];
-    var pts = [];
-    for (var i = 0; i < N; i++) {
-      var row = Math.floor(i / 16), col = i % 16, a = rnd() * Math.PI * 2, r = 14 + rnd() * 40;
-      pts.push({ i: i, g: row, gx: 160 + col * 29, gy: 36 + row * 46, mx: centers[row][0] + Math.cos(a) * r, my: centers[row][1] + Math.sin(a) * r * 0.7, x: 0, y: 0 });
-    }
-    var links = [];
-    for (i = 0; i < N; i++) { var j = i + 1, k = i + 3; if (j < N && j % 16 !== 0) links.push([i, j]); if (k < N && Math.floor(k / 16) === Math.floor(i / 16) && rnd() < 0.3) links.push([i, k]); }
-    [[2, 20], [20, 25], [9, 37], [21, 68], [40, 80], [50, 70], [66, 99], [85, 100]].forEach(function (l) { links.push(l); });
-    var NEED = [2, 20, 25], NEEDG = [0, 1], PRIVNEED = 118; // contracts and emails, plus one line from a personnel file
-    var el = function (id) { return document.getElementById(id); };
-    function mk(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var a in attrs) e.setAttribute(a, attrs[a]); (parent || svg).appendChild(e); return e; }
-    var step = 1, timer = null, anim = null, changed = false, t = 0; // t: 0 grid, 1 map
-    var SAY = {
-      1: "The agent has the 128 documents in front of it. To find the answer it has to read every one, the personnel files included: nothing tells it which files matter without opening them. The answer names no source.",
-      2: "Nothing was kept from last week, so the same question costs the same again: all 128 documents, the personnel files included.",
-      3: "Eigen reads the 128 documents once and keeps a map of them: each document's passages, linked, gathered into groups by what they are about. Personnel files are a group this agent may not open.",
-      4: "The question is routed only to the groups it needs: contracts and emails, where three passages are opened. One fact it needs sits in a personnel file. Eigen does not open that file for the agent; it delivers the one line asked for, with the name and the pay figure removed, as the rights policy for this agent requires.",
-      5: "Every passage has a fingerprint, a short code worked out from its exact words. The answer carries the four passages it rests on, including the filtered line from the personnel file, with the fingerprint of each. Edit one of those passages and its code changes, so the answer is flagged until it is redone."
-    };
-    var FP = { 2: "a1f3…", 20: "7c0e…", 25: "e94d…", 118: "52b7…" };
-    function side(html) { el("st-side").innerHTML = html; }
-    function pos() { pts.forEach(function (p) { p.x = p.gx + (p.mx - p.gx) * t; p.y = p.gy + (p.my - p.gy) * t; }); }
-    function draw(readSet, badSet) {
-      while (svg.firstChild) svg.removeChild(svg.firstChild);
-      pos();
-      if (t < 0.5) {
-        KINDS.forEach(function (k, r) { mk("text", { x: 140, y: 40 + r * 46, "text-anchor": "end", "font-family": "Lora, serif", "font-size": 11, fill: r === PRIV ? "#c0392b" : "#9ca3af" }).textContent = k + (r === PRIV ? " · private" : ""); });
-      }
-      if (t > 0.5) {
-        centers.forEach(function (c, gi) {
-          var on = step >= 4 && NEEDG.indexOf(gi) >= 0, priv = gi === PRIV;
-          mk("ellipse", { cx: c[0], cy: c[1], rx: 62, ry: 50, fill: on ? "rgba(123,211,137,0.10)" : (priv ? "rgba(192,57,43,0.10)" : "rgba(255,255,255,0.03)"), stroke: on ? "#7bd389" : (priv ? "#c0392b" : "rgba(255,255,255,0.15)"), "stroke-dasharray": on || priv ? "" : "4 4" });
-          var lab = (priv ? "personnel" : KINDS[gi]), col = priv ? "#c0392b" : (on ? "#7bd389" : "#9ca3af");
-          if (step >= 4) lab += priv ? " · filtered" : (on ? " · opened" : " · not needed"); else if (priv) lab += " · private";
-          mk("text", { x: c[0], y: c[1] + 64, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 11, fill: col }).textContent = lab;
-        });
-        links.forEach(function (l) { var a = pts[l[0]], b = pts[l[1]], lit = step >= 4 && NEED.indexOf(l[0]) >= 0 && NEED.indexOf(l[1]) >= 0; mk("line", { x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: lit ? "#c9a96e" : "rgba(255,255,255,0.10)", "stroke-width": lit ? 1.4 : 1, opacity: t }); });
-        if (step >= 4) { mk("text", { x: 320, y: 16, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 12, fill: "#c9a96e" }).textContent = "what did we agree with the supplier?"; NEEDG.forEach(function (gi) { mk("line", { x1: 320, y1: 22, x2: centers[gi][0], y2: centers[gi][1] - 50, stroke: "#c9a96e", "stroke-width": 1.2, "stroke-dasharray": "3 3" }); }); mk("line", { x1: 320, y1: 22, x2: centers[PRIV][0], y2: centers[PRIV][1] - 50, stroke: "#c0392b", "stroke-width": 1.2, "stroke-dasharray": "3 3" }); var pp = pts[PRIVNEED]; mk("circle", { cx: pp.x, cy: pp.y, r: 7, fill: "none", stroke: "#c9a96e", "stroke-width": 1.5 }); mk("text", { x: pp.x, y: pp.y + 20, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 10, fill: "#c9a96e" }).textContent = ""; }
-      }
-      pts.forEach(function (p) {
-        var priv = p.g === PRIV, read = readSet && readSet[p.i], bad = badSet && badSet[p.i], need = step >= 4 && NEED.indexOf(p.i) >= 0;
-        var fill = need ? "#7bd389" : bad ? "#c0392b" : read ? "#c9a96e" : (priv ? "rgba(192,57,43,0.55)" : (t > 0.5 ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.12)"));
-        if (step === 5 && changed && p.i === 20) fill = "#c0392b";
-        if (t < 0.5) mk("rect", { x: p.x - 10, y: p.y - 10, width: 20, height: 20, rx: 3, fill: fill, stroke: priv ? "rgba(192,57,43,0.6)" : "rgba(255,255,255,0.12)" });
-        else mk("circle", { cx: p.x, cy: p.y, r: need ? 5 : 3, fill: fill });
-      });
-    }
-    function counters(opened, priv, names, filtered) {
-      return '<div class="box">opened by the agent<span class="n">' + opened + '</span></div><div class="box">private documents opened<span class="n ' + (priv ? "bad" : "good") + '">' + priv + '</span></div>' + (filtered !== undefined ? '<div class="box">lines delivered from private files, filtered<span class="n good">' + filtered + '</span></div>' : '') + '<div class="box">documents the answer names<span class="n ' + (names === "none" ? "bad" : "good") + '">' + names + '</span></div>';
-    }
-    function sweep(done) {
-      var readSet = {}, badSet = {}, i = 0, bad = 0;
-      side(counters(0, 0, "…"));
-      timer = setInterval(function () {
-        if (i >= N) { clearInterval(timer); timer = null; side(counters(N, bad, "none") + (step === 2 ? '<div class="box">opened across both questions<span class="n">256</span></div>' : '') + '<div class="box">answer: delivery by 14 March. No source given.</div>'); if (done) done(); return; }
-        var p = pts[i++]; if (p.g === PRIV) { badSet[p.i] = 1; bad++; } else { readSet[p.i] = 1; }
-        draw(readSet, badSet); var ns = el("st-side").querySelectorAll(".n"); ns[0].textContent = i; ns[1].textContent = bad; ns[1].className = "n " + (bad ? "bad" : "good");
-      }, 14);
-    }
-    function morph(done) {
-      var t0 = null;
-      anim = function (ts) { if (!t0) t0 = ts; t = Math.min(1, (ts - t0) / 1400); draw(); if (t < 1) requestAnimationFrame(anim); else if (done) done(); };
-      requestAnimationFrame(anim);
-    }
-    function go(n) {
-      if (timer) { clearInterval(timer); timer = null; } anim = null; step = n; changed = false;
-      [1, 2, 3, 4, 5].forEach(function (k) { el("st-" + k).className = k === n ? "on" : ""; });
-      el("st-say").textContent = SAY[n];
-      if (n === 1 || n === 2) { t = 0; draw(); sweep(); }
-      if (n === 3) { t = 0; draw(); side('<h4>What the record holds for each passage</h4><div class="box">a passage of text</div><div class="box">what it says</div><div class="box">the names, dates and numbers in it</div><div class="box">links to other passages</div>'); morph(); }
-      if (n === 4) { t = 1; draw(); side(counters(3, 0, "—", 1) + '<div class="box">opened for the agent: three passages, from contracts and emails</div><div class="box">from the personnel files: one line, with the name and the pay figure removed; the file itself is never shown to the agent</div><div class="box">not needed: invoices, reports, minutes, drafts, policies</div>'); }
-      if (n === 5) { t = 1; draw(); answer(); }
-    }
-    function answer() {
-      var bad = changed;
-      side('<h4>The answer</h4><div class="box">Delivery by 14 March; the price is fixed until June; our contact on their side is their account manager.</div><h4>Rests on</h4>' +
-        NEED.concat([PRIVNEED]).map(function (i) { return '<div class="box">' + (i === PRIVNEED ? 'personnel file ' + (i + 1) + ', one line, transformed' : KINDS[pts[i].g].replace(/s$/, "") + ' ' + (i + 1)) + ' <span class="fp' + (bad && i === 20 ? ' bad' : '') + '">' + FP[i] + (bad && i === 20 ? ' no longer matches' : '') + '</span></div>'; }).join("") +
-        (bad ? '<div class="box flag">Flagged: a source changed after this answer was given.</div><button type="button" class="small" id="st-undo">Undo the change</button>'
-             : '<div class="box ok">Every fingerprint matches the sources.</div><button type="button" class="small" id="st-change">Change the passage from email 21</button>'));
-      var b = el("st-change"), u = el("st-undo");
-      if (b) b.addEventListener("click", function () { changed = true; draw(); answer(); });
-      if (u) u.addEventListener("click", function () { changed = false; draw(); answer(); });
-    }
-    [1, 2, 3, 4, 5].forEach(function (k) { el("st-" + k).addEventListener("click", function () { go(k); }); });
-    var ran = false, io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && !ran) { ran = true; go(1); io.disconnect(); } }); }, { threshold: 0.25 }) : null;
-    t = 0; draw(); side(counters(0, 0, "…"));
-    if (io) io.observe(svg); else go(1);
-  })();
-  </script>
-  <script>
-  (function () {
-    var NS = "http://www.w3.org/2000/svg";
-    var GOLD = "#c9a96e", BLUE = "#7eb8da", GREY = "#9ca3af", DIM = "#6b7280", INK = "#e8e6e3", DARK = "#0a0e1a";
-    function el(id) { return document.getElementById(id); }
-    function mk(svg, tag, attrs, text) { var e = document.createElementNS(NS, tag); for (var a in attrs) e.setAttribute(a, attrs[a]); if (text !== undefined) e.textContent = text; svg.appendChild(e); return e; }
-    function clear(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
-    // Position of the d-th cell along the Hilbert path through an n-by-n grid (n a power of two).
-    function d2xy(n, d) { var x = 0, y = 0, t = d, s, rx, ry, tmp; for (s = 1; s < n; s *= 2) { rx = 1 & (t >> 1); ry = 1 & (t ^ rx); if (ry === 0) { if (rx === 1) { x = s - 1 - x; y = s - 1 - y; } tmp = x; x = y; y = tmp; } x += s * rx; y += s * ry; t >>= 2; } return [x, y]; }
-    function bars(group, m) { [].forEach.call(group.querySelectorAll("button"), function (b) { b.className = b === m ? "on" : ""; }); }
-    function fmt(v, d) { return v.toFixed(d); }
-
-    // ---- masthead decoration: one Hilbert path of 1024 cells ----
-    (function () {
-      var svg = el("cc-deco"); if (!svg) return;
-      var n = 32, d = "", i, p, c = 320 / n;
-      for (i = 0; i < n * n; i++) { p = d2xy(n, i); d += (i ? "L" : "M") + (p[0] * c + c / 2).toFixed(1) + " " + (320 - p[1] * c - c / 2).toFixed(1); }
-      var path = mk(svg, "path", { d: d });
-      var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (calm || !path.getTotalLength || !("IntersectionObserver" in window)) return;
-      var len = path.getTotalLength();
-      path.style.strokeDasharray = len; path.style.strokeDashoffset = len;
-      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { path.style.transition = "stroke-dashoffset 6s ease-out"; path.style.strokeDashoffset = 0; io.disconnect(); } }); }, { threshold: 0.2 });
-      io.observe(svg);
-    })();
-
-    // ---- result 1: sixteen symbols, five arrangements ----
-    (function () {
-      var grid = el("cc-reg-grid"), addr = el("cc-reg-addr"), read = el("cc-reg-read"), bar = el("cc-reg-bar"); if (!grid || !addr) return;
-      var m = 4, sel = 11, pts = [], r;
-      for (r = 1; r <= 16; r++) { var p = d2xy(4, r - 1); pts[r] = [48 + p[0] * 75, 272 - p[1] * 75]; }
-      function draw() {
-        var n = 16 / m, i = Math.ceil(sel / n), j = sel - n * (i - 1), g, k, a, b;
-        clear(grid);
-        for (g = 1; g <= m; g++) {
-          var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-          for (k = (g - 1) * n + 1; k <= g * n; k++) { x0 = Math.min(x0, pts[k][0]); x1 = Math.max(x1, pts[k][0]); y0 = Math.min(y0, pts[k][1]); y1 = Math.max(y1, pts[k][1]); }
-          mk(grid, "rect", { x: x0 - 27, y: y0 - 27, width: x1 - x0 + 54, height: y1 - y0 + 54, rx: 16, fill: g === i ? "rgba(201,169,110,0.16)" : "rgba(201,169,110,0.04)", stroke: GOLD, "stroke-width": g === i ? 2 : 1, "stroke-opacity": g === i ? 1 : 0.55 });
-        }
-        var d = ""; for (k = 1; k <= 16; k++) d += (k > 1 ? "L" : "M") + pts[k][0] + " " + pts[k][1];
-        mk(grid, "path", { d: d, fill: "none", stroke: BLUE, "stroke-width": 2, "stroke-opacity": 0.8 });
-        for (k = 1; k <= 16; k++) {
-          var on = k === sel, node = mk(grid, "g", { style: "cursor:pointer", "data-r": k });
-          mk(node, "circle", { cx: pts[k][0], cy: pts[k][1], r: 17, fill: on ? GOLD : "#101728", stroke: on ? GOLD : BLUE, "stroke-width": 1.5 });
-          mk(node, "text", { x: pts[k][0], y: pts[k][1] + 5, "text-anchor": "middle", "font-family": "JetBrains Mono, monospace", "font-size": 13, "font-weight": on ? 700 : 400, fill: on ? DARK : INK }, k);
-          (function (kk) { node.addEventListener("click", function () { sel = kk; draw(); }); })(k);
-        }
-        clear(addr);
-        function row(y, count, pick, colour, label) {
-          mk(addr, "text", { x: 16, y: y, "font-family": "Outfit, sans-serif", "font-size": 13.5, "font-weight": 600, fill: colour }, label);
-          var w = Math.min(34, 288 / count), q;
-          for (q = 1; q <= count; q++) {
-            var hit = q === pick;
-            mk(addr, "rect", { x: 16 + (q - 1) * w + 1, y: y + 12, width: w - 2, height: 26, rx: 4, fill: hit ? colour : "rgba(255,255,255,0.04)", stroke: colour, "stroke-opacity": hit ? 1 : 0.5 });
-            mk(addr, "text", { x: 16 + (q - 1) * w + w / 2, y: y + 30, "text-anchor": "middle", "font-family": "JetBrains Mono, monospace", "font-size": w < 20 ? 10 : 12, fill: hit ? DARK : GREY }, q);
-          }
-        }
-        row(26, m, i, GOLD, m === 1 ? "Which register: there is only one" : "Which register: " + i + " of " + m);
-        row(106, n, j, BLUE, n === 1 ? "Which symbol inside: there is only one" : "Which symbol inside it: " + j + " of " + n);
-        a = Math.log(m) / Math.LN2; b = 4 - a;
-        mk(addr, "text", { x: 16, y: 198, "font-family": "Outfit, sans-serif", "font-size": 13.5, "font-weight": 600, fill: INK }, "The address of one symbol: 4 bits");
-        if (a > 0) mk(addr, "rect", { x: 16, y: 210, width: 72 * a, height: 26, rx: 4, fill: GOLD });
-        if (b > 0) mk(addr, "rect", { x: 16 + 72 * a, y: 210, width: 72 * b, height: 26, rx: 4, fill: BLUE });
-        mk(addr, "text", { x: 16, y: 256, "font-family": "Lora, serif", "font-size": 12.5, fill: GOLD }, a + (a === 1 ? " bit" : " bits") + " to pick the register");
-        mk(addr, "text", { x: 304, y: 256, "text-anchor": "end", "font-family": "Lora, serif", "font-size": 12.5, fill: BLUE }, b + (b === 1 ? " bit" : " bits") + " inside it");
-        mk(addr, "text", { x: 16, y: 298, "font-family": "JetBrains Mono, monospace", "font-size": 14, fill: INK }, sel + " = " + n + " × (" + i + " − 1) + " + j);
-        read.innerHTML = m === 1 ? "<b>One register holds everything.</b> The selector has nothing to choose, and all sixteen alternatives must be told apart inside the register."
-          : n === 1 ? "<b>Every symbol has its own register.</b> Nothing is left to choose inside, and the selector now has to tell sixteen registers apart. The original problem has moved into the selector."
-          : "Symbol <b>" + sel + "</b>: <b>" + a + (a === 1 ? " bit chooses" : " bits choose") + "</b> the register and <b>" + b + (b === 1 ? " bit chooses" : " bits choose") + "</b> the position inside it. An account that leaves out the first part makes small registers look cheaper than they are.";
-      }
-      [].forEach.call(bar.querySelectorAll("button"), function (b) { b.addEventListener("click", function () { m = +b.getAttribute("data-m"); bars(bar, b); draw(); }); });
-      draw();
-    })();
-
-    // ---- result 2: dividing a square, three prices ----
-    (function () {
-      var sq = el("cc-hil-sq"), ch = el("cc-hil-ch"), read = el("cc-hil-read"), bar = el("cc-hil-bar"); if (!sq || !ch) return;
-      var KMAX = 4, YMAX = 15;
-      var series = [
-        { name: "price ∝ wall length", colour: GOLD, a: 0.5 },
-        { name: "price ∝ area", colour: BLUE, a: 0 },
-        { name: "price falls faster than area", colour: GREY, a: -0.5 }
-      ];
-      // total spent after k rounds, in units of the first round: sum over rounds i of 4^(i*a)
-      function spent(a, k) { var s = 0, i; for (i = 0; i < k; i++) s += Math.pow(4, i * a); return s; }
-      function X(k) { return 46 + k * 68; } function Y(v) { return 276 - v / YMAX * 240; }
-      function draw(k) {
-        var n = Math.pow(2, k), c = 280 / n, i, lvl, p, d = "";
-        clear(sq);
-        mk(sq, "rect", { x: 20, y: 20, width: 280, height: 280, fill: "rgba(255,255,255,0.03)", stroke: GOLD, "stroke-width": 1.5 });
-        for (lvl = k; lvl >= 1; lvl--) {
-          var step = 280 / Math.pow(2, lvl), op = lvl === 1 ? 1 : lvl === 2 ? 0.6 : lvl === 3 ? 0.36 : 0.22, wdt = lvl === 1 ? 1.8 : lvl === 2 ? 1.3 : 0.9, t;
-          for (t = 1; t < Math.pow(2, lvl); t += 2) {
-            mk(sq, "line", { x1: 20 + t * step, y1: 20, x2: 20 + t * step, y2: 300, stroke: GOLD, "stroke-opacity": op, "stroke-width": wdt });
-            mk(sq, "line", { x1: 20, y1: 20 + t * step, x2: 300, y2: 20 + t * step, stroke: GOLD, "stroke-opacity": op, "stroke-width": wdt });
-          }
-        }
-        if (k === 0) mk(sq, "circle", { cx: 160, cy: 160, r: 6, fill: BLUE });
-        else {
-          for (i = 0; i < n * n; i++) { p = d2xy(n, i); d += (i ? "L" : "M") + (20 + p[0] * c + c / 2).toFixed(1) + " " + (300 - p[1] * c - c / 2).toFixed(1); }
-          mk(sq, "path", { d: d, fill: "none", stroke: BLUE, "stroke-width": k < 3 ? 2.4 : k === 3 ? 2 : 1.5, "stroke-linejoin": "round", "stroke-linecap": "round" });
-        }
-        clear(ch);
-        mk(ch, "path", { d: "M46 30 L46 276 L330 276", fill: "none", stroke: DIM, "stroke-width": 1 });
-        for (i = 0; i <= KMAX; i++) mk(ch, "text", { x: X(i), y: 292, "text-anchor": "middle", "font-family": "JetBrains Mono, monospace", "font-size": 11.5, fill: i === k ? INK : GREY }, i);
-        [0, 5, 10, 15].forEach(function (v) { mk(ch, "text", { x: 38, y: Y(v) + 4, "text-anchor": "end", "font-family": "JetBrains Mono, monospace", "font-size": 11.5, fill: GREY }, v); if (v) mk(ch, "line", { x1: 46, y1: Y(v), x2: 330, y2: Y(v), stroke: "rgba(255,255,255,0.06)" }); });
-        mk(ch, "text", { x: 188, y: 312, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 12.5, fill: GREY }, "rounds of division");
-        mk(ch, "text", { x: 46, y: 18, "font-family": "Lora, serif", "font-size": 12.5, fill: GREY }, "total spent on dividing");
-        mk(ch, "line", { x1: X(k), y1: 30, x2: X(k), y2: 276, stroke: "rgba(255,255,255,0.18)", "stroke-dasharray": "3 4" });
-        series.forEach(function (s, si) {
-          var path = "", q;
-          for (q = 0; q <= KMAX; q++) path += (q ? "L" : "M") + X(q) + " " + Y(spent(s.a, q)).toFixed(1);
-          mk(ch, "path", { d: path, fill: "none", stroke: s.colour, "stroke-width": si === 1 ? 2.6 : 1.8 });
-          for (q = 0; q <= KMAX; q++) mk(ch, "circle", { cx: X(q), cy: Y(spent(s.a, q)), r: q === k ? 5 : 2.6, fill: s.colour });
-          mk(ch, "rect", { x: 60, y: 40 + si * 20, width: 14, height: 3, fill: s.colour });
-          mk(ch, "text", { x: 80, y: 45 + si * 20, "font-family": "Lora, serif", "font-size": 12.5, fill: s.colour }, s.name);
-        });
-        var N = Math.pow(4, k);
-        read.innerHTML = k === 0 ? "<b>1 alternative.</b> Nothing has been divided, so nothing has been spent beyond the cost K<sub>0</sub> of the register existing."
-          : "<b>" + N + " alternatives</b> after " + k + (k === 1 ? " round" : " rounds") + ". Spent so far, in units of the first round: <b>" + fmt(spent(0.5, k), 0) + "</b> if a division is priced by wall length, <b>" + fmt(spent(0, k), 0) + "</b> if by area, <b>" + String(+spent(-0.5, k).toFixed(3)) + "</b> if the price falls faster than area. Only the area price adds the same amount every round, which is the logarithm.";
-      }
-      [].forEach.call(bar.querySelectorAll("button"), function (b) { b.addEventListener("click", function () { bars(bar, b); draw(+b.getAttribute("data-k")); }); });
-      draw(3);
-    })();
-
-    // ---- result 4: the Zipf family on 500 symbols ----
-    (function () {
-      var svg = el("cc-zipf"), inp = el("cc-zipf-lam"); if (!svg || !inp) return;
-      var R = 500, LR = Math.log(R) / Math.LN10, KT = 4.1419; // k_B T at 300 K, in zeptojoules
-      function X(r) { return 52 + Math.log(r) / Math.LN10 / LR * 292; }
-      function Y(p) { return 22 - Math.max(-5.4, Math.log(p) / Math.LN10) / 5 * 256; }
-      function stats(lam) { var Z = 0, C = 0, r, w; for (r = 1; r <= R; r++) { w = Math.pow(r, -lam); Z += w; C += w * Math.log(r); } C /= Z; return { Z: Z, C: C, S: lam * C + Math.log(Z) }; }
-      function line(lam, Z) { var d = "", r, step; for (r = 1; r <= R; r += step) { d += (r > 1 ? "L" : "M") + X(r).toFixed(1) + " " + Y(Math.pow(r, -lam) / Z).toFixed(1); step = r < 20 ? 1 : r < 100 ? 5 : 20; } return d + "L" + X(R).toFixed(1) + " " + Y(Math.pow(R, -lam) / Z).toFixed(1); }
-      function draw() {
-        var lam = +inp.value, st = stats(lam), e;
-        clear(svg);
-        var clip = mk(svg, "clipPath", { id: "cc-zipf-clip" }); mk(clip, "rect", { x: 52, y: 22, width: 292, height: 256 });
-        mk(svg, "path", { d: "M52 22 L52 278 L344 278", fill: "none", stroke: DIM, "stroke-width": 1 });
-        for (e = 0; e >= -5; e--) {
-          var y = 22 - e / 5 * 256;
-          if (e) mk(svg, "line", { x1: 52, y1: y, x2: 344, y2: y, stroke: "rgba(255,255,255,0.06)" });
-          var t = mk(svg, "text", { x: 44, y: y + 4, "text-anchor": "end", "font-family": "JetBrains Mono, monospace", "font-size": 11.5, fill: GREY }, e === 0 ? "1" : "10");
-          if (e) mk(t, "tspan", { dy: -5, "font-size": 8.5 }, "−" + (-e));
-        }
-        [1, 10, 100, 500].forEach(function (r) { mk(svg, "text", { x: X(r), y: 294, "text-anchor": "middle", "font-family": "JetBrains Mono, monospace", "font-size": 11.5, fill: GREY }, r); });
-        mk(svg, "text", { x: 198, y: 313, "text-anchor": "middle", "font-family": "Lora, serif", "font-size": 12.5, fill: GREY }, "rank r");
-        mk(svg, "text", { x: 52, y: 13, "font-family": "Lora, serif", "font-size": 12.5, fill: GREY }, "share of use p(r)");
-        var z1 = stats(1).Z;
-        mk(svg, "path", { d: line(1, z1), fill: "none", stroke: GOLD, "stroke-width": 1.4, "stroke-dasharray": "5 4", "clip-path": "url(#cc-zipf-clip)" });
-        mk(svg, "line", { x1: 196, y1: 38, x2: 218, y2: 38, stroke: GOLD, "stroke-width": 1.4, "stroke-dasharray": "5 4" });
-        mk(svg, "text", { x: 224, y: 42, "font-family": "Lora, serif", "font-size": 12, fill: GOLD }, "λ = 1, Zipf's law");
-        mk(svg, "line", { x1: 196, y1: 57, x2: 218, y2: 57, stroke: BLUE, "stroke-width": 2.6 });
-        mk(svg, "text", { x: 224, y: 61, "font-family": "Lora, serif", "font-size": 12, fill: BLUE }, "λ set by the slider");
-        mk(svg, "path", { d: line(lam, st.Z), fill: "none", stroke: BLUE, "stroke-width": 2.6, "clip-path": "url(#cc-zipf-clip)" });
-        el("cc-zipf-out").textContent = fmt(lam, 2);
-        el("cc-zipf-c").textContent = fmt(st.C, 2) + " nats";
-        el("cc-zipf-s").textContent = fmt(st.S, 2) + " nats";
-        el("cc-zipf-q").textContent = fmt(st.S * KT, 1) + " zJ";
-      }
-      inp.addEventListener("input", draw);
-      draw();
-    })();
-  })();
-  </script>
+  <section class="ee-band ee-outputs" id="see" aria-labelledby="ee-outputs-title">
+    <div class="ee-width">
+      <p class="ee-label">Research outputs</p>
+      <h2 id="ee-outputs-title">Made with Eigen</h2>
+      <div class="ee-outputs-grid">
+        <a class="ee-feature-output" href="/talks/synthetics/">
+          <img src="/assets/img/eigen/synthetics-cover.webp" width="800" height="450" alt="Original Synthetics title artwork, with a field of events partitioned into cells" loading="lazy">
+          <div class="ee-output-info"><span class="ee-kind">Illustrated talk</span><h3>Synthetics <span aria-hidden="true">↗</span></h3>
+          <p>Gerard McCaul’s talk connects the cost of representing a distinction to the design of a memory and an agent. Step through the original experiments, figures and animated explanations.</p></div>
+        </a>
+        <div class="ee-other-outputs">
+          <a class="ee-output-row" href="/unlisted/eigenengine/superarc/">
+            <img src="/assets/img/eigen/superarc-preview.webp" width="160" height="110" alt="" loading="lazy">
+            <div><span class="ee-kind">Executable benchmark</span><h3>SuperARC</h3><p>Eigen ran candidate rules for 100 binary sequences. The benchmark classified 96 answers as rules. Inspect the answers and the scoring audit.</p></div><b aria-hidden="true">↗</b>
+          </a>
+          <a class="ee-output-row" href="/trip.html">
+            <img src="/assets/img/trip_hero.jpg" width="160" height="110" alt="" loading="lazy">
+            <div><span class="ee-kind">Interactive map</span><h3>The Long Way Round</h3><p>Phone locations and photos became a day-by-day map of a 95-day journey across the United States.</p></div><b aria-hidden="true">↗</b>
+          </a>
+          <a class="ee-output-row" href="/unlisted/eigenengine/twinning/">
+            <img src="/assets/img/eigen/twinning-preview.webp" width="160" height="110" alt="" loading="lazy">
+            <div><span class="ee-kind">Paper and research record</span><h3>Optical twinning trees</h3><p>One physics question led to a paper and a talk. Read the drafts, the review and the conversation that changed the result.</p></div><b aria-hidden="true">↗</b>
+          </a>
+          <a class="ee-output-row" href="/talks/laws-of-learning-v3/">
+            <img src="/assets/img/eigen/learning-cover.webp" width="160" height="110" alt="" loading="lazy">
+            <div><span class="ee-kind">Animated talk</span><h3>The Laws of Learning</h3><p>A paper on how learning systems organise into layers, developed into a talk with moving diagrams of the dynamics.</p></div><b aria-hidden="true">↗</b>
+          </a>
+        </div>
+      </div>
+      <div class="ee-end"><a class="ee-button ee-primary" href="/demo/writing/#session">Explore the Writing App ↗</a><a class="ee-text-link" href="mailto:eigen@gmccaul.co.uk">eigen@gmccaul.co.uk</a></div>
+    </div>
+  </section>
+</main>

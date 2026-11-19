@@ -1,0 +1,343 @@
+{
+  "project": "cost-of-complexity",
+  "through_exclusive_utc": "2026-11-19T00:00:00Z",
+  "first_turn_utc": "2026-11-17T10:38:54.921Z",
+  "last_turn_utc": "2026-11-18T18:50:49.071Z",
+  "sessions": 2,
+  "turns": 39,
+  "turn_outcomes": {
+    "completed": 38,
+    "interrupted": 1
+  },
+  "saved_proposal_versions": 85,
+  "turns_with_proposals": 25,
+  "decision_records": {
+    "accepted": 77,
+    "rejected": 6,
+    "resolved-into-successor": 17
+  },
+  "tool_attempts": 1580,
+  "receipt_types": {
+    "read": 1229,
+    "action": 257,
+    "failure": 94
+  },
+  "method": "Project-scoped Writing App records through the end of 18 November 2026 UTC. Each original tool receipt is counted once under its recorded operation. The read, action and failure categories describe native tool receipts. Proposal versions and decisions measure different stages of the same work.",
+  "tools": [
+    {
+      "operation": "authoring/proposal-preview",
+      "read": 260,
+      "action": 0,
+      "failure": 5,
+      "total": 265
+    },
+    {
+      "operation": "source",
+      "read": 192,
+      "action": 0,
+      "failure": 1,
+      "total": 193
+    },
+    {
+      "operation": "help",
+      "read": 149,
+      "action": 0,
+      "failure": 4,
+      "total": 153
+    },
+    {
+      "operation": "web_fetch",
+      "read": 137,
+      "action": 0,
+      "failure": 8,
+      "total": 145
+    },
+    {
+      "operation": "repository",
+      "read": 103,
+      "action": 0,
+      "failure": 5,
+      "total": 108
+    },
+    {
+      "operation": "literature_import",
+      "read": 0,
+      "action": 57,
+      "failure": 13,
+      "total": 70
+    },
+    {
+      "operation": "web_search",
+      "read": 66,
+      "action": 0,
+      "failure": 0,
+      "total": 66
+    },
+    {
+      "operation": "build_status",
+      "read": 55,
+      "action": 0,
+      "failure": 2,
+      "total": 57
+    },
+    {
+      "operation": "apply_revision",
+      "read": 0,
+      "action": 16,
+      "failure": 35,
+      "total": 51
+    },
+    {
+      "operation": "reference_text",
+      "read": 46,
+      "action": 0,
+      "failure": 5,
+      "total": 51
+    },
+    {
+      "operation": "literature_lookup",
+      "read": 45,
+      "action": 0,
+      "failure": 1,
+      "total": 46
+    },
+    {
+      "operation": "concept",
+      "read": 41,
+      "action": 0,
+      "failure": 0,
+      "total": 41
+    },
+    {
+      "operation": "structure",
+      "read": 38,
+      "action": 0,
+      "failure": 0,
+      "total": 38
+    },
+    {
+      "operation": "reference_fetch",
+      "read": 0,
+      "action": 36,
+      "failure": 0,
+      "total": 36
+    },
+    {
+      "operation": "author_history",
+      "read": 30,
+      "action": 0,
+      "failure": 4,
+      "total": 34
+    },
+    {
+      "operation": "build",
+      "read": 0,
+      "action": 27,
+      "failure": 2,
+      "total": 29
+    },
+    {
+      "operation": "propose_revision",
+      "read": 0,
+      "action": 24,
+      "failure": 5,
+      "total": 29
+    },
+    {
+      "operation": "authoring/proposal-decision",
+      "read": 0,
+      "action": 23,
+      "failure": 0,
+      "total": 23
+    },
+    {
+      "operation": "concept_change",
+      "read": 0,
+      "action": 12,
+      "failure": 1,
+      "total": 13
+    },
+    {
+      "operation": "structure_change",
+      "read": 0,
+      "action": 12,
+      "failure": 0,
+      "total": 12
+    },
+    {
+      "operation": "references_attached",
+      "read": 11,
+      "action": 0,
+      "failure": 0,
+      "total": 11
+    },
+    {
+      "operation": "authoring/proposals",
+      "read": 10,
+      "action": 0,
+      "failure": 0,
+      "total": 10
+    },
+    {
+      "operation": "literature_bind",
+      "read": 0,
+      "action": 10,
+      "failure": 0,
+      "total": 10
+    },
+    {
+      "operation": "references",
+      "read": 8,
+      "action": 0,
+      "failure": 2,
+      "total": 10
+    },
+    {
+      "operation": "section_change",
+      "read": 0,
+      "action": 10,
+      "failure": 0,
+      "total": 10
+    },
+    {
+      "operation": "logical_plan_change",
+      "read": 0,
+      "action": 7,
+      "failure": 0,
+      "total": 7
+    },
+    {
+      "operation": "visual_create",
+      "read": 0,
+      "action": 7,
+      "failure": 0,
+      "total": 7
+    },
+    {
+      "operation": "concept_tree",
+      "read": 6,
+      "action": 0,
+      "failure": 0,
+      "total": 6
+    },
+    {
+      "operation": "corpus/friction-report",
+      "read": 0,
+      "action": 6,
+      "failure": 0,
+      "total": 6
+    },
+    {
+      "operation": "literature_scope",
+      "read": 6,
+      "action": 0,
+      "failure": 0,
+      "total": 6
+    },
+    {
+      "operation": "store_artifact",
+      "read": 0,
+      "action": 6,
+      "failure": 0,
+      "total": 6
+    },
+    {
+      "operation": "logical_plan",
+      "read": 5,
+      "action": 0,
+      "failure": 0,
+      "total": 5
+    },
+    {
+      "operation": "block_change",
+      "read": 0,
+      "action": 2,
+      "failure": 1,
+      "total": 3
+    },
+    {
+      "operation": "conversation_history",
+      "read": 3,
+      "action": 0,
+      "failure": 0,
+      "total": 3
+    },
+    {
+      "operation": "document",
+      "read": 3,
+      "action": 0,
+      "failure": 0,
+      "total": 3
+    },
+    {
+      "operation": "literature_discover",
+      "read": 3,
+      "action": 0,
+      "failure": 0,
+      "total": 3
+    },
+    {
+      "operation": "project",
+      "read": 3,
+      "action": 0,
+      "failure": 0,
+      "total": 3
+    },
+    {
+      "operation": "read_artifact",
+      "read": 3,
+      "action": 0,
+      "failure": 0,
+      "total": 3
+    },
+    {
+      "operation": "visuals",
+      "read": 2,
+      "action": 0,
+      "failure": 0,
+      "total": 2
+    },
+    {
+      "operation": "author_changes",
+      "read": 1,
+      "action": 0,
+      "failure": 0,
+      "total": 1
+    },
+    {
+      "operation": "literature_uses",
+      "read": 1,
+      "action": 0,
+      "failure": 0,
+      "total": 1
+    },
+    {
+      "operation": "project_metadata",
+      "read": 1,
+      "action": 0,
+      "failure": 0,
+      "total": 1
+    },
+    {
+      "operation": "research",
+      "read": 1,
+      "action": 0,
+      "failure": 0,
+      "total": 1
+    },
+    {
+      "operation": "task",
+      "read": 0,
+      "action": 1,
+      "failure": 0,
+      "total": 1
+    },
+    {
+      "operation": "task_status",
+      "read": 0,
+      "action": 1,
+      "failure": 0,
+      "total": 1
+    }
+  ]
+}
