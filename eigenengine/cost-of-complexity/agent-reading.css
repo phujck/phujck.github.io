@@ -9,8 +9,8 @@
 .paper-agent-entry button,.paper-agent-entry .paper-agent-open{margin:.24rem 0 0;padding:.44rem .72rem;border:1px solid #efcf95;border-radius:.26rem;background:#e4c590;color:#1a2228;cursor:pointer;text-decoration:none;font:600 .9rem/1.3 Outfit,system-ui,sans-serif}
 .paper-agent-entry button:hover,.paper-agent-entry .paper-agent-open:hover {background:#ffe0ab;color:#151e24}
 .paper-agent-first-actions {display:flex;align-items:center;flex-wrap:wrap;gap:.28rem .48rem}
-.paper-agent-entry .paper-agent-inspect {border-color:#7b9aa8;background:#192e3c;color:#d7e8ed}
-.paper-agent-entry .paper-agent-inspect:hover,.paper-agent-entry .paper-agent-inspect[aria-expanded="true"] {border-color:#bdd8df;background:#274356;color:#f2f7f7}
+.paper-agent-entry [data-read-opening] {border-color:#7b9aa8;background:#192e3c;color:#d7e8ed}
+.paper-agent-entry [data-read-opening]:hover,.paper-agent-entry [data-read-opening][aria-expanded="true"] {border-color:#bdd8df;background:#274356;color:#f2f7f7}
 .paper-agent-entry [hidden]{display:none!important}
 .paper-agent-links{display:flex;flex-wrap:wrap;gap:.4rem 1.3rem}
 .paper-agent-entry a:not(.paper-agent-open){color:#b3d7e8;font:500 .89rem/1.45 Outfit,system-ui,sans-serif;text-underline-offset:.2em}
@@ -22,9 +22,14 @@
 .paper-agent-opening-preview {margin:.4rem 0 .85rem;scroll-margin:5rem 0 1.2rem}
 .paper-agent-opening-preview label {display:block;color:#e8d5ac;font:550 .92rem/1.4 Outfit,system-ui,sans-serif}
 .paper-agent-opening-preview textarea {display:block;height:clamp(17rem,55svh,28rem);margin-top:.35rem;padding:clamp(.72rem,2vw,1rem);resize:vertical;scroll-margin:5rem 0 1.2rem;font:400 1rem/1.6 Lora,Georgia,serif}
-.paper-agent-entry :is(.paper-agent-inspect,.paper-agent-opening-preview textarea):focus-visible {outline:2px solid #a9d5e4;outline-offset:3px}
+.paper-agent-entry :is([data-read-opening],.paper-agent-opening-preview textarea):focus-visible {outline:2px solid #a9d5e4;outline-offset:3px}
 .km-hero .km-origin{margin:.5rem 0 1rem;max-width:80ch;font:400 1rem/1.52 Outfit,system-ui,sans-serif;color:#c6d5dd}.km-origin a{color:#add6e6;text-underline-offset:.2em}
 .quick-why,.quick-papers{margin:1.8rem 0;padding-top:1.1rem;border-top:1px solid #435862;scroll-margin-top:1rem}.quick-why p,.quick-papers p{max-width:76ch;margin:.6rem 0;color:#c5d3d9}
 .study-notes{margin-top:.8rem}.study-notes li{margin:.7rem 0;max-width:80ch}.study-notes ul{padding-left:1.2rem}
 .quick-papers>div{display:flex;align-items:baseline;gap:.3rem .8rem;flex-wrap:wrap;margin-top:.65rem}.quick-papers>div span,.quick-notebook{color:#b6c8d1;font-size:.91rem}.quick-notebook{margin:1.3rem 0}
 @media(max-width:600px){.paper-agent-steps{gap:.58rem}.paper-agent-step+ .paper-agent-step{padding-left:.58rem}.paper-agent-step span{font-size:.82rem}.paper-agent-entry button,.paper-agent-entry .paper-agent-open{font-size:.83rem;padding:.45rem .55rem}.paper-agent-entry .paper-agent-intro p{font-size:.92rem}.km-hero .km-origin{font-size:.93rem}}
+
+@supports (grid-template-rows: subgrid) {
+  .paper-agent-steps {row-gap:.25rem}
+  .paper-agent-step {grid-row:span 4;grid-template-rows:subgrid}
+}
