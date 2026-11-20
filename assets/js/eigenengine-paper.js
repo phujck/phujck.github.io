@@ -1,7 +1,10 @@
 (() => {
   "use strict";
-  const art = document.querySelector(".ee-cover-art");
+  const art = document.querySelector(".ee-cover-art, [data-paper-hilbert]");
   if (!art) return;
+  const article = art.hasAttribute("data-paper-hilbert");
+  const control = article ? document.querySelector("[data-paper-hilbert-control]") : art;
+  const reduced = article ? matchMedia("(prefers-reduced-motion: reduce)") : null;
   const ink = art.querySelector(".ee-curve-ink");
   const guide = art.querySelector(".ee-curve-guide");
   const tracer = art.querySelector(".ee-curve-tracer");
@@ -26,7 +29,7 @@
     return [(x + .5) * 320 / side, 320 - (y + .5) * 320 / side];
   }
 
-  const levels = [2, 4, 8, 16].map(side =>
+  const singleTile = [2, 4, 8, 16].map(side =>
     Array.from({length: 256}, (_, i) => point(side, Math.floor(i * side * side / 256))));
   function path(points) {
     return points.map(([x, y], i) => (i ? "L" : "M") + x.toFixed(2) + " " + y.toFixed(2)).join("");
@@ -62,11 +65,13 @@
     const lap = (value % 2 + 2) % 2;
     return lap <= 1 ? lap : 2 - lap;
   }
-  const shapes = levels.map(curve);
+  let levels = singleTile;
+  let shapes = levels.map(curve);
   const sequence = [0, 1, 2, 3, 2, 1];
   const stepTime = 1660;
-  let clock = 0, travel = .43, last = null, handle = null;
-  let visible = true, paused = false, previewOpen = false;
+  let clock = article ? stepTime * (reduced.matches ? 2 : 1) : 0;
+  let travel = article ? .74 : .43, last = null, handle = null;
+  let visible = !article, paused = Boolean(reduced?.matches), previewOpen = false;
   let paintedCurve = null, paintedGuide = -1;
 
   function draw(dt) {
@@ -120,13 +125,61 @@
     const running = visible && !paused && !document.hidden && !previewOpen;
     if (running && handle === null) { last = null; handle = requestAnimationFrame(frame); }
     if (!running && handle !== null) { cancelAnimationFrame(handle); handle = null; last = null; }
-    const label = (paused ? "Resume" : "Pause") + " the animated Hilbert construction";
-    art.setAttribute("aria-label", label);
-    art.title = label;
+    if (article) {
+      const action = paused ? (reduced.matches ? "Play" : "Resume") : "Pause";
+      control.querySelector("[data-paper-hilbert-label]").textContent = action + " animation";
+      control.setAttribute("aria-label", action + " the Hilbert animation");
+      control.dataset.playing = String(!paused);
+      tracer.setAttribute("visibility", reduced.matches && paused ? "hidden" : "visible");
+    } else {
+      const label = (paused ? "Resume" : "Pause") + " the animated Hilbert construction";
+      art.setAttribute("aria-label", label);
+      art.title = label;
+    }
   }
-  art.disabled = false;
+  control.disabled = false;
+  control.hidden = false;
   tracer.removeAttribute("visibility");
-  art.addEventListener("click", () => { paused = !paused; update(); });
+  control.addEventListener("click", () => { paused = !paused; update(); });
+  if (article) {
+    const svg = art.querySelector("svg");
+    const grid = art.querySelector(".ee-curve-frame");
+    let tileCount = 0;
+    function fit() {
+      const width = document.documentElement.clientWidth;
+      const height = art.clientHeight;
+      if (!width || !height) return;
+      art.style.setProperty("--er-hilbert-width", width + "px");
+      // Join complete Hilbert motifs along the width. Equal axis scales keep
+      // each quadrant square and the travelling tip round on wide screens.
+      const count = Math.max(1, Math.round(width / height));
+      const span = count * 320;
+      const viewWidth = span + 16;
+      const viewHeight = viewWidth * height / width;
+      svg.setAttribute("viewBox", `-8 ${(320 - viewHeight) / 2} ${viewWidth} ${viewHeight}`);
+      if (count === tileCount) return;
+      tileCount = count;
+      levels = singleTile.map(vertices => Array.from({length: count}, (_, tile) =>
+        vertices.map(([x, y]) => [x + tile * 320, y])).flat());
+      shapes = levels.map(curve);
+      const gridLines = Array.from({length: count}, (_, i) =>
+        `M${i * 320} 0v320 M${i * 320 + 160} 0v320`).join(" ");
+      grid.setAttribute("d", `M0 0H${span}V320H0Z M0 160H${span} ${gridLines}`);
+      paintedCurve = null; paintedGuide = -1;
+      draw(0);
+    }
+    fit();
+    window.addEventListener("resize", fit);
+    if ("ResizeObserver" in window) new ResizeObserver(fit).observe(art);
+    reduced.addEventListener("change", () => {
+      paused = reduced.matches;
+      if (paused) {
+        clock = stepTime * 2;
+        draw(0);
+      }
+      update();
+    });
+  }
   document.addEventListener("visibilitychange", update);
   document.addEventListener("eigenengine-source-preview", ({ detail }) => {
     previewOpen = Boolean(detail?.open);
@@ -134,7 +187,7 @@
   });
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; update(); }).observe(art);
-  }
+  } else visible = true;
   draw(0);
   update();
 })();

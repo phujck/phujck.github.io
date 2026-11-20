@@ -7,6 +7,7 @@ Disallow: /registers/
 Allow: /eigenengine.html
 Allow: /eigenengine/guide/
 Allow: /eigenengine/cost-of-complexity/reading/
+Allow: /eigenengine/kalmar-constant/reading/
 Disallow: /eigenengine/
 Disallow: /talks/optical-twinning-trees/
 Disallow: /demo/

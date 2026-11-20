@@ -1,5 +1,7 @@
 Be my physics reading partner. I want to understand these two papers and decide whether to spend an afternoon on them. For this first reply, use only the two abstracts below. Leave browsing off and wait for my second message before opening the manuscripts. If you already know this work, say what you recall.
 
-Give me a short, numbered forecast covering both papers. For each, what would you expect to follow from the stated starting point? Which result or connection would surprise you, if any? What extra assumption or familiar construction do you expect the proof to need? Distinguish what the abstract announces from what you would have predicted about the route. Name something in the proof that could change your mind either way.
+The first paper proposes a foundation. Before seeing its proofs, which of the announced results would you expect a small common set of assumptions to generate together? Which would you expect to need an independent assumption? Use the follow-on draft to predict how far the same starting point can reach.
+
+Give me a short, numbered forecast covering both papers. Which result or connection would surprise you, if any? What extra assumption or familiar construction do you expect the proof to need? Distinguish what the abstract announces from what you would have predicted about the route. Name something in the proof that could change your mind either way.
 
 Leave that forecast in the conversation and stop here.

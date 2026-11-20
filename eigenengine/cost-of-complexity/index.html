@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#0a0e1a">
-  <meta name="description" content="The Cost of Complexity, Gerard McCaul’s physical theory of representation. Explore how the cost of subdividing one square depends on what a split costs.">
+  <meta name="description" content="What does a physical memory pay to make a symbol accessible? Gerard McCaul traces how the organisation of the same distinctions changes their cost, and when the most efficient budget grows logarithmically.">
   <meta property="og:type" content="article">
   <meta property="og:title" content="The Cost of Complexity · EigenEngine">
-  <meta property="og:description" content="A Physical Theory of Representation, with an interactive Hilbert refinement from the paper.">
+  <meta property="og:description" content="The same symbols can have different physical costs. Explore how organising a memory changes what it takes to reach them.">
   <meta property="og:url" content="https://gmccaul.co.uk/eigenengine/cost-of-complexity/">
   <meta property="og:image" content="https://gmccaul.co.uk/demo/writing/media/published-figure.webp">
   <title>The Cost of Complexity · EigenEngine</title>
@@ -18,6 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/eigenengine-paper.css">
+  <script src="/assets/js/eigenengine-paper.js" defer></script>
   <script src="/assets/js/eigenengine-results.js" defer></script>
   <link rel="stylesheet" href="/assets/css/eigenengine-source-preview.css">
   <script defer src="/assets/js/eigenengine-source-preview.js"></script>
@@ -38,33 +39,60 @@
   </header>
   <main class="er-paper-shell" id="paper">
     <header class="er-paper-heading">
+      <div class="er-hero-hilbert" data-paper-hilbert aria-hidden="true">
+        <svg viewBox="-14 -14 348 348" preserveAspectRatio="xMidYMid meet" focusable="false">
+          <path class="ee-curve-frame" d="M0 0H320V320H0Z M160 0V320 M0 160H320"/>
+          <path class="ee-curve-guide"/>
+          <path class="ee-curve-ink" d="M40 280H120V200H40V40H120V120H200V40H280V200H200V280H280"/>
+          <g class="ee-curve-tracer" visibility="hidden"><path/><circle r="3.5"/></g>
+        </svg>
+      </div>
+      <button class="er-hero-motion" type="button" data-paper-hilbert-control hidden>
+        <span data-paper-hilbert-icon aria-hidden="true"></span><span data-paper-hilbert-label>Pause animation</span>
+      </button>
       <p class="er-paper-kicker">Research paper</p>
       <h1>The Cost of Complexity</h1>
       <p class="er-paper-subtitle">A Physical Theory of Representation</p>
       <p class="er-paper-byline">Gerard McCaul · EigenEngine · 21 pages</p>
-      <section class="paper-agent-entry" id="agent-reading" data-paired-review aria-labelledby="agent-reading-title">
-        <div class="paper-agent-intro"><h2 id="agent-reading-title">Have your agent explain both papers</h2><p>In our trial, an agent checked the proofs yet gave a passing remark too much weight. These prompts record its expectations first, then ask which conclusions an objection would actually change. <a href="https://arxiv.org/abs/2610.02022" target="_blank" rel="noopener">Research on how framing shifts novelty judgements ↗</a></p></div>
-        <div class="paper-agent-steps">
-          <div class="paper-agent-step"><strong>1 · Before the proofs</strong><span>Fresh chat. Send only the two abstracts and the question.</span>
-            <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/opening.txt" data-prompt-url="opening">Open first message</a><button type="button" data-copy-message="opening" hidden>Copy first prompt</button></div>
-          <div class="paper-agent-step"><strong>2 · After the reply</strong><span>Same chat. Enable browsing or attach the papers.</span>
-            <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/follow-up.txt" data-prompt-url="follow-up">Open follow-up</a><button type="button" data-copy-message="follow-up" hidden>Copy follow-up</button></div>
-        </div>
-        <p class="paper-agent-status" data-paired-status role="status"></p>
-        <textarea data-paired-selection hidden readonly aria-label="Selected message to copy manually"></textarea>
-        <div class="paper-agent-links"><a href="/eigenengine/cost-of-complexity/reading/#why">Why two messages?</a><a href="/eigenengine/cost-of-complexity/reading/papers.zip" download>Download both papers (ZIP) ↓</a></div>
-        <details class="paper-agent-access"><summary>Other ways to give it the papers</summary>
-          <p>With web access, the follow-up contains both manuscript links. If your agent accepts uploads, attach the ZIP or the <a href="/eigenengine/guide/the-cost-of-complexity.pdf" target="_blank" rel="noopener">21-page paper</a> and <a href="/eigenengine/guide/physical-origins-of-the-kalmar-constant.pdf" target="_blank" rel="noopener">8-page draft</a> to message 2. For a text-only chat with room for both papers, copy the follow-up and manuscripts together.</p>
-          <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/follow-up-with-papers.txt" data-prompt-url="with-papers">Open follow-up with manuscript text</a><button type="button" data-copy-message="with-papers" hidden>Copy follow-up with manuscript text</button>
-          <p class="paper-agent-small">Plain text editions: <a href="/eigenengine/cost-of-complexity/reading/the-cost-of-complexity.txt" target="_blank" rel="noopener">The Cost of Complexity</a> · <a href="/eigenengine/cost-of-complexity/reading/physical-origins-of-the-kalmar-constant.txt" target="_blank" rel="noopener">Physical origins of the Kalmár constant</a>.</p>
-        </details>
-      </section>
-      <p class="er-paper-summary">A physical system can distinguish more things by putting them into groups and then choosing within a group. The paper asks what the apparatus that makes those choices costs. Its Hilbert example shows how one arrangement can have different costs depending on what each split consumes.</p>
+      <p class="er-paper-summary">A physical memory has to distinguish its symbols and provide a way to reach each one. How much of the cost comes from the distinctions we need, and how much can we change by organising the memory differently?</p>
       <div class="er-paper-actions">
         <a class="er-paper-return" data-material-viewer="/demo/view/?asset=cost-paper" href="/assets/docs/the-cost-of-complexity.pdf" target="_blank" rel="noopener">Read the paper <span class="er-paper-format">PDF</span></a>
         <a class="ee-text-link" href="#try-refinement">Try the refinement</a>
       </div>
     </header>
+
+    <section class="er-paper-purpose" id="purpose" aria-labelledby="er-purpose-title">
+      <h2 id="er-purpose-title">Why the arrangement matters</h2>
+      <p class="er-purpose-example">Imagine a memory with sixteen values. Put them in two banks of eight and value 11 is the third entry in the second bank. Use eight banks of two and it becomes the first entry in the sixth bank. The value stays the same. Making the choice inside each bank smaller has made the choice of bank larger. Both choices need physical apparatus.</p>
+      <figure class="er-purpose-figure"><a data-source-region="cost-fig-2bc" href="/assets/docs/the-cost-of-complexity.pdf#page=5" target="_blank" rel="noopener"><img src="./reading/cost/figure-2.webp" width="1083" height="571" alt="Two organisations of the same sixteen symbols. Orange highlights symbol 11 and its bank in each layout."><span>Inspect the two addresses in Figure 2 ↗</span></a></figure>
+      <div class="er-purpose-copy">
+        <p>The paper asks how little that apparatus can cost. If digit registers can be combined at the sum of their individual costs, one more binary digit doubles the range. If the best average cost per bit stays above zero as memories get larger, the least budget grows in proportion to the length of an address. That is logarithmic growth in the number of values. A code can approach the same rate even after paying for the mark that tells it where an address ends.</p>
+        <p>A design that spends one element per value grows linearly. Reorganising its components as digits can change that growth law. The paper then asks what more is needed to connect cost to use. With a fixed mean logarithmic cost, maximum entropy gives a Zipf family of symbol frequencies. For a specified reset, ranking the states actually erased gives a lower bound on heat. Those further conclusions have different assumptions, which the physical account makes explicit.</p>
+      </div>
+    </section>
+
+    <section class="paper-agent-entry" id="agent-reading" data-paired-review aria-labelledby="agent-reading-title">
+        <div class="paper-agent-intro"><h2 id="agent-reading-title">Have your agent explain this paper</h2><p>A model can approach a synthesis with a deflationary prior, expecting it to reduce to familiar work. A referee-style prompt can reinforce that expectation. The model may import an assumption from another field and criticise a claim the author never made. For a proposed foundation, the question is how much follows from how few physical assumptions. <a href="/eigenengine/cost-of-complexity/reading/#why">Research on framing ↗</a></p></div>
+        <div class="paper-agent-steps">
+          <div class="paper-agent-step"><strong>1 · Before the proofs</strong><span>Fresh chat. Send just this abstract and the question.</span>
+            <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/first-message.txt" data-prompt-url="opening">Read first prompt</a><button type="button" data-copy-message="opening" hidden>Copy first prompt</button>
+            <button type="button" class="paper-agent-read" data-read-opening aria-expanded="false" aria-controls="paired-opening-preview" hidden>Read first prompt</button></div>
+          <div class="paper-agent-step"><strong>2 · After the reply</strong><span>Same chat. Enable browsing or attach the paper.</span>
+            <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/second-message.txt" data-prompt-url="follow-up">Open follow-up</a><button type="button" data-copy-message="follow-up" hidden>Copy follow-up</button></div>
+        </div>
+        <p class="paper-agent-status" data-paired-status role="status"></p>
+        <section class="paper-agent-opening-preview" id="paired-opening-preview" data-opening-preview aria-labelledby="paired-opening-label" hidden>
+          <label id="paired-opening-label" for="paired-opening-text">First prompt and abstract</label>
+          <textarea id="paired-opening-text" data-opening-preview-text readonly></textarea>
+        </section>
+        <textarea data-paired-selection hidden readonly aria-label="Selected message to copy manually"></textarea>
+        <div class="paper-agent-links"><a href="/eigenengine/cost-of-complexity/reading/paper.zip" download>Download this paper and prompts (ZIP) ↓</a></div>
+        <details class="paper-agent-access"><summary>Other ways to give it the paper</summary>
+          <p>The follow-up links to the complete manuscript. If your agent accepts files, attach the ZIP or the <a href="/eigenengine/guide/the-cost-of-complexity.pdf" target="_blank" rel="noopener">original PDF</a> to message 2. For a text-only chat, copy the second message with the manuscript included.</p>
+          <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/second-message-with-paper.txt" data-prompt-url="with-papers">Open follow-up with manuscript text</a><button type="button" data-copy-message="with-papers" hidden>Copy follow-up with manuscript text</button>
+          <p class="paper-agent-small"><a href="/eigenengine/cost-of-complexity/reading/the-cost-of-complexity.txt" target="_blank" rel="noopener">Read the plain-text manuscript ↗</a></p>
+        </details>
+      </section>
 
     <div class="er-results">
       <header class="er-intro">

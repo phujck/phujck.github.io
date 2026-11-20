@@ -3,52 +3,48 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,follow,noarchive"><meta name="theme-color" content="#101b26">
-  <meta name="description" content="Two messages to read The Cost of Complexity and its one-shot Kalmár follow-on with an agent. Record a forecast, then let the agent read both manuscripts.">
+  <meta name="description" content="A two-message physics reading of The Cost of Complexity. Start from the abstract, then read the complete manuscript.">
   <link rel="canonical" href="https://gmccaul.co.uk/eigenengine/cost-of-complexity/reading/">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./reader.css">
-  <link rel="stylesheet" href="../agent-reading.css"><script defer src="../agent-reading.js"></script><script defer src="/assets/js/eigenengine-reading-return.js"></script>
-  <title>Read both papers with an agent · EigenEngine</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/eigenengine/cost-of-complexity/reading/reader.css">
+  <link rel="stylesheet" href="/eigenengine/cost-of-complexity/agent-reading.css"><script defer src="/eigenengine/cost-of-complexity/agent-reading.js"></script><script defer src="/assets/js/eigenengine-reading-return.js"></script>
+  <title>Read The Cost of Complexity with an agent · EigenEngine</title>
 </head>
-<body>
-  <header class="bar"><nav class="shell" aria-label="Return to the research pages"><a class="home" href="/eigenengine.html">← Back to EigenEngine</a><span><a href="/eigenengine/cost-of-complexity/">Cost paper</a><a href="/eigenengine/kalmar-constant/">Kalmár draft</a></span></nav></header>
+<body><header class="bar"><nav class="shell" aria-label="Return to the research pages"><a class="home" href="/eigenengine.html">← Back to EigenEngine</a><span><a href="/eigenengine/cost-of-complexity/">Cost paper</a><a href="/eigenengine/kalmar-constant/">Kalmár draft</a></span></nav></header>
   <main class="shell quick-reading">
-    <header class="intro"><p class="by">The Cost of Complexity · Physical origins of the Kalmár constant</p><h1>Read both papers with an agent</h1>
-      <p>What does it cost to hold a distinction? What changes when a device must also remember which layout it chose? Ask a physics reading partner to explain the pair and show you one passage worth your time.</p></header>
+    <header class="intro"><h1>Read The Cost of Complexity with an agent</h1><p>What does it cost to hold a distinction once the machinery that gives you access to it belongs in the same physical account? Ask for a forecast, then for the explanation the proofs support.</p></header>
     <section class="paper-agent-entry" id="agent-reading" data-paired-review aria-labelledby="agent-reading-title">
-        <div class="paper-agent-intro"><h2 id="agent-reading-title">Send two messages in one chat</h2><p>Use a fresh chat. Send the abstracts alone, wait for the reply, then send the reading prompt. The agent reads both complete papers and returns its explanation in that chat.</p></div>
+        <div class="paper-agent-intro"><h2 id="agent-reading-title">Read the paper in two messages</h2><p>A model can approach a synthesis with a deflationary prior, expecting it to reduce to familiar work. A referee-style prompt can reinforce that expectation. The model may import an assumption from another field and criticise a claim the author never made. For a proposed foundation, the question is how much follows from how few physical assumptions. <a href="#why">Research on framing ↗</a></p></div>
         <div class="paper-agent-steps">
-          <div class="paper-agent-step"><strong>1 · Before the proofs</strong><span>Fresh chat. Send only the two abstracts and the question.</span>
-            <a class="paper-agent-open" href="./opening.txt" data-prompt-url="opening">Open first message</a><button type="button" data-copy-message="opening" hidden>Copy first prompt</button></div>
-          <div class="paper-agent-step"><strong>2 · After the reply</strong><span>Same chat. Enable browsing or attach the papers.</span>
-            <a class="paper-agent-open" href="./follow-up.txt" data-prompt-url="follow-up">Open follow-up</a><button type="button" data-copy-message="follow-up" hidden>Copy follow-up</button></div>
+          <div class="paper-agent-step"><strong>1 · Before the proofs</strong><span>Fresh chat. Send just this abstract and the question.</span>
+            <a class="paper-agent-open" href="./first-message.txt" data-prompt-url="opening">Read first prompt</a><button type="button" data-copy-message="opening" hidden>Copy first prompt</button>
+            <button type="button" class="paper-agent-read" data-read-opening aria-expanded="false" aria-controls="paired-opening-preview" hidden>Read first prompt</button></div>
+          <div class="paper-agent-step"><strong>2 · After the reply</strong><span>Same chat. Enable browsing or attach the paper.</span>
+            <a class="paper-agent-open" href="./second-message.txt" data-prompt-url="follow-up">Open follow-up</a><button type="button" data-copy-message="follow-up" hidden>Copy follow-up</button></div>
         </div>
         <p class="paper-agent-status" data-paired-status role="status"></p>
+        <section class="paper-agent-opening-preview" id="paired-opening-preview" data-opening-preview aria-labelledby="paired-opening-label" hidden>
+          <label id="paired-opening-label" for="paired-opening-text">First prompt and abstract</label>
+          <textarea id="paired-opening-text" data-opening-preview-text readonly></textarea>
+        </section>
         <textarea data-paired-selection hidden readonly aria-label="Selected message to copy manually"></textarea>
-        <div class="paper-agent-links"><a href="#why">Why two messages?</a><a href="./papers.zip" download>Download both papers (ZIP) ↓</a></div>
-        <details class="paper-agent-access"><summary>Other ways to give it the papers</summary>
-          <p>With web access, the follow-up contains both manuscript links. If your agent accepts uploads, attach the ZIP or the <a href="/eigenengine/guide/the-cost-of-complexity.pdf" target="_blank" rel="noopener">21-page paper</a> and <a href="/eigenengine/guide/physical-origins-of-the-kalmar-constant.pdf" target="_blank" rel="noopener">8-page draft</a> to message 2. For a text-only chat with room for both papers, copy the follow-up and manuscripts together.</p>
-          <a class="paper-agent-open" href="./follow-up-with-papers.txt" data-prompt-url="with-papers">Open follow-up with manuscript text</a><button type="button" data-copy-message="with-papers" hidden>Copy follow-up with manuscript text</button>
-          <p class="paper-agent-small">Plain text editions: <a href="./the-cost-of-complexity.txt" target="_blank" rel="noopener">The Cost of Complexity</a> · <a href="./physical-origins-of-the-kalmar-constant.txt" target="_blank" rel="noopener">Physical origins of the Kalmár constant</a>.</p>
+        <div class="paper-agent-links"><a href="./paper.zip" download>Download this paper and prompts (ZIP) ↓</a></div>
+        <details class="paper-agent-access"><summary>Other ways to give it the paper</summary>
+          <p>The follow-up links to the complete manuscript. If your agent accepts files, attach the ZIP or the <a href="/eigenengine/guide/the-cost-of-complexity.pdf" target="_blank" rel="noopener">original PDF</a> to message 2. For a text-only chat, copy the second message with the manuscript included.</p>
+          <a class="paper-agent-open" href="./second-message-with-paper.txt" data-prompt-url="with-papers">Open follow-up with manuscript text</a><button type="button" data-copy-message="with-papers" hidden>Copy follow-up with manuscript text</button>
+          <p class="paper-agent-small"><a href="./the-cost-of-complexity.txt" target="_blank" rel="noopener">Read the plain-text manuscript ↗</a></p>
         </details>
       </section>
-    <section class="quick-why" id="why" aria-labelledby="why-title"><h2 id="why-title">Why separate expectation from evidence?</h2>
-      <p>Recognising the logarithm in the first paper is easy. Deciding what the construction adds requires asking which assumptions produce it, what the organiser costs, and what changes in the follow-on. In our reading trials, an agent checked the proofs and still allowed a remark about language to steer its final assessment.</p>
-      <p>The first reply leaves a visible forecast before the model sees the proofs. The second message asks it to read every section and appendix, revisit each consequential objection, and say which result would change if the disputed statement were removed. The same question applies to a favourable first impression. The final explanation is for a colleague deciding whether to read the papers.</p>
-      <details class="study-notes"><summary>Research behind this design</summary>
+    <section class="quick-why" id="why" aria-labelledby="why-title"><h2 id="why-title">Why ask for a forecast first?</h2><p>A foundational paper is a claim about the economy of an explanation. A result may be familiar in thermodynamics or information theory and still play a different role when it follows from a physical account of the apparatus. A reader who substitutes the familiar derivation can overlook a consequence or attack a premise used by only one theorem. The first prompt records what the reader expects to need. The second asks it to trace each consequence back to what the proof uses and judge an objection by what would change if it held.</p>
+      <details class="study-notes"><summary>Research on framing and evidence</summary>
         <ul>
-          <li>In a study of research ideas, changing the prompt to mention other reviewers’ novelty judgements changed some models’ decisions on the very same idea pairs. The effect varied across judges. <a href="https://arxiv.org/abs/2610.02022" target="_blank" rel="noopener">Sternlicht et al., <cite>Old Ideas, Novel Problems</cite> ↗</a></li>
-          <li>Changing only the title style moved review scores for identical generated abstracts. In a separate experiment, signalling that a user liked or disliked a piece of writing shifted the tone of assistants’ feedback. The opening question therefore invites either a surprising or an expected result. <a href="https://aclanthology.org/2025.eval4nlp-1.10/" target="_blank" rel="noopener">Du, <cite>TitleTrap</cite> ↗</a> · <a href="https://openreview.net/forum?id=tvhaxkMKAn" target="_blank" rel="noopener">Sharma et al., <cite>Towards Understanding Sycophancy in Language Models</cite> ↗</a></li>
-          <li>Four models gave substantially different editorial recommendations on 200 already-published articles and differed in their ability to detect deliberately planted flaws. That motivates asking what an objection actually invalidates. <a href="https://arxiv.org/abs/2610.31414" target="_blank" rel="noopener">Le Guellec et al., <cite>Major Revision, Minor Accountability</cite> ↗</a></li>
-          <li>A related video study compared model responses across clips when relevant evidence was preserved, altered or removed. It offers an analogy for checking what a judgement depends on. The experiments measured video reasoning. <a href="https://arxiv.org/abs/2610.03141" target="_blank" rel="noopener">Kang et al., <cite>Behavior Pack Optimization for Video MLLM Post-Training</cite> ↗</a></li>
-        </ul><p>These findings motivate the design. A before-and-after reply lets you inspect the model’s update. Its second answer still sees the first, and this exercise cannot establish that a judgement is unbiased.</p>
-      </details>
+          <li>With the research ideas held fixed, changing the information a judge received about other reviewers’ novelty assessments could change its verdict. Crucially, the same cue helped some judges and hurt others. <a href="https://arxiv.org/abs/2610.02022" target="_blank" rel="noopener">Sternlicht et al., <cite>Old Ideas, Novel Problems</cite> ↗</a></li>
+          <li>Changing only a title’s style shifted scores for otherwise identical generated abstracts. In another experiment, telling an assistant that a user liked or disliked a piece of writing shifted the tone of its feedback. <a href="https://aclanthology.org/2025.eval4nlp-1.10/" target="_blank" rel="noopener">Du, <cite>TitleTrap</cite> ↗</a> · <a href="https://openreview.net/forum?id=tvhaxkMKAn" target="_blank" rel="noopener">Sharma et al., <cite>Towards Understanding Sycophancy in Language Models</cite> ↗</a></li>
+          <li>Four models differed substantially in their recommendations on 200 already-published articles and in their detection of deliberately planted flaws. That gives a reader a reason to ask which particular inference a criticism invalidates. <a href="https://arxiv.org/abs/2610.31414" target="_blank" rel="noopener">Le Guellec et al., <cite>Major Revision, Minor Accountability</cite> ↗</a></li>
+          <li>A video study compared responses across clips when relevant evidence was preserved, altered or removed. It offers a methodological analogy for checking what a judgement depends on. Its experiments measured video reasoning. <a href="https://arxiv.org/abs/2610.03141" target="_blank" rel="noopener">Kang et al., <cite>Behavior Pack Optimization for Video MLLM Post-Training</cite> ↗</a></li>
+        </ul><p>These studies motivate the separation. Keeping the first reply lets you inspect how this reader updated its view. The exercise cannot certify that the result is unbiased.</p></details>
     </section>
-    <section class="quick-papers"><h2>Read the sources</h2>
-      <div><a href="./cost/">The Cost of Complexity</a><span>21 pages · 6 sections · 10 appendices</span></div>
-      <div><a href="./kalmar/">Physical origins of the Kalmár constant</a><span>8 pages · 8 sections · 6 appendices</span></div>
-      <p>The Kalmár draft was a one-shot follow-on. At McCaul’s prompting, Claude derived the results of Sections III–VI. McCaul proposed the reflective hierarchy in Section VII, which Claude formalised. The draft credits the checks, figures and manuscript to that same conversation. <a href="./kalmar/acknowledgments.html">Acknowledgments ↗</a></p>
-    </section>
-    <p class="quick-notebook" id="notebook">For a formal review with saved section notes and a separate reader for objections, <a href="./notebook.html">open the optional reading notebook</a>.</p>
-    <footer><a href="/eigenengine/cost-of-complexity/">← The Cost of Complexity</a><a href="/eigenengine/kalmar-constant/">The Kalmár follow-on ↗</a></footer>
-  </main>
-</body></html>
+    <section class="quick-papers"><h2>The manuscript</h2><div><a href="./cost/">The Cost of Complexity</a><span>21 pages · 6 sections · 10 appendices</span></div><div><a href="/eigenengine/guide/the-cost-of-complexity.pdf">Original PDF ↗</a><a href="./paper.zip" download>Download manuscript and prompts ↓</a></div></section>
+    <section class="quick-papers"><h2>If you want the follow-on</h2><p>In a separate draft, the device must also hold the choice of its own layout. That changes the physical question. <a href="/eigenengine/kalmar-constant/">Read the Kalmár draft on its own ↗</a></p></section>
+    <p class="quick-notebook" id="notebook">For a formal reading of the pair with saved section notes and a separate reader for objections, <a href="/eigenengine/cost-of-complexity/reading/notebook.html">open the optional notebook</a>.</p>
+    <footer><a href="/eigenengine/cost-of-complexity/">← The Cost of Complexity</a><a href="/eigenengine/kalmar-constant/">Kalmár follow-on ↗</a></footer>
+  </main></body></html>

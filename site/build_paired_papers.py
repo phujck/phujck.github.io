@@ -1,4 +1,4 @@
-"""Build the two-manuscript attachment from the published reading corpus and follow-up.
+"""Build the separate manuscript readings and the existing paired-reading attachment.
 
 Run with Python 3, or pass --check to verify the existing transcripts and ZIP without rewriting them.
 """
@@ -14,7 +14,10 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 SITE = Path(__file__).resolve().parents[1]
 READING = SITE / "eigenengine/cost-of-complexity/reading"
 PACKET = READING / "papers.zip"
-PAPER_IDS = ("cost", "kalmar")
+FRONT_DOORS = {
+    "cost": READING,
+    "kalmar": SITE / "eigenengine/kalmar-constant/reading",
+}
 
 README = """Paired reading of The Cost of Complexity and Physical origins of the Kalmár constant
 
@@ -86,21 +89,15 @@ def manuscript_files(paper):
     return members
 
 
-def public_outputs():
-    papers = json.loads((READING / "corpus.json").read_bytes())["papers"]
-    if tuple(p["id"] for p in papers) != PAPER_IDS:
-        raise ValueError("Expected the Cost manuscript followed by the Kalmár draft")
+def prompt(path):
+    data = path.read_bytes()
+    if not data.decode("utf-8").strip():
+        raise ValueError(f"Empty reading instructions in {path.name}")
+    return data
 
-    follow_up = (READING / "follow-up.txt").read_bytes()
-    if not follow_up.decode("utf-8").strip():
-        raise ValueError("The follow-up prompt is empty")
-    members = {"README.txt": README.encode("utf-8"), "follow-up.txt": follow_up}
-    outputs = {}
-    for paper in papers:
-        files = manuscript_files(paper)
-        text_name = Path(paper["pdf"]).with_suffix(".txt").name
-        outputs[READING / text_name] = files[text_name]
-        members.update(files)
+
+def zip_bytes(files):
+    members = dict(files)
     members["SHA256SUMS.txt"] = "".join(
         f"{sha256(data)}  {name}\n" for name, data in sorted(members.items())
     ).encode("utf-8")
@@ -112,6 +109,99 @@ def public_outputs():
             info.create_system = 3
             info.external_attr = 0o100644 << 16
             archive.writestr(info, data, compress_type=ZIP_DEFLATED, compresslevel=9)
+    return buffer.getvalue()
+
+
+def kalmar_transcript(paper, files):
+    """Keep the independently addressable full manuscript in step with its checked source."""
+    door = FRONT_DOORS["kalmar"]
+    outputs = {}
+    # The source transcript is generated from the checked page packets.
+    # Only navigation and the locations of the three images change here.
+    html = (READING / "kalmar/index.html").read_text(encoding="utf-8")
+    back = '<a href="../">Return to the reading session</a>'
+    if html.count(back) != 1:
+        raise ValueError("Cannot identify the manuscript's original return link")
+    html = html.replace(back, '<a href="./">Return to the Kalmár reading</a>')
+    for section in paper["sections"]:
+        for figure in section["figures"]:
+            image = Path(figure["image"])
+            src = f'src="{figure["image"]}"'
+            if html.count(src) != 1:
+                raise ValueError(f"Cannot identify the manuscript image {image.name}")
+            alias = f"kalmar/{image.name}"
+            html = html.replace(src, f'src="{alias}"')
+            outputs[door / alias] = files[alias]
+    outputs[door / "manuscript.html"] = html.encode("utf-8")
+    return outputs
+
+
+def single_reading(paper, files):
+    door = FRONT_DOORS[paper["id"]]
+    first_instructions = prompt(door / "first-message-instructions.txt")
+    second = prompt(door / "second-message.txt")
+    title = paper["title"]
+    first = (
+        first_instructions.rstrip(b"\r\n")
+        + b"\n\n"
+        + (title + "\n" + paper["abstract"] + "\n").encode("utf-8")
+    )
+    if paper["id"] == "cost" and re.search(
+        r"kalm[aá]r", (first + second).decode("utf-8"), re.IGNORECASE
+    ):
+        raise ValueError("The Cost reading prompt includes the other paper")
+    text_name = Path(paper["pdf"]).with_suffix(".txt").name
+    full_text = files[text_name]
+    path = door.relative_to(SITE).as_posix()
+    readme = f"""{title}
+
+1. In a fresh conversation, send first-message.txt by itself and keep the reply.
+2. Then send second-message.txt in the same conversation. You can attach paper.zip
+   with that second message. The reading page also offers the original PDF, a
+   browser transcript and the follow-up with the complete paper as plain text.
+
+The PDF preserves the original typesetting for reading or printing. The UTF-8
+transcript includes the equations, captions, references and end matter. The
+caption of each figure gives its image path and published page.
+
+Reading page: https://gmccaul.co.uk/{path}/
+SHA256SUMS.txt lists the digest of every other file in this archive.
+"""
+    packet = zip_bytes(
+        {
+            **files,
+            "README.txt": readme.encode("utf-8"),
+            "first-message.txt": first,
+            "second-message.txt": second,
+        }
+    )
+    outputs = {
+        door / "first-message.txt": first,
+        door / "second-message-with-paper.txt": second.rstrip(b"\r\n")
+        + b"\n\n"
+        + full_text,
+        door / "paper.zip": packet,
+        door / text_name: full_text,
+    }
+    if paper["id"] == "kalmar":
+        outputs.update(kalmar_transcript(paper, files))
+    return outputs
+
+
+def public_outputs():
+    papers = json.loads((READING / "corpus.json").read_bytes())["papers"]
+    if tuple(p["id"] for p in papers) != tuple(FRONT_DOORS):
+        raise ValueError("Expected the Cost manuscript followed by the Kalmár draft")
+
+    follow_up = prompt(READING / "follow-up.txt")
+    members = {"README.txt": README.encode("utf-8"), "follow-up.txt": follow_up}
+    outputs = {}
+    for paper in papers:
+        files = manuscript_files(paper)
+        text_name = Path(paper["pdf"]).with_suffix(".txt").name
+        outputs[READING / text_name] = files[text_name]
+        outputs.update(single_reading(paper, files))
+        members.update(files)
     # Text-only chats can receive this as their single second message.
     # Keep the same instruction visible after a long attachment has been read.
     separator = b"\n\n"
@@ -123,7 +213,7 @@ def public_outputs():
         b"End of manuscripts. Now give me the reading-partner explanation requested above, comparing what you found with your first reply.",
     ]
     outputs[READING / "follow-up-with-papers.txt"] = separator.join(contents) + b"\n"
-    outputs[PACKET] = buffer.getvalue()
+    outputs[PACKET] = zip_bytes(members)
     return outputs
 
 
@@ -138,9 +228,13 @@ def main():
         if not path.exists() or path.read_bytes() != data:
             if args.check:
                 parser.exit(1, f"{path.name} differs from its published source\n")
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
-    data = outputs[PACKET]
-    print(f"{PACKET.name}: {len(data):,} bytes, SHA-256 {sha256(data)}")
+    for path, data in outputs.items():
+        if path.suffix == ".zip":
+            print(
+                f"{path.relative_to(SITE)}: {len(data):,} bytes, SHA-256 {sha256(data)}"
+            )
 
 
 if __name__ == "__main__":

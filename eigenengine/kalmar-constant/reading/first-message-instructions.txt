@@ -1,0 +1,5 @@
+Be my physics reading partner. I want to decide whether this draft is worth an afternoon. For this first reply use only its abstract below. Leave browsing off and wait for my second message before opening the draft. Disclose any prior familiarity.
+
+If a device has to distinguish its possible layouts as well as its contents, what would you expect can be inferred from that requirement alone? Which claims in the abstract would you expect to share a derivation? Which might require an additional definition of a layout, a physical price or a rule for what the device must remember? What would a familiar result from counting or communication theory already supply?
+
+Leave me a short, numbered forecast. Distinguish what the abstract announces from what you predict its proofs will require. Name a result that would change your expectations, or explain why none would. Stop after your forecast.

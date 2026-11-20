@@ -36,20 +36,25 @@
       <p class="km-by">Gerard McCaul · EigenEngine</p>
       <p class="km-origin">At Gerard McCaul’s prompting, Eigen generated this unreviewed follow-on in one conversation with Claude, including the derivations, checks and figures. McCaul proposed the hierarchy in Section VII and Claude formalised it. <a href="/eigenengine/cost-of-complexity/reading/kalmar/acknowledgments.html">Draft credits ↗</a></p>
       <section class="paper-agent-entry" id="agent-reading" data-paired-review aria-labelledby="agent-reading-title">
-        <div class="paper-agent-intro"><h2 id="agent-reading-title">Have your agent explain both papers</h2><p>In our trial, an agent checked the proofs yet gave a passing remark too much weight. These prompts record its expectations first, then ask which conclusions an objection would actually change. <a href="https://arxiv.org/abs/2610.02022" target="_blank" rel="noopener">Research on how framing shifts novelty judgements ↗</a></p></div>
+        <div class="paper-agent-intro"><h2 id="agent-reading-title">Have your agent explain this draft</h2><p>A model can recognise a classical number-theory result and assume the physical question is already settled. That can lead it to criticise a different device or a different cost. Follow the choice this draft actually prices, then ask which consequences come from the shared assumptions and which require a new one. <a href="/eigenengine/kalmar-constant/reading/#why">Research on framing ↗</a></p></div>
         <div class="paper-agent-steps">
-          <div class="paper-agent-step"><strong>1 · Before the proofs</strong><span>Fresh chat. Send only the two abstracts and the question.</span>
-            <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/opening.txt" data-prompt-url="opening">Open first message</a><button type="button" data-copy-message="opening" hidden>Copy first prompt</button></div>
-          <div class="paper-agent-step"><strong>2 · After the reply</strong><span>Same chat. Enable browsing or attach the papers.</span>
-            <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/follow-up.txt" data-prompt-url="follow-up">Open follow-up</a><button type="button" data-copy-message="follow-up" hidden>Copy follow-up</button></div>
+          <div class="paper-agent-step"><strong>1 · Before the proofs</strong><span>Fresh chat. Send just this abstract and the question.</span>
+            <a class="paper-agent-open" href="/eigenengine/kalmar-constant/reading/first-message.txt" data-prompt-url="opening">Read first prompt</a><button type="button" data-copy-message="opening" hidden>Copy first prompt</button>
+            <button type="button" class="paper-agent-read" data-read-opening aria-expanded="false" aria-controls="paired-opening-preview" hidden>Read first prompt</button></div>
+          <div class="paper-agent-step"><strong>2 · After the reply</strong><span>Same chat. Enable browsing or attach the paper.</span>
+            <a class="paper-agent-open" href="/eigenengine/kalmar-constant/reading/second-message.txt" data-prompt-url="follow-up">Open follow-up</a><button type="button" data-copy-message="follow-up" hidden>Copy follow-up</button></div>
         </div>
         <p class="paper-agent-status" data-paired-status role="status"></p>
+        <section class="paper-agent-opening-preview" id="paired-opening-preview" data-opening-preview aria-labelledby="paired-opening-label" hidden>
+          <label id="paired-opening-label" for="paired-opening-text">First prompt and abstract</label>
+          <textarea id="paired-opening-text" data-opening-preview-text readonly></textarea>
+        </section>
         <textarea data-paired-selection hidden readonly aria-label="Selected message to copy manually"></textarea>
-        <div class="paper-agent-links"><a href="/eigenengine/cost-of-complexity/reading/#why">Why two messages?</a><a href="/eigenengine/cost-of-complexity/reading/papers.zip" download>Download both papers (ZIP) ↓</a></div>
-        <details class="paper-agent-access"><summary>Other ways to give it the papers</summary>
-          <p>With web access, the follow-up contains both manuscript links. If your agent accepts uploads, attach the ZIP or the <a href="/eigenengine/guide/the-cost-of-complexity.pdf" target="_blank" rel="noopener">21-page paper</a> and <a href="/eigenengine/guide/physical-origins-of-the-kalmar-constant.pdf" target="_blank" rel="noopener">8-page draft</a> to message 2. For a text-only chat with room for both papers, copy the follow-up and manuscripts together.</p>
-          <a class="paper-agent-open" href="/eigenengine/cost-of-complexity/reading/follow-up-with-papers.txt" data-prompt-url="with-papers">Open follow-up with manuscript text</a><button type="button" data-copy-message="with-papers" hidden>Copy follow-up with manuscript text</button>
-          <p class="paper-agent-small">Plain text editions: <a href="/eigenengine/cost-of-complexity/reading/the-cost-of-complexity.txt" target="_blank" rel="noopener">The Cost of Complexity</a> · <a href="/eigenengine/cost-of-complexity/reading/physical-origins-of-the-kalmar-constant.txt" target="_blank" rel="noopener">Physical origins of the Kalmár constant</a>.</p>
+        <div class="paper-agent-links"><a href="/eigenengine/kalmar-constant/reading/paper.zip" download>Download this paper and prompts (ZIP) ↓</a></div>
+        <details class="paper-agent-access"><summary>Other ways to give it the paper</summary>
+          <p>The follow-up links to the complete manuscript. If your agent accepts files, attach the ZIP or the <a href="/eigenengine/guide/physical-origins-of-the-kalmar-constant.pdf" target="_blank" rel="noopener">original PDF</a> to message 2. For a text-only chat, copy the second message with the manuscript included.</p>
+          <a class="paper-agent-open" href="/eigenengine/kalmar-constant/reading/second-message-with-paper.txt" data-prompt-url="with-papers">Open follow-up with manuscript text</a><button type="button" data-copy-message="with-papers" hidden>Copy follow-up with manuscript text</button>
+          <p class="paper-agent-small"><a href="/eigenengine/kalmar-constant/reading/physical-origins-of-the-kalmar-constant.txt" target="_blank" rel="noopener">Read the plain-text manuscript ↗</a></p>
         </details>
       </section>
       <div class="km-hero-bottom">
