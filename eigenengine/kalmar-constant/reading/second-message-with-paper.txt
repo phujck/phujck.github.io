@@ -6,6 +6,8 @@ Reread any passage on which your judgement turns. How relevant is each objection
 
 Explain the draft to me as a colleague deciding whether to read it. Open with the physical question, the assumptions doing the work and the distinct consequences that result. Give me one example I can work through, relate it to what you predicted, and distinguish the draft’s results from interpretations of your own. Keep the explanation concise. If a local remark can be deleted with no change to the central answer, leave it in your notes. Give a qualification space when it changes the conclusions a reader can use. Would you give it an afternoon, and which passage should I start with?
 
+If you raised objections, close by asking me, “Would you like me to check each objection against the paper as written and show which conclusions, if any, it changes?”
+
 Physical origins of the Kalmár constant
 Gerard McCaul · EigenEngine
 Draft of 19 November 2026

@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#0a0e1a">
-  <meta name="description" content="What does a physical memory pay to make a symbol accessible? Gerard McCaul traces how the organisation of the same distinctions changes their cost, and when the most efficient budget grows logarithmically.">
+  <meta name="description" content="A physical theory of representation. What constrains the cost of arranging the same distinctions when the apparatus that organises them must itself be represented?">
   <meta property="og:type" content="article">
   <meta property="og:title" content="The Cost of Complexity · EigenEngine">
-  <meta property="og:description" content="The same symbols can have different physical costs. Explore how organising a memory changes what it takes to reach them.">
+  <meta property="og:description" content="The same distinctions can be prohibitively expensive in one organisation and accessible in another. What constrains that freedom?">
   <meta property="og:url" content="https://gmccaul.co.uk/eigenengine/cost-of-complexity/">
   <meta property="og:image" content="https://gmccaul.co.uk/demo/writing/media/published-figure.webp">
   <title>The Cost of Complexity · EigenEngine</title>
@@ -54,7 +54,7 @@
       <h1>The Cost of Complexity</h1>
       <p class="er-paper-subtitle">A Physical Theory of Representation</p>
       <p class="er-paper-byline">Gerard McCaul · EigenEngine · 21 pages</p>
-      <p class="er-paper-summary">A physical memory has to distinguish its symbols and provide a way to reach each one. How much of the cost comes from the distinctions we need, and how much can we change by organising the memory differently?</p>
+      <p class="er-paper-summary">There is no Platonic register upon which dynamics can act. The symbols of a representation must be realised in matter, and so must the apparatus by which we select them. Yet the same distinctions can be prohibitively expensive in one organisation and accessible in another. What constrains that freedom?</p>
       <div class="er-paper-actions">
         <a class="er-paper-return" data-material-viewer="/demo/view/?asset=cost-paper" href="/assets/docs/the-cost-of-complexity.pdf" target="_blank" rel="noopener">Read the paper <span class="er-paper-format">PDF</span></a>
         <a class="ee-text-link" href="#try-refinement">Try the refinement</a>
@@ -62,12 +62,13 @@
     </header>
 
     <section class="er-paper-purpose" id="purpose" aria-labelledby="er-purpose-title">
-      <h2 id="er-purpose-title">Why the arrangement matters</h2>
-      <p class="er-purpose-example">Imagine a memory with sixteen values. Put them in two banks of eight and value 11 is the third entry in the second bank. Use eight banks of two and it becomes the first entry in the sixth bank. The value stays the same. Making the choice inside each bank smaller has made the choice of bank larger. Both choices need physical apparatus.</p>
+      <h2 id="er-purpose-title">Where is the complexity placed?</h2>
+      <p class="er-purpose-example">Suppose we give every symbol a register of its own. The choice within each register is now trivial. What have we gained? We still have to choose the register, and there are precisely as many registers as there were symbols. The original problem has reappeared one level up. Figure 2 lets us move the boundary between these two choices while keeping all sixteen distinctions exactly the same.</p>
       <figure class="er-purpose-figure"><a data-source-region="cost-fig-2bc" href="/assets/docs/the-cost-of-complexity.pdf#page=5" target="_blank" rel="noopener"><img src="./reading/cost/figure-2.webp" width="1083" height="571" alt="Two organisations of the same sixteen symbols. Orange highlights symbol 11 and its bank in each layout."><span>Inspect the two addresses in Figure 2 ↗</span></a></figure>
       <div class="er-purpose-copy">
-        <p>The paper asks how little that apparatus can cost. If digit registers can be combined at the sum of their individual costs, one more binary digit doubles the range. If the best average cost per bit stays above zero as memories get larger, the least budget grows in proportion to the length of an address. That is logarithmic growth in the number of values. A code can approach the same rate even after paying for the mark that tells it where an address ends.</p>
-        <p>A design that spends one element per value grows linearly. Reorganising its components as digits can change that growth law. The paper then asks what more is needed to connect cost to use. With a fixed mean logarithmic cost, maximum entropy gives a Zipf family of symbol frequencies. For a specified reset, ranking the states actually erased gives a lower bound on heat. Those further conclusions have different assumptions, which the physical account makes explicit.</p>
+        <p>A register holds distinctions at one level and is itself selected by a distinction at the next. Suppose a device needs one element for every symbol. Put those elements to work as digits and their ranges multiply. If the registers can be combined at the sum of their complete costs, the most efficient designs have a well-defined limiting price per nat of capacity. When that price is positive, the minimum budget grows logarithmically with the number of distinctions. We can approach the same rate with words of different lengths, even when we count the symbol that tells us where each word ends.</p>
+        <p>We have reached the logarithm before assigning a probability to anything. Probability enters when we ask how the register is used. At fixed mean logarithmic rank cost, maximum entropy gives the Zipf family. For a thermal reset, what matters is the uncertainty over the states that actually reach it. A register known to hold a particular value has no logical uncertainty to erase, however large the number written there.</p>
+        <p>Where does this leave learning? A learner must preserve the distinctions that matter for its target. When it turns that question on its own architecture, its evaluator, its memory and the records it keeps of failed attempts all belong in the same physical account. To price the passage from one such organisation to another we will need the dynamics.</p>
       </div>
     </section>
 

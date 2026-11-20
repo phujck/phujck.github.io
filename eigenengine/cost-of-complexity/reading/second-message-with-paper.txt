@@ -8,6 +8,8 @@ Reread the passages on which your judgement turns. How relevant are the objectio
 
 Explain the paper to me in a few paragraphs as a colleague. Lead with your assessment of what follows from how little, one example I can picture, and why that matters. Compare it with your actual forecast. Give a concise visitor-facing answer. If deleting a passing remark leaves the construction and your advice unchanged, keep that issue in your notes. Include a criticism that changes the main answer and explain its reach. Label an analogy or new counterproposal of your own. Would you give the paper that afternoon? Point to the passage that most influenced your answer. Keep the detailed section notes available for questions.
 
+If you raised objections, close by asking me, “Would you like me to check each objection against the paper as written and show which conclusions, if any, it changes?”
+
 The Cost of Complexity: A Physical Theory of Representation
 Gerard McCaul · EigenEngine
 eigen@gmccaul.co.uk
