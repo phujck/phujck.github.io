@@ -1,52 +1,71 @@
-/* The shell every EigenEngine page shares (see eigen-shell.js): the header bar and the pop-out map.
+/* The shell every EigenEngine page shares (see eigen-shell.js): one type scale for the node pages, the header bar and
+   the pop-out map. Everything here is sized from --egs-fs, which depends on the window alone, so the bar and the map
+   are the same size and in the same place on every page whatever that page does with its own type.
    Colours and faces from eigen-tokens.css only. */
+:root { --egs-fs: clamp(13px, calc(8.2px + .41vw), 19px); --egs-bar-h: calc(var(--egs-fs) * 3.7); --egs-gutter: calc(var(--egs-fs) * 2); }
+
+/* ---- one type scale for every node's own page: 16 px at 1440, 22 px at 2560 ---- */
+html.egs-node { font-size: clamp(16px, calc(.55vw + 8px), 23px) !important; }
+html.egs-node body { font-size: 1rem; }
+@media (max-width: 760px) { html.egs-node { font-size: 16px !important; } }
 
 /* ---- the header bar of a node's own page ---- */
-.egs-bar { display: flex !important; flex-wrap: wrap; align-items: center; justify-content: flex-start !important; gap: 6px 16px; }
-.egs-crumbs { font: 400 .86rem/1.3 var(--eg-label); color: var(--eg-faint); min-width: 0; }
-.egs-crumbs a { color: var(--eg-blue); text-decoration: none; } .egs-crumbs a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.egs-bar { display: flex !important; flex-wrap: wrap; align-items: center !important; justify-content: flex-start !important; gap: .35em 1.2em !important; box-sizing: border-box !important;
+  width: auto !important; max-width: none !important; min-height: var(--egs-bar-h) !important; height: auto !important; padding: .55em var(--egs-gutter) !important;
+  border: 0 !important; border-bottom: 1px solid var(--eg-line) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important;
+  font: 400 var(--egs-fs)/1.3 var(--eg-label) !important; color: var(--eg-faint); position: relative; z-index: 5; }
+.egs-crumbs { font: 400 1em/1.3 var(--eg-label) !important; color: var(--eg-faint) !important; min-width: 0; margin: 0 !important; padding: 0 !important; }
+.egs-crumbs a { color: var(--eg-blue) !important; text-decoration: none !important; font: inherit !important; } .egs-crumbs a:hover { text-decoration: underline !important; text-underline-offset: 3px; }
 .egs-crumbs i { font-style: normal; margin: 0 .3em; } .egs-crumbs b { font-weight: 500; color: var(--eg-ink); }
-.egs-kick { margin: 0 !important; font: 500 .74rem/1.3 var(--eg-label) !important; letter-spacing: .06em; text-transform: uppercase; color: var(--eg-gold); }
+.egs-kick { margin: 0 !important; padding: 0 !important; font: 500 .82em/1.3 var(--eg-label) !important; letter-spacing: .06em; text-transform: uppercase; color: var(--eg-gold) !important; }
 .egs-kick span { margin-left: .8em; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--eg-faint); }
-.egs-tools { margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px 14px; }
-.egs-tools > button:not(.egs-pill) { font: 400 .78rem/1.2 var(--eg-label); color: var(--eg-faint); background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-.egs-tools > button:not(.egs-pill):hover { color: var(--eg-ink); }
+.egs-tools { margin: 0 0 0 auto !important; padding: 0 !important; display: inline-flex !important; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .35em 1.1em !important; font-size: 1em !important; }
+.egs-tools > button:not(.egs-pill) { font: 400 .9em/1.2 var(--eg-label) !important; color: var(--eg-faint) !important; background: none !important; border: 0 !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important;
+  min-width: 0 !important; text-decoration: underline !important; text-underline-offset: 3px; cursor: pointer; }
+.egs-tools > button:not(.egs-pill):hover { color: var(--eg-ink) !important; }
+.egs-tools .eg-level { font: 500 .9em/1.2 var(--eg-label) !important; margin: 0 !important; gap: .6em; }
+.egs-tools .eg-level button { font: inherit !important; padding: .28em .8em !important; }
 
-/* ---- the map's button ---- */
-.egs-pill { display: inline-flex; align-items: center; gap: 7px; font: 500 .8rem/1 var(--eg-label); color: var(--eg-muted); background: color-mix(in srgb, var(--eg-surface) 92%, transparent);
-  border: 1px solid var(--eg-line); border-radius: 999px; padding: 6px 12px 6px 10px; cursor: pointer; transition: color .2s, border-color .2s; }
-.egs-pill svg { width: 18px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.3; }
-.egs-pill:hover, .egs-pill.on { color: var(--eg-ink); border-color: var(--eg-gold); }
+/* ---- the map's button: the top right corner of the window on every page ---- */
+.egs-pill { display: inline-flex !important; align-items: center; gap: .5em; box-sizing: border-box; height: 2.2em; margin: 0 !important; font: 500 calc(var(--egs-fs) * .92)/1 var(--eg-label) !important; color: var(--eg-muted) !important;
+  background: color-mix(in srgb, var(--eg-surface) 92%, transparent) !important; border: 1px solid var(--eg-line) !important; border-radius: 999px !important; padding: 0 .9em 0 .75em !important;
+  text-decoration: none !important; cursor: pointer; transition: color .2s, border-color .2s; }
+.egs-pill svg { width: 1.3em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.3; }
+.egs-pill:hover, .egs-pill.on { color: var(--eg-ink) !important; border-color: var(--eg-gold) !important; }
 .egs-pill:focus-visible, .egs-map-x:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
-.egs-pill:not(.egs-pill-in) { position: fixed; right: 14px; bottom: 14px; z-index: 60; box-shadow: 0 6px 22px rgba(0, 0, 0, .45); }
+.egs-pill:not(.egs-pill-in) { position: fixed; top: calc((var(--egs-bar-h) - var(--egs-fs) * 2.02) / 2); right: var(--egs-gutter); z-index: 1200; box-shadow: 0 4px 18px rgba(0, 0, 0, .4); }
 
-/* ---- the map itself ---- */
-.egs-map { position: fixed; right: 14px; bottom: 54px; z-index: 61; width: min(440px, calc(100vw - 28px)); box-sizing: border-box; padding: 10px 12px 10px;
-  background: color-mix(in srgb, var(--eg-surface) 96%, transparent); border: 1px solid var(--eg-line); border-radius: var(--eg-radius-s); box-shadow: 0 18px 50px rgba(0, 0, 0, .55);
-  font-family: var(--eg-label); color: var(--eg-ink); animation: egs-in .28s cubic-bezier(.3, .1, .2, 1) both; transform-origin: 100% 100%; }
+/* ---- the map itself: always beneath its button ---- */
+.egs-map { position: fixed; top: calc(var(--egs-bar-h) + 6px); right: var(--egs-gutter); z-index: 1201; width: min(31em, calc(100vw - 28px)); box-sizing: border-box; margin: 0; padding: .75em .9em .8em;
+  background: color-mix(in srgb, var(--eg-surface) 97%, transparent); border: 1px solid var(--eg-line); border-radius: var(--eg-radius-s); box-shadow: 0 18px 50px rgba(0, 0, 0, .55);
+  font: 400 var(--egs-fs)/1.3 var(--eg-label); color: var(--eg-ink); text-align: left; letter-spacing: 0; text-transform: none; animation: egs-in .28s cubic-bezier(.3, .1, .2, 1) both; transform-origin: 100% 0; }
 .egs-map[hidden] { display: none; }
-.egs-map.egs-map-top { top: 52px; bottom: auto; transform-origin: 100% 0; }
 @keyframes egs-in { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
-.egs-map-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
-.egs-map-head b { font: 500 .74rem/1 var(--eg-label); letter-spacing: .08em; text-transform: uppercase; color: var(--eg-gold); }
-.egs-map-where { font: 400 .84rem/1.2 var(--eg-label); color: var(--eg-muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.egs-map-x { font: 400 1.1rem/1 var(--eg-label); color: var(--eg-muted); background: none; border: 0; padding: 0 2px; cursor: pointer; } .egs-map-x:hover { color: var(--eg-ink); }
-.egs-map-svg svg { display: block; width: 100%; height: auto; }
-.egs-map-route { margin: 6px 0 0; font: 400 .76rem/1.4 var(--eg-label); color: var(--eg-faint); }
-.egs-map-route a { color: var(--eg-blue); text-decoration: none; } .egs-map-route a:hover { text-decoration: underline; }
+.egs-map-head { display: flex; align-items: baseline; gap: .7em; margin: 0 0 .45em; }
+.egs-map-head b { font: 500 .8em/1 var(--eg-label); letter-spacing: .08em; text-transform: uppercase; color: var(--eg-gold); }
+.egs-map-where { font: 400 .95em/1.2 var(--eg-label); color: var(--eg-muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.egs-map-x { font: 400 1.25em/1 var(--eg-label) !important; color: var(--eg-muted) !important; background: none !important; border: 0 !important; padding: 0 .15em !important; margin: 0 !important; cursor: pointer; } .egs-map-x:hover { color: var(--eg-ink) !important; }
+.egs-map-svg { margin: 0; padding: 0; line-height: 0; } .egs-map-svg svg { display: block; width: 100%; height: auto; max-width: none; max-height: none; }
+.egs-map-route { margin: .5em 0 0 !important; padding: 0 !important; font: 400 .84em/1.4 var(--eg-label) !important; color: var(--eg-faint) !important; min-height: 2.8em; }
+.egs-map-route a { color: var(--eg-blue) !important; text-decoration: none !important; font: inherit !important; } .egs-map-route a:hover { text-decoration: underline !important; }
 .egs-m-links line { stroke: var(--eg-line); stroke-width: 1; stroke-dasharray: 3 4; }
-.egs-m-node rect { fill: var(--eg-raise); stroke: var(--eg-line); stroke-width: 1; transition: fill .3s, stroke .3s; }
-.egs-m-node.egs-m-holds rect { fill: color-mix(in srgb, var(--eg-surface) 70%, var(--eg-ground)); }
-.egs-m-node text { font: 400 10px var(--eg-label); fill: var(--eg-muted); pointer-events: none; }
-.egs-m-node.egs-m-holds text { fill: var(--eg-faint); }
-.egs-m-node { cursor: pointer; outline: none; }
-.egs-m-node:hover rect, .egs-m-node:focus-visible rect { stroke: var(--eg-gold); }
-.egs-m-node.egs-m-cost rect { fill: var(--eg-cost-b); stroke: var(--eg-cost-edge); } .egs-m-node.egs-m-phases rect { fill: var(--eg-phases-b); stroke: var(--eg-phases-edge); }
-.egs-m-node.egs-m-memory rect { fill: var(--eg-memory-b); stroke: var(--eg-memory-edge); } .egs-m-node.egs-m-interface rect { fill: var(--eg-interface-b); stroke: var(--eg-interface-edge); }
-.egs-m-node.seen rect { stroke: color-mix(in srgb, var(--eg-gold) 55%, var(--eg-line)); } .egs-m-node.seen text { fill: var(--eg-ink); }
-.egs-m-node.here rect { stroke: var(--eg-gold); stroke-width: 1.6; } .egs-m-node.here text { fill: var(--eg-ink); }
+.egs-map .egs-m-node rect { fill: var(--eg-raise); stroke: var(--eg-line); stroke-width: 1; transition: fill .3s, stroke .3s; }
+.egs-map .egs-m-node.egs-m-holds rect { fill: color-mix(in srgb, var(--eg-surface) 70%, var(--eg-ground)); }
+.egs-map .egs-m-node text { font: 400 10px var(--eg-label) !important; letter-spacing: 0 !important; text-transform: none !important; fill: var(--eg-muted) !important; stroke: none !important; pointer-events: none; }
+.egs-map .egs-m-node.egs-m-holds text { fill: var(--eg-faint) !important; }
+.egs-map .egs-m-node { cursor: pointer; outline: none; text-decoration: none !important; }
+.egs-map .egs-m-node:hover rect, .egs-map .egs-m-node:focus-visible rect { stroke: var(--eg-gold); }
+.egs-map .egs-m-node.egs-m-cost rect { fill: var(--eg-cost-b); stroke: var(--eg-cost-edge); } .egs-map .egs-m-node.egs-m-phases rect { fill: var(--eg-phases-b); stroke: var(--eg-phases-edge); }
+.egs-map .egs-m-node.egs-m-memory rect { fill: var(--eg-memory-b); stroke: var(--eg-memory-edge); } .egs-map .egs-m-node.egs-m-interface rect { fill: var(--eg-interface-b); stroke: var(--eg-interface-edge); }
+.egs-map .egs-m-node.seen rect { stroke: color-mix(in srgb, var(--eg-gold) 55%, var(--eg-line)); } .egs-map .egs-m-node.seen text { fill: var(--eg-ink) !important; }
+.egs-map .egs-m-node.here rect { stroke: var(--eg-gold); stroke-width: 1.6; } .egs-map .egs-m-node.here text { fill: var(--eg-ink) !important; }
 .egs-m-trail { fill: none; stroke: var(--eg-gold); stroke-width: 1.4; stroke-dasharray: 1 5; stroke-linecap: round; opacity: .9; pointer-events: none; }
 .egs-m-you { fill: var(--eg-gold); stroke: none; pointer-events: none; }
-@media (max-width: 520px) { .egs-map.egs-map-top { top: auto; bottom: 54px; } .egs-crumbs { font-size: .8rem; } }
-.egs-map.egs-map-home { left: 14px; right: auto; bottom: 50px; transform-origin: 0 100%; }
-.ep-foot .egs-pill { margin-left: auto; padding: 4px 10px 4px 8px; font-size: .74rem; }
+
+/* ---- a phone: the bar wraps; where a page has no bar the button sits at the foot of the window, the map above it ---- */
+@media (max-width: 760px) {
+  .egs-bar { padding: .5em 14px !important; }
+  .egs-pill:not(.egs-pill-in) { top: auto; bottom: 12px; right: 12px; }
+  .egs-map { top: auto; bottom: 54px; right: 14px; transform-origin: 100% 100%; }
+  .ep-foot { padding-right: 6.4em; }
+}

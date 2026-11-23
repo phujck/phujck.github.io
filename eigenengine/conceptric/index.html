@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="egs-node">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -17,51 +17,51 @@
 html { background: var(--eg-ground); }
 body.cqp { margin: 0; background: var(--eg-ground); color: var(--eg-ink); font: 400 1rem/1.6 var(--eg-text); -webkit-font-smoothing: antialiased; }
 .cqp a { color: inherit; }
-.cqp-shell { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
-.cqp-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0 6px; font: 500 .84rem/1 var(--eg-label); }
+.cqp-shell { max-width: 72.5rem; margin: 0 auto; padding: 0 1.75rem; }
+.cqp-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.875rem 0 0.375rem; font: 500 .84rem/1 var(--eg-label); }
 .cqp-top a { color: var(--eg-muted); text-decoration: none; }
 .cqp-top a:hover { color: var(--eg-ink); }
-.cqp-top button, .cqp-steps button { font: 500 .82rem/1 var(--eg-label); color: var(--eg-ink); background: none; border: 1px solid var(--eg-line); border-radius: 8px; padding: 7px 11px; cursor: pointer; transition: border-color .25s, background-color .25s; }
+.cqp-top button, .cqp-steps button { font: 500 .82rem/1 var(--eg-label); color: var(--eg-ink); background: none; border: 1px solid var(--eg-line); border-radius: 0.5rem; padding: 0.4375rem 0.6875rem; cursor: pointer; transition: border-color .25s, background-color .25s; }
 .cqp-top button:focus-visible, .cqp-steps button:focus-visible, .cqp-near a:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
-.cqp-head { display: grid; grid-template-columns: minmax(0, 1fr) 232px; gap: 30px; align-items: end; padding: 2px 0 8px; }
-.cqp-eyebrow { font: 600 .74rem/1 var(--eg-label); letter-spacing: .13em; text-transform: uppercase; color: var(--eg-gold); margin: 0 0 10px; }
+.cqp-head { display: grid; grid-template-columns: minmax(0, 1fr) 14.5rem; gap: 1.875rem; align-items: end; padding: 2px 0 0.5rem; }
+.cqp-eyebrow { font: 600 .74rem/1 var(--eg-label); letter-spacing: .13em; text-transform: uppercase; color: var(--eg-gold); margin: 0 0 0.625rem; }
 .cqp-eyebrow a { text-decoration: none; }
-.cqp h1 { font: 400 clamp(1.9rem, 3vw, 2.5rem)/1.02 var(--eg-text); letter-spacing: -.035em; margin: 0 0 8px; }
+.cqp h1 { font: 400 clamp(1.9rem, 3vw, 2.5rem)/1.02 var(--eg-text); letter-spacing: -.035em; margin: 0 0 0.5rem; }
 .cqp-text { color: var(--eg-muted); max-width: 92ch; margin: 0; font-size: 1rem; line-height: 1.5; }
 .cqp-text em { color: var(--eg-ink); }
 .cqp-text2 { display: none; }
-.cqp-card { position: relative; overflow: hidden; height: 128px; border-radius: var(--eg-radius); border: 1px solid var(--eg-line); background: radial-gradient(ellipse at 91% 24%, var(--eg-raise) 0, var(--eg-surface) 46%, var(--eg-ground)); }
+.cqp-card { position: relative; overflow: hidden; height: 8rem; border-radius: var(--eg-radius); border: 1px solid var(--eg-line); background: radial-gradient(ellipse at 91% 24%, var(--eg-raise) 0, var(--eg-surface) 46%, var(--eg-ground)); }
 .cqp-card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.cqp-steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 8px; }
+.cqp-steps { display: flex; flex-wrap: wrap; gap: 0.375rem; margin: 0.375rem 0 0.5rem; }
 .cqp-steps button.on { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
-.cqp-steps button span { color: var(--eg-faint); margin-right: 6px; font-variant-numeric: tabular-nums; }
-.cqp-cap { color: var(--eg-muted); max-width: 118ch; min-height: 3.1em; margin: 0 0 10px; font-size: 1rem; line-height: 1.55; transition: opacity .35s ease; }
+.cqp-steps button span { color: var(--eg-faint); margin-right: 0.375rem; font-variant-numeric: tabular-nums; }
+.cqp-cap { color: var(--eg-muted); max-width: 118ch; min-height: 3.1em; margin: 0 0 0.625rem; font-size: 1rem; line-height: 1.55; transition: opacity .35s ease; }
 .cqp-cap i { color: var(--eg-ink); }
-.cqp-box { position: relative; overflow: hidden; height: clamp(480px, calc(100vh - 372px), 660px); border: 1px solid var(--eg-line); border-radius: var(--eg-radius); background: var(--eg-surface); }
-.cqp-more { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 44px; padding: 44px 0 70px; }
-.cqp h2 { font: 400 1.5rem/1.15 var(--eg-text); letter-spacing: -.02em; margin: 0 0 14px; }
-.cqp-near { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.cqp-near a { position: relative; display: block; overflow: hidden; height: 118px; border-radius: var(--eg-radius-s); border: 1px solid var(--eg-line); text-decoration: none; background: radial-gradient(ellipse at 91% 24%, var(--a, var(--eg-raise)) 0, var(--b, var(--eg-surface)) 46%, var(--c, var(--eg-ground))); transition: border-color .25s; }
+.cqp-box { position: relative; overflow: hidden; height: clamp(30rem, calc(100vh - 23.25rem), 41.25rem); border: 1px solid var(--eg-line); border-radius: var(--eg-radius); background: var(--eg-surface); }
+.cqp-more { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 2.75rem; padding: 2.75rem 0 4.375rem; }
+.cqp h2 { font: 400 1.5rem/1.15 var(--eg-text); letter-spacing: -.02em; margin: 0 0 0.875rem; }
+.cqp-near { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.cqp-near a { position: relative; display: block; overflow: hidden; height: 7.375rem; border-radius: var(--eg-radius-s); border: 1px solid var(--eg-line); text-decoration: none; background: radial-gradient(ellipse at 91% 24%, var(--a, var(--eg-raise)) 0, var(--b, var(--eg-surface)) 46%, var(--c, var(--eg-ground))); transition: border-color .25s; }
 .cqp-near a:hover { border-color: var(--eg-gold); }
-.cqp-near a.plain { height: 74px; } .cqp-near a.plain svg { display: none; }
+.cqp-near a.plain { height: 4.625rem; } .cqp-near a.plain svg { display: none; }
 .cqp-near a.cost { --a: var(--eg-cost-a); --b: var(--eg-cost-b); --c: var(--eg-cost-c); border-color: var(--eg-cost-edge); }
 .cqp-near a.phases { --a: var(--eg-phases-a); --b: var(--eg-phases-b); --c: var(--eg-phases-c); border-color: var(--eg-phases-edge); }
 .cqp-near svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .85; }
-.cqp-near div { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 13px 11px; background: linear-gradient(0deg, color-mix(in srgb, var(--eg-ground) 94%, transparent) 38%, transparent); }
-.cqp-near small { display: block; font: 600 .74rem/1 var(--eg-label); letter-spacing: .08em; text-transform: uppercase; color: var(--eg-gold); margin-bottom: 5px; }
+.cqp-near div { position: absolute; left: 0; right: 0; bottom: 0; padding: 1.625rem 0.8125rem 0.6875rem; background: linear-gradient(0deg, color-mix(in srgb, var(--eg-ground) 94%, transparent) 38%, transparent); }
+.cqp-near small { display: block; font: 600 .74rem/1 var(--eg-label); letter-spacing: .08em; text-transform: uppercase; color: var(--eg-gold); margin-bottom: 0.3125rem; }
 .cqp-near strong { font: 400 1.08rem/1.15 var(--eg-text); letter-spacing: -.015em; }
 @media (max-width: 760px) {
-  .cqp-shell { padding: 0 16px; }
-  .cqp-head { grid-template-columns: 1fr; gap: 0; padding: 2px 0 6px; }
+  .cqp-shell { padding: 0 1rem; }
+  .cqp-head { grid-template-columns: 1fr; gap: 0; padding: 2px 0 0.375rem; }
   .cqp-head .cqp-text, .cqp-card, .cqp-eyebrow { display: none; }
-  .cqp h1 { font-size: 1.7rem; margin: 0 0 4px; }
-  .cqp-steps { flex-wrap: nowrap; gap: 5px; margin: 4px 0 6px; }
-  .cqp-steps button { padding: 7px 9px; white-space: nowrap; }
+  .cqp h1 { font-size: 1.7rem; margin: 0 0 0.25rem; }
+  .cqp-steps { flex-wrap: nowrap; gap: 0.3125rem; margin: 0.25rem 0 0.375rem; }
+  .cqp-steps button { padding: 0.4375rem 0.5625rem; white-space: nowrap; }
   .cqp-steps button:not(.on) { font-size: 0; } .cqp-steps button:not(.on) span { font-size: .82rem; margin: 0; }
-  .cqp-cap { font-size: .92rem; line-height: 1.45; min-height: 6.6em; margin: 0 0 6px; }
-  .cqp-box { height: max(440px, calc(100svh - 300px)); }
-  .cqp-more { grid-template-columns: 1fr; gap: 30px; padding-top: 26px; }
-  .cqp-text2 { display: block !important; margin: 0 0 22px; }
+  .cqp-cap { font-size: .92rem; line-height: 1.45; min-height: 6.6em; margin: 0 0 0.375rem; }
+  .cqp-box { height: max(27.5rem, calc(100svh - 18.75rem)); }
+  .cqp-more { grid-template-columns: 1fr; gap: 1.875rem; padding-top: 1.625rem; }
+  .cqp-text2 { display: block !important; margin: 0 0 1.375rem; }
 }
 </style>
   <link rel="stylesheet" href="/assets/css/eigen-shell.css">

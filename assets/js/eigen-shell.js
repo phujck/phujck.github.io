@@ -55,8 +55,7 @@
     });
     svg.appendChild(sv('path', { class: 'egs-m-trail' })); svg.appendChild(sv('circle', { class: 'egs-m-you', r: 4 }));
     document.body.appendChild(panel);
-    const tools = document.querySelector('.egs-tools'); if (tools) { pill.classList.add('egs-pill-in'); tools.appendChild(pill); panel.classList.add('egs-map-top'); } else document.body.appendChild(pill);
-    if (onHome) { let n = 0; const seat = () => { const foot = document.querySelector('.ep-foot'); if (foot) { pill.classList.add('egs-pill-in'); foot.appendChild(pill); panel.classList.add('egs-map-home'); } else if (++n < 40) setTimeout(seat, 200); }; seat(); }
+    const tools = document.querySelector('.egs-tools'); if (tools) { pill.classList.add('egs-pill-in'); tools.appendChild(pill); } else document.body.appendChild(pill);
     toggle(open, true);
   }
   function toggle(to, quiet) { open = to == null ? !open : to; panel.hidden = !open; pill.setAttribute('aria-expanded', String(open)); pill.classList.toggle('on', open); if (!quiet) store.set('eg-map-open', open); draw(); }
@@ -75,7 +74,7 @@
   /* ---- the header bar and the links of a node's own page -------------------------------------------------------- */
   function bar() {
     const g = G.nodes[here]; if (!nodePage || !g) return;
-    const head = document.querySelector('body header, body nav.cqp-top'); if (!head) return;
+    const head = document.querySelector('body header:not(.ep-console), body nav.cqp-top'); if (!head) return;
     const keep = Array.from(head.querySelectorAll('button, [data-eg-level-switch], p')).filter(el => !el.parentElement.closest('[data-eg-level-switch]'));
     const up = parentOf(here), crumbs = document.createElement('nav'); crumbs.className = 'egs-crumbs'; crumbs.setAttribute('aria-label', 'Where this page sits');
     crumbs.innerHTML = `<a href="${HOME}#${here}">← EigenEngine</a>` + (up && up !== G.root ? ` <i>›</i> <a href="${pageOf(up)}">${esc(G.nodes[up].title)}</a>` : '') + ` <i>›</i> <b>${esc(g.title)}</b>`;
@@ -83,6 +82,10 @@
     head.textContent = ''; head.classList.add('egs-bar'); head.appendChild(crumbs);
     keep.forEach(el => { if (el.tagName === 'P') { el.classList.add('egs-kick'); head.appendChild(el); } else tools.appendChild(el); });
     head.appendChild(tools);
+    /* the bar runs the full width of the window on every page, whatever box the page keeps it in */
+    const bleed = () => { head.style.marginLeft = head.style.marginRight = head.style.marginTop = ''; const r = head.getBoundingClientRect(), vw = document.documentElement.clientWidth, cs = getComputedStyle(head), n = v => parseFloat(v) || 0;
+      if (r.left > .5) head.style.marginLeft = (n(cs.marginLeft) - r.left) + 'px'; if (vw - r.right > .5) head.style.marginRight = (n(cs.marginRight) - (vw - r.right)) + 'px'; if (r.top + window.scrollY > .5) head.style.marginTop = (n(cs.marginTop) - r.top - window.scrollY) + 'px'; };
+    bleed(); window.addEventListener('resize', bleed);
     const h1 = document.querySelector('h1'); if (h1 && h1.textContent.trim() !== g.title && !/Cost of Complexity/.test(g.title)) h1.textContent = g.title;
     document.title = g.title + ' · EigenEngine';
     requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));       // the level switch measures itself again in its new place

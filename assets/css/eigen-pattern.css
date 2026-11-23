@@ -213,7 +213,7 @@
 
 /* ---- very wide windows: the words grow with the cards ------------------------------------------------------------- */
 @media (min-width: 2000px) and (min-height: 1000px) {
-  .ep-release { font-size: .88rem; } .ep-tab { font-size: .76rem; } .ep-chip { font-size: .96rem; padding: 6px 12px; } .ep-where { font-size: .9rem; } .ep-motion { font-size: .84rem; }
+  .ep-release { font-size: .88rem; } .ep-tab { font-size: .76rem; } .ep-chip { font-size: .96rem; padding: 6px 12px; } [data-grp="q"] .ep-chip { font-size: .92rem; padding: 5px 11px; } .ep-where { font-size: .9rem; } .ep-motion { font-size: .84rem; }
   .ep-map svg { max-height: 220px; }
   .ep-say { font-size: 1.22rem; max-width: 980px; } .ep-app .ep-text { font-size: 1.12rem; } .ep-box .ep-text { font-size: 1.1rem; } .ep-cap { font-size: 1.12rem; } .ep-steps button { font-size: .92rem; padding: 6px 12px; } .ep-out a { font-size: .96rem; }
 }

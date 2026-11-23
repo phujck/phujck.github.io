@@ -20,6 +20,7 @@ The contract (`CONTRACT.md`) says what a node is; this says how it should look, 
 | Sizes | An exhibit works from about 330 x 220 (the main page on a phone) to 1100 x 640 and scales its type for a 2560 px window. When small it drops its own controls and leaves the host's steps. | `network`, `memory` |
 | A node's page | One screen at 1440 x 900: header bar (from the shell), the card with the paragraph and links on the left, steps, caption and exhibit on the right. On a phone the card, steps and exhibit come before the paragraph. | `reading`, `change` |
 | Two levels | Plain and expert readings of the line, paragraph and captions; the expert reading carries the rule with its conditions, from the paper. The exhibit may answer the switch. Supplied so far by `search`, `reading`, `change`, `interface`, `network`, `memory`, `made`. | `reading` |
+| The shell | The header bar, the Map button and the map are drawn by `eigen-shell.js` and sized from the window alone, so they are the same size and in the same place on every page: the bar along the top, the button in the top right corner, the map beneath it. Node pages share one type scale (`html.egs-node`). | the shell |
 | The map | On every page; pops out; shows the graph, where the reader is and the route taken. | the shell |
 
 Not yet at this standard (left as built): card art of `conceptric`, `search`, `reading` and `change` is busier or sparser than the Hilbert card;
