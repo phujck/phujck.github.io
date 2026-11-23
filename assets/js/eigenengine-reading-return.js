@@ -14,7 +14,7 @@
     ["/eigenengine/kalmar-constant/reading/", "the Kalmár reading guide"],
     ["/eigenengine/cost-of-complexity/reading/notebook.html", "the reading notebook"],
     ["/eigenengine/kalmar-constant/", "the Kalmár article"],
-    ["/demo/writing/", "the Writing App film"],
+    ["/demo/writing/", "the interface film"],
     ["/demo/writing/simulation/", "the simulation"],
     ["/demo/writing/project-record/", "the editing record"],
   ]);

@@ -1,0 +1,174 @@
+/* "What is a conceptric?": everything is scoped under .egn-conceptric and coloured from the shared tokens.
+   Lora for running text, Outfit for every word inside a figure. No monospace. */
+
+/* ── the card art ── */
+.egn-conceptric svg.cq-art path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.egn-conceptric .cq-art-body { stroke: var(--eg-gold); stroke-opacity: .9; filter: drop-shadow(0 0 2.5px color-mix(in srgb, var(--eg-gold) 55%, transparent)); }
+.egn-conceptric .cq-art-sib { stroke: color-mix(in srgb, var(--eg-gold) 55%, var(--eg-muted)); stroke-opacity: .6; }
+.egn-conceptric .cq-art-flap { stroke: var(--eg-gold); stroke-opacity: .75; }
+.egn-conceptric .cq-art-thread { stroke: var(--eg-gold); stroke-opacity: .5; stroke-dasharray: 1 5; }
+.egn-conceptric .cq-art-wake { stroke: var(--eg-gold); stroke-width: 3.2; stroke-opacity: .6; filter: drop-shadow(0 0 3px var(--eg-gold)); }
+.egn-conceptric .cq-art-wake-b { stroke: var(--eg-ink); stroke-width: 4.6; stroke-opacity: .97; }
+.egn-conceptric .cq-art-tip { fill: var(--eg-ink); stroke: var(--eg-gold); stroke-width: 1.4; filter: drop-shadow(0 0 4px var(--eg-gold)); }
+
+/* ── the exhibit ── */
+.egn-conceptric .cq { position: absolute; inset: 0; overflow: hidden; font-family: var(--eg-label); color: var(--eg-ink);
+  background: radial-gradient(color-mix(in srgb, var(--eg-ink) 10%, transparent) 1px, transparent 1.3px) 0 0 / 22px 22px, radial-gradient(ellipse at 50% 46%, color-mix(in srgb, var(--eg-raise) 78%, transparent) 0, transparent 68%); }
+.egn-conceptric .cq-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.egn-conceptric .cq-svg text { font-family: var(--eg-label); }
+.egn-conceptric .cq-svg path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* an envelope: its face, its flap, and the sheet of material inside it */
+.egn-conceptric .cq-piece { cursor: pointer; outline: none; }
+.egn-conceptric .cq-face { stroke: var(--eg-line); stroke-width: 1.2; filter: drop-shadow(0 3px 5px color-mix(in srgb, var(--eg-ground) 85%, transparent)); }
+.egn-conceptric .cq-g0 { stop-color: color-mix(in srgb, var(--eg-ink) 7%, var(--eg-raise)); }
+.egn-conceptric .cq-g1 { stop-color: color-mix(in srgb, var(--eg-ground) 45%, var(--eg-raise)); }
+.egn-conceptric .cq-svg .cq-port { fill: var(--eg-ground); stroke: var(--eg-muted); stroke-width: 1.2; }
+.egn-conceptric .cq-svg .cq-port.cq-r-sup { stroke: var(--eg-blue); }
+.egn-conceptric .cq-svg .cq-port.cq-r-comp, .egn-conceptric .cq-svg .cq-port.cq-r-shown { stroke: var(--eg-teal); }
+.egn-conceptric .cq-pulse { fill: var(--eg-ink); filter: drop-shadow(0 0 3px var(--eg-gold)); pointer-events: none; }
+.egn-conceptric .cq-piece:hover .cq-face, .egn-conceptric .cq-piece:focus-visible .cq-face { stroke: var(--eg-gold); fill: color-mix(in srgb, var(--eg-gold) 9%, var(--eg-raise)); }
+.egn-conceptric .cq-piece:focus-visible .cq-face { stroke-width: 2; }
+.egn-conceptric .cq-svg .cq-flap-front { fill: color-mix(in srgb, var(--eg-ink) 6%, transparent); stroke: var(--eg-faint); stroke-width: 1; stroke-opacity: .75; }
+.egn-conceptric .cq-seam { stroke: var(--eg-faint); stroke-width: 1; stroke-opacity: .16; }
+.egn-conceptric .cq-glyph { stroke: var(--eg-faint); stroke-width: 1.15; }
+.egn-conceptric .cq-t-gold .cq-glyph { stroke: var(--eg-gold); } .egn-conceptric .cq-t-blue .cq-glyph { stroke: var(--eg-blue); } .egn-conceptric .cq-t-teal .cq-glyph { stroke: var(--eg-teal); }
+.egn-conceptric .cq-svg .cq-flap-back { fill: color-mix(in srgb, var(--eg-raise) 70%, var(--eg-ground)); stroke: var(--eg-faint); stroke-width: 1; }
+.egn-conceptric .cq-sheet rect { fill: var(--eg-ink); }
+.egn-conceptric .cq-sheet-text { fill: var(--eg-ground); font-size: 11.6px; font-weight: 500; }
+.egn-conceptric .cq-sheet-axis { stroke: var(--eg-ground); stroke-opacity: .55; stroke-width: 1; }
+.egn-conceptric .cq-sheet-curve { stroke: var(--eg-ground); stroke-width: 1.8; }
+.egn-conceptric .cq-kind { font-size: 11.7px; font-weight: 600; letter-spacing: .03em; fill: var(--eg-faint); }
+.egn-conceptric .cq-title { font-size: 12.2px; font-weight: 500; fill: var(--eg-ink); }
+.egn-conceptric .cq-says { font-size: 6px; fill: var(--eg-muted); }
+.egn-conceptric .cq-t-gold .cq-kind { fill: var(--eg-gold); }
+.egn-conceptric .cq-t-blue .cq-kind { fill: var(--eg-blue); }
+.egn-conceptric .cq-t-teal .cq-kind { fill: var(--eg-teal); }
+.egn-conceptric .cq-t-gold .cq-face { stroke: color-mix(in srgb, var(--eg-gold) 62%, var(--eg-line)); }
+.egn-conceptric .cq-t-blue .cq-face { stroke: color-mix(in srgb, var(--eg-blue) 62%, var(--eg-line)); }
+.egn-conceptric .cq-t-teal .cq-face { stroke: color-mix(in srgb, var(--eg-teal) 62%, var(--eg-line)); }
+.egn-conceptric .cq-ring { fill: none; stroke: var(--eg-gold); stroke-width: 1.5; stroke-dasharray: 2 4; stroke-linecap: round; pointer-events: none; }
+.egn-conceptric .cq-badge { pointer-events: none; }
+.egn-conceptric .cq-badge circle { fill: var(--eg-gold); }
+.egn-conceptric .cq-badge text { fill: var(--eg-ground); font-size: 12px; font-weight: 700; text-anchor: middle; }
+.egn-conceptric .cq-hook { stroke: var(--eg-gold); stroke-width: 1.6; }
+
+/* an open envelope grows into the outline that holds its contents */
+.egn-conceptric .cq-svg .cq-hull { fill: color-mix(in srgb, var(--eg-ink) 4%, transparent); stroke: var(--eg-line); stroke-width: 1.2; }
+.egn-conceptric .cq-svg .cq-hull.cq-t-gold { stroke: color-mix(in srgb, var(--eg-gold) 45%, var(--eg-line)); }
+.egn-conceptric .cq-svg .cq-hull.cq-t-blue { stroke: color-mix(in srgb, var(--eg-blue) 45%, var(--eg-line)); }
+.egn-conceptric .cq-svg .cq-hull.cq-t-teal { stroke: color-mix(in srgb, var(--eg-teal) 45%, var(--eg-line)); }
+
+/* threads, one line style to each relationship */
+.egn-conceptric .cq-link { stroke: var(--eg-muted); }
+.egn-conceptric .cq-r-part { stroke: var(--eg-faint); }
+.egn-conceptric .cq-r-req { stroke: var(--eg-ink); }
+.egn-conceptric .cq-r-sup { stroke: var(--eg-blue); }
+.egn-conceptric .cq-r-comp { stroke: var(--eg-teal); }
+.egn-conceptric .cq-r-shown { stroke: var(--eg-teal); stroke-dasharray: 1.5 4.5; }
+.egn-conceptric .cq-link-label { font-size: 11.5px; font-weight: 500; fill: var(--eg-ink); text-anchor: middle; paint-order: stroke; stroke: var(--eg-ground); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
+.egn-conceptric .cq-guide { stroke: var(--eg-line); stroke-opacity: .5; stroke-dasharray: 1 7; stroke-width: 1; }
+.egn-conceptric .cq-guide-n { font-size: 11.5px; font-weight: 600; fill: var(--eg-faint); text-anchor: middle; }
+.egn-conceptric .cq-guide-word { font-weight: 500; text-anchor: start; font-size: 11px; }
+.egn-conceptric .cq-shelf-label { font-size: 11px; fill: var(--eg-faint); }
+.egn-conceptric .cq-trail { stroke: var(--eg-gold); stroke-width: 2; stroke-dasharray: 1 5; }
+
+/* the sixty-four, and the envelopes they are split into */
+.egn-conceptric .cq-tok { cursor: pointer; outline: none; --glow: 0; }
+.egn-conceptric .cq-tok rect { fill: color-mix(in srgb, var(--eg-gold) calc(var(--glow) * 78%), var(--eg-raise)); stroke: color-mix(in srgb, var(--eg-gold) calc(var(--glow) * 100%), var(--eg-faint)); stroke-width: 1; }
+.egn-conceptric .cq-tok path { stroke: color-mix(in srgb, var(--eg-ground) calc(var(--glow) * 100%), var(--eg-faint)); stroke-width: .9; }
+.egn-conceptric .cq-tok.cq-t-blue rect { stroke: color-mix(in srgb, var(--eg-gold) calc(var(--glow) * 100%), var(--eg-blue)); }
+.egn-conceptric .cq-tok.cq-t-teal rect { stroke: color-mix(in srgb, var(--eg-gold) calc(var(--glow) * 100%), var(--eg-teal)); }
+.egn-conceptric .cq-tok.target rect { fill: var(--eg-gold); stroke: var(--eg-ink); stroke-width: 1.4; }
+.egn-conceptric .cq-tok.target path { stroke: var(--eg-ground); }
+.egn-conceptric .cq-tok:hover rect, .egn-conceptric .cq-tok:focus-visible rect { stroke: var(--eg-ink); stroke-width: 1.6; }
+.egn-conceptric .cq-svg .cq-wall { --glow: 0; fill: color-mix(in srgb, var(--eg-gold) calc(var(--glow) * 10%), transparent);
+  stroke: color-mix(in srgb, var(--eg-gold) calc(var(--glow) * 100%), var(--eg-line)); stroke-width: calc(1.1px + var(--glow) * .9px); }
+.egn-conceptric .cq-hilbert { stroke: var(--eg-gold); stroke-width: 1; stroke-opacity: .55; }
+.egn-conceptric .cq-tracer { pointer-events: none; filter: drop-shadow(0 0 4px var(--eg-gold)); }
+.egn-conceptric .cq-tracer path { stroke: var(--eg-gold); stroke-width: 3; stroke-opacity: .8; }
+.egn-conceptric .cq-tracer circle { fill: var(--eg-ink); stroke: var(--eg-gold); stroke-width: 1.4; }
+
+/* controls, inside the figure */
+.egn-conceptric .cq-bar { position: absolute; left: 12px; right: 12px; top: 10px; min-height: 30px; pointer-events: none; }
+.egn-conceptric .cq-group { position: absolute; left: 0; top: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; opacity: 0; visibility: hidden; transition: opacity .18s ease, visibility 0s .18s; }
+.egn-conceptric .cq[data-view="hang"] .cq-axis, .egn-conceptric .cq[data-view="split"] .cq-split { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity .45s ease .22s; }
+.egn-conceptric .cq-group-label { font: 600 .74rem/1 var(--eg-label); letter-spacing: .11em; text-transform: uppercase; color: var(--eg-gold); margin-right: 4px; }
+.egn-conceptric .cq-btn { font: 500 .82rem/1 var(--eg-label); color: var(--eg-ink); background: color-mix(in srgb, var(--eg-ground) 55%, transparent); border: 1px solid var(--eg-line); border-radius: 8px; padding: 7px 11px; margin: 0; cursor: pointer; transition: border-color .25s, background-color .25s; }
+.egn-conceptric .cq-btn:hover { border-color: var(--eg-muted); }
+.egn-conceptric .cq-btn:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egn-conceptric .cq-btn.on { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
+.egn-conceptric .cq-lifted { font: 400 .8rem/1.2 var(--eg-label); color: var(--eg-gold); margin-left: 4px; }
+.egn-conceptric .cq-hint { position: absolute; left: 14px; right: 14px; bottom: 8px; margin: 0; font: 400 .82rem/1.3 var(--eg-label); color: var(--eg-muted); text-align: center; opacity: 0; pointer-events: none; }
+.egn-conceptric .cq-hint.in { opacity: 1; transition: opacity .4s ease; }
+.egn-conceptric .cq[data-narrow="1"] .cq-group-label { display: none; }
+.egn-conceptric .cq[data-narrow="1"] .cq-btn { padding: 7px 9px; font-size: .78rem; }
+.egn-conceptric .cq[data-narrow="1"] .cq-hint { font-size: .76rem; }
+
+/* the count beside the sixty-four */
+.egn-conceptric .cq-read { position: absolute; left: 14px; right: 14px; bottom: 34px; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility 0s .3s; }
+.egn-conceptric .cq-read.side { left: auto; right: 18px; top: 56px; bottom: 40px; width: min(250px, 36%); display: flex; flex-direction: column; justify-content: center; }
+.egn-conceptric .cq[data-view="split"] .cq-read { opacity: 1; visibility: visible; transition: opacity .5s ease .25s; }
+.egn-conceptric .cq-read p { margin: 0; }
+.egn-conceptric .cq-num { display: flex; align-items: baseline; gap: 10px; }
+.egn-conceptric .cq-num b { font: 400 2.5rem/1 var(--eg-text); letter-spacing: -.03em; color: var(--eg-gold); font-variant-numeric: tabular-nums; min-width: 1.6em; }
+.egn-conceptric .cq-num span { font: 400 .84rem/1.25 var(--eg-label); color: var(--eg-muted); }
+.egn-conceptric .cq-say { font: 400 .84rem/1.38 var(--eg-label); color: var(--eg-ink); margin: 8px 0 12px !important; min-height: 4.2em; }
+.egn-conceptric .cq-price { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 14px; }
+.egn-conceptric .cq-price [data-prices] { display: flex; gap: 5px; }
+.egn-conceptric .cq-price .cq-btn { padding: 6px 9px; }
+.egn-conceptric .cq-chart { display: flex; align-items: flex-end; gap: 8px; height: 78px; border-bottom: 1px solid var(--eg-line); margin-bottom: 20px; }
+.egn-conceptric .cq-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; opacity: .5; transition: opacity .4s ease; }
+.egn-conceptric .cq-col.on { opacity: 1; }
+.egn-conceptric .cq-col b { font: 500 .74rem/1 var(--eg-label); color: var(--eg-muted); margin-bottom: 3px; font-variant-numeric: tabular-nums; }
+.egn-conceptric .cq-col.best b { color: var(--eg-gold); }
+.egn-conceptric .cq-col i { display: block; width: 16px; min-height: 1px; transition: height .55s cubic-bezier(.3, .8, .3, 1); }
+.egn-conceptric .cq-col .cq-bar-env { border-radius: 2px 2px 0 0; }
+.egn-conceptric .cq-bar-looks, .egn-conceptric .cq-key-looks { background: var(--eg-gold); }
+.egn-conceptric .cq-bar-env, .egn-conceptric .cq-key-env { background: var(--eg-blue); }
+.egn-conceptric .cq-col span { position: absolute; top: 100%; margin-top: 5px; font: 400 .74rem/1 var(--eg-label); color: var(--eg-muted); white-space: nowrap; }
+.egn-conceptric .cq-col.on span { color: var(--eg-ink); }
+.egn-conceptric .cq-key { font: 400 .74rem/1 var(--eg-label); color: var(--eg-faint); display: flex; align-items: center; gap: 5px; }
+.egn-conceptric .cq-key i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.egn-conceptric .cq-key .cq-key-env { margin-left: 10px; }
+.egn-conceptric .cq-read:not(.side) .cq-chart, .egn-conceptric .cq-read:not(.side) .cq-key { display: none; }
+.egn-conceptric .cq-read:not(.side) .cq-num b { font-size: 1.9rem; }
+.egn-conceptric .cq-read:not(.side) .cq-say { margin: 4px 0 8px !important; min-height: 4.2em; }
+.egn-conceptric .cq-read:not(.side) .cq-price { margin-bottom: 0; }
+
+/* the record in focus, written out beside a wide stage */
+.egn-conceptric .cq-info { position: absolute; right: 18px; top: 54px; bottom: 46px; width: 256px; padding-left: 22px; border-left: 1px solid var(--eg-line); display: flex; flex-direction: column; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility 0s .3s; }
+.egn-conceptric .cq-info.on { visibility: visible; transition: opacity .3s ease; }
+.egn-conceptric .cq-info.on.in { opacity: 1; transition: opacity .45s ease; }
+.egn-conceptric .cq-info p { margin: 0; }
+.egn-conceptric .cq-info-kind { font: 600 .74rem/1 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-faint); }
+.egn-conceptric .cq-info-kind.cq-t-gold { color: var(--eg-gold); } .egn-conceptric .cq-info-kind.cq-t-blue { color: var(--eg-blue); } .egn-conceptric .cq-info-kind.cq-t-teal { color: var(--eg-teal); }
+.egn-conceptric .cq-info h4 { font: 400 1.5rem/1.1 var(--eg-text); letter-spacing: -.02em; margin: 7px 0 9px; color: var(--eg-ink); }
+.egn-conceptric .cq-info-says { font: 400 .98rem/1.45 var(--eg-text); color: var(--eg-muted); }
+.egn-conceptric .cq-info-label { font: 600 .74rem/1 var(--eg-label); letter-spacing: .1em; text-transform: uppercase; color: var(--eg-faint); margin: 16px 0 6px !important; }
+.egn-conceptric .cq-info-in { font: 400 .95rem/1.4 var(--eg-label); color: var(--eg-ink); }
+.egn-conceptric .cq-info ul { list-style: none; margin: 0; padding: 0; font: 400 .88rem/1.25 var(--eg-label); color: var(--eg-ink); }
+.egn-conceptric .cq-info li { display: flex; gap: 8px; padding: 3px 0; }
+.egn-conceptric .cq-info li i { font-style: normal; color: var(--eg-faint); min-width: 6.4em; }
+.egn-conceptric .cq-info a { display: inline-block; margin-top: 16px; font: 500 .86rem/1 var(--eg-label); color: var(--eg-ink); text-decoration: underline; text-decoration-color: var(--eg-gold); text-underline-offset: 4px; }
+.egn-conceptric .cq-info a:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 3px; }
+.egn-conceptric .cq[data-full="1"]:not([data-view="split"]) .cq-hint, .egn-conceptric .cq[data-full="1"]:not([data-view="split"]) .cq-legend { right: 304px; }
+
+/* the node's own page */
+.egn-conceptric.cq-why p, .egn-conceptric .cq-why p { font: 400 1rem/1.6 var(--eg-text); color: var(--eg-muted); max-width: 62ch; margin: 0 0 .8em; }
+.egn-conceptric .cq-why a, .egn-conceptric.cq-why a { color: var(--eg-ink); text-decoration-color: var(--eg-gold); text-underline-offset: 3px; }
+
+/* which line is which relationship */
+.egn-conceptric .cq-legend { position: absolute; left: 14px; right: 14px; bottom: 30px; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; font: 400 .74rem/1.2 var(--eg-label); color: var(--eg-faint); opacity: 0; transition: opacity .45s ease; pointer-events: none; }
+.egn-conceptric .cq[data-full="1"][data-view="nest"] .cq-legend, .egn-conceptric .cq[data-full="1"][data-view="hang"] .cq-legend { opacity: 1; }
+.egn-conceptric .cq-legend span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.egn-conceptric .cq-legend span:first-child { font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.egn-conceptric .cq-legend svg { width: 26px; height: 8px; overflow: visible; }
+.egn-conceptric .cq-legend path { fill: none; stroke-width: 1.8; stroke-linecap: round; }
+.egn-conceptric .cq[data-narrow="1"] .cq-legend { display: none; }
+
+.egn-conceptric .cq[data-narrow="1"] .cq-title { font-size: 11.2px; }
+.egn-conceptric .cq-shelf-label { font-size: 11.6px; }
+.egn-conceptric .cq-guide-word { font-size: 11.6px; }
+
+.egn-conceptric .cq-note { font: 400 .8rem/1.4 var(--eg-label) !important; color: var(--eg-faint) !important; }

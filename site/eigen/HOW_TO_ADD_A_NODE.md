@@ -1,0 +1,8 @@
+# How to add a node
+
+1. **Name it in the graph.** Add one entry to `eigenengine/_graph/site-graph.js`: `id: { title, question, slug, ground? }`, put the id in its parent's `children`, and add its links (`[from, to, 'requires' | 'supports']`). Give it a box in the map (`BOX` and `SHORT` in `assets/js/eigen-shell.js`).
+2. **Write the node** in `eigenengine/<slug>/`: `node.js` (registers `EIGEN_NODES[id]`: line, text, `art`, `exhibit`, optional `sections`), `node.css` (every rule under `.egn-<id>`, a class prefix of its own). The shape is in `CONTRACT.md`; how it should look, move and read is in `STANDARD.md`. Copy `eigenengine/projection/` as the model.
+3. **See it** in the harness: `http://localhost:8123/site/eigen/harness/?node=<id>&slug=<slug>` (card at three sizes, exhibit compact and full; add `&level=expert`). Serve the repository with `python3 -m http.server 8123`.
+4. **Give it a page**: copy `eigenengine/projection/index.html`, change the slug and id. It must load `eigen-tokens.css`, `eigen-shell.css`, the motion, graph and level scripts, the node, and `eigen-shell.js` last. The shell writes the header, the links and the map.
+5. **Nothing else.** The main page loads every node the graph names, draws its card, opens it in place and adds its question to "Ask it".
+6. **Check**: no console error at 1440 and 390 px wide; one screen at 1440 x 900; every control changes the exhibit at once; nothing scrolls the page; fonts are Lora and Outfit; then from the laplace repository `scripts/laplace-python -m laplace.web.site_backend render` and `… gates --skip-visual`.

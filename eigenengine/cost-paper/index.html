@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="description" content="The Cost of Complexity in seven steps, from one register to the reason EigenEngine nests its conceptrics.">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="The Cost of Complexity · EigenEngine">
+  <meta property="og:description" content="What does a representation have to carry, and what does it cost to carry it?">
+  <meta property="og:image" content="https://gmccaul.co.uk/demo/writing/media/published-figure.webp">
+  <title>The Cost of Complexity · EigenEngine</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+  <link rel="stylesheet" href="/eigenengine/cost-paper/node.css">
+  <link rel="stylesheet" href="/assets/css/eigenengine-source-preview.css">
+  <script defer src="/assets/js/eigenengine-source-preview.js"></script>
+  <style>
+    /* The page around the node. The synthesis replaces this with the pattern's shell; the node itself is node.js and node.css. */
+    html { font-size: clamp(16px, .55vw + 8px, 23px); }      /* the type grows with a wide window, so a 2560 px screen is not read at arm's length */
+    html, body { height: 100%; }
+    body { margin: 0; background: var(--eg-ground); color: var(--eg-ink); font: 400 1rem/1.5 var(--eg-text); }
+    .egp { box-sizing: border-box; min-height: 100%; height: 100vh; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 12px; padding: 12px 20px 16px; max-width: 124rem; margin: 0 auto; }
+    .egp *, .egp *::before { box-sizing: border-box; }
+    .egp-top { display: flex; align-items: center; gap: 16px; min-height: 34px; }
+    .egp-back, .egp-btn { font: 500 .84rem/1 var(--eg-label); color: var(--eg-ink); text-decoration: none; background: none; border: 1px solid var(--eg-line); border-radius: 9px; padding: 8px 12px; cursor: pointer; transition: border-color .25s, background .25s; white-space: nowrap; }
+    .egp-back:hover, .egp-btn:hover:not(:disabled) { border-color: var(--eg-gold); background: rgba(228, 191, 125, .1); }
+    .egp-btn:disabled { opacity: .35; cursor: default; }
+    .egp-kick { flex: 1; margin: 0; font: 600 .68rem/1.3 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-gold); }
+    .egp-kick span { color: var(--eg-faint); letter-spacing: .04em; text-transform: none; font-weight: 400; font-size: .8rem; margin-left: 10px; }
+    .egp-main { display: grid; grid-template-columns: minmax(19rem, 25%) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "card stage" "more stage"; gap: 12px 18px; min-height: 0; }
+    .egp-card { grid-area: card; } .egp-stage { grid-area: stage; } .egp-more { grid-area: more; }
+    .egp-more { padding: 14px 20px 12px; border: 1px solid var(--eg-line); border-radius: var(--eg-radius); background: var(--eg-surface); }
+
+    .egp-card { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; min-height: 0; border: 1px solid var(--eg-cost-edge); border-radius: var(--eg-radius);
+      background: radial-gradient(ellipse at 91% 14%, var(--eg-cost-a) 0, var(--eg-cost-b) 40%, var(--eg-cost-c)); }
+    .egp-art { position: absolute; z-index: -2; top: 0; left: 0; width: 100%; aspect-ratio: 4 / 3; }
+    .egp-card::after { content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: linear-gradient(90deg, #171c20f5 3%, #191e21a6 38%, transparent 74%), linear-gradient(0deg, #171c20 1%, #171c20c4 34%, transparent 73%); }
+    .egp-copy { margin-top: auto; padding: 0 22px 18px; }
+    .egp-copy h1 { margin: 0; font: 400 clamp(2rem, 2.5vw, 2.7rem)/1.02 var(--eg-text); letter-spacing: -.045em; color: #f5eedf; }
+    .egp-sub { margin: 7px 0 0; font: italic 400 1.02rem/1.35 var(--eg-text); color: #ddc9a6; }
+    .egp-by { margin: 5px 0 0; font: 400 .78rem/1.4 var(--eg-label); color: var(--eg-muted); }
+    .egp-line { margin: 14px 0 0; font: 400 1.04rem/1.42 var(--eg-text); color: var(--eg-ink); }
+    .egp-text { margin: 0; font: 400 .93rem/1.52 var(--eg-text); color: var(--eg-muted); }
+    .egp-text i { color: var(--eg-ink); }
+    .egp-map { display: block; width: 100%; height: auto; margin-top: 12px; border-top: 1px solid rgba(182, 153, 97, .28); padding-top: 9px; overflow: visible; }
+    .egp-map text { font: 500 10px var(--eg-label); fill: var(--eg-muted); }
+    .egp-map a text { transition: fill .25s; } .egp-map a:hover text { fill: var(--eg-ink); }
+    .egp-map .egp-here { fill: var(--eg-ink); font-weight: 600; }
+    .egp-map .egp-cap { font-weight: 600; font-size: 8.5px; letter-spacing: .12em; fill: var(--eg-gold); }
+    .egp-map path { fill: none; stroke: var(--eg-line); stroke-width: 1.2; }
+    .egp-map path.egp-sup { stroke: var(--eg-cost-line); stroke-dasharray: 3 4; }
+    .egp-map circle { fill: var(--eg-raise); stroke: var(--eg-faint); stroke-width: 1.2; }
+    .egp-map circle.egp-me { fill: var(--eg-gold); stroke: #ffe3a8; }
+    .egp-map circle.egp-ph { stroke: var(--eg-phases-line); } .egp-map circle.egp-me2 { stroke: var(--eg-memory-line); }
+    .egp-map circle.egp-pulse { fill: #fff9e9; stroke: #f7ce7e; stroke-width: 1; filter: drop-shadow(0 0 3px #ffd58b); }
+
+    .egp-stage { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 10px; min-width: 0; min-height: 0; }
+    .egp-views { display: flex; gap: 8px; flex-wrap: wrap; }
+    .egp-views button { font: 500 .86rem/1 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 9px; padding: 9px 13px; cursor: pointer; transition: border-color .25s, background .25s, color .25s; }
+    .egp-views button:hover { color: var(--eg-ink); }
+    .egp-views button[aria-pressed="true"] { border-color: var(--eg-gold); background: rgba(228, 191, 125, .13); color: var(--eg-ink); }
+    .egp-wrap { position: relative; min-height: 0; border: 1px solid var(--eg-cost-edge); border-radius: var(--eg-radius); overflow: hidden; background: var(--eg-cost-c); }
+    .egp-view { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .42s ease, visibility 0s .42s; }
+    .egp-view.egp-on { opacity: 1; visibility: visible; transition: opacity .42s ease; }
+    .egp-capbar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; height: 6.3rem; transition: opacity .3s; }   /* a fixed height: a longer caption must not resize the figure */
+    @media (max-width: 1320px) { .egp-capbar { height: 7.8rem; } }
+    .egp-capbar.egp-off { opacity: 0; pointer-events: none; }
+    .egp-caption { margin: 0; font: 400 1rem/1.45 var(--eg-text); color: var(--eg-ink); transition: opacity .18s; max-width: 96ch; }
+    .egp-caption b { font: 600 .7rem/1 var(--eg-label); letter-spacing: .1em; text-transform: uppercase; color: var(--eg-gold); margin-right: 9px; white-space: nowrap; }
+    .egp-caption i { color: #f1d9a6; }
+    .egp-src { margin-left: 10px; font: 500 .8rem/1 var(--eg-label); color: var(--eg-blue); text-decoration: none; border-bottom: 1px solid rgba(131, 191, 213, .45); white-space: nowrap; }
+    .egp-src:hover { color: var(--eg-ink); border-color: var(--eg-ink); }
+    .egp-still, .egp-still * { transition: none !important; }
+    .egp :focus-visible { outline: 2px solid #ffe3a8; outline-offset: 2px; }
+    noscript p { max-width: 60ch; margin: 30px auto; padding: 0 20px; }
+    noscript a { color: var(--eg-gold); }
+
+    @media (max-width: 900px) {
+      body { height: auto; }
+      .egp { height: auto; display: block; padding: 10px 16px 28px; }
+      .egp-top { margin-bottom: 10px; flex-wrap: wrap; gap: 8px 10px; }
+      .egp-kick { flex-basis: 100%; order: 3; } .egp-kick span { display: block; margin: 3px 0 0; }
+      .egp-main { display: block; }
+      .egp-card { min-height: 300px; }
+      .egp-more { margin-top: 14px; }
+      .egp-stage { display: block; margin-top: 14px; }
+      .egp-wrap { height: 590px; margin-top: 10px; }
+      .egp-capbar { margin-top: 10px; grid-template-columns: 1fr 1fr; height: auto; align-items: start; }
+      .egp-caption { grid-column: 1 / -1; grid-row: 2; }
+      .egp-map { max-width: 380px; }
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
+</head>
+<body>
+  <div class="egp egn-cost">
+    <header class="egp-top">
+      <a class="egp-back" href="/eigenengine.html"><span aria-hidden="true">←</span> EigenEngine</a>
+      <p class="egp-kick">Pre-pre-print<span>An early example of what EigenEngine makes.</span></p>
+      <button class="egp-btn" type="button" id="egp-motion"></button>
+    </header>
+    <main class="egp-main">
+      <aside class="egp-card" aria-labelledby="egp-title">
+        <svg class="egp-art" id="egp-art" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+        <div class="egp-copy">
+          <h1 id="egp-title">The Cost of Complexity</h1>
+          <p class="egp-sub">A Physical Theory of Representation</p>
+          <p class="egp-by">Gerard McCaul · 21 pages</p>
+          <p class="egp-line" id="egp-line"></p>
+        </div>
+      </aside>
+      <section class="egp-stage" aria-label="The paper in seven steps">
+        <nav class="egp-views" id="egp-views" aria-label="Views of the paper"></nav>
+        <div class="egp-wrap" id="egp-wrap"></div>
+        <div class="egp-capbar" id="egp-capbar">
+          <button class="egp-btn" type="button" id="egp-prev"><span aria-hidden="true">←</span> Back</button>
+          <p class="egp-caption" id="egp-caption" aria-live="polite"></p>
+          <button class="egp-btn" type="button" id="egp-next">Next <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+      <aside class="egp-more" aria-label="What the paper says, and where it sits">
+        <p class="egp-text" id="egp-text"></p>
+        <svg class="egp-map" id="egp-map" viewBox="0 0 300 118" role="img" aria-label="Where this paper sits in the EigenEngine pages: under the question of why it should scale, supporting the conceptric and the search."></svg>
+      </aside>
+    </main>
+  </div>
+  <noscript><p>This page is a moving figure and needs JavaScript. The paper itself is here: <a href="/assets/docs/the-cost-of-complexity.pdf">The Cost of Complexity (PDF)</a>, and its results are set out one at a time on <a href="/eigenengine/cost-of-complexity/">this page</a>.</p></noscript>
+  <script src="/assets/js/eigen-motion.js"></script>
+  <script src="/eigenengine/_graph/site-graph.js"></script>
+  <script src="/eigenengine/cost-paper/node.js"></script>
+  <script>
+  (() => {
+    const N = window.EIGEN_NODES.cost, M = window.EG_MOTION, G = (window.EIGEN_GRAPH || { nodes: {} }).nodes, $ = id => document.getElementById(id);
+    const NS = 'http://www.w3.org/2000/svg', S = (p, n, a) => { const e = document.createElementNS(NS, n); for (const k in a || {}) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
+    $('egp-line').textContent = N.line; $('egp-text').innerHTML = N.text;
+
+    /* the views: the exhibit, then the node's further sections, each opened where the last one was */
+    const wrap = $('egp-wrap'), nav = $('egp-views'), capbar = $('egp-capbar'), cap = $('egp-caption');
+    const steps = N.exhibit.steps; let at = 0, exhibit = null, capTimer = 0;
+    const say = i => {
+      at = i; const src = steps[i].source;
+      const write = () => { cap.innerHTML = `<b>${i + 1} of ${steps.length} · ${steps[i].label}</b>${steps[i].caption}` + (src ? ` <a class="egp-src" href="${src.href}" target="_blank" rel="noopener"${src.region ? ` data-source-region="${src.region}"` : ''}>${src.text} ↗</a>` : ''); cap.style.opacity = 1; };
+      $('egp-prev').disabled = i === 0; $('egp-next').disabled = i === steps.length - 1;
+      clearTimeout(capTimer);
+      if (M.off || !cap.innerHTML) write(); else { cap.style.opacity = 0; capTimer = setTimeout(write, 180); }
+    };
+    const views = [{ title: 'The argument, in seven steps', mount: el => (exhibit = N.exhibit.mount(el, { compact: false, onStep: say })) }, ...N.sections].map((v, i) => {
+      const el = document.createElement('div'); el.className = 'egp-view'; wrap.appendChild(el);
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = v.title; nav.appendChild(b);
+      b.addEventListener('click', () => show(i));
+      return { v, el, b, made: false };
+    });
+    function show(i) {
+      views.forEach((w, k) => {
+        if (k === i && !w.made) { w.v.mount(w.el); w.made = true; }
+        w.el.classList.toggle('egp-on', k === i); w.b.setAttribute('aria-pressed', String(k === i));
+      });
+      capbar.classList.toggle('egp-off', i !== 0);
+    }
+    show(0); say(0);
+    const go = d => { const i = Math.max(0, Math.min(steps.length - 1, at + d)); if (i !== at) { exhibit.step(i); say(i); } };
+    $('egp-prev').addEventListener('click', () => go(-1)); $('egp-next').addEventListener('click', () => go(1));
+    addEventListener('keydown', e => { if (e.target.closest && e.target.closest('input')) return; if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); });
+
+    /* the card art and the small map share one clock */
+    const art = N.art($('egp-art'));
+    const map = $('egp-map'), P = { eigen: [12, 26], theory: [112, 26], cost: [12, 62], phases: [150, 52], memory: [150, 72], conceptric: [12, 104], search: [128, 104] };
+    const href = id => { const n = G[id] || {}; return id === 'cost' ? null : n.page || (n.slug ? `/eigenengine/${n.slug}/` : null); };
+    const cls = { cost: 'egp-me', phases: 'egp-ph', memory: 'egp-me2' };
+    const t0 = S(map, 'text', { class: 'egp-cap', x: 8, y: 8 }); t0.textContent = 'WHERE THIS SITS';
+    const edge = (a, b, sup) => S(map, 'path', { d: `M${P[a][0]} ${P[a][1]}L${P[b][0]} ${P[b][1]}`, class: sup ? 'egp-sup' : '' });
+    edge('eigen', 'theory'); S(map, 'path', { d: `M${P.theory[0]} ${P.theory[1]}C${P.theory[0] - 30} ${P.theory[1] + 22} ${P.cost[0] + 40} ${P.cost[1] - 8} ${P.cost[0]} ${P.cost[1]}` });
+    ['phases', 'memory'].forEach(k => S(map, 'path', { d: `M${P.theory[0]} ${P.theory[1]}C${P.theory[0]} ${P[k][1]} ${P.theory[0] + 10} ${P[k][1]} ${P[k][0]} ${P[k][1]}` }));
+    const sup = [edge('cost', 'conceptric', true), S(map, 'path', { d: `M${P.cost[0]} ${P.cost[1]}C${P.cost[0] + 18} ${P.cost[1] + 34} ${P.search[0] - 32} ${P.search[1] - 24} ${P.search[0]} ${P.search[1]}`, class: 'egp-sup' })];
+    const pulses = sup.map(p => ({ p, len: p.getTotalLength(), el: S(map, 'circle', { class: 'egp-pulse', r: 2.4 }) }));
+    Object.keys(P).forEach(id => {
+      const h = href(id), g = h ? S(map, 'a', { href: h }) : S(map, 'g');
+      S(g, 'circle', { cx: P[id][0], cy: P[id][1], r: id === 'cost' ? 5.5 : 4, class: cls[id] || '' });
+      const t = S(g, 'text', { x: P[id][0] + 9, y: P[id][1] + 3.5, class: id === 'cost' ? 'egp-here' : '' });
+      t.textContent = id === 'cost' ? 'This paper' : (G[id] || {}).title || id;
+    });
+    const start = performance.now();
+    (function loop(now) {
+      const t = (now - start) / 1000;
+      art.tick(t);
+      document.documentElement.classList.toggle('egp-still', !!M.off);
+      if (!M.off) pulses.forEach((u, k) => { const f = ((t * .32 + k * .5) % 1), q = u.p.getPointAtLength(f * u.len); u.el.setAttribute('cx', q.x); u.el.setAttribute('cy', q.y); u.el.style.opacity = Math.sin(Math.PI * f).toFixed(2); });
+      requestAnimationFrame(loop);
+    })(start);
+
+    /* motion: on unless the visitor turns it off here */
+    const mo = $('egp-motion'), label = () => { mo.textContent = M.off ? 'Turn motion on' : 'Turn motion off'; };
+    mo.addEventListener('click', () => { M.off = !M.off; try { localStorage.setItem('eg-motion', M.off ? 'off' : 'on'); } catch (e) {} label(); });
+    label();
+  })();
+  </script>
+<script src="/assets/js/eigen-shell.js"></script>
+</body>
+</html>

@@ -46,7 +46,7 @@
         <g class="el-traveler"><circle class="el-halo" r="8.5"/><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="1.3"/></g>
       </svg>
       <div class="el-editor">
-        <div class="el-record-label">Hilbert manuscript revision <span>Writing App</span></div>
+        <div class="el-record-label">Hilbert manuscript revision <span>The interface</span></div>
         <div class="el-proposal">
           <div class="el-workbench">
             <svg class="el-saved-ui" viewBox="224 117 1360 480" role="img" aria-label="The manuscript editor and its saved project changes."><image href="/demo/writing/media/full-changes.webp" width="1600" height="900"/></svg>

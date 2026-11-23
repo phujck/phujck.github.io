@@ -1,0 +1,16 @@
+/* One set of tokens for every EigenEngine page and exhibit. Read them; do not redefine colours locally. */
+:root {
+  --eg-ground: #0a0e1a; --eg-surface: #111827; --eg-raise: #18233a; --eg-line: #2e3a54;
+  --eg-ink: #f2eee6; --eg-muted: #b4bccb; --eg-faint: #7f8aa0;
+  --eg-gold: #e4bf7d; --eg-blue: #83bfd5; --eg-teal: #7fd1b9; --eg-coral: #ef8f6b;
+  /* meaning: gold = selected, and query weight; blue = sources and links out; teal = computed or drawn; coral = needs review */
+  /* each paper has a ground of its own, used on its card and its page */
+  --eg-cost-a: #3c382c; --eg-cost-b: #242b2b; --eg-cost-c: #1a1c20; --eg-cost-line: #b69961; --eg-cost-edge: #7d6849;       /* The Cost of Complexity: gold */
+  --eg-phases-a: #5a2a28; --eg-phases-b: #3a2024; --eg-phases-c: #1c181c; --eg-phases-line: #d98a7c; --eg-phases-edge: #8a4a44; /* The Phases of Hierarchy: red */
+  --eg-memory-a: #1f3f5c; --eg-memory-b: #1a2c44; --eg-memory-c: #141a26; --eg-memory-line: #7fb4d9; --eg-memory-edge: #3f6f93; /* Dynamic Memory: blue */
+  --eg-interface-a: #1f4a3a; --eg-interface-b: #19322b; --eg-interface-c: #131c1b; --eg-interface-line: #7fd1a8; --eg-interface-edge: #3f7f67; /* The interface: green */
+  --eg-text: 'Lora', Georgia, serif;          /* headings and all running text */
+  --eg-label: 'Outfit', system-ui, sans-serif; /* labels, buttons, captions, every word inside a figure */
+  /* no monospace anywhere */
+  --eg-radius: 16px; --eg-radius-s: 10px;
+}

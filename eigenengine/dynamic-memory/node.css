@@ -1,0 +1,126 @@
+/* Dynamic Memory (id `memory`): the exhibit and its section. Scoped under .egn-memory; colours from eigen-tokens.css only.
+   Meaning of colour, as everywhere on these pages: gold = a question's weight, blue = sources, coral = changed and to be
+   reviewed, teal = current, work kept. */
+.egn-memory .egm { position: absolute; inset: 0; overflow: hidden; color: var(--eg-ink); font: 400 13px/1.35 var(--eg-label);
+  background: radial-gradient(ellipse 80% 90% at 18% 8%, var(--eg-memory-b) 0, var(--eg-memory-c) 72%); }
+.egn-memory .egm *, .egn-memory .egm *::before { box-sizing: border-box; }
+.egn-memory .egm button, .egn-memory .egm-par button { margin: 0; }
+.egn-memory .egm-svg { position: absolute; inset: 0; width: 100%; height: 100%; font-family: var(--eg-label); }
+.egn-memory .egm .egm-svg text { font-family: var(--eg-label) !important; font-size: 1em !important; letter-spacing: 0 !important; }   /* a host's own rules for text must not reach into the figure */
+
+/* the figure */
+.egn-memory .egm-e { fill: none; stroke: var(--eg-memory-line); stroke-linecap: round; }
+.egn-memory .egm-e.sel { stroke: var(--eg-blue); }
+.egn-memory .egm-eh, .egn-memory .egm-ef { fill: none; stroke: var(--eg-gold); stroke-linecap: butt; }
+.egn-memory .egm-stop { stroke: var(--eg-faint); stroke-width: 2; stroke-linecap: round; }
+.egn-memory .egm-dot { fill: var(--eg-ink); }
+.egn-memory .egm-n { fill: var(--eg-ink); stroke: var(--eg-memory-c); stroke-width: 1.5; }
+.egn-memory .egm-n.leaf { fill: var(--eg-memory-line); }
+.egn-memory .egm-ring { fill: none; stroke: var(--eg-coral); stroke-width: 1.8; }
+.egn-memory .egm-ring.kept { stroke: var(--eg-teal); stroke-width: 1.3; stroke-dasharray: 2 3; }
+.egn-memory .egm-thr { fill: none; stroke: var(--eg-blue); stroke-width: 1; }
+.egn-memory .egm-thr.on { stroke-width: 1.7; }
+.egn-memory .egm-t { fill: var(--eg-muted); font-weight: 500; paint-order: stroke; stroke: var(--eg-memory-c); stroke-width: 3.2px; stroke-linejoin: round; }
+.egn-memory .egm-ll { fill: var(--eg-muted); } .egn-memory .egm-num { fill: var(--eg-ink); font-weight: 600; }
+.egn-memory .egm-rl { fill: var(--eg-faint); }
+.egn-memory .egm .egm-svg text.egm-cn { fill: var(--eg-faint); }
+.egn-memory .egm-call { font-weight: 600; letter-spacing: .02em; paint-order: stroke; stroke: var(--eg-memory-c); stroke-width: 3.4px; stroke-linejoin: round; }
+.egn-memory .egm-call.gold { fill: var(--eg-gold); } .egn-memory .egm-call.coral { fill: var(--eg-coral); } .egn-memory .egm-call.teal { fill: var(--eg-teal); }
+
+/* the names of the three labels, above the links that read them */
+.egn-memory .egm-heads { position: absolute; left: 0; right: 0; margin: 0; height: 0; pointer-events: none; transition: opacity .5s; }
+.egn-memory .egm-heads span { position: absolute; transform: translateX(-50%); font: 600 .72rem/1 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-faint); white-space: nowrap; }
+.egn-memory .egm[data-mode=records] .egm-heads, .egn-memory .egm[data-size=tiny] .egm-heads { opacity: 0; }
+
+/* the answer and the notebook it rests on */
+.egn-memory .egm-side { position: absolute; top: 0; right: 0; padding: 14px 16px 0 0; display: flex; flex-direction: column; gap: 9px; min-height: 0; }
+.egn-memory .egm[data-size=full] .egm-side { padding: 22px 22px 0 0; gap: 12px; }
+.egn-memory .egm[data-size=tiny] .egm-side { display: none; }
+.egn-memory .egm-side p { margin: 0; }
+.egn-memory .egm-ans { border: 1px solid var(--eg-memory-edge); border-radius: var(--eg-radius-s); padding: 10px 12px 10px; background: color-mix(in srgb, var(--eg-memory-a) 38%, transparent); flex: none; transition: border-color .4s; }
+.egn-memory .egm[data-asked="1"] .egm-ans { border-color: color-mix(in srgb, var(--eg-gold) 62%, var(--eg-memory-edge)); }
+.egn-memory .egm-q { color: var(--eg-muted); font-size: .86rem; line-height: 1.3; min-height: 2.6em; } .egn-memory .egm[data-size=compact] .egm-q { min-height: 1.3em; white-space: nowrap; }
+.egn-memory .egm-val { display: grid; gap: 2px; margin-top: 3px !important; min-height: 3.2rem; align-content: start; }
+.egn-memory .egm-val b { font: 400 1.75rem/1.1 var(--eg-text); letter-spacing: -.02em; color: var(--eg-gold); }
+.egn-memory .egm-val span { font-size: .8rem; color: var(--eg-muted); white-space: nowrap; }
+.egn-memory .egm-rest { font-size: .8rem; color: var(--eg-blue); margin-top: 3px !important; min-height: 1.35em; white-space: nowrap; }
+.egn-memory .egm-moved { font-size: .8rem; line-height: 1.32; color: var(--eg-ink); margin-top: 5px !important; }
+.egn-memory .egm-moved:empty { display: none; } .egn-memory .egm[data-size=compact] .egm-val { min-height: 2.55rem; }
+.egn-memory .egm[data-stack="1"] .egm-side { padding: 0; right: auto; } .egn-memory .egm[data-stack="1"] .egm-status { display: none; }
+.egn-memory .egm[data-stack="1"] .egm-grp:last-child { margin-left: 0; }
+.egn-memory .egm-h { font: 600 .72rem/1 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-faint); }
+.egn-memory .egm-cost { display: grid; gap: 3px; margin-top: 7px; transition: opacity .35s; } .egn-memory .egm[data-asked="0"] .egm-cost { opacity: 0; visibility: hidden; }
+.egn-memory .egm-cost p { position: relative; display: flex; align-items: center; height: 1.28rem; font-size: .78rem; color: var(--eg-faint); padding-left: 7px; }
+.egn-memory .egm-cost i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 4px; background: color-mix(in srgb, var(--eg-memory-line) 22%, transparent); transition: width .7s cubic-bezier(.3, .1, .2, 1), background .35s; }
+.egn-memory .egm-cost span { position: relative; white-space: nowrap; } .egn-memory .egm-cost b { font-weight: 600; color: var(--eg-muted); }
+.egn-memory .egm-cost p.on { color: var(--eg-ink); } .egn-memory .egm-cost p.on i { background: color-mix(in srgb, var(--eg-gold) 34%, transparent); } .egn-memory .egm-cost p.on b { color: var(--eg-gold); }
+.egn-memory .egm[data-size=compact] .egm-cost { margin-top: 4px; gap: 2px; } .egn-memory .egm[data-size=compact] .egm-cost p { font-size: .72rem; height: 1.12rem; }
+.egn-memory .egm-h-eig, .egn-memory .egm[data-skin=eigen] .egm-h-lab { display: none; }
+.egn-memory .egm[data-skin=eigen] .egm-h-eig { display: inline; color: var(--eg-blue); }
+.egn-memory .egm-lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; min-height: 0; overflow: hidden; }
+.egn-memory .egm-lines li.more p { display: flex; gap: 8px; align-items: baseline; margin: 0; font: 400 .8rem/1.3 var(--eg-label); color: var(--eg-muted); padding: 2.5px 6px 2.5px 7px; border-left: 2px solid transparent; white-space: nowrap; } .egn-memory .egm-lines li.more.rest p { border-left-color: var(--eg-blue); }
+.egn-memory .egm[data-size=compact] .egm-lines li.more p { font-size: .72rem; padding: 1.5px 4px 1.5px 6px; gap: 6px; }
+.egn-memory .egm-lines li { max-height: 3.2em; transition: max-height .45s ease, opacity .45s ease; }
+.egn-memory .egm-lines li.gone { max-height: 0; opacity: 0; overflow: hidden; pointer-events: none; }
+.egn-memory .egm-lines button span { white-space: nowrap; }
+.egn-memory .egm-lines button { display: flex; gap: 8px; align-items: baseline; width: 100%; text-align: left; font: 400 .8rem/1.3 var(--eg-label); color: var(--eg-muted); background: none; border: 0; border-left: 2px solid transparent; border-radius: 0 6px 6px 0; padding: 2.5px 6px 2.5px 7px; cursor: pointer; transition: background .25s, border-color .25s, color .25s; }
+.egn-memory .egm-lines button:hover { background: color-mix(in srgb, var(--eg-blue) 10%, transparent); color: var(--eg-ink); }
+.egn-memory .egm-lines i { font: 600 .72rem/1 var(--eg-label); font-style: normal; color: var(--eg-faint); min-width: .8em; text-align: right; }
+.egn-memory .egm-lines mark { background: none; color: var(--eg-ink); border-bottom: 1px solid color-mix(in srgb, var(--eg-blue) 70%, transparent); }
+.egn-memory .egm-lines s { color: var(--eg-faint); }
+.egn-memory .egm-lines li.rest button { border-left-color: var(--eg-blue); }
+.egn-memory .egm-lines li.sel button { background: color-mix(in srgb, var(--eg-blue) 17%, transparent); color: var(--eg-ink); border-left-color: var(--eg-blue); }
+.egn-memory .egm-lines li.sel mark { border-bottom-color: var(--eg-gold); border-bottom-width: 2px; }
+.egn-memory .egm-lines li.new button { border-left-color: var(--eg-coral); } .egn-memory .egm-lines li.new mark:first-of-type { border-bottom-color: var(--eg-coral); }
+.egn-memory .egm-lines li.off button { color: var(--eg-faint); text-decoration: line-through; border-left-color: var(--eg-coral); } .egn-memory .egm-lines li.off mark { color: var(--eg-faint); border-bottom-color: transparent; }
+.egn-memory .egm[data-size=compact] .egm-lines button { font-size: .72rem; padding: 1.5px 4px 1.5px 6px; gap: 6px; }
+.egn-memory .egm[data-size=compact] .egm-ans { padding: 7px 9px; }
+.egn-memory .egm[data-short="1"] .egm-h, .egn-memory .egm[data-short="1"][data-asked="1"] .egm-rest { display: none; } .egn-memory .egm[data-short="1"] .egm-lines button, .egn-memory .egm[data-short="1"] .egm-lines li.more p { padding-block: .5px; } .egn-memory .egm[data-size=compact] .egm-val b { font-size: 1.4rem; }
+.egn-memory .egm[data-size=compact] .egm-q, .egn-memory .egm[data-size=compact] .egm-val span, .egn-memory .egm[data-size=compact] .egm-rest, .egn-memory .egm[data-size=compact] .egm-moved { font-size: .72rem; }
+.egn-memory .egm-out { font-size: .78rem; color: var(--eg-faint); opacity: 0; transition: opacity .5s; pointer-events: none; }
+.egn-memory .egm-out a { color: var(--eg-gold); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--eg-gold) 45%, transparent); }
+.egn-memory .egm[data-skin=eigen] .egm-out { opacity: 1; pointer-events: auto; } .egn-memory .egm[data-size=compact] .egm-out { display: none; }
+
+/* what the figure says about itself, and its controls */
+.egn-memory .egm-status { position: absolute; left: 14px; margin: 0; font: 400 .8rem/1.3 var(--eg-label); color: var(--eg-muted); max-width: 62%; }
+.egn-memory .egm[data-size=full] .egm-status { left: 22px; font-size: .86rem; } .egn-memory .egm[data-size=tiny] .egm-status { left: 9px; right: 9px; bottom: 7px !important; max-width: none !important; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.egn-memory .egm-bar { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 8px 14px 9px; border-top: 1px solid color-mix(in srgb, var(--eg-memory-edge) 55%, transparent); background: color-mix(in srgb, var(--eg-memory-c) 82%, transparent); }
+.egn-memory .egm[data-size=full] .egm-bar { padding: 11px 22px 12px; } .egn-memory .egm[data-size=tiny] .egm-bar { display: none; }
+.egn-memory .egm-grp { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 6px; }
+.egn-memory .egm-grp > span { font: 600 .72rem/1 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-faint); margin-right: 2px; }
+.egn-memory .egm-grp:last-child { margin-left: auto; }
+.egn-memory .egm-bar button { font: 500 .8rem/1.15 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 999px; padding: 6px 12px; cursor: pointer; white-space: nowrap; transition: border-color .25s, background .25s, color .25s; }
+.egn-memory .egm[data-size=compact] .egm-bar button { font-size: .72rem; padding: 5px 9px; }
+.egn-memory .egm-bar button:hover { color: var(--eg-ink); border-color: var(--eg-memory-line); }
+.egn-memory .egm-bar button[aria-pressed=true] { color: var(--eg-ink); border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
+.egn-memory .egm-grp:nth-child(2) button[aria-pressed=true] { border-color: var(--eg-coral); background: color-mix(in srgb, var(--eg-coral) 13%, transparent); }
+.egn-memory .egm-grp:last-child { gap: 5px 8px; }
+.egn-memory .egm-grow[aria-pressed=true], .egn-memory .egm-fold[aria-pressed=true] { border-color: var(--eg-memory-line) !important; background: color-mix(in srgb, var(--eg-memory-line) 14%, transparent) !important; }
+.egn-memory .egm :focus-visible, .egn-memory .egm-par :focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+
+/* why whole records are kept */
+.egn-memory .egm-par { font-size: clamp(1rem, 1.45vw, 1.7rem) !important; }
+.egn-memory .egm-par { position: relative; width: 100%; height: 100%; min-height: 21rem; display: grid; grid-template-columns: 1fr 1.05fr 1.25fr; gap: clamp(14px, 3vw, 44px); align-items: center; padding: clamp(16px, 3vw, 44px); color: var(--eg-ink); font: 400 .92rem/1.45 var(--eg-label); overflow: auto;
+  background: radial-gradient(ellipse 80% 90% at 18% 8%, var(--eg-memory-b) 0, var(--eg-memory-c) 72%); }
+.egn-memory .egm-par p { margin: 0; } .egn-memory .egm-par .egm-h { margin-bottom: 14px; }
+.egn-memory .egm-par-rows { display: grid; gap: 10px; }
+.egn-memory .egm-par-row { display: flex; gap: 9px; transition: opacity .45s, transform .45s; }
+.egn-memory .egm-par-row.dim { opacity: .22; transform: scale(.94); transform-origin: left center; }
+.egn-memory .egm-par-row span { width: 3.1em; height: 3.1em; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--eg-memory-line); font: 500 1.05rem/1 var(--eg-label); position: relative; color: var(--eg-memory-line); }
+.egn-memory .egm-par-row span.on { background: var(--eg-memory-line); color: var(--eg-memory-c); }
+.egn-memory .egm-par-row span i { position: absolute; top: -.2em; left: -.15em; font: 600 .72rem/1 var(--eg-label); color: var(--eg-faint); font-style: normal; }
+.egn-memory .egm-par-row span:last-child { border-color: var(--eg-gold); color: var(--eg-gold); } .egn-memory .egm-par-row span.on:last-child { background: var(--eg-gold); color: var(--eg-memory-c); }
+.egn-memory .egm-par-pick { display: flex; gap: 18px; margin-bottom: 16px; }
+.egn-memory .egm-par-sw { display: flex; align-items: center; gap: 5px; } .egn-memory .egm-par-sw > span { font-weight: 600; color: var(--eg-muted); margin-right: 3px; }
+.egn-memory .egm-par-sw button { font: 500 .92rem/1 var(--eg-label); width: 2.5em; height: 2.3em; color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 9px; cursor: pointer; transition: border-color .25s, background .25s, color .25s; }
+.egn-memory .egm-par-sw button[aria-pressed=true] { color: var(--eg-ink); border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
+.egn-memory .egm-par-out { font: 400 1.05rem/1.45 var(--eg-text); color: var(--eg-muted); } .egn-memory .egm-par-out b { font-weight: 500; font-size: 1.5rem; color: var(--eg-gold); }
+.egn-memory .egm-par-bars { display: grid; gap: 9px; margin-bottom: 14px; }
+.egn-memory .egm-par-bar { display: grid; grid-template-columns: 1.2em 1fr auto; gap: 10px; align-items: center; color: var(--eg-muted); } .egn-memory .egm-par-bar b { font-weight: 600; }
+.egn-memory .egm-par-bar span { height: 9px; border-radius: 5px; background: color-mix(in srgb, var(--eg-memory-line) 20%, transparent); overflow: hidden; } .egn-memory .egm-par-bar span i { display: block; height: 100%; background: var(--eg-memory-line); }
+.egn-memory .egm-par-bar em { font-style: normal; font-size: .82rem; color: var(--eg-faint); }
+.egn-memory .egm-par-say { font: 400 .98rem/1.5 var(--eg-text); color: var(--eg-muted); } .egn-memory .egm-par-say b { color: var(--eg-ink); font-weight: 500; }
+@media (max-width: 760px) { .egn-memory .egm-par { grid-template-columns: 1fr; align-items: start; } }
+/* the pairs of the four records: each as balanced as each label alone */
+.egn-memory .egm-par-pairs { display: flex; gap: 1.1em; margin-bottom: 14px; } .egn-memory .egm-par-pairs div { display: grid; grid-template-columns: auto 1fr 1fr; gap: 3px; align-items: center; font: 500 .72em/1 var(--eg-label); color: var(--eg-faint); }
+.egn-memory .egm-par-pairs b { grid-column: 1 / -1; font-weight: 600; color: var(--eg-muted); margin-bottom: 2px; } .egn-memory .egm-par-pairs span { width: 1.9em; height: 1.9em; display: grid; place-items: center; border-radius: 4px; background: color-mix(in srgb, var(--eg-memory-line) 22%, transparent); color: var(--eg-ink); }

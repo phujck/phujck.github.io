@@ -4,488 +4,321 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <meta name="theme-color" content="#0a0e1a">
-  <meta name="description" content="See how an author and an agent work on the same manuscript, simulations and figures in the EigenEngine Writing App.">
+  <meta name="theme-color" content="#131c1b">
+  <meta name="description" content="A saved session on The Cost of Complexity, filmed in the interface: an author and an agent at work on the same manuscript, its derivation and its figures.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Writing App walkthrough · EigenEngine">
-  <meta property="og:description" content="The film reopens a saved session for The Cost of Complexity and uses separate worked examples to show how an author reviews an edit and checks a simulation-backed figure.">
+  <meta property="og:title" content="A scientific paper in revision · The human interface · EigenEngine">
+  <meta property="og:description" content="The film reopens a saved session for The Cost of Complexity. Separate worked examples show how an author reviews one edit and checks a figure against the simulation behind it.">
   <meta property="og:url" content="https://gmccaul.co.uk/demo/writing/">
-  <meta property="og:image" content="https://gmccaul.co.uk/demo/writing/media/session-tour-poster.webp">
-  <meta property="og:image:alt" content="The Writing App shows the manuscript, outline and saved editing conversation for The Cost of Complexity.">
-  <title>Writing App walkthrough · EigenEngine</title>
+  <meta property="og:image" content="https://gmccaul.co.uk/demo/writing/media/full-project.webp">
+  <meta property="og:image:alt" content="The interface shows the manuscript, the outline and the saved editing conversation for The Cost of Complexity.">
+  <title>A scientific paper in revision · The human interface · EigenEngine</title>
   <link rel="canonical" href="https://gmccaul.co.uk/demo/writing/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/eigen-tokens.css">
   <link rel="stylesheet" href="./walkthrough.css">
-  <script src="/assets/js/eigenengine-old-links.js"></script>
-  <script src="./walkthrough.js" defer></script>
+  <link rel="stylesheet" href="/eigenengine/interface/node.css">
   <link rel="stylesheet" href="/assets/css/eigenengine-source-preview.css">
+  <script src="/assets/js/eigenengine-old-links.js"></script>
+  <script defer src="/assets/js/eigen-motion.js"></script>
+  <script defer src="/eigenengine/interface/node.js"></script>
+  <script defer src="./walkthrough.js"></script>
   <script defer src="/assets/js/eigenengine-source-preview.js"></script>
   <script defer src="/assets/js/eigenengine-reading-return.js"></script>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
 </head>
-<body>
-  <a class="skip-link" href="#session-film">Skip to the session film</a>
-  <header class="site-header">
-    <div class="shell masthead">
-      <a class="return-link" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
-      <nav aria-label="About this walkthrough">
-        <a href="/demo/writing/simulation/">Simulation to figure</a>
-        <a data-source-region="cost-fig-3" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">Read the paper</a>
-      </nav>
+<body class="ifc">
+  <a class="ifc-skip" href="#session-film">Skip to the session film</a>
+  <header class="ifc-bar">
+    <nav class="ifc-crumbs" aria-label="Where this page sits"><a href="/eigenengine.html">← EigenEngine</a> › <a href="/eigenengine/interface/">The human interface</a> › <b>A session, filmed</b></nav>
+    <div class="ifc-bar-links">
+      <a data-source-region="cost-fig-3" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">Read the paper ↗</a>
+      <button class="ifc-motion" type="button" data-ifc-motion hidden>Turn motion off</button>
     </div>
   </header>
-  <main class="shell">
-    <section class="session-opening" id="session-film" aria-labelledby="film-title">
-      <header class="session-intro">
-        <div>
-          <p class="eyebrow">Writing App</p>
-          <h1 id="film-title">One workspace for authors and agents</h1>
-        </div>
-        <p>While the author writes, an agent can rework an argument, derive its cost law and redraw the accompanying figure. Watch a saved section rewrite, then the smaller change the author requested inside one panel.</p>
-      </header>
-      <div class="session-film">
-        <div class="film-media" id="film-rewrite" data-rewrite-time="21">
-          <video controls playsinline muted preload="none" poster="./media/session-tour-poster.webp" aria-label="The Writing App session film">
-            <source src="./media/session-tour.mp4" type="video/mp4">
-            <a href="./media/session-tour.mp4" download>Download the session film</a>
-          </video>
-          <button type="button" class="film-play-action film-play" hidden>Play film</button>
-        </div>
-      </div>
-      <div class="film-chapters" role="group" aria-label="Session film chapters" hidden>
-        <button type="button" data-time="0" aria-current="true"><span>0:00</span><b>Editing workspace</b></button>
-        <button type="button" data-time="9"><span>0:09</span><b>Argument and figure</b></button>
-        <button type="button" data-time="42"><span>0:42</span><b>A precise edit</b></button>
-        <button type="button" data-time="55"><span>0:55</span><b>Simulation to figure</b></button>
-        <button type="button" data-time="77"><span>1:17</span><b>Workflow</b></button>
-        <button type="button" data-time="85"><span>1:25</span><b>arXiv package</b></button>
-      </div>
-      <div class="film-links">
-        <a class="film-inspect" href="#revision-atlas">Inspect the section rewrite <span aria-hidden="true">↓</span></a>
-        <a href="./media/session-tour.mp4" download>Download film</a>
-        <a href="./media/session-tour.vtt" download>Timed captions</a>
-        <button type="button" class="film-play-action film-resume" hidden>Resume film</button>
-      </div>
-      <details class="film-transcript" id="session-film-transcript">
-        <summary>Read the timed transcript</summary>
-        <ol>
-          <li><time datetime="PT0S">0:00</time><p>The manuscript is in the centre. Its saved conversation is on the right.</p></li>
-          <li><time datetime="PT4.5S">0:04.5</time><p>The editor keeps the draft and its evidence in view while the argument changes.</p></li>
-          <li><time datetime="PT9S">0:09</time><p>One proposal covers eight source files. Here it proposes moving a proof.</p></li>
-          <li><time datetime="PT14S">0:14</time><p>The main text keeps the proof outline. Appendix A carries the full derivation.</p></li>
-          <li><time datetime="PT21S">0:21</time><p>The rewrite ties the cost correction to the geometry of the cut.</p></li>
-          <li><time datetime="PT27S">0:27</time><p>The revised figure marks the dividing cuts and adds a cost exponent to each panel.</p></li>
-          <li><time datetime="PT34S">0:34</time><p>The added inset follows child 3 into the next register.</p></li>
-          <li><time datetime="PT38S">0:38</time><p>Price cuts by wall length. The exponent is α = 1 − 1/d.</p></li>
-          <li><time datetime="PT42S">0:42</time><p>A later edit adds two panel labels. Readers can tell each diagram’s job.</p></li>
-          <li><time datetime="PT49S">0:49</time><p>One panel compares contraction. The other follows a nested choice.</p></li>
-          <li><time datetime="PT55S">0:55</time><p>A separate run splits one square into 256 cells in four rounds.</p></li>
-          <li><time datetime="PT60S">1:00</time><p>The same 85 splits cost 4 by area and 15 by wall length, in first-split units.</p></li>
-          <li><time datetime="PT65S">1:05</time><p>The CSV saves each round’s totals.</p></li>
-          <li><time datetime="PT67.75S">1:07.75</time><p>The plot links back to the run.</p></li>
-          <li><time datetime="PT70.5S">1:10.5</time><p>The rebuilt manuscript contains the computed plot and its caption.</p></li>
-          <li><time datetime="PT77S">1:17</time><p>In this example, an independent review can send the wording back for revision.</p></li>
-          <li><time datetime="PT85S">1:25</time><p>The arXiv check rebuilds the saved draft from an 11-file package.</p></li>
-          <li><time datetime="PT91S">1:31</time><p>Both LaTeX passes succeed. All 21 pages reproduce the same text.</p></li>
-        </ol>
-      </details>
-    </section>
-
-    <section class="revision-atlas" id="revision-atlas" aria-labelledby="revision-title">
-      <header class="revision-intro">
-        <div><p class="eyebrow">Inside a saved rewrite</p><h2 id="revision-title">A section, a derivation, a figure.</h2></div>
-        <p>Gerard asked what the paper’s correction term meant geometrically. The resulting rewrite changed the argument in Section III, brought two figures into it and revised the discussion. A later request came down to one detail in Figure 4. <a href="#film-rewrite">Watch the rewrite at 0:21 ↗</a></p>
-      </header>
-      <nav class="revision-choices" aria-label="Inspect the manuscript revision">
-        <a id="rev-nav-argument" href="#revision-argument">The argument</a>
-        <a id="rev-nav-figure" href="#revision-figure">The drawing</a>
-        <a id="rev-nav-inset" href="#revision-inset">One fine adjustment</a>
+  <main class="ifc-main">
+    <aside class="ifc-rail">
+      <p class="ifc-eyebrow"><a href="/eigenengine/interface/">The human interface</a></p>
+      <h1>A scientific paper in revision</h1>
+      <p class="ifc-lede">An author revises <em>The Cost of Complexity</em> while an agent reworks an argument, derives its cost law and redraws a figure. The session was saved, and we reopen it here.</p>
+      <nav class="ifc-parts" aria-label="Parts of this page">
+        <a class="ifc-part" data-part="session-film" href="#session-film"><span class="ifc-part-art"><img src="./media/full-project.webp" alt="" width="1600" height="900"></span><span class="ifc-part-t"><strong>The film</strong><small>The saved session, replayed in ninety-seven seconds.</small></span></a>
+        <a class="ifc-part" data-part="revision-atlas" href="#revision-atlas"><span class="ifc-part-art"><img src="./media/hilbert-revised.webp" alt="" width="1264" height="670" loading="lazy"></span><span class="ifc-part-t"><strong>A section rewritten</strong><small>One question changed an argument, a figure and one detail of it.</small></span></a>
+        <a class="ifc-part" data-part="session" href="#session"><span class="ifc-part-art"><img src="./media/full-changes.webp" alt="" width="1600" height="900" loading="lazy"></span><span class="ifc-part-t"><strong>The saved session</strong><small>Six screens of the interface, as the session left them.</small></span></a>
+        <a class="ifc-part" data-part="edit-example" href="#edit-example"><span class="ifc-part-art"><img src="./media/proposal-changes.webp" alt="" width="1440" height="900" loading="lazy"></span><span class="ifc-part-t"><strong>One edit up close</strong><small>A proposal is read, reworded, accepted and undone.</small></span></a>
+        <a class="ifc-part" data-part="both-forms" href="#both-forms"><span class="ifc-part-art egn-interface"><svg data-art="interface" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></span><span class="ifc-part-t"><strong>The edit, in the reader’s hands</strong><small>The same sentence, to propose on, reword and rewrite.</small></span></a>
       </nav>
+      <nav class="ifc-doors" aria-label="Elsewhere in the interface">
+        <a href="/demo/writing/simulation/">From a simulation to a figure →</a>
+        <a href="/demo/writing/project-record/">The work behind the paper →</a>
+      </nav>
+    </aside>
 
-      <article class="revision-sheet" id="revision-argument" aria-labelledby="rev-nav-argument">
-        <div class="revision-columns">
-          <section class="revision-column"><p class="revision-label">Earlier passage</p><h3>Where does each cell belong?</h3>
-            <blockquote>“The rank of a cell therefore specifies a quadrant, then a quadrant within that quadrant, and so on down to the cell itself.”</blockquote>
-            <p>Shrink the quadrants into the corners and the path still visits the cells in the same order. The draft described that hierarchy, then left open what each level of nesting costs.</p>
-          </section>
-          <section class="revision-column is-revised"><p class="revision-label">Applied rewrite</p><h3>What does it cost to split them?</h3>
-            <blockquote>“Refining <i>m</i> registers draws the motif <i>m</i> times, and each copy is narrower by a factor <i>m</i><sup>−1/2</sup> and so cheaper by <i>m</i><sup>−γ/2</sup>.”</blockquote>
-            <p>More cells must be split, but each split costs less as its cell shrinks. The rewrite works out which effect wins. Charging by area on a square makes them balance.</p>
-          </section>
+    <div class="ifc-stage">
+      <section class="ifc-panel" id="session-film" aria-labelledby="film-title">
+        <header class="ifc-panel-head"><h2 id="film-title">The session, replayed</h2><p>The film follows one saved revision from the workspace to the package sent to arXiv.</p></header>
+        <div class="ifc-screen">
+          <div class="ifc-screen-in" id="film-rewrite" data-rewrite-time="21">
+            <video controls playsinline muted preload="none" poster="./media/session-tour-poster.webp" aria-label="The session film">
+              <source src="./media/session-tour.mp4" type="video/mp4">
+              <track kind="captions" src="./media/session-tour.vtt" srclang="en" label="English">
+              <a href="./media/session-tour.mp4" download>Download the session film</a>
+            </video>
+            <span class="ifc-plate" aria-hidden="true">EigenEngine&nbsp; / &nbsp;The interface</span>
+          </div>
         </div>
-        <div class="revision-equation"><div class="edition-formula" aria-label="alpha equals one minus gamma divided by d"><i>α</i> = 1 − <span class="edition-fraction"><i>γ</i><i>d</i></span></div>
-          <p><strong>From geometry to the correction.</strong> Dimension <i>d</i> and the price of a split (width raised to <i>γ</i>) fix the exponent <i>α</i>. It determines <i>ε</i>, which compares the price of the same refinement starting from several alternatives and starting from one. When <i>γ</i> equals <i>d</i>, every round costs the same and the correction vanishes.</p>
-          <a data-source-region="cost-eq-36" href="/assets/docs/the-cost-of-complexity.pdf#page=9" target="_blank" rel="noopener">Read Eq. 36 in context ↗</a></div>
-        <details class="revision-reader"><summary>Read the two saved passages and the derivation</summary>
-          <p>Selected manuscript paragraphs from before and after the applied section rewrite. Equation, figure and reference numbers follow the linked manuscript.</p>
-          <div class="revision-columns">
-            <section class="revision-column"><h4>Before the rewrite</h4><p>Number the cells <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mi>…</mi><mo>,</mo><msup><mn>4</mn><mi>k</mi></msup></mrow></semantics></math> in the order the path visits them, and take this number as the rank of a symbol. The path finishes each quadrant before it enters the next, so ranks <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>4</mn><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msup></semantics></math> occupy the first quadrant, the next <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>4</mn><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msup></semantics></math> ranks the second, and so on, and the same holds inside every quadrant at every level. The rank of a cell therefore specifies a quadrant, then a quadrant within that quadrant, and so on down to the cell itself. Each quadrant is a register and the position along the path within it is the symbol, so the subdivision of Eq. (6) holds with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><msup><mn>4</mn><mi>j</mi></msup></mrow></semantics></math> at every level <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi></semantics></math> without reordering any rank. Figure 2(b,c) shows two organisations of sixteen symbols on the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow></semantics></math> path, and Fig. 3(a) shows the same square described at successive levels. Because cells that are close along the path are close in space, these curves are used to order data in spatial databases and large matrix computations [47]. For the present argument the curve supplies a concrete organisation in which each register is a symbol of the level above it. It specifies how the distinctions nest but not what each level of nesting costs, and that cost is what <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi></semantics></math> describes.</p>
+        <ol class="ifc-chapters" aria-label="Chapters of the session film">
+          <li class="ifc-chapter" data-time="0" data-end="9"><button type="button"><span>0:00</span>Editing workspace</button></li>
+          <li class="ifc-chapter" data-time="9" data-end="42"><button type="button"><span>0:09</span>Argument and figure</button></li>
+          <li class="ifc-chapter" data-time="42" data-end="55"><button type="button"><span>0:42</span>A precise edit</button></li>
+          <li class="ifc-chapter" data-time="55" data-end="77"><button type="button"><span>0:55</span>Simulation to figure</button></li>
+          <li class="ifc-chapter" data-time="77" data-end="85"><button type="button"><span>1:17</span>Workflow</button></li>
+          <li class="ifc-chapter" data-time="85" data-end="97"><button type="button"><span>1:25</span>arXiv package</button></li>
+        </ol>
+        <p class="ifc-now" aria-hidden="true"></p>
+        <div class="ifc-filmlinks">
+          <button type="button" class="ifc-btn ifc-btn-gold" data-film-play hidden>Play the film</button>
+          <a href="#revision-atlas">Inspect the section rewrite →</a>
+          <a href="./media/session-tour.mp4" download>Download the film</a>
+          <a href="./media/session-tour.vtt" download>Timed captions</a>
+          <details class="ifc-reader" id="session-film-transcript">
+            <summary>Read the transcript</summary>
+            <div class="ifc-reader-body">
+              <button type="button" class="ifc-btn ifc-reader-close">Close</button>
+              <h4>The film, line by line</h4>
+              <div class="ifc-lines">
+              <p data-t="0"><time datetime="PT0S">0:00</time> The manuscript is in the centre. Its saved conversation is on the right.</p>
+              <p data-t="4.5"><time datetime="PT4.5S">0:04.5</time> The editor keeps the draft and its evidence in view while the argument changes.</p>
+              <p data-t="9"><time datetime="PT9S">0:09</time> One proposal covers eight source files. Here it proposes moving a proof.</p>
+              <p data-t="14"><time datetime="PT14S">0:14</time> The main text keeps the proof outline. Appendix A carries the full derivation.</p>
+              <p data-t="21"><time datetime="PT21S">0:21</time> The rewrite ties the cost correction to the geometry of the cut.</p>
+              <p data-t="27"><time datetime="PT27S">0:27</time> The revised figure marks the dividing cuts and adds a cost exponent to each panel.</p>
+              <p data-t="34"><time datetime="PT34S">0:34</time> The added inset follows child 3 into the next register.</p>
+              <p data-t="38"><time datetime="PT38S">0:38</time> Price cuts by wall length. The exponent is α = 1 − 1/d.</p>
+              <p data-t="42"><time datetime="PT42S">0:42</time> A later edit adds two panel labels. Readers can tell each diagram’s job.</p>
+              <p data-t="49"><time datetime="PT49S">0:49</time> One panel compares contraction. The other follows a nested choice.</p>
+              <p data-t="55"><time datetime="PT55S">0:55</time> A separate run splits one square into 256 cells in four rounds.</p>
+              <p data-t="60"><time datetime="PT60S">1:00</time> The same 85 splits cost 4 by area and 15 by wall length, in first-split units.</p>
+              <p data-t="65"><time datetime="PT65S">1:05</time> The CSV saves each round’s totals.</p>
+              <p data-t="67.75"><time datetime="PT67.75S">1:07.75</time> The plot links back to the run.</p>
+              <p data-t="70.5"><time datetime="PT70.5S">1:10.5</time> The rebuilt manuscript contains the computed plot and its caption.</p>
+              <p data-t="77"><time datetime="PT77S">1:17</time> In this example, an independent review can send the wording back for revision.</p>
+              <p data-t="85"><time datetime="PT85S">1:25</time> The arXiv check rebuilds the saved draft from an 11-file package.</p>
+              <p data-t="91"><time datetime="PT91S">1:31</time> Both LaTeX passes succeed. All 21 pages reproduce the same text.</p>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="ifc-panel" id="revision-atlas" aria-labelledby="revision-title">
+        <header class="ifc-panel-head"><h2 id="revision-title">A section rewritten</h2><p>Gerard asked what the paper’s correction term meant geometrically. The rewrite which followed changed the argument of Section III and redrew a figure, and a later request returned to one detail of it. <a href="#film-rewrite">Watch it at 0:21 →</a></p></header>
+        <nav class="ifc-steps" aria-label="Inspect the manuscript revision">
+          <a class="ifc-btn" id="rev-nav-argument" data-sheet="revision-argument" href="#revision-argument"><span>1</span>The argument</a>
+          <a class="ifc-btn" id="rev-nav-figure" data-sheet="revision-figure" href="#revision-figure"><span>2</span>The drawing</a>
+          <a class="ifc-btn" id="rev-nav-inset" data-sheet="revision-inset" href="#revision-inset"><span>3</span>One fine adjustment</a>
+        </nav>
+        <div class="ifc-tabs">
+          <article class="ifc-sheet" id="revision-argument" aria-labelledby="rev-nav-argument">
+            <div class="ifc-cols">
+              <section class="ifc-col"><p class="ifc-label">Earlier passage</p><h3>Where each cell belongs</h3>
+                <blockquote>“The rank of a cell therefore specifies a quadrant, then a quadrant within that quadrant, and so on down to the cell itself.”</blockquote>
+                <p>Shrink the quadrants into the corners and the path still visits the cells in the same order. The draft described that hierarchy, then left open what each level of nesting costs.</p>
+              </section>
+              <section class="ifc-col is-revised"><p class="ifc-label">Applied rewrite</p><h3>What a split costs</h3>
+                <blockquote>“Refining <i>m</i> registers draws the motif <i>m</i> times, and each copy is narrower by a factor <i>m</i><sup>−1/2</sup> and so cheaper by <i>m</i><sup>−γ/2</sup>.”</blockquote>
+                <p>More cells must be split, but each split costs less as its cell shrinks. The rewrite works out which effect wins. Charging by area on a square makes them balance.</p>
+              </section>
+            </div>
+            <div class="ifc-equation"><div class="ifc-formula" aria-label="alpha equals one minus gamma divided by d"><i>α</i> = 1 − <span class="ifc-frac"><i>γ</i><i>d</i></span></div>
+              <p><strong>From geometry to the correction.</strong> Dimension <i>d</i> and the price of a split (width raised to <i>γ</i>) fix the exponent <i>α</i>. It determines <i>ε</i>, which compares the price of the same refinement starting from several alternatives and starting from one. When <i>γ</i> equals <i>d</i>, every round costs the same and the correction vanishes.</p>
+              <a data-source-region="cost-eq-36" href="/assets/docs/the-cost-of-complexity.pdf#page=9" target="_blank" rel="noopener">Read Eq. 36 in context ↗</a></div>
+            <details class="ifc-reader"><summary>Read the two saved passages and the derivation</summary>
+              <div class="ifc-reader-body">
+                <button type="button" class="ifc-btn ifc-reader-close">Close</button>
+                <p>Selected manuscript paragraphs from before and after the applied section rewrite. Equation, figure and reference numbers follow the linked manuscript.</p>
+                <div class="ifc-cols">
+<section class="ifc-col"><h4>Before the rewrite</h4><p>Number the cells <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mi>…</mi><mo>,</mo><msup><mn>4</mn><mi>k</mi></msup></mrow></semantics></math> in the order the path visits them, and take this number as the rank of a symbol. The path finishes each quadrant before it enters the next, so ranks <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>4</mn><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msup></semantics></math> occupy the first quadrant, the next <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>4</mn><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msup></semantics></math> ranks the second, and so on, and the same holds inside every quadrant at every level. The rank of a cell therefore specifies a quadrant, then a quadrant within that quadrant, and so on down to the cell itself. Each quadrant is a register and the position along the path within it is the symbol, so the subdivision of Eq. (6) holds with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><msup><mn>4</mn><mi>j</mi></msup></mrow></semantics></math> at every level <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi></semantics></math> without reordering any rank. Figure 2(b,c) shows two organisations of sixteen symbols on the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow></semantics></math> path, and Fig. 3(a) shows the same square described at successive levels. Because cells that are close along the path are close in space, these curves are used to order data in spatial databases and large matrix computations [47]. For the present argument the curve supplies a concrete organisation in which each register is a symbol of the level above it. It specifies how the distinctions nest but not what each level of nesting costs, and that cost is what <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi></semantics></math> describes.</p>
 <p>The construction does not need the quadrants to fill the square. If each quadrant is shrunk by a factor <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mi>s</mi></mrow></semantics></math> with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>&gt;</mo><mn>2</mn></mrow></semantics></math> and moved into its corner, repeating the construction produces a self-similar Cantor dust of similarity dimension <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>=</mo><mo>log</mo><mn>4</mn><mi>/</mi><mo>log</mo><mi>s</mi></mrow></semantics></math>. The order in which the cells are visited is unchanged, and so is every rank and every register. Figure 4 shows this fractional Hilbert order for dimensions between two, the full square, and one. For <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>&lt;</mo><mn>2</mn></mrow></semantics></math> the set consists of disconnected pieces, so no continuous curve can fill it, and the path drawn in the figure only joins consecutive ranks. The ordering is all the register hierarchy uses, and it is unaffected. Space-filling curves on connected self-similar sets have been constructed systematically [48]. Since <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">g</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></semantics></math> depends only on the number of distinctions, the register budget is the same in every panel. The dimension matters only when distinctions are exchanged for spatial resolution. Resolving a linear scale <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi></semantics></math> requires <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>∼</mo><msup><mi>ε</mi><mrow><mo>−</mo><mi>D</mi></mrow></msup></mrow></semantics></math> distinctions, so under homogeneous refinement each <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>e</mi></semantics></math>-fold improvement in resolution costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mi>D</mi></mrow></semantics></math>, a non-integer multiple of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>κ</mi></semantics></math> whenever <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi></semantics></math> is not an integer.</p>
 </section>
-            <section class="revision-column is-revised"><h4>After the rewrite</h4><p>The path fixes how the distinctions nest. It leaves open the price of each repetition of the motif, and here the geometry has something to say, because every repetition acts on a smaller square. At depth <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi></semantics></math> the registers have width <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>=</mo><msup><mn>2</mn><mrow><mo>−</mo><mi>i</mi></mrow></msup></mrow></semantics></math>, in units of the original square, and there are <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mi>i</mi><mrow><mo>−</mo><mn>2</mn></mrow></msubsup><mo>=</mo><msup><mn>4</mn><mi>i</mi></msup></mrow></semantics></math> of them. Suppose that the price of dividing a register into four depends only on its width, in proportion to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>w</mi><mi>γ</mi></msup></semantics></math>. The exponent records the dimension of whatever the division consumes, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>0</mn></mrow></semantics></math> for a fixed charge per division, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>1</mn></mrow></semantics></math> for walls drawn across the register and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>2</mn></mrow></semantics></math> for a resource spread through its area. Refining from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><msup><mn>4</mn><mi>k</mi></msup></mrow></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>n</mi></mrow></semantics></math> distinctions, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><msup><mn>4</mn><mi>j</mi></msup></mrow></semantics></math>, passes through depths <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>+</mo><mi>j</mi><mo>−</mo><mn>1</mn></mrow></semantics></math>. Since <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>4</mn><mi>i</mi></msup><msubsup><mi>w</mi><mi>i</mi><mi>γ</mi></msubsup><mo>=</mo><msup><mn>4</mn><mrow><mi>i</mi><mi>α</mi></mrow></msup></mrow></semantics></math> with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>1</mn><mo>−</mo><mi>γ</mi><mi>/</mi><mn>2</mn></mrow></semantics></math>, <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Δ</mi><mi>m</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>Δ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>4</mn><mo stretchy="true" form="postfix">)</mo></mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mi>k</mi></mrow><mrow><mi>k</mi><mo>+</mo><mi>j</mi><mo>−</mo><mn>1</mn></mrow></munderover><msup><mn>4</mn><mi>i</mi></msup><msubsup><mi>w</mi><mi>i</mi><mi>γ</mi></msubsup><mo>=</mo><msup><mi>m</mi><mi>α</mi></msup><mspace width="0.167em"></mspace><msub><mi>Δ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow></semantics></math> and the composition correction of Eq. (13) follows at once, <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>m</mi><mo>,</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mo><msup><mi>m</mi><mi>α</mi></msup><mo>−</mo><mn>1</mn><mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mo><mspace width="0.167em"></mspace><msub><mi>Δ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow></semantics></math></p>
+            <section class="ifc-col is-revised"><h4>After the rewrite</h4><p>The path fixes how the distinctions nest. It leaves open the price of each repetition of the motif, and here the geometry has something to say, because every repetition acts on a smaller square. At depth <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi></semantics></math> the registers have width <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>=</mo><msup><mn>2</mn><mrow><mo>−</mo><mi>i</mi></mrow></msup></mrow></semantics></math>, in units of the original square, and there are <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mi>i</mi><mrow><mo>−</mo><mn>2</mn></mrow></msubsup><mo>=</mo><msup><mn>4</mn><mi>i</mi></msup></mrow></semantics></math> of them. Suppose that the price of dividing a register into four depends only on its width, in proportion to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>w</mi><mi>γ</mi></msup></semantics></math>. The exponent records the dimension of whatever the division consumes, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>0</mn></mrow></semantics></math> for a fixed charge per division, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>1</mn></mrow></semantics></math> for walls drawn across the register and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>2</mn></mrow></semantics></math> for a resource spread through its area. Refining from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><msup><mn>4</mn><mi>k</mi></msup></mrow></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>n</mi></mrow></semantics></math> distinctions, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><msup><mn>4</mn><mi>j</mi></msup></mrow></semantics></math>, passes through depths <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi></semantics></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>+</mo><mi>j</mi><mo>−</mo><mn>1</mn></mrow></semantics></math>. Since <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>4</mn><mi>i</mi></msup><msubsup><mi>w</mi><mi>i</mi><mi>γ</mi></msubsup><mo>=</mo><msup><mn>4</mn><mrow><mi>i</mi><mi>α</mi></mrow></msup></mrow></semantics></math> with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>1</mn><mo>−</mo><mi>γ</mi><mi>/</mi><mn>2</mn></mrow></semantics></math>, <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Δ</mi><mi>m</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>Δ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mn>4</mn><mo stretchy="true" form="postfix">)</mo></mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mi>k</mi></mrow><mrow><mi>k</mi><mo>+</mo><mi>j</mi><mo>−</mo><mn>1</mn></mrow></munderover><msup><mn>4</mn><mi>i</mi></msup><msubsup><mi>w</mi><mi>i</mi><mi>γ</mi></msubsup><mo>=</mo><msup><mi>m</mi><mi>α</mi></msup><mspace width="0.167em"></mspace><msub><mi>Δ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow></semantics></math> and the composition correction of Eq. (13) follows at once, <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>m</mi><mo>,</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mo><msup><mi>m</mi><mi>α</mi></msup><mo>−</mo><mn>1</mn><mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mo><mspace width="0.167em"></mspace><msub><mi>Δ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow></semantics></math></p>
 <p>Equation (35) is a statement about copies. Refining <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi></semantics></math> registers draws the motif <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi></semantics></math> times, and each copy is narrower by a factor <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>m</mi><mrow><mo>−</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup></semantics></math> and so cheaper by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>m</mi><mrow><mo>−</mo><mi>γ</mi><mi>/</mi><mn>2</mn></mrow></msup></semantics></math>. The correction <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi></semantics></math> is what the multiplication of copies leaves over once their shrinking has been paid for. The two balance at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>2</mn></mrow></semantics></math>, when dividing a register costs in proportion to its area. The registers at every depth tile the same square, so the total area being divided never changes, and neither does the price of dividing it. This is homogeneous refinement, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>=</mo><mn>0</mn></mrow></semantics></math>. Walls are the natural case of a smaller exponent. A partition priced by the length of wall it draws has <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>1</mn></mrow></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow></semantics></math>. Its excess budget is proportional to the total wall length, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><msqrt><mi>N</mi></msqrt><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></semantics></math> in units of the side, so each new depth costs twice as much as the last and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>&gt;</mo><mn>0</mn></mrow></semantics></math>. A price falling faster than area gives <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>&lt;</mo><mn>0</mn></mrow></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>&lt;</mo><mn>0</mn></mrow></semantics></math>, and divisions become cheaper with depth until arbitrarily fine distinctions cost almost nothing. Figure 3(b) shows the three regimes on the same organisation.</p>
 </section>
-          </div>
-        </details>
-      </article>
+          
+                </div>
+              </div>
+            </details>
+          </article>
 
-      <article class="revision-sheet" id="revision-figure" aria-labelledby="rev-nav-figure">
-        <div class="revision-plates">
-          <figure><figcaption><span class="revision-label">Before the applied rewrite</span><strong>The dimension under each drawing</strong></figcaption>
-            <picture><source media="(max-width: 540px)" srcset="./media/hilbert-before-rewrite-detail.webp"><img src="./media/hilbert-before-rewrite.webp" width="1360" height="320" alt="The saved drawing shows the same ranked path at five dimensions. Only the dimension appears beneath each panel." loading="lazy"></picture><small class="revision-plate-detail">Dimension 3/2</small></figure>
-          <figure><figcaption><span class="revision-label">After the applied rewrite</span><strong>The cuts and what they cost</strong></figcaption>
-            <picture><source media="(max-width: 540px)" srcset="./media/hilbert-after-rewrite-detail.webp"><img src="./media/hilbert-after-rewrite.webp" width="1360" height="353" alt="In the same five diagrams, dashed lines now mark the cuts, and a second row gives each cost exponent." loading="lazy"></picture><small class="revision-plate-detail">Dimension 3/2 · Cost exponent 1/3</small></figure>
+          <article class="ifc-sheet" id="revision-figure" aria-labelledby="rev-nav-figure">
+            <div class="ifc-compare" role="group" aria-label="Drag across the drawing to compare it before and after the rewrite">
+              <img src="./media/hilbert-after-rewrite.webp" width="1360" height="353" alt="After the rewrite: in the same five diagrams, dashed lines mark the cuts, and a second row gives each cost exponent." loading="lazy">
+              <img class="ifc-before" src="./media/hilbert-before-rewrite.webp" width="1360" height="320" alt="Before the rewrite: the same ranked path at five dimensions, with only the dimension beneath each panel." loading="lazy">
+              <span class="ifc-cut" aria-hidden="true"></span><b>Before</b><b>After</b>
+            </div>
+            <p>Drag across the drawing. The order of the 256 ranks stays fixed, while the revised drawing marks the dividing cuts and gives their cost exponent: at dimension 3/2 it is 1/3, when each cut is priced by its length. The image and the equation now answer the same question. <a data-source-region="cost-fig-4" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Inspect the final figure ↗</a></p>
+            <div class="ifc-thumbs">
+              <figure><figcaption>First saved illustration · 64 ranks at four settings</figcaption><img src="./media/hilbert-early.webp" width="1149" height="318" loading="lazy" alt="The first four-panel illustration, labelled by the shrink factor and dimension."></figure>
+              <figure><figcaption>Final manuscript · 256 ranks and the nested address</figcaption><a data-source-region="cost-fig-4" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener"><img src="./media/hilbert-revised.webp" width="1264" height="670" loading="lazy" alt="The final Figure 4, with physical cuts in its five upper panels and an address sequence beneath them."></a></figure>
+            </div>
+          </article>
+
+          <article class="ifc-sheet ifc-inset" id="revision-inset" aria-labelledby="rev-nav-inset">
+            <div><p class="ifc-label">A targeted follow-up</p><h3>One selected cell</h3></div>
+            <p>The author asked for an inset showing the recursive nesting. A later edit gave the two panels their own headings, identifying what changes with dimension in (a) and what stays the same in (b). Follow child 3 in the original figure. The highlighted cell becomes the whole register for the next choice, and it looks the same size on the page because the drawing is magnified each time.</p>
+            <a data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener"><img src="./media/hilbert-inset.webp" width="1243" height="312" alt="The selected child 3 is enlarged twice. The three equal-size drawings represent physical widths 1, s to the minus one and s to the minus two." loading="lazy"></a>
+            <div class="ifc-files"><a data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Enlarge the published inset ↗</a>
+              <a href="/eigenengine/networked-research/#judgement">How could another project use this correction? ↗</a></div>
+          </article>
         </div>
-        <p class="revision-bottom"><span class="revision-mobile-detail">Both views show the middle panel enlarged. </span>The order of the 256 ranks stays fixed. At dimension 3/2, the revised drawing shows the dividing cuts and gives their cost exponent, 1/3, when each cut is priced by length. The image and the equation now answer the same question. <a data-source-region="cost-fig-4" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Inspect the final figure ↗</a></p>
-        <details class="revision-reader"><summary>See the first saved drawing and the finished figure</summary>
-          <div class="revision-plates"><figure><figcaption>First saved illustration · 64 ranks at four settings</figcaption><img src="./media/hilbert-early.webp" width="1149" height="318" loading="lazy" alt="The first four-panel illustration, labelled by the shrink factor and dimension."></figure>
-          <figure><figcaption>Final manuscript · 256 ranks and the nested address</figcaption><a data-source-region="cost-fig-4" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener"><img src="./media/hilbert-revised.webp" width="1264" height="670" loading="lazy" alt="The final Figure 4, with physical cuts in its five upper panels and an address sequence beneath them."></a></figure></div>
-        </details>
-      </article>
+      </section>
 
-      <article class="revision-sheet" id="revision-inset" aria-labelledby="rev-nav-inset">
-        <p class="revision-label">A targeted follow-up</p><h3>Show what happens to one selected cell.</h3>
-        <p>The author asked for an inset showing the recursive nesting. A later edit gave the two panels their own headings, identifying what changes with dimension in (a) and what stays the same in (b). Follow child 3 in the original figure. The highlighted cell becomes the whole register for the next choice. It looks the same size on the page because the drawing is magnified each time.</p>
-        <a class="revision-inset-art" data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener"><img src="./media/hilbert-inset.webp" width="1243" height="312" alt="The selected child 3 is enlarged twice. The three equal-size drawings represent physical widths 1, s to the minus one and s to the minus two." loading="lazy"></a>
-        <div class="revision-links"><a data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener">Enlarge the published inset ↗</a>
-          <a href="/eigenengine/networked-research/#judgement">How could another project use this correction? ↗</a></div>
-      </article>
-    </section>
-
-    <section class="session-tour" id="session" aria-labelledby="session-title">
-      <header class="tour-header">
-        <h2 id="session-title">Saved manuscript session</h2>
-        <div class="tour-controls" hidden>
-          <button type="button" class="tour-play">Play tour</button>
-          <button type="button" class="tour-previous" aria-label="Previous stop">Previous</button>
-          <button type="button" class="tour-next" aria-label="Next stop">Next</button>
-        </div>
-      </header>
-      <nav class="tour-nav" aria-label="Editing session stops">
-        <a href="#session-overview">Workspace</a>
-        <a href="#session-morning">Revision proposal</a>
-        <a href="#session-changes">Saved changes</a>
-        <a href="#session-passage">Manuscript edit</a>
-        <a href="#session-history">File history</a>
-        <a href="#session-arxiv">arXiv package</a>
-      </nav>
-
-      <article class="tour-stop" id="session-overview" aria-labelledby="session-overview-title">
-        <figure class="tour-frame">
-          <div class="tour-window">
-            <div class="tour-scene"><img src="./media/full-project.webp" width="1600" height="900" alt="The Cost of Complexity project in the Writing App, with the manuscript outline, paper and conversation visible."></div>
-          </div>
-          <figcaption>
-            <div>
-              <h3 id="session-overview-title">The editing workspace</h3>
-              <p>In this saved session for <em>The Cost of Complexity</em>, the author has the manuscript open beside the conversation. The agent’s proposed edits appear here alongside the passages it read.</p>
-            </div>
-            <div class="tour-frame-actions"><a data-material-viewer="/demo/view/?asset=full-project" href="/demo/writing/media/full-project.webp" target="_blank" rel="noopener">Open screenshot</a></div>
-          </figcaption>
-        </figure>
-      </article>
-
-      <article class="tour-stop" id="session-morning" aria-labelledby="session-morning-title" data-region=".581,.384,.377,.146">
-        <figure class="tour-frame">
-          <div class="tour-window">
-            <div class="tour-scene"><img src="./media/morning-comparison.webp" width="1600" height="900" fetchpriority="low" alt="The saved proposal compares a full proof in TeX with an outline that refers readers to Appendix A."></div>
-          </div>
-          <figcaption>
-            <div>
-              <h3 id="session-morning-title">More than 50 proposed edits</h3>
-              <p>The proposal covers eight TeX files. In this comparison, Eigen proposes giving the idea of the proof in the main text and referring readers to Appendix A for the details.</p>
-              <p class="tour-related"><a data-material-viewer="/demo/view/?asset=morning-versions" href="/demo/writing/media/morning-versions.webp" target="_blank" rel="noopener">Open the versions list</a></p>
-            </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=morning-comparison" href="/demo/writing/media/morning-comparison.webp" target="_blank" rel="noopener">Open screenshot</a></div>
-          </figcaption>
-        </figure>
-      </article>
-
-      <article class="tour-stop" id="session-changes" aria-labelledby="session-changes-title" data-region=".733,.249,.251,.451" data-mobile-region=".735,.251,.181,.219">
-        <figure class="tour-frame">
-          <div class="tour-window">
-            <div class="tour-scene"><img src="./media/full-changes.webp" width="1600" height="900" fetchpriority="low" alt="The Writing App shows saved project changes from the editing session."></div>
-          </div>
-          <figcaption>
-            <div>
-              <h3 id="session-changes-title">Saved project changes</h3>
-              <p>One saved turn has 34 project changes. The list includes a task and a revision proposal, each with links to inspect the action and its receipt.</p>
-            </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=full-changes" href="/demo/writing/media/full-changes.webp" target="_blank" rel="noopener">Open screenshot</a></div>
-          </figcaption>
-        </figure>
-      </article>
-
-      <article class="tour-stop" id="session-passage" aria-labelledby="session-passage-title" data-region=".163,.363,.538,.326" data-mobile-region=".444,.415,.253,.264">
-        <figure class="tour-frame">
-          <div class="tour-window">
-            <div class="tour-scene"><img src="./media/full-passage.webp" width="1600" height="900" fetchpriority="low" alt="The Writing App displays the recorded changes to a passage in The Cost of Complexity."></div>
-          </div>
-          <figcaption>
-            <div>
-              <h3 id="session-passage-title">A changed passage</h3>
-              <p>One of nine recorded edits proposes a note distinguishing the free-energy principle’s bound on sensory surprisal from the paper’s comparison at fixed rank cost. The app keeps the original proposal and points to the later revision that resolved it.</p>
-            </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=full-passage" href="/demo/writing/media/full-passage.webp" target="_blank" rel="noopener">Open screenshot</a></div>
-          </figcaption>
-        </figure>
-      </article>
-
-      <article class="tour-stop" id="session-history" aria-labelledby="session-history-title" data-region=".199,.433,.741,.444" data-mobile-region=".203,.438,.267,.207">
-        <figure class="tour-frame">
-          <div class="tour-window">
-            <div class="tour-scene"><img src="./media/full-history.webp" width="1600" height="900" fetchpriority="low" alt="The Writing App’s file history lists saved author changes to the section source."></div>
-          </div>
-          <figcaption>
-            <div>
-              <h3 id="session-history-title">The source file’s history</h3>
-              <p>The author saved two versions of this section. Each proposed edit refers to the version the agent read. If that passage changes, the author reviews the current text before applying the suggestion.</p>
-            </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=full-history" href="/demo/writing/media/full-history.webp" target="_blank" rel="noopener">Open screenshot</a></div>
-          </figcaption>
-        </figure>
-      </article>
-
-      <article class="tour-stop" id="session-arxiv" aria-labelledby="session-arxiv-title" data-region=".667,.235,.318,.292" data-mobile-region=".671,.393,.308,.134">
-        <figure class="tour-frame">
-          <div class="tour-window">
-            <div class="tour-scene"><img src="./media/full-arxiv.webp" width="1600" height="900" fetchpriority="low" alt="The Writing App’s Package for arXiv panel reports two successful compile passes and matching text on all 21 pages. Download ZIP and Download PDF are available."></div>
-          </div>
-          <figcaption>
-            <div>
-              <h3 id="session-arxiv-title">Building the arXiv package</h3>
-              <p>The app repeats the check on the saved manuscript. It compiles the 11-file package in an empty folder, reproduces the text on all 21 pages, then offers the ZIP and PDF.</p>
-            </div>
-            <div class="tour-frame-actions"><button type="button" class="tour-focus" hidden>Full workspace</button><a data-material-viewer="/demo/view/?asset=full-arxiv" href="/demo/writing/media/full-arxiv.webp" target="_blank" rel="noopener">Open screenshot</a></div>
-          </figcaption>
-        </figure>
-      </article>
-      <div class="tour-status" role="status"></div>
-      <div class="tour-links">
-        <a href="/demo/writing/simulation/">Simulation to figure ↓</a>
-        <a href="#edit-example">One edit up close ↓</a>
-        <a href="/demo/writing/project-record/">Project record</a>
-        <a href="#session-film">Watch session film ↑</a>
-      </div>
-    </section>
-
-    <header class="intro" id="edit-example">
-      <div class="intro-copy">
-        <p class="eyebrow">Staged example</p>
-        <h2>One edit up close</h2>
-        <p>Follow a correction as the author reviews, revises, accepts and undoes it. The Writing App screens show a staged revision of an excerpt from <em>The Cost of Complexity</em>.</p>
-      </div>
-      <aside class="premise" aria-labelledby="premise-title">
-        <h2 id="premise-title">Why the wording matters</h2>
-        <p>Each round of the paper’s Hilbert example divides the same total area. The round costs the same when a split is priced by area. Price the split by wall length and the cost doubles each round.</p>
-      </aside>
-    </header>
-
-    <section class="walkthrough" id="walkthrough" aria-label="Walkthrough">
-      <nav class="step-nav" aria-label="Walkthrough stops">
-        <div>
-          <h2>Review the edit</h2>
-          <ol>
-            <li><a href="#manuscript">Open the manuscript</a></li>
-            <li><a href="#proposal">Read the proposal</a></li>
-            <li><a href="#edit">Edit its wording</a></li>
-            <li><a href="#accept">Accept the edit</a></li>
-            <li><a href="#undo">Undo the edit</a></li>
-          </ol>
-        </div>
-        <div>
-          <h2>Explore the working record</h2>
-          <ol>
-            <li><a href="#workflow">Workflow</a></li>
-            <li><a href="#reader-plan">Reader plan</a></li>
-            <li><a href="#figure">Numerical figure</a></li>
-            <li><a href="#reading-options">Reading options</a></li>
-            <li><a href="#published-figure">Figure in the PDF</a></li>
-          </ol>
-        </div>
-      </nav>
-      <div class="viewer">
-        <div class="viewer-controls" hidden>
-          <label class="step-select" for="select-step">
-            <span>Go to a stop</span>
-            <select id="select-step"></select>
-          </label>
-          <p class="viewer-progress" aria-live="polite"></p>
-          <div class="pager">
-            <button type="button" data-previous>Previous</button>
-            <button type="button" data-next>Next</button>
+      <section class="ifc-panel" id="session" aria-labelledby="session-title">
+        <header class="ifc-panel-head"><h2 id="session-title">The saved session</h2><p>Six screens of the interface, as the session left them. The window first shows the whole screen, then draws in on the part described.</p></header>
+        <div class="ifc-tour">
+          <div class="ifc-steps" role="group" aria-label="Stops in the saved session"></div>
+          <div class="ifc-window" aria-label="A screen of the interface"></div>
+          <div class="ifc-notes">
+          <article class="ifc-stop" id="session-overview" data-short="Workspace" aria-labelledby="session-overview-title">
+            <h3 id="session-overview-title">The editing workspace</h3>
+            <p>In this saved session for <em>The Cost of Complexity</em>, the author has the manuscript open beside the conversation. The agent’s proposed edits appear here alongside the passages it read.</p>
+            <figure><img src="./media/full-project.webp" width="1600" height="900" loading="lazy" alt="The Cost of Complexity project in the interface, with the manuscript outline, the paper and the conversation visible."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=full-project" href="/demo/writing/media/full-project.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="session-morning" data-short="Revision proposal" data-region=".581,.384,.377,.146" aria-labelledby="session-morning-title">
+            <h3 id="session-morning-title">More than 50 proposed edits</h3>
+            <p>The proposal covers eight TeX files. In this comparison, Eigen proposes giving the idea of the proof in the main text and referring readers to Appendix A for the details. <a data-material-viewer="/demo/view/?asset=morning-versions" href="/demo/writing/media/morning-versions.webp" target="_blank" rel="noopener">Open the list of versions ↗</a></p>
+            <figure><img src="./media/morning-comparison.webp" width="1600" height="900" loading="lazy" alt="The saved proposal compares a full proof in TeX with an outline that refers readers to Appendix A."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=morning-comparison" href="/demo/writing/media/morning-comparison.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="session-changes" data-short="Saved changes" data-region=".733,.249,.251,.451" aria-labelledby="session-changes-title">
+            <h3 id="session-changes-title">Saved project changes</h3>
+            <p>One saved turn has 34 project changes. The list includes a task and a revision proposal, each with links to inspect the action and its receipt.</p>
+            <figure><img src="./media/full-changes.webp" width="1600" height="900" loading="lazy" alt="The interface shows the saved project changes from the editing session."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=full-changes" href="/demo/writing/media/full-changes.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="session-passage" data-short="Manuscript edit" data-region=".163,.363,.538,.326" aria-labelledby="session-passage-title">
+            <h3 id="session-passage-title">A changed passage</h3>
+            <p>One of nine recorded edits proposes a note distinguishing the free-energy principle’s bound on sensory surprisal from the paper’s comparison at fixed rank cost. The interface keeps the original proposal and points to the later revision that resolved it.</p>
+            <figure><img src="./media/full-passage.webp" width="1600" height="900" loading="lazy" alt="The interface displays the recorded changes to a passage in The Cost of Complexity."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=full-passage" href="/demo/writing/media/full-passage.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="session-history" data-short="File history" data-region=".199,.433,.741,.444" aria-labelledby="session-history-title">
+            <h3 id="session-history-title">The source file’s history</h3>
+            <p>The author saved two versions of this section. Each proposed edit refers to the version the agent read. If that passage changes, the author reviews the current text before applying the suggestion.</p>
+            <figure><img src="./media/full-history.webp" width="1600" height="900" loading="lazy" alt="The file history lists the author’s saved changes to the source of the section."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=full-history" href="/demo/writing/media/full-history.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="session-arxiv" data-short="arXiv package" data-region=".667,.235,.318,.292" aria-labelledby="session-arxiv-title">
+            <h3 id="session-arxiv-title">Building the arXiv package</h3>
+            <p>The interface repeats the check on the saved manuscript. It compiles the 11-file package in an empty folder, reproduces the text on all 21 pages, then offers the ZIP and PDF.</p>
+            <figure><img src="./media/full-arxiv.webp" width="1600" height="900" loading="lazy" alt="The Package for arXiv panel reports two successful compile passes and matching text on all 21 pages. Download ZIP and Download PDF are available."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=full-arxiv" href="/demo/writing/media/full-arxiv.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+            <div class="ifc-tourbar"><button type="button" class="ifc-btn ifc-btn-gold" data-tour="play" hidden>Play the tour</button><button type="button" class="ifc-btn" data-tour="prev" hidden aria-label="Previous stop">‹</button><button type="button" class="ifc-btn" data-tour="next" hidden aria-label="Next stop">›</button><button type="button" class="ifc-btn" data-tour="zoom" hidden>Look closer</button><span class="ifc-count"></span></div>
           </div>
         </div>
+      </section>
 
-        <article class="walk-step" id="manuscript" aria-labelledby="manuscript-title">
-          <h2 id="manuscript-title">Open the manuscript</h2>
-          <p class="summary">This copy contains the section on the geometry of refinement. The draft sentence leaves out the assumption that makes the cost equal at each round.</p>
-          <figure class="capture" data-focus-x=".31" data-focus-y=".47">
-            <a data-material-viewer="/demo/view/?asset=manuscript" href="/demo/writing/media/manuscript.webp" target="_blank" rel="noopener">
-              <img src="./media/manuscript.webp" width="1440" height="900" alt="The Writing App shows the manuscript excerpt with the draft wording about equal refinement costs.">
-              <span class="capture-link">Enlarge screen</span>
-            </a>
-            <figcaption>The draft says, “The total cost of dividing the registers stays the same at every refinement depth.”</figcaption>
-          </figure>
-        </article>
-
-        <article class="walk-step" id="proposal" aria-labelledby="proposal-title">
-          <h2 id="proposal-title">Read the proposal</h2>
-          <p class="summary">Switch from Mine to Changes. The app highlights the added condition in the sentence it replaces.</p>
-          <figure class="capture" data-focus-x=".31" data-focus-y=".47">
-            <a data-material-viewer="/demo/view/?asset=proposal-changes" href="/demo/writing/media/proposal-changes.webp" target="_blank" rel="noopener">
-              <img src="./media/proposal-changes.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App proposal panel shows the draft and a revision that makes the area assumption explicit.">
-              <span class="capture-link">Enlarge screen</span>
-            </a>
-            <figcaption>The staged suggestion says, “When division is priced by area, the total cost of dividing the registers stays the same at every refinement depth.”</figcaption>
-          </figure>
-        </article>
-
-        <article class="walk-step" id="edit" aria-labelledby="edit-title">
-          <h2 id="edit-title">Edit its wording</h2>
-          <p class="summary">Select Edit to specify how the cost of an individual split depends on its area.</p>
-          <figure class="capture" data-focus-x=".32" data-focus-y=".48">
-            <a data-material-viewer="/demo/view/?asset=proposal-edit" href="/demo/writing/media/proposal-edit.webp" target="_blank" rel="noopener">
-              <img src="./media/proposal-edit.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App opens an editable proposal field containing the author's replacement sentence.">
-              <span class="capture-link">Enlarge screen</span>
-            </a>
-            <figcaption>The edited proposal reads, “When the cost of a split is proportional to its area, the total cost of dividing the registers stays the same at every refinement depth.”</figcaption>
-          </figure>
-        </article>
-
-        <article class="walk-step" id="accept" aria-labelledby="accept-title">
-          <h2 id="accept-title">Accept the edit</h2>
-          <p class="summary">Accepting applies the edited sentence to the working copy.</p>
-          <figure class="capture" data-focus-x=".33" data-focus-y=".53">
-            <a data-material-viewer="/demo/view/?asset=proposal-accepted" href="/demo/writing/media/proposal-accepted.webp" target="_blank" rel="noopener">
-              <img src="./media/proposal-accepted.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App shows the manuscript after accepting the author's revised sentence.">
-              <span class="capture-link">Enlarge screen</span>
-            </a>
-            <figcaption>The app shows “Accepted into your text” and offers Undo.</figcaption>
-          </figure>
-        </article>
-
-        <article class="walk-step" id="undo" aria-labelledby="undo-title">
-          <h2 id="undo-title">Undo the edit</h2>
-          <p class="summary">Undo restores the draft sentence and reopens the proposal for review.</p>
-          <figure class="capture" data-focus-x=".32" data-focus-y=".49">
-            <a data-material-viewer="/demo/view/?asset=proposal-undo" href="/demo/writing/media/proposal-undo.webp" target="_blank" rel="noopener">
-              <img src="./media/proposal-undo.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App shows the original illustrative draft sentence after Undo.">
-              <span class="capture-link">Enlarge screen</span>
-            </a>
-          </figure>
-        </article>
-
-        <article class="walk-step" id="workflow" aria-labelledby="workflow-title">
-          <h2 id="workflow-title">Workflow</h2>
-          <p class="summary">This workflow design pairs a drafting step with independent evidence review and includes a route back for revision.</p>
-          <figure class="capture" data-focus-x=".22" data-focus-y=".63">
-            <a data-material-viewer="/demo/view/?asset=workflow" href="/demo/writing/media/workflow.webp" target="_blank" rel="noopener">
-              <img src="./media/workflow.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App's workflow view for the manuscript excerpt.">
-              <span class="capture-link">Enlarge screen</span>
-            </a>
-          </figure>
-        </article>
-
-        <article class="walk-step" id="reader-plan" aria-labelledby="reader-plan-title">
-          <h2 id="reader-plan-title">Reader plan</h2>
-          <p class="summary">The reader plan records what the reader already knows and what the next section should help them understand.</p>
-          <figure class="capture" data-focus-x=".57" data-focus-y=".47">
-            <a data-material-viewer="/demo/view/?asset=reader-plan" href="/demo/writing/media/reader-plan.webp" target="_blank" rel="noopener">
-              <img src="./media/reader-plan.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App's reader plan for the manuscript excerpt.">
-              <span class="capture-link">Enlarge screen</span>
-            </a>
-          </figure>
-        </article>
-
-        <article class="walk-step" id="figure" aria-labelledby="figure-title">
-          <h2 id="figure-title">How the figure gets its numbers</h2>
-          <p class="summary">A simulation of 85 square splits supplies both curves. <strong>Linked results</strong> opens the saved run behind the figure. If its output table changes, the app flags the figure for review. <a href="/demo/writing/simulation/">Trace the run, table and manuscript placement.</a></p>
-          <figure class="capture" data-focus-x=".44" data-focus-y=".71">
-            <a data-material-viewer="/demo/view/?asset=simulation-binding" href="/demo/writing/media/simulation-binding.webp" target="_blank" rel="noopener">
-              <img src="./media/simulation-binding.webp" width="1440" height="900" fetchpriority="low" alt="The app shows the plotted area and wall-length costs, the linked subdivision result, and Place in manuscript.">
-              <span class="capture-link">Enlarge screen</span>
-            </a>
-            <figcaption>This figure was computed for the walkthrough. <a data-material-viewer="/demo/view/?asset=figure" href="/demo/writing/media/figure.webp" target="_blank" rel="noopener">Inspect the original paper figure used in the editing example.</a></figcaption>
-          </figure>
-        </article>
-
-        <article class="walk-step" id="reading-options" aria-labelledby="reading-options-title">
-          <h2 id="reading-options-title">Reading options</h2>
-          <p class="summary">The app lets the author adjust the reading width, show their changes and inspect open points.</p>
-          <figure class="capture" data-focus-x=".49" data-focus-y=".37">
-            <a data-material-viewer="/demo/view/?asset=reading-options" href="/demo/writing/media/reading-options.webp" target="_blank" rel="noopener">
-              <img src="./media/reading-options.webp" width="1440" height="900" fetchpriority="low" alt="The Writing App shows its reading options for the manuscript.">
-              <span class="capture-link">Enlarge screen</span>
-            </a>
-          </figure>
-        </article>
-
-        <article class="walk-step" id="published-figure" aria-labelledby="published-figure-title">
-          <h2 id="published-figure-title">Figure in the PDF</h2>
-          <p class="summary">Compare the working view with <a data-source-region="cost-fig-3" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">Figure 3 in the released paper</a>. Its caption states the pricing assumption for each curve.</p>
-          <figure class="capture" data-focus-x=".31" data-focus-y=".62">
-            <a data-material-viewer="/demo/view/?asset=published-figure" href="/demo/writing/media/published-figure.webp" target="_blank" rel="noopener">
-              <img src="./media/published-figure.webp" width="1554" height="771" fetchpriority="low" alt="Figure 3 from the published paper. Successive Hilbert subdivisions sit above a plot showing the fastest budget growth for wall length, steady increases for area and diminishing increases for cubic pricing.">
-              <span class="capture-link">Enlarge figure</span>
-            </a>
-          </figure>
-        </article>
-        <div class="share-row" hidden>
-          <button type="button" class="copy-link">Copy link to this stop</button>
-          <span class="share-status" role="status"></span>
+      <section class="ifc-panel" id="edit-example" aria-labelledby="edit-title-h">
+        <header class="ifc-panel-head"><h2 id="edit-title-h">One edit up close</h2><p>Each round of the paper’s Hilbert example divides the same total area, so a round costs the same only when a split is priced by its area. The draft left that condition out, and these screens show a staged correction of it.</p></header>
+        <div class="ifc-tour" id="walkthrough">
+          <div class="ifc-steps" role="group" aria-label="Stops in the edit"></div>
+          <div class="ifc-window" aria-label="A screen of the interface">
+            <div class="ifc-rec" id="video" hidden><div class="ifc-screen-in">
+              <video controls playsinline preload="none" poster="./media/proposal-walkthrough-poster.webp" aria-label="Recording of the proposal, the author’s edit, accept and undo">
+                <source src="./media/proposal-walkthrough.mp4" type="video/mp4">
+                <track kind="captions" src="./media/proposal-walkthrough.vtt" srclang="en" label="English">
+              </video>
+              <span class="ifc-plate" aria-hidden="true">EigenEngine&nbsp; / &nbsp;The interface</span>
+            </div></div>
+          </div>
+          <div class="ifc-notes">
+          <article class="ifc-stop" id="manuscript" data-short="Manuscript" data-region=".16,.453,.68,.347" data-crop="1" data-focus-x=".31" data-focus-y=".47" data-group="The edit" aria-labelledby="manuscript-title">
+            <h3 id="manuscript-title">Open the manuscript</h3>
+            <p>This copy contains the section on the geometry of refinement. The draft sentence leaves out the assumption that makes the cost equal at each round.</p>
+            <figure><img src="./media/manuscript.webp" width="1440" height="900" loading="lazy" alt="The interface shows the manuscript excerpt with the draft wording about equal refinement costs."><figcaption>The draft says, “The total cost of dividing the registers stays the same at every refinement depth.”</figcaption></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=manuscript" href="/demo/writing/media/manuscript.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="proposal" data-short="Proposal" data-region=".16,.453,.68,.347" data-crop="1" data-focus-x=".31" data-focus-y=".47" aria-labelledby="proposal-title">
+            <h3 id="proposal-title">Read the proposal</h3>
+            <p>Switch from Mine to Changes. The interface highlights the added condition in the sentence it replaces.</p>
+            <figure><img src="./media/proposal-changes.webp" width="1440" height="900" loading="lazy" alt="The proposal panel shows the draft and a revision that makes the area assumption explicit."><figcaption>The staged suggestion says, “When division is priced by area, the total cost of dividing the registers stays the same at every refinement depth.”</figcaption></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=proposal-changes" href="/demo/writing/media/proposal-changes.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="edit" data-short="Edit" data-region=".16,.453,.68,.347" data-crop="1" data-focus-x=".32" data-focus-y=".48" aria-labelledby="edit-title">
+            <h3 id="edit-title">Edit its wording</h3>
+            <p>Select Edit to specify how the cost of an individual split depends on its area.</p>
+            <figure><img src="./media/proposal-edit.webp" width="1440" height="900" loading="lazy" alt="An editable proposal field contains the author’s replacement sentence."><figcaption>The edited proposal reads, “When the cost of a split is proportional to its area, the total cost of dividing the registers stays the same at every refinement depth.”</figcaption></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=proposal-edit" href="/demo/writing/media/proposal-edit.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="accept" data-short="Accept" data-region=".16,.453,.68,.347" data-crop="1" data-focus-x=".33" data-focus-y=".53" aria-labelledby="accept-title">
+            <h3 id="accept-title">Accept the edit</h3>
+            <p>Accepting applies the edited sentence to the working copy.</p>
+            <figure><img src="./media/proposal-accepted.webp" width="1440" height="900" loading="lazy" alt="The manuscript after the author’s revised sentence has been accepted."><figcaption>The interface shows “Accepted into your text” and offers Undo.</figcaption></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=proposal-accepted" href="/demo/writing/media/proposal-accepted.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="undo" data-short="Undo" data-region=".16,.453,.68,.347" data-crop="1" data-focus-x=".32" data-focus-y=".49" aria-labelledby="undo-title">
+            <h3 id="undo-title">Undo the edit</h3>
+            <p>Undo restores the draft sentence and reopens the proposal for review.</p>
+            <figure><img src="./media/proposal-undo.webp" width="1440" height="900" loading="lazy" alt="The original draft sentence, restored after Undo."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=proposal-undo" href="/demo/writing/media/proposal-undo.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="workflow" data-short="Workflow" data-focus-x=".22" data-focus-y=".63" data-group="Around it" aria-labelledby="workflow-title">
+            <h3 id="workflow-title">Workflow</h3>
+            <p>This workflow design pairs a drafting step with independent evidence review and includes a route back for revision.</p>
+            <figure><img src="./media/workflow.webp" width="1440" height="900" loading="lazy" alt="The workflow view for the manuscript excerpt."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=workflow" href="/demo/writing/media/workflow.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="reader-plan" data-short="Reader plan" data-focus-x=".57" data-focus-y=".47" aria-labelledby="reader-plan-title">
+            <h3 id="reader-plan-title">Reader plan</h3>
+            <p>The reader plan records what the reader already knows and what the next section should help them understand.</p>
+            <figure><img src="./media/reader-plan.webp" width="1440" height="900" loading="lazy" alt="The reader plan for the manuscript excerpt."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=reader-plan" href="/demo/writing/media/reader-plan.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="figure" data-short="Figure" data-focus-x=".44" data-focus-y=".71" aria-labelledby="figure-title">
+            <h3 id="figure-title">How the figure gets its numbers</h3>
+            <p>A simulation of 85 square splits supplies both curves. <strong>Linked results</strong> opens the saved run behind the figure. If its output table changes, the interface flags the figure for review. <a href="/demo/writing/simulation/">Trace the run, the table and the placement →</a></p>
+            <figure><img src="./media/simulation-binding.webp" width="1440" height="900" loading="lazy" alt="The plotted area and wall-length costs, the linked subdivision result, and Place in manuscript."><figcaption>This figure was computed for the walkthrough. <a data-material-viewer="/demo/view/?asset=figure" href="/demo/writing/media/figure.webp" target="_blank" rel="noopener">Inspect the original figure of the paper ↗</a></figcaption></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=simulation-binding" href="/demo/writing/media/simulation-binding.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="reading-options" data-short="Reading options" data-focus-x=".49" data-focus-y=".37" aria-labelledby="reading-options-title">
+            <h3 id="reading-options-title">Reading options</h3>
+            <p>The author can adjust the reading width, show their own changes and inspect open points.</p>
+            <figure><img src="./media/reading-options.webp" width="1440" height="900" loading="lazy" alt="The reading options for the manuscript."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=reading-options" href="/demo/writing/media/reading-options.webp" target="_blank" rel="noopener">Open the screen ↗</a>
+          </article>
+          <article class="ifc-stop" id="published-figure" data-short="In the PDF" data-focus-x=".31" data-focus-y=".62" aria-labelledby="published-figure-title">
+            <h3 id="published-figure-title">Figure in the PDF</h3>
+            <p>Compare the working view with <a data-source-region="cost-fig-3" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">Figure 3 in the released paper</a>. Its caption states the pricing assumption for each curve.</p>
+            <figure><img src="./media/published-figure.webp" width="1554" height="771" loading="lazy" alt="Figure 3 from the published paper. Successive Hilbert subdivisions sit above a plot showing the fastest budget growth for wall length, steady increases for area and diminishing increases for cubic pricing."></figure>
+            <a class="ifc-more" data-material-viewer="/demo/view/?asset=published-figure" href="/demo/writing/media/published-figure.webp" target="_blank" rel="noopener">Enlarge the figure ↗</a>
+          </article>
+            <article class="ifc-stop ifc-rec-note" id="edit-film-transcript">
+              <h3>The same edit, as a recording</h3>
+              <p><b>0:00</b> The draft says the cost stays constant. It leaves out the pricing condition.<br><b>0:03</b> Green marks the missing condition in the staged proposal.<br><b>0:08</b> The author rewrites the added phrase. The saved draft stays untouched.<br><b>0:13</b> Accept saves the author’s wording. Undo is still available.<br><b>0:18</b> Undo restores the earlier sentence and reopens the proposal.</p>
+              <p class="ifc-more"><a data-material-viewer="/demo/view/?asset=proposal-walkthrough" href="/demo/writing/media/proposal-walkthrough.mp4" target="_blank" rel="noopener">Open the recording in the viewer ↗</a> · <a href="./media/proposal-walkthrough.vtt" download>Timed captions</a></p>
+            </article>
+            <div class="ifc-tourbar"><button type="button" class="ifc-btn" data-tour="prev" hidden aria-label="Previous stop">‹</button><button type="button" class="ifc-btn" data-tour="next" hidden aria-label="Next stop">›</button><button type="button" class="ifc-btn" data-tour="zoom" hidden>Look closer</button><button type="button" class="ifc-btn" data-tour="film" hidden aria-pressed="false">Watch it as a recording</button><span class="ifc-count"></span></div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="video-section" id="video" aria-labelledby="video-title">
-      <div class="video-copy">
-        <p class="eyebrow">Screen recording</p>
-        <h2 id="video-title">Watch the edit</h2>
-        <p>Follow the proposal, author edit, accept and undo in one recording.</p>
-        <details class="film-transcript" id="edit-film-transcript">
-          <summary>Read the timed transcript</summary>
-          <ol>
-            <li><time datetime="PT0S">0:00</time><p>The draft says the cost stays constant. It leaves out the pricing condition.</p></li>
-            <li><time datetime="PT3.28S">0:03.28</time><p>Green marks the missing condition in the staged proposal.</p></li>
-            <li><time datetime="PT7.8S">0:07.8</time><p>The author rewrites the added phrase. The saved draft stays untouched.</p></li>
-            <li><time datetime="PT13.08S">0:13.08</time><p>Accept saves the author’s wording. Undo is still available.</p></li>
-            <li><time datetime="PT17.72S">0:17.72</time><p>Undo restores the earlier sentence and reopens the proposal.</p></li>
-          </ol>
-        </details>
-        <p class="video-view"><a data-material-viewer="/demo/view/?asset=proposal-walkthrough" href="/demo/writing/media/proposal-walkthrough.mp4" target="_blank" rel="noopener">Open recording in viewer</a> · <a href="./media/proposal-walkthrough.vtt" download>Timed captions</a></p>
-      </div>
-      <div class="video-frame">
-        <video controls playsinline preload="none" poster="./media/proposal-changes.webp" aria-label="Recording of the proposal, author edit, accept and undo">
-          <source src="./media/proposal-walkthrough.mp4" type="video/mp4">
-          <a href="./media/proposal-walkthrough.mp4" download>Download the recording</a>
-        </video>
-      </div>
-    </section>
-
-    <footer class="sources">
-      <a data-source-region="cost-fig-3" href="/assets/docs/the-cost-of-complexity.pdf#page=10" target="_blank" rel="noopener">
-        <span>The source paper</span>
-        <strong>The Cost of Complexity</strong>
-        <small>Gerard McCaul · Figure 3 in the PDF</small>
-      </a>
-      <div class="page-exit">
-        <a class="return-link" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
-      </div>
-    </footer>
+      <section class="ifc-panel" id="both-forms" aria-labelledby="both-title">
+        <header class="ifc-panel-head"><h2 id="both-title">The edit, in the reader’s hands</h2><p>The film shows an author and an agent at work on one sentence. Here the same sentence is open in both of its forms, and either hand may be played.</p></header>
+        <div class="ifc-live">
+          <div class="ifc-steps" role="group" aria-label="Steps of the demonstration"></div>
+          <p class="ifc-cap" aria-live="polite"></p>
+          <div class="ifc-box egn-interface" data-exhibit="interface"></div>
+          <noscript><p class="ifc-cap">This part is a live demonstration and needs scripts. <a href="/eigenengine/interface/">The human interface</a> describes it in words.</p></noscript>
+        </div>
+      </section>
+    </div>
   </main>
-  <dialog class="lightbox" aria-labelledby="lightbox-title">
-    <div class="lightbox-controls">
-      <p id="lightbox-title">Screen close-up</p>
-      <a class="return-link" href="/eigenengine.html"><span aria-hidden="true">←</span> Back to EigenEngine</a>
-      <button type="button" class="scale-toggle">View at full size</button>
-      <button type="button" class="lightbox-close" autofocus>Close</button>
-    </div>
-    <div class="lightbox-scroll" tabindex="0" role="region" aria-label="Scrollable screen capture">
-      <img alt="">
-    </div>
-  </dialog>
+<script src="/eigenengine/_graph/site-graph.js"></script>
+<script src="/assets/js/eigen-shell.js"></script>
 </body>
 </html>

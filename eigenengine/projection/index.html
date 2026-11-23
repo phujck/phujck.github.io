@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>From conceptrics to papers · EigenEngine</title>
+<meta name="description" content="A paper or a talk is a projection of the research object through a receiver state: the records one reader lacks, in an order that reader can follow.">
+<link rel="canonical" href="https://gmccaul.co.uk/eigenengine/projection/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+<link rel="stylesheet" href="/eigenengine/projection/level.css">
+<link rel="stylesheet" href="/eigenengine/projection/node.css">
+<style>
+/* The page around the node. The synthesis replaces this with the pattern's shell; the node itself is node.js. */
+html { font-size: clamp(16px, calc(9.6px + .44vw), 26px); }
+html, body { margin: 0; }
+body.egp { min-height: 100vh; display: flex; flex-direction: column; background: radial-gradient(ellipse 70rem 38rem at 14% -6rem, var(--eg-raise), transparent) var(--eg-ground); color: var(--eg-ink); font: 400 1rem/1.5 var(--eg-text); }
+.egp a { color: var(--eg-blue); text-underline-offset: .2em; } .egp a:hover { color: var(--eg-gold); }
+.egp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; padding: .7rem 1.75rem; border-bottom: 1px solid var(--eg-line); font: 500 .86rem/1.3 var(--eg-label); }
+.egp-bar a { text-decoration: none; color: var(--eg-muted); } .egp-bar a:hover { color: var(--eg-gold); }
+.egp-crumbs { display: flex; flex-wrap: wrap; gap: 0 8px; color: var(--eg-faint); } .egp-crumbs b { color: var(--eg-ink); font-weight: 500; }
+.egp-tools { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.egp-motion { font: 500 .82rem var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 8px; padding: 5px 11px; cursor: pointer; }
+.egp-motion:hover { border-color: var(--eg-gold); color: var(--eg-ink); }
+.egp-main { display: grid; grid-template-columns: minmax(17.5rem, 21.5rem) minmax(0, 1fr); gap: 1.9rem; padding: 1.3rem 1.75rem 1.5rem; box-sizing: border-box; flex: 1 1 auto; width: 100%; min-height: 640px; max-width: 150rem; margin: 0 auto; }
+@media (min-width: 901px) and (min-height: 721px) { body.egp { height: 100vh; } .egp-main { min-height: 0; } }
+.egp-side { display: flex; flex-direction: column; min-height: 0; overflow: auto; scrollbar-width: thin; }
+.egp-card { position: relative; flex: none; aspect-ratio: 7 / 5; overflow: hidden; border-radius: var(--eg-radius); border: 1px solid color-mix(in srgb, var(--eg-muted) 34%, var(--eg-line)); background: radial-gradient(ellipse at 91% 24%, var(--eg-raise) 0, var(--eg-surface) 44%, var(--eg-ground)); }
+.egp-card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.egp-card div { position: absolute; left: 0; right: 0; bottom: 0; padding: .9rem 1.1rem .95rem; background: linear-gradient(0deg, color-mix(in srgb, var(--eg-ground) 95%, transparent) 40%, transparent); }
+.egp-card h1 { margin: 0; font: 400 1.62rem/1.1 var(--eg-text); letter-spacing: -.03em; text-wrap: balance; }
+.egp-line { margin: .35rem 0 0; font: 400 .9rem/1.35 var(--eg-label); color: var(--eg-muted); }
+.egp-text { margin: 1.1rem 0 0; color: var(--eg-muted); font-size: 1rem; line-height: 1.56; }
+.egp-text i { color: var(--eg-ink); }
+.egp-links { margin: 1.1rem 0 0; padding: .85rem 0 0; border-top: 1px solid var(--eg-line); display: grid; gap: 7px; font: 500 .9rem/1.3 var(--eg-label); }
+.egp-links span { color: var(--eg-faint); font-weight: 400; } .egp-links b { font-weight: 500; }
+.egp-side.is-more .egp-text, .egp-side.is-more .egp-links, .egp-side.is-more .egp-card svg, .egp-side.is-more .egp-line { display: none; }
+.egp-side.is-more .egp-card { aspect-ratio: auto; } .egp-side.is-more .egp-card div { position: static; background: none; }
+.egp-more { margin: 1rem 0 0; border-top: 1px solid var(--eg-line); padding-top: .75rem; }
+.egp-more summary { cursor: pointer; font: 500 .9rem/1.3 var(--eg-label); color: var(--eg-muted); }
+.egp-more summary:hover { color: var(--eg-gold); }
+.egp-more > div { margin-top: .75rem; }
+.egp-stage { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.egp-steps { display: flex; flex-wrap: wrap; gap: 7px; }
+.egp-steps button { font: 500 .86rem/1.2 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 9px; padding: 7px 12px; cursor: pointer; transition: border-color .25s, color .25s, background-color .25s; }
+.egp-steps button span { color: var(--eg-faint); margin-right: 6px; }
+.egp-steps button:hover { border-color: var(--eg-faint); color: var(--eg-ink); }
+.egp-steps button[aria-pressed="true"] { border-color: var(--eg-gold); color: var(--eg-ink); background: color-mix(in srgb, var(--eg-gold) 12%, transparent); }
+.egp-steps button[aria-pressed="true"] span { color: var(--eg-gold); }
+.egp-steps button:focus-visible, .egp-motion:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egp-cap { margin: .75rem 0; min-height: 4.6em; max-width: 86ch; color: var(--eg-ink); font: italic 400 1.02rem/1.5 var(--eg-text); transition: opacity .22s ease; }
+.egp-cap .eg-math { font-style: normal; }
+.egp-exhibit { position: relative; flex: 1 1 auto; min-height: 420px; border: 1px solid var(--eg-line); border-radius: var(--eg-radius); overflow: hidden; background: var(--eg-surface); }
+.egp-fallback { max-width: 70ch; margin: 0 auto; padding: 8px 28px 40px; color: var(--eg-muted); }
+.egp-fallback li { margin-bottom: .6em; }
+@media (max-width: 900px) {
+  .egp-bar { padding: 10px 16px; }
+  .egp-main { display: flex; flex-direction: column; min-height: 0; padding: 16px 16px 28px; gap: 16px; }
+  .egp-side { display: contents; }                      /* on a narrow screen the steps and the exhibit come straight after the card, before its paragraph */
+  .egp-card { order: 0; max-width: 460px; aspect-ratio: 2 / 1; } .egp-stage { order: 1; } .egp-text { order: 2; margin: 0; } .egp-links { order: 3; margin: 0; } .egp-more { order: 4; margin: 0; }
+  .egp-exhibit { flex: none; height: 520px; min-height: 0; }
+  .egp-cap { min-height: 9.4em; margin: .6rem 0; font-size: .98rem; }
+  .egp-steps { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+  .egp-steps button { flex: none; }
+}
+@media (min-width: 901px) and (max-height: 720px) { .egp-exhibit { flex: none; height: 520px; } }
+</style>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
+</head>
+<body class="egp">
+<header class="egp-bar">
+  <nav class="egp-crumbs" aria-label="Where this page sits"><a href="/eigenengine.html#reading">← EigenEngine</a> › <b>From conceptrics to papers</b></nav>
+  <div class="egp-tools">
+    <span data-eg-level-switch></span>
+    <button class="egp-motion" type="button" id="egp-motion">Turn motion off</button>
+  </div>
+</header>
+<main class="egp-main">
+  <aside class="egp-side">
+    <div class="egp-card egn-reading"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" id="egp-art"></svg><div><h1 id="egp-title">From conceptrics to papers</h1><p class="egp-line" id="egp-line"></p></div></div>
+    <p class="egp-text" id="egp-text">A research object is a graph, but it is read one record at a time. The right order depends on the reader, whom we describe by a <i>receiver state</i>: what they already know. A record can be read once the state holds all it needs, and reading adds to the state. A paper or a talk is a path of such steps to the result: a <i>projection</i> of the object.</p>
+    <nav class="egp-links" aria-label="Linked to this">
+      <a href="/eigenengine/research-object/"><span>Requires · </span><b data-node="object">The research object</b> →</a>
+      <a href="/eigenengine/built-in-stages/"><span>The same example · </span><b data-node="build">Built in stages</b> →</a>
+      <a href="/eigenengine.html#change"><span>Next · </span><b data-node="change">Keeping it consistent</b> →</a>
+    </nav>
+    <details class="egp-more" id="egp-more"><summary>This page, written for two readers</summary><div id="egp-section"></div></details>
+  </aside>
+  <section class="egp-stage" aria-label="From the object to a paper or a talk, in seven steps">
+    <div class="egp-steps" id="egp-steps" role="group" aria-label="Steps"></div>
+    <p class="egp-cap" id="egp-cap" aria-live="polite"></p>
+    <div class="egp-exhibit egn-reading" id="egp-exhibit"></div>
+  </section>
+</main>
+<noscript>
+  <div class="egp-fallback">
+    <p>This page shows how one research object becomes a paper or a talk, using the word frequency law from <i>The Cost of Complexity</i>.</p>
+    <ol>
+      <li><b>The object.</b> The result is kept as twelve linked records, and nothing in the object says which of them should be read first.</li>
+      <li><b>A reader.</b> A reader arrives knowing some of this already. What they know is their <i>receiver state</i>, and a paper has to supply the rest.</li>
+      <li><b>A sequence.</b> The missing records are put in a line, ordered so that each needs only what the reader knows already or what came before it.</li>
+      <li><b>Reading.</b> Each record read moves the reader to a new state, until the state holds the result.</li>
+      <li><b>A paper.</b> Written out, the sequence becomes a manuscript, in which each record is a paragraph and a source the reader has not met is given a paragraph of background.</li>
+      <li><b>A talk.</b> The same sequence folds into slides when the result is to be spoken.</li>
+      <li><b>Another reader.</b> A reader who starts elsewhere is given a different sequence from the same object. A newcomer is shown the figure first, and the argument that explains it afterwards.</li>
+    </ol>
+  </div>
+</noscript>
+<script src="/assets/js/eigen-motion.js"></script>
+<script src="/eigenengine/_graph/site-graph.js"></script>
+<script src="/eigenengine/projection/level.js"></script>
+<script src="/eigenengine/projection/node.js"></script>
+<script>
+(() => {
+  const N = window.EIGEN_NODES.reading, M = window.EG_MOTION, $ = id => document.getElementById(id);
+  $('egp-title').textContent = N.title; $('egp-line').innerHTML = N.line; $('egp-text').innerHTML = N.text;
+  const art = N.art($('egp-art')), t0 = performance.now();
+  (function loop(now) { art.tick((now - t0) / 1000); requestAnimationFrame(loop); })(t0);
+  const bar = $('egp-steps'), cap = $('egp-cap'), q = new URLSearchParams(location.search);
+  const show = i => {
+    [...bar.children].forEach((b, k) => b.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
+    if (cap.dataset.i === String(i)) return;
+    cap.dataset.i = i; cap.style.opacity = 0;
+    setTimeout(() => { if (cap.dataset.i === String(i)) { cap.innerHTML = N.exhibit.steps[i].caption; cap.style.opacity = 1; } }, M.off ? 0 : 200);
+  };
+  const ex = N.exhibit.mount($('egp-exhibit'), { compact: false, onStep: show, autoplay: q.get('auto') !== '0' && !q.has('step') });
+  N.exhibit.steps.forEach((s, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = `<span>${i + 1}</span>${s.label}`; b.onclick = () => { ex.step(i); show(i); }; bar.appendChild(b);
+  });
+  if (q.has('step')) { const i = +q.get('step'); ex.step(i); show(i); } else show(0);
+  const more = $('egp-more'); let sec = null;
+  more.addEventListener('toggle', () => { more.closest('.egp-side').classList.toggle('is-more', more.open); if (more.open && !sec) sec = N.sections[0].mount($('egp-section')); });
+  document.querySelectorAll('.egp-links [data-node]').forEach(b => { const g = window.EIGEN_GRAPH.nodes[b.dataset.node]; if (g && g.title) b.textContent = g.title; });   // neighbours are named as the graph names them
+  const mo = $('egp-motion'), label = () => mo.textContent = M.off ? 'Turn motion on' : 'Turn motion off';
+  mo.onclick = () => { M.off = !M.off; try { localStorage.setItem('eg-motion', M.off ? 'off' : 'on'); } catch (e) {} label(); };
+  label();
+  window.EGP = { ex };
+})();
+</script>
+<script src="/assets/js/eigen-shell.js"></script>
+</body>
+</html>

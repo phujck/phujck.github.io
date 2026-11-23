@@ -1,0 +1,195 @@
+/* What happens when something changes?   Styles for the node `change`. Everything is under .egn-change; colours are the
+   shared tokens (gold: what changed and what is selected; coral: needs review; teal: looked at and standing, and what is
+   computed or drawn; blue: sources). Outfit throughout; nothing is smaller than 11 px. Sizes are in em of the stage's
+   own font size, which node.js sets from the stage's width. */
+.egv.egn-change { position: absolute; inset: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); font: 400 12.5px/1.3 var(--eg-label); color: var(--eg-ink); background: radial-gradient(ellipse 70% 80% at 30% 40%, color-mix(in srgb, var(--eg-raise) 55%, transparent), transparent 70%) var(--eg-surface); user-select: none; -webkit-user-select: none; overflow: hidden; }
+.egv.egn-change.egv-wide { grid-template-columns: minmax(0, 1fr) 17em; }
+.egn-change .egv-top, .egn-change .egv-bar { grid-column: 1 / -1; }
+.egn-change .egv-top { grid-row: 1; } .egn-change .egv-bar { grid-row: 3; }
+.egn-change button { font: inherit; color: inherit; }
+
+/* the top line: the three changes, and the count of records in each state */
+.egn-change .egv-top { display: flex; flex-wrap: wrap; align-items: center; gap: .4em .7em; padding: .6em .85em .3em; min-height: 2.2em; }
+.egn-change .egv-lead { font-size: max(11px, .82em); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--eg-gold); }
+.egn-change .egv-chips { display: inline-flex; flex-wrap: wrap; gap: .4em; }
+.egn-change .egv-chips button, .egn-change .egv-acts button { font-size: max(11.5px, .95em); font-weight: 500; padding: .32em .78em; border-radius: .7em; border: 1px solid var(--eg-line); background: color-mix(in srgb, var(--eg-ground) 55%, transparent); cursor: pointer; transition: border-color .25s, background-color .25s, color .25s; white-space: nowrap; }
+.egn-change .egv-chips button:hover, .egn-change .egv-acts button:hover { border-color: var(--eg-faint); }
+.egn-change .egv-chips button[aria-pressed="true"] { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 14%, transparent); }
+.egn-change button:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egn-change .egv-machine { margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; gap: .2em .3em; }
+.egn-change .egv-m { display: inline-flex; align-items: center; gap: .36em; font-size: max(11px, .88em); color: var(--eg-faint); transition: color .35s; }
+.egn-change .egv-m b { font-weight: 600; color: var(--eg-muted); min-width: .6em; text-align: right; display: inline-block; transition: color .35s; }
+.egn-change .egv-m i { width: .72em; height: .72em; border-radius: 50%; border: 1.5px solid var(--eg-faint); box-sizing: border-box; }
+.egn-change .egv-m[data-s="review"] i { border: 1.5px dashed var(--eg-coral); }
+.egn-change .egv-m[data-s="changed"] i { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 45%, transparent); }
+.egn-change .egv-m.on { color: var(--eg-ink); } .egn-change .egv-m.on b { color: var(--eg-ink); }
+.egn-change .egv-m[data-s="current"] { color: var(--eg-muted); }
+.egn-change .egv-m { padding: .06em .5em .06em .4em; border-radius: 1em; border: 1px solid transparent; transition: color .35s, border-color .35s, background-color .35s; }
+.egn-change .egv-m.at { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 12%, transparent); color: var(--eg-ink); }
+.egn-change .egv-arrow { width: 1.3em; height: .87em; flex: none; align-self: center; fill: none; stroke: var(--eg-faint); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.egn-change .egv-m.egv-tick b { animation: egv-tick .55s ease-out; }
+@keyframes egv-tick { 0% { transform: translateY(-.3em); opacity: .35; } 100% { transform: none; opacity: 1; } }
+
+/* the stage */
+.egn-change .egv-stage { background-image: radial-gradient(circle, color-mix(in srgb, var(--eg-faint) 26%, transparent) .8px, transparent 1.3px); background-size: 1.9em 1.9em; position: relative; grid-column: 1; grid-row: 2; min-width: 0; min-height: 0; overflow: hidden; }
+.egn-change .egv-threads, .egn-change .egv-over { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.egn-change .egv-cards, .egn-change .egv-names, .egn-change .egv-cols { position: absolute; inset: 0; }
+.egn-change .egv-names, .egn-change .egv-cols { pointer-events: none; }
+.egn-change .egv-names { z-index: 6; } .egn-change .egv-over { z-index: 7; }
+
+.egn-change .egv-th { fill: none; stroke: color-mix(in srgb, var(--eg-faint) 62%, var(--eg-line)); stroke-width: 1.15; stroke-linecap: round; transition: stroke .4s, opacity .4s, stroke-width .4s; }
+.egn-change .egv-th[data-kind="uses"] { stroke-dasharray: 1.5 4.5; stroke-width: 1.5; }
+.egn-change .egv-th[data-kind="supported-by"] { stroke: color-mix(in srgb, var(--eg-blue) 50%, var(--eg-line)); }
+.egn-change .egv-th[data-kind="computed-by"], .egn-change .egv-th[data-kind="shown-by"] { stroke: color-mix(in srgb, var(--eg-teal) 46%, var(--eg-line)); }
+.egn-change .egv-th[data-kind="shown-by"], .egn-change .egv-th[data-kind="cites"] { stroke-dasharray: 5 4; }
+.egn-change .egv-th.far { opacity: .34; }
+.egn-change .egv-th.off { opacity: .1; }
+.egn-change .egv-th.route { stroke: color-mix(in srgb, var(--eg-gold) 62%, var(--eg-line)); stroke-width: 1.5; }
+.egn-change .egv-th.stood { stroke: color-mix(in srgb, var(--eg-teal) 62%, var(--eg-line)); stroke-width: 1.5; }
+.egn-change .egv-th.foc { stroke: var(--eg-gold); stroke-width: 1.6; opacity: 1; }
+.egn-change .egv-th.hot { stroke: var(--eg-coral); stroke-width: 2; opacity: 1; }
+.egn-change .egv-stop { fill: none; stroke: var(--eg-teal); stroke-width: 2.6; stroke-linecap: round; opacity: 0; transition: opacity .45s; }
+.egn-change .egv-stop.on { opacity: 1; }
+.egn-change .egv-pulse path { fill: none; stroke: var(--eg-gold); stroke-width: 3; stroke-linecap: round; opacity: .8; }
+.egn-change .egv-pulse circle { fill: var(--eg-ink); filter: drop-shadow(0 0 5px var(--eg-gold)); }
+.egn-change .egv-name { position: absolute; left: 0; top: 0; font-size: max(11px, .84em); line-height: 1.5; padding: 0 .55em; border-radius: 1em; white-space: nowrap; color: var(--eg-muted); background: var(--eg-ground); border: 1px solid var(--eg-line); opacity: 0; transition: opacity .3s, border-color .3s, color .3s; }
+.egn-change .egv-name.on { opacity: 1; }
+.egn-change .egv-name.on.dup { opacity: 0; }
+.egn-change .egv-name.hot { border-color: var(--eg-coral); color: var(--eg-ink); }
+.egn-change .egv-col { position: absolute; left: 0; top: 0; font-size: max(11px, .8em); font-weight: 500; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: var(--eg-faint); opacity: 0; transition: opacity .45s, left .6s cubic-bezier(.3, .1, .2, 1), top .6s cubic-bezier(.3, .1, .2, 1); }
+.egn-change .egv-col.on { opacity: 1; }
+/* a band behind each round of review; the one being reviewed is lit */
+.egn-change .egv-band { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 1em; opacity: 0; border: 1px solid color-mix(in srgb, var(--eg-line) 55%, transparent); background: linear-gradient(180deg, color-mix(in srgb, var(--eg-raise) 38%, transparent), transparent 85%);
+  transition: opacity .5s, left .6s cubic-bezier(.3, .1, .2, 1), top .6s cubic-bezier(.3, .1, .2, 1), width .6s cubic-bezier(.3, .1, .2, 1), height .6s cubic-bezier(.3, .1, .2, 1), border-color .5s, background-color .5s; }
+.egn-change .egv-band.on { opacity: 1; }
+.egn-change .egv-band.src { border-color: color-mix(in srgb, var(--eg-gold) 26%, transparent); }
+.egn-change .egv-band.hot { border-color: color-mix(in srgb, var(--eg-coral) 42%, transparent); background-color: color-mix(in srgb, var(--eg-coral) 5%, transparent); }
+.egn-change .egv-col.egv-aside { letter-spacing: .04em; text-transform: none; }
+
+/* a record */
+.egn-change .egv-card { position: absolute; left: 0; top: 0; box-sizing: border-box; width: var(--egv-cw, 120px); margin: 0; padding: 0; overflow: hidden; text-align: left; cursor: default; border: 1px solid var(--eg-line); border-radius: .78em; background: var(--eg-raise); will-change: transform; z-index: 2;
+  transition: border-color .4s, background-color .4s, box-shadow .4s; box-shadow: 0 .25em .9em color-mix(in srgb, var(--eg-ground) 72%, transparent); }
+.egn-change .egv-in { display: block; box-sizing: border-box; width: var(--egv-cw, 120px); padding: .5em .65em .58em; }
+.egn-change .egv-head { display: flex; align-items: center; gap: .36em; height: 1.3em; padding-right: 1.5em; margin-bottom: .16em; }
+.egn-change .egv-gl { width: 1.12em; height: 1.12em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; color: var(--eg-muted); }
+.egn-change .egv-card[data-k="source"] .egv-gl { color: var(--eg-blue); }
+.egn-change .egv-card[data-k="run"] .egv-gl, .egn-change .egv-card[data-k="figure"] .egv-gl { color: var(--eg-teal); }
+.egn-change .egv-kind { font-size: max(11px, .8em); font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--eg-faint); transition: opacity .3s; }
+.egn-change .egv-ver { font-size: max(11px, .8em); font-weight: 600; color: var(--eg-gold); opacity: 0; transform: scale(.7); transition: opacity .4s, transform .4s; }
+.egn-change .egv-ver.on { opacity: 1; transform: none; }
+:root[data-level="expert"] .egn-change .egv-ver { opacity: 1; transform: none; color: var(--eg-faint); }
+:root[data-level="expert"] .egn-change .egv-ver.on { color: var(--eg-gold); }
+.egn-change .egv-lab { display: block; font-weight: 500; line-height: 1.24; transition: opacity .3s; }
+.egn-change .egv-card[data-k="term"] .egv-lab { font-size: 1.16em; }
+.egn-change .egv-say { display: flex; align-items: center; gap: .5em; margin-top: .36em; font-size: max(11px, .92em); line-height: 1.27; color: var(--eg-muted); opacity: 0; transition: opacity .4s; }
+.egn-change .egv-card[data-m="f"] .egv-say { opacity: 1; }
+.egn-change .egv-pin { display: none; margin-top: .3em; font-size: max(11px, .86em); line-height: 1.25; color: var(--eg-coral); }
+:root[data-level="expert"] .egn-change .egv-card[data-m="f"] .egv-pin:not(:empty) { display: block; }
+.egn-change .egv-plot { width: 3.5em; height: 2.13em; flex: none; fill: none; stroke: var(--eg-teal); stroke-width: 1.3; stroke-linecap: round; overflow: visible; }
+.egn-change .egv-plot .ax { stroke: var(--eg-faint); stroke-width: 1; }
+.egn-change .egv-plot .cv { transform-origin: 6px 0; transform: scaleX(.62); transition: transform 1s cubic-bezier(.3, .1, .2, 1); }
+.egn-change .egv-card[data-size="1"] .egv-plot .cv { transform: none; }
+.egn-change .egv-plot .more { opacity: 0; transition: opacity .8s; }
+.egn-change .egv-card[data-size="1"] .egv-plot .more { opacity: 1; }
+
+/* words that are rewritten where they stand */
+.egn-change .egv-tok[data-f="n"] { white-space: normal; }
+.egn-change .egv-tok { white-space: nowrap; transition: color 1.3s; text-decoration-color: transparent; }
+.egn-change .egv-tok.egv-behind { text-decoration: underline wavy var(--eg-coral); text-underline-offset: .2em; text-decoration-thickness: 1px; }
+.egn-change .egv-tok.egv-fresh { color: var(--eg-gold); transition: none; }
+.egn-change .egv-old, .egn-change .egv-new { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; transition: max-width .45s cubic-bezier(.3, .1, .2, 1), opacity .36s; }
+.egn-change .egv-old { text-decoration: line-through var(--eg-coral); color: var(--eg-muted); }
+.egn-change .egv-new { opacity: 0; color: var(--eg-gold); }
+
+/* the dial each record carries: its state. Its needle rests upright, and turns to face a neighbour that changed. */
+.egn-change .egv-dial { position: absolute; right: .28em; top: .26em; width: 1.6em; height: 1.6em; overflow: visible; transition: opacity .3s; }
+.egn-change .egv-ring { fill: var(--eg-raise); stroke: var(--eg-faint); stroke-width: 1.5; transition: stroke .4s, fill .4s; }
+.egn-change .egv-needle { stroke: var(--eg-muted); stroke-width: 2; stroke-linecap: round; transition: stroke .4s, opacity .4s; }
+.egn-change .egv-dot { fill: var(--eg-muted); transition: fill .4s; }
+.egn-change .egv-emit { fill: none; stroke: var(--eg-gold); stroke-width: 1.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
+
+.egn-change .egv-card[data-s="review"] { border: 1px dashed var(--eg-coral); background: color-mix(in srgb, var(--eg-coral) 11%, var(--eg-raise)); box-shadow: 0 0 1.5em color-mix(in srgb, var(--eg-coral) 26%, transparent), 0 .25em .9em color-mix(in srgb, var(--eg-ground) 75%, transparent); cursor: pointer; z-index: 4; }
+.egn-change .egv-card[data-s="review"]:hover { background: color-mix(in srgb, var(--eg-coral) 19%, var(--eg-raise)); }
+.egn-change .egv-card[data-s="review"] .egv-ring { stroke: var(--eg-coral); stroke-dasharray: 2.6 2.4; fill: color-mix(in srgb, var(--eg-coral) 14%, var(--eg-raise)); }
+.egn-change .egv-card[data-s="review"] .egv-needle { stroke: var(--eg-coral); } .egn-change .egv-card[data-s="review"] .egv-dot { fill: var(--eg-coral); }
+.egn-change .egv-card[data-s="changed"] { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 10%, var(--eg-raise)); box-shadow: 0 0 1.5em color-mix(in srgb, var(--eg-gold) 22%, transparent), 0 .25em .9em color-mix(in srgb, var(--eg-ground) 75%, transparent); z-index: 3; }
+.egn-change .egv-card[data-s="changed"] .egv-ring { stroke: var(--eg-gold); fill: color-mix(in srgb, var(--eg-gold) 40%, var(--eg-raise)); }
+.egn-change .egv-card[data-s="changed"] .egv-needle { opacity: 0; } .egn-change .egv-card[data-s="changed"] .egv-dot { fill: var(--eg-gold); }
+.egn-change .egv-card[data-s="changed"] .egv-emit { animation: egv-emit 1.7s ease-out infinite; }
+@keyframes egv-emit { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(2.2); opacity: 0; } }
+.egn-change .egv-card.egv-stood { animation: egv-stood 1.5s ease-out; }
+@keyframes egv-stood { 0%, 35% { border-color: var(--eg-teal); box-shadow: 0 0 1.5em color-mix(in srgb, var(--eg-teal) 34%, transparent); } }
+.egn-change .egv-card.egv-moved, .egn-change .egv-card.egv-hit { animation: egv-moved 1.3s ease-out; }
+@keyframes egv-moved { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--eg-gold) 70%, transparent), 0 0 1.5em color-mix(in srgb, var(--eg-gold) 40%, transparent); } 100% { box-shadow: 0 0 0 1em transparent, 0 0 1.5em color-mix(in srgb, var(--eg-gold) 22%, transparent); } }
+.egn-change .egv-card.egv-focus { border-color: var(--eg-gold); border-style: solid; z-index: 5; }
+.egn-change .egv-card[data-m="f"] { z-index: 4; }
+
+/* a record folded small: what the change has not come near */
+.egn-change .egv-card[data-m="t"] { z-index: 1; box-shadow: none; border-radius: .6em; background: color-mix(in srgb, var(--eg-raise) 70%, var(--eg-surface)); }
+.egn-change .egv-card[data-m="t"] .egv-kind, .egn-change .egv-card[data-m="t"] .egv-lab, .egn-change .egv-card[data-m="t"] .egv-ver, .egn-change .egv-card[data-m="t"] .egv-dial { opacity: 0; }
+.egn-change .egv-card[data-m="t"] .egv-in { padding: .44em .66em; }
+
+/* the side panel on a wide stage */
+.egn-change .egv-panel { display: none; }
+.egn-change.egv-wide .egv-panel { display: block; grid-column: 2; grid-row: 2; min-height: 0; overflow: auto; scrollbar-width: thin; padding: .5em 1.1em 1em; border-left: 1px solid color-mix(in srgb, var(--eg-line) 70%, transparent); user-select: text; -webkit-user-select: text; }
+.egn-change .egv-panel p { margin: 0; }
+.egn-change .egv-pk { font-size: max(11px, .8em); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--eg-gold); }
+.egn-change .egv-pk[data-k="source"] { color: var(--eg-blue); } .egn-change .egv-pk[data-k="run"], .egn-change .egv-pk[data-k="figure"] { color: var(--eg-teal); }
+.egn-change .egv-pn { font-size: 1.36em; font-weight: 500; line-height: 1.2; margin-top: .2em !important; }
+.egn-change .egv-pt { font-size: max(11.5px, .98em); line-height: 1.42; color: var(--eg-muted); margin-top: .55em !important; }
+.egn-change .egv-pt b { color: var(--eg-ink); font-weight: 600; }
+.egn-change .egv-ph { font-size: max(11px, .8em); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--eg-faint); margin-top: 1em !important; }
+.egn-change .egv-panel ul { list-style: none; margin: .3em 0 0; padding: 0; font-size: max(11.5px, .98em); line-height: 1.35; }
+.egn-change .egv-panel li { display: grid; grid-template-columns: 6.6em 1fr; gap: .1em .5em; padding: .16em 0; }
+.egn-change .egv-panel li span { color: var(--eg-faint); } .egn-change .egv-panel li em { grid-column: 2; font-style: normal; color: var(--eg-faint); font-size: max(11px, .88em); }
+.egn-change .egv-mach { display: block; width: 100%; max-width: 15.5em; height: auto; margin: .8em 0 .1em; overflow: visible; }
+.egn-change .egv-mach .ar { fill: none; stroke: var(--eg-faint); stroke-width: 1.2; }
+.egn-change .egv-mach .hd { fill: var(--eg-faint); stroke: none; }
+.egn-change .egv-mach rect { fill: var(--eg-surface); stroke: var(--eg-line); stroke-width: 1.2; transition: fill .4s, stroke .4s; }
+.egn-change .egv-mach text { font: 500 12px var(--eg-label); fill: var(--eg-faint); transition: fill .4s; }
+.egn-change .egv-mach .st.on text { fill: var(--eg-ink); }
+.egn-change .egv-mach .st.on[data-s="current"] rect { stroke: var(--eg-muted); fill: var(--eg-raise); }
+.egn-change .egv-mach .st.on[data-s="review"] rect { stroke: var(--eg-coral); stroke-dasharray: 4 3; fill: color-mix(in srgb, var(--eg-coral) 16%, var(--eg-surface)); }
+.egn-change .egv-mach .st.on[data-s="changed"] rect { stroke: var(--eg-gold); fill: color-mix(in srgb, var(--eg-gold) 18%, var(--eg-surface)); }
+
+/* the line of words under the stage */
+.egn-change .egv-bar { display: flex; align-items: center; gap: .3em 1em; padding: .45em .85em .6em; border-top: 1px solid color-mix(in srgb, var(--eg-line) 60%, transparent); min-height: 3.5em; box-sizing: border-box; }
+.egn-change .egv-status, .egn-change .egv-panel { transition: opacity .15s ease; } .egn-change .egv-status.egv-out, .egn-change .egv-panel.egv-out { opacity: 0; }
+.egn-change .egv-status { flex: 1 1 0; min-width: 0; margin: 0; font-size: max(11.5px, 1em); line-height: 1.36; color: var(--eg-ink); user-select: text; -webkit-user-select: text; }
+.egn-change .egv-status b { font-weight: 600; color: var(--eg-gold); }
+.egn-change .egv-acts { flex: none; display: inline-flex; gap: .4em; }
+.egn-change .egv-acts button[data-act="carry"] { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 14%, transparent); }
+.egn-change .egv-acts button[hidden] { display: none; }
+
+/* a stage taller than wide: the kind sits closer so the version mark clears the dial */
+.egn-change.egv-portrait .egv-kind { letter-spacing: .02em; } .egn-change.egv-portrait .egv-head { gap: .28em; }
+
+/* a stage taller than wide: rows of review in place of columns, and the long definition is left to the status line */
+.egn-change.egv-portrait .egv-card[data-k="term"] .egv-say { display: none; }
+
+/* a very low stage (the main page on a phone): the host's steps drive it, the records in front keep their names and the rest fold */
+.egn-change.egv-low .egv-top { display: none; }
+.egn-change.egv-low .egv-bar { height: 4.6em; min-height: 0; padding: .25em .6em .3em; align-items: flex-start; }
+.egn-change.egv-low .egv-acts { display: none; }
+.egn-change.egv-low .egv-status { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; line-height: 1.3; }
+.egn-change.egv-low .egv-head, .egn-change.egv-low .egv-say, .egn-change.egv-low .egv-pin, .egn-change.egv-low .egv-dial { display: none !important; }
+.egn-change.egv-low .egv-card[data-m="t"] .egv-in { opacity: 0; }
+.egn-change.egv-low .egv-in { padding: .3em .5em .34em; }
+.egn-change.egv-low .egv-name, .egn-change.egv-low .egv-col, .egn-change.egv-low .egv-band { display: none; }
+@media (max-width: 520px) { .egn-change .egv-machine { margin-left: 0; } .egn-change .egv-lead { display: none; } }
+
+/* the section on the node's own page */
+.egv-real.egn-change { display: flex; flex-direction: column; justify-content: flex-start; gap: 1.15em; font: 400 1rem/1.55 var(--eg-text); color: var(--eg-muted); height: 100%; box-sizing: border-box; padding: 1.4em 1.7em; max-width: 68rem; margin: 0 auto; }
+.egv-real.egn-change p { margin: 0; }
+.egv-real.egn-change .egv-real-head { font: 600 max(11px, .76rem)/1.4 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-gold); }
+.egv-real.egn-change .egv-shot { display: block; position: relative; overflow: hidden; border-radius: var(--eg-radius-s); border: 1px solid var(--eg-line); aspect-ratio: 578 / 74; width: 100%; flex: none; }
+.egv-real.egn-change .egv-shot img { position: absolute; width: 249.100%; max-width: none; left: -55.700%; top: -806%; }
+.egv-real.egn-change .egv-real-states { display: flex; flex-wrap: wrap; gap: .5em 1.2em; font: 500 max(11.5px, .9rem)/1.4 var(--eg-label); color: var(--eg-ink); }
+.egv-real.egn-change .egv-m { display: inline-flex; align-items: center; gap: .45em; }
+.egv-real.egn-change .egv-m i { width: .8em; height: .8em; border-radius: 50%; box-sizing: border-box; border: 1.5px solid var(--eg-muted); }
+.egv-real.egn-change .egv-m[data-s="review"] i { border: 1.5px dashed var(--eg-coral); }
+.egv-real.egn-change .egv-real-words { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 1.8em; align-items: start; }
+.egv-real.egn-change .egv-real-words > p:first-child { color: var(--eg-ink); }
+.egv-real.egn-change .egv-real-links { display: grid; gap: .55em; font: 500 .92rem/1.35 var(--eg-label); }
+.egv-real.egn-change a { color: var(--eg-blue); text-underline-offset: .2em; } .egv-real.egn-change a:hover { color: var(--eg-gold); }
+@media (max-width: 760px) { .egv-real.egn-change { height: auto; } .egv-real.egn-change .egv-real-words { grid-template-columns: 1fr; gap: 1em; } }

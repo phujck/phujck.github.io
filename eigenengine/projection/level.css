@@ -1,0 +1,32 @@
+/* The technicality switch (see level.js). Colours and faces from eigen-tokens.css only. */
+
+/* a two-level run of words: both readings are in the page, and the level in force decides which is shown */
+.eg-lv-expert { display: none; }
+:root[data-level="expert"] .eg-lv-plain { display: none; }
+:root[data-level="expert"] .eg-lv-expert { display: inline; }
+.eg-lv { transition: opacity .17s ease; }
+:root.eg-lv-out .eg-lv { opacity: 0; }
+:root.eg-lv-in .eg-lv { animation: eg-lv-in .34s ease both; }
+@keyframes eg-lv-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* arriving at the expert level, a formula is shown once it has been set, never as its source */
+:root.eg-lv-wait .eg-lv-expert { visibility: hidden; }
+.eg-lv-expert[data-eg-math="wait"], [data-eg-math="wait"] { visibility: hidden; }
+
+/* mathematics in an expert reading */
+.eg-math { white-space: nowrap; font-style: normal; }
+.eg-math .katex { font-size: 1.1em; }
+.eg-math-block { display: block; margin: .5em 0 .45em; text-align: center; white-space: normal; overflow-x: auto; overflow-y: hidden; }
+.eg-math-raw { font-style: italic; }
+
+/* the switch */
+.eg-level { display: inline-flex; align-items: center; gap: 9px; font: 500 .82rem/1.2 var(--eg-label); color: var(--eg-faint); white-space: nowrap; }
+.eg-level-legend { letter-spacing: .01em; }
+.eg-level-track { position: relative; display: inline-flex; padding: 2px; border: 1px solid var(--eg-line); border-radius: 999px; background: color-mix(in srgb, var(--eg-ground) 60%, transparent); }
+.eg-level-thumb { position: absolute; left: 0; top: 2px; bottom: 2px; width: 0; opacity: 0; border-radius: 999px; background: color-mix(in srgb, var(--eg-gold) 16%, transparent); box-shadow: inset 0 0 0 1px var(--eg-gold);
+  transition: transform .34s cubic-bezier(.3, .1, .2, 1), width .34s cubic-bezier(.3, .1, .2, 1), opacity .2s; }
+.eg-level button { position: relative; font: inherit; color: var(--eg-muted); background: none; border: 0; border-radius: 999px; padding: 4px 12px; cursor: pointer; transition: color .25s; }
+.eg-level button:hover { color: var(--eg-ink); }
+.eg-level button[aria-pressed="true"] { color: var(--eg-ink); }
+.eg-level button:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+@media (max-width: 520px) { .eg-level-legend { display: none; } }

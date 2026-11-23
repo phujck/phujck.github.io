@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Keeping it consistent · EigenEngine</title>
+<meta name="description" content="Every record in an EigenEngine research object is a small state machine. A change marks the records written against it for review, and each review stops the change or passes it on.">
+<link rel="canonical" href="https://gmccaul.co.uk/eigenengine/revision/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+<link rel="stylesheet" href="/eigenengine/projection/level.css">
+<link rel="stylesheet" href="/eigenengine/revision/node.css">
+<style>
+/* The page around the node. The synthesis replaces this with the pattern's shell; the node itself is node.js. */
+html { font-size: clamp(16px, .42vw + 10px, 24px); }
+html, body { margin: 0; }
+body.egc { min-height: 100vh; display: flex; flex-direction: column; background: radial-gradient(ellipse 70rem 38rem at 14% -6rem, color-mix(in srgb, var(--eg-raise) 85%, transparent), transparent) var(--eg-ground); color: var(--eg-ink); font: 400 1rem/1.5 var(--eg-text); }
+.egc a { color: var(--eg-blue); text-underline-offset: .2em; } .egc a:hover { color: var(--eg-gold); }
+.egc-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem 1.4rem; padding: .7rem 1.75rem; border-bottom: 1px solid var(--eg-line); font: 500 .86rem/1.3 var(--eg-label); }
+.egc-bar a { text-decoration: none; color: var(--eg-muted); } .egc-bar a:hover { color: var(--eg-gold); }
+.egc-crumbs { display: flex; flex-wrap: wrap; gap: 0 .5rem; color: var(--eg-faint); } .egc-crumbs b { color: var(--eg-ink); font-weight: 500; }
+.egc-tools { margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
+.egc-motion { font: 500 .82rem var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 8px; padding: .32rem .7rem; cursor: pointer; }
+.egc-motion:hover { border-color: var(--eg-gold); color: var(--eg-ink); }
+.egc-main { display: grid; grid-template-columns: minmax(17.5rem, 21.5rem) minmax(0, 1fr); gap: 1.9rem; padding: 1.3rem 1.75rem 1.5rem; box-sizing: border-box; flex: 1 1 auto; width: 100%; min-height: 40rem; max-width: 118rem; margin: 0 auto; }
+@media (min-width: 901px) and (min-height: 641px) { body.egc { height: 100vh; } .egc-main { min-height: 0; } }
+.egc-side { display: flex; flex-direction: column; min-height: 0; overflow: auto; scrollbar-width: thin; }
+.egc-card { position: relative; flex: none; aspect-ratio: 7 / 5; overflow: hidden; border-radius: var(--eg-radius); border: 1px solid var(--eg-line); background: radial-gradient(ellipse at 91% 24%, var(--eg-raise) 0, var(--eg-surface) 42%, var(--eg-ground)); }
+.egc-card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.egc-card div { position: absolute; left: 0; right: 0; bottom: 0; padding: .9rem 1.1rem .95rem; background: linear-gradient(0deg, color-mix(in srgb, var(--eg-ground) 95%, transparent) 38%, transparent); }
+.egc-card h1 { margin: 0; font: 400 1.72rem/1.1 var(--eg-text); letter-spacing: -.03em; }
+.egc-card p { margin: .3rem 0 0; font: 400 .9rem/1.35 var(--eg-label); color: var(--eg-muted); }
+.egc-text { margin: 1.1rem 0 0; color: var(--eg-muted); font-size: 1rem; line-height: 1.56; }
+.egc-text i { color: var(--eg-ink); }
+.egc-links { margin: 1.1rem 0 0; padding: .85rem 0 0; border-top: 1px solid var(--eg-line); display: grid; gap: .42rem; font: 500 .9rem/1.3 var(--eg-label); }
+.egc-links span { color: var(--eg-faint); font-weight: 400; }
+.egc-stage { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.egc-row { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; }
+.egc-row button { position: relative; overflow: hidden; font: 500 .86rem/1.2 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 9px; padding: .44rem .75rem; cursor: pointer; transition: border-color .25s, color .25s, background-color .25s; }
+.egc-row button span { color: var(--eg-faint); margin-right: .38rem; }
+.egc-row button:hover { border-color: var(--eg-faint); color: var(--eg-ink); }
+.egc-row button[aria-pressed="true"] { border-color: var(--eg-gold); color: var(--eg-ink); background: color-mix(in srgb, var(--eg-gold) 12%, transparent); }
+.egc-row button[aria-pressed="true"] span { color: var(--eg-gold); }
+.egc-row button i { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--eg-gold); transform: scaleX(0); transform-origin: left; transition: transform .3s linear; }
+.egc-row .egc-tab { margin-left: auto; border-color: color-mix(in srgb, var(--eg-teal) 45%, var(--eg-line)); }
+.egc-row .egc-tab[aria-pressed="true"] { border-color: var(--eg-teal); background: color-mix(in srgb, var(--eg-teal) 12%, transparent); }
+.egc-row button:focus-visible, .egc-motion:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egc-cap { margin: .75rem 0; min-height: 3.1em; max-width: 92ch; color: var(--eg-ink); font: italic 400 1.02rem/1.5 var(--eg-text); transition: opacity .2s ease; }
+.egc-cap .katex { font-style: normal; }
+.egc-exhibit, .egc-real { position: relative; flex: 1 1 auto; min-height: 26rem; border: 1px solid var(--eg-line); border-radius: var(--eg-radius); overflow: hidden; background: var(--eg-surface); }
+.egc-real { display: none; } .egc-stage[data-view="real"] .egc-real { display: block; } .egc-stage[data-view="real"] .egc-exhibit { display: none; }
+.egc-fallback { max-width: 70ch; margin: 0 auto; padding: .5rem 1.75rem 2.5rem; color: var(--eg-muted); }
+.egc-fallback li { margin-bottom: .6em; }
+@media (max-width: 900px) {   /* one column: the card, then the demonstration, then the words about it */
+  .egc-bar { padding: .6rem 1rem; }
+  .egc-main { display: flex; flex-direction: column; min-height: 0; padding: .8rem 1rem 1.75rem; gap: .9rem; }
+  .egc-side { display: contents; }
+  .egc-card { order: 1; aspect-ratio: 16 / 6.6; } .egc-card h1 { font-size: 1.45rem; } .egc-card p { display: none; }
+  .egc-stage { order: 2; } .egc-text { order: 3; margin: 0; } .egc-links { order: 4; margin: 0; }
+  .egc-exhibit { flex: none; height: min(36rem, 74vh); min-height: 30rem; } .egc-real { flex: none; min-height: 0; }
+  .egc-row { gap: .35rem; } .egc-row button { padding: .36rem .58rem; font-size: .8rem; } .egc-row .egc-tab { margin-left: 0; }
+  .egc-cap { min-height: 5.6em; margin: .6rem 0; font-size: .95rem; }
+}
+@media (min-width: 901px) and (max-height: 640px) { .egc-exhibit { flex: none; height: 32rem; } }
+</style>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
+</head>
+<body class="egc">
+<header class="egc-bar">
+  <nav class="egc-crumbs" aria-label="Where this page sits"><a href="/eigenengine.html">← EigenEngine</a> › <b>Keeping it consistent</b></nav>
+  <span class="egc-tools"><span data-eg-level-switch></span><button class="egc-motion" type="button" id="egc-motion">Turn motion off</button></span>
+</header>
+<main class="egc-main">
+  <aside class="egc-side">
+    <div class="egc-card egn-change"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMin slice" aria-hidden="true" id="egc-art"></svg><div><h1 id="egc-title">Keeping it consistent</h1><p id="egc-question">What happens when something changes?</p></div></div>
+    <p class="egc-text" id="egc-text">No record in a research object stands alone: an edit to one can falsify others nobody touched. Each record is therefore a <i>state machine</i>: <i>current</i>, <i>needs review</i> or <i>changed</i>. When one changes, those written against it are marked, and stay marked until someone has looked. A review stops the change or passes it on. A renamed term is thereby forced through the conceptric until no record uses the old word.</p>
+    <nav class="egc-links" id="egc-links" aria-label="Linked to this">
+      <a href="/eigenengine/research-object/"><span>Requires · </span>The research object →</a>
+      <a href="/eigenengine/projection/"><span>Requires · </span>From conceptrics to papers →</a>
+      <a href="/eigenengine/interface/"><span>Required by · </span>The human interface →</a>
+      <a href="/eigenengine/phases-of-hierarchy/"><span>Supported by · </span>The Phases of Hierarchy →</a>
+    </nav>
+  </aside>
+  <section class="egc-stage" aria-label="One object, changed and carried through" id="egc-stage" data-view="exhibit">
+    <div class="egc-row" id="egc-steps" role="group" aria-label="Six parts of the demonstration"></div>
+    <p class="egc-cap" id="egc-cap" aria-live="polite"></p>
+    <div class="egc-exhibit egn-change" id="egc-exhibit"></div>
+    <div class="egc-real" id="egc-real"></div>
+  </section>
+</main>
+<noscript>
+  <div class="egc-fallback">
+    <p>This page changes one research object, the word frequency law from <i>The Cost of Complexity</i>, and carries the change through its fourteen records.</p>
+    <ol>
+      <li><b>At rest.</b> Every record keeps one of three states: current, changed or needs review.</li>
+      <li><b>A renamed term.</b> The term “rank” is renamed “position”. The four records which use it are marked for review.</li>
+      <li><b>First reviews.</b> The marked records are read against the new wording. Each of the four carried the old word and is reworded, and the three records written against them are marked in turn.</li>
+      <li><b>Through to the end.</b> A review which finds nothing to alter stops the change where it stands. Of the eight records looked at in three rounds, six are reworded and two are left as they were, while five are never disturbed.</li>
+      <li><b>A corrected source.</b> The claim which the passage supports is restated, while the step and the idea which require that claim are read and stand. Four records further on are never opened.</li>
+      <li><b>A new run.</b> The figure computed by the run is drawn again and the caption which cites it is rewritten. Nothing else was written against the run.</li>
+    </ol>
+  </div>
+</noscript>
+<script src="/assets/js/eigen-motion.js"></script>
+<script src="/eigenengine/_graph/site-graph.js"></script>
+<script src="/eigenengine/projection/level.js"></script>
+<script src="/eigenengine/revision/node.js"></script>
+<script>
+(() => {
+  const N = window.EIGEN_NODES.change, L = window.EigenLevel, M = window.EG_MOTION, G = window.EIGEN_GRAPH, $ = id => document.getElementById(id);
+  const html = f => L ? L.html(f) : String(f);
+  $('egc-title').textContent = N.title; $('egc-question').textContent = N.question; $('egc-text').innerHTML = html(N.text);
+  /* neighbours, read from the site's graph so that names and addresses follow it; an address not yet built is left out */
+  if (G) {
+    const at = id => { const n = G.nodes[id]; return n ? (n.page || (n.slug ? `/eigenengine/${n.slug}/` : null)) : null; }, row = (rel, id) => ({ rel, id, href: at(id), name: G.nodes[id] && G.nodes[id].title });
+    const rows = G.links.filter(l => l[0] === 'change').map(l => row('Requires', l[1])).concat(G.links.filter(l => l[1] === 'change').map(l => row(l[2] === 'supports' ? 'Supported by' : 'Required by', l[0]))).filter(r => r.href && r.name);
+    rows.sort((a, b) => ['Requires', 'Required by', 'Supported by'].indexOf(a.rel) - ['Requires', 'Required by', 'Supported by'].indexOf(b.rel));
+    Promise.all(rows.map(r => fetch(r.href, { method: 'HEAD' }).then(x => x.ok, () => false))).then(ok => { const live = rows.filter((r, i) => ok[i]); if (live.length) $('egc-links').innerHTML = live.map(r => `<a href="${r.href}"><span>${r.rel} · </span>${r.name} →</a>`).join(''); });
+  }
+  /* the card */
+  const art = N.art($('egc-art')); let at = 0, was = performance.now();
+  (function loop(now) { if (!M.off) at += Math.min(.1, (now - was) / 1000); was = now; art.tick(at); requestAnimationFrame(loop); })(was);
+  /* the exhibit, its six parts and the caption. Left alone, the page walks through them; each waits until the object has
+     settled and its last sentence has had time to be read, and the walk pauses while the exhibit is out of view. */
+  const stage = $('egc-stage'), bar = $('egc-steps'), cap = $('egc-cap'), box = $('egc-exhibit'), steps = N.exhibit.steps; let cur = -1, touring = true, inView = true, since = 0, idleFor = 0, last = performance.now();
+  const ex = N.exhibit.mount(box, { compact: false });
+  const btns = steps.map((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'egc-step'; b.innerHTML = `<span>${i + 1}</span>${s.label}<i></i>`; b.addEventListener('click', () => { stop(); show('exhibit'); go(i); }); bar.appendChild(b); return b; });
+  const tab = document.createElement('button'); tab.type = 'button'; tab.className = 'egc-tab'; bar.appendChild(tab);
+  let capT = 0; const say = h => { clearTimeout(capT); cap.style.opacity = 0; capT = setTimeout(() => { cap.innerHTML = h; cap.style.opacity = 1; if (L) L.typeset(cap); }, M.off ? 0 : 190); };
+  const mark = i => btns.forEach((b, k) => { b.setAttribute('aria-pressed', k === i ? 'true' : 'false'); b.querySelector('i').style.transform = ''; });
+  function go(i) { cur = i; since = 0; idleFor = 0; mark(i); say(html(steps[i].caption)); ex.step(i); }
+  function stop() { if (!touring) return; touring = false; btns.forEach(b => { b.querySelector('i').style.transform = ''; }); }
+  (function tour(now) {
+    if (!touring) return; requestAnimationFrame(tour);
+    const dt = Math.min(.1, (now - last) / 1000); last = now;
+    if (document.hidden || !inView || stage.dataset.view !== 'exhibit' || cur < 0) return;
+    const hold = (steps[cur].hold || 5000) / 1000, idle = ex.state().idle;   // `hold` is how long a part takes; the walk also waits for the part to finish
+    since += dt; idleFor = idle ? idleFor + dt : 0;
+    btns[cur].querySelector('i').style.transform = `scaleX(${Math.min(1, since / hold)})`;
+    if (since >= Math.min(hold, 4) && idleFor >= 3.2) go((cur + 1) % steps.length);
+  })(last);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { inView = es[es.length - 1].isIntersecting; }, { threshold: .25 }).observe(box);
+  /* the reader acting on the figure itself ends the walk, and the mark on the part with it */
+  box.addEventListener('eigen-exhibit-change', () => { stop(); if (cur >= 0) { cur = -1; mark(-1); say('Pressing a marked record reviews it, and any of the three changes may be made at any time. Pressing a part above sets the object up for that part again.'); } });
+  /* the section: the same thing happening in the interface */
+  const sec = N.sections[0]; let secOn = null;
+  function show(view) {
+    stage.dataset.view = view; tab.textContent = view === 'real' ? 'Back to the demonstration' : html(sec.title).replace(/<[^>]+>/g, ''); tab.setAttribute('aria-pressed', view === 'real' ? 'true' : 'false');
+    if (view === 'real') { if (!secOn) secOn = sec.mount($('egc-real')); cur = -1; mark(-1); say(html(sec.line)); }
+  }
+  tab.addEventListener('click', () => { stop(); const to = stage.dataset.view === 'real' ? 'exhibit' : 'real'; show(to); if (to === 'exhibit') say('Pressing a marked record reviews it, and any of the three changes may be made at any time. Pressing a part above sets the object up for that part again.'); });
+  show('exhibit'); go(0);
+  /* motion */
+  const mo = $('egc-motion'), lab = () => { mo.textContent = M.off ? 'Turn motion on' : 'Turn motion off'; };
+  mo.addEventListener('click', () => { M.off = !M.off; try { localStorage.setItem('eg-motion', M.off ? 'off' : 'on'); } catch (e) {} lab(); }); lab();
+  window.EGC = { ex, go, stop };
+})();
+</script>
+<script src="/assets/js/eigen-shell.js"></script>
+</body>
+</html>

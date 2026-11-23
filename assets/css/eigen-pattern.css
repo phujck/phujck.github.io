@@ -1,0 +1,227 @@
+/* The EigenEngine pattern: one stage, a console beside it, and the same card at every depth.
+   Colours and faces come from eigen-tokens.css. Lora carries text; Outfit carries labels and every word in a figure. */
+@font-face { font-family: 'Outfit'; src: url('/demo/shared/fonts/outfit-var.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Lora'; src: url('/demo/shared/fonts/lora-var.woff2') format('woff2'); font-weight: 400 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Lora'; src: url('/demo/shared/fonts/lora-italic-var.woff2') format('woff2'); font-weight: 400 700; font-style: italic; font-display: swap; }
+
+.ep-page { padding-top: var(--nav-height, 64px); background: var(--eg-ground); color: var(--eg-ink); }
+.ep-app { box-sizing: border-box; height: calc(100svh - var(--nav-height, 64px)); min-height: 600px; max-width: 2500px; margin: 0 auto; padding: 14px 16px 14px 24px;
+  display: grid; grid-template-columns: clamp(290px, 25.5vw, 450px) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); grid-template-areas: "head stage" "tray stage"; gap: 10px 18px;
+  font: 400 16px/1.5 var(--eg-label); color: var(--eg-ink); }
+.ep-app :where(h1, h2, h3, p, ol, ul, li, dl, dd, dt) { margin: 0; padding: 0; }
+.ep-app :where(button) { font: inherit; color: inherit; }
+.ep-app:not(.ep-on) { height: auto; }
+
+/* ---- the console ---------------------------------------------------------------------------------------------- */
+.ep-console { grid-area: head; min-width: 0; }
+.ep-release { font: 400 .76rem/1.4 var(--eg-label); color: var(--eg-faint); margin-bottom: 12px; }
+.ep-release strong { color: var(--eg-gold); font-weight: 600; } .ep-release a { color: var(--eg-blue); }
+.ep-up { font: 500 .8rem var(--eg-label); color: var(--eg-blue); text-decoration: none; display: inline-block; margin-bottom: 8px; } .ep-up:hover { color: var(--eg-gold); }
+.ep-console h1 { font: 500 clamp(2.3rem, 3.5vw, 4rem)/1.02 var(--eg-text); letter-spacing: -.055em; color: var(--eg-ink); }
+.ep-def { font: 400 clamp(1.08rem, 1.45vw, 1.5rem)/1.22 var(--eg-text); color: color-mix(in srgb, var(--eg-gold) 55%, var(--eg-ink)); margin-top: 8px; letter-spacing: -.012em; }
+.ep-lede { font: 400 clamp(.9rem, 1vw, 1.02rem)/1.5 var(--eg-text); color: var(--eg-muted); margin-top: 10px; }
+.ep-lede i { color: var(--eg-ink); }
+.ep-tray { grid-area: tray; min-height: 0; display: flex; flex-direction: column; gap: 7px; }
+.ep-tab { display: block; background: none; border: 0; padding: 0; margin: 0 0 5px; font: 600 .68rem var(--eg-label); letter-spacing: .13em; text-transform: uppercase; color: var(--eg-gold); cursor: default; }
+.ep-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ep-chip { background: none; border: 1px solid var(--eg-line); border-radius: 9px; padding: 4px 9px; font: 500 .82rem/1.25 var(--eg-label); color: var(--eg-ink); cursor: pointer; text-align: left; transition: border-color .25s, background-color .25s; }
+.ep-chip:hover { border-color: var(--eg-faint); } .ep-chip.on { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
+[data-grp="q"] .ep-chip { flex: 0 1 auto; font-size: .78rem; padding: 3px 8px; }
+.ep-app button:focus-visible, .ep-app a:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.ep-map { flex: 0 0 auto; margin-top: auto; border: 1px solid var(--eg-line); border-radius: 12px; background: var(--eg-surface); overflow: hidden; line-height: 0; }
+.ep-map svg { display: block; width: 100%; height: auto; max-height: 134px; margin: 0 auto; }
+.ep-m-t { font: 500 56px var(--eg-label); fill: var(--eg-ink); text-anchor: middle; pointer-events: none; paint-order: stroke; stroke: #1b2538; stroke-width: 12px; stroke-linejoin: round; }
+.ep-direct { font: 400 .78rem/1.4 var(--eg-label); color: var(--eg-faint); margin-top: 8px; } .ep-direct a { color: var(--eg-blue); text-decoration: none; } .ep-direct a:hover { color: var(--eg-gold); }
+.ep-m-n { fill: color-mix(in srgb, var(--eg-gold) calc(var(--heat, 0) * 100%), #2b3a58); stroke: #6c7da2; stroke-width: 1; vector-effect: non-scaling-stroke; cursor: pointer; transition: stroke .3s; }
+.ep-m-box { fill: color-mix(in srgb, var(--eg-gold) calc(var(--heat, 0) * 26%), rgba(255, 255, 255, .035)); }
+.ep-m-n.ep-g-cost { stroke: var(--eg-cost-line); } .ep-m-n.ep-g-phases { stroke: var(--eg-phases-line); } .ep-m-n.ep-g-memory { stroke: var(--eg-memory-line); }
+.ep-m-n.seen:not(.ep-m-box) { fill: color-mix(in srgb, var(--eg-gold) 38%, #2b3a58); }
+.ep-m-n.on { stroke: var(--eg-gold); stroke-width: 2; } .ep-m-n.here { fill: var(--eg-gold); } .ep-m-n.here + .ep-m-t { fill: #171a20; stroke: none; }
+.ep-m-n:hover { stroke: var(--eg-ink); }
+.ep-m-out { opacity: .62; } .ep-m-root { stroke: var(--eg-gold); stroke-width: 2; }
+.ep-m-l { fill: none; stroke: #5b6b90; stroke-width: 1; vector-effect: non-scaling-stroke; pointer-events: none; } .ep-m-l-supports { stroke-dasharray: 3 3; } .ep-m-l-then { display: none; }
+.ep-m-trail { fill: none; stroke: var(--eg-gold); stroke-width: 1.4; stroke-dasharray: 2 4; vector-effect: non-scaling-stroke; pointer-events: none; }
+.ep-m-you { fill: none; stroke: var(--eg-gold); stroke-width: 1.6; vector-effect: non-scaling-stroke; pointer-events: none; }
+.ep-where { font: 400 .78rem/1.35 var(--eg-label); color: var(--eg-muted); min-height: 1.35em; }
+.ep-motion { align-self: flex-start; background: none; border: 0; padding: 0; font: 400 .74rem var(--eg-label); color: var(--eg-faint); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+/* ---- the stage ------------------------------------------------------------------------------------------------- */
+.ep-stage { grid-area: stage; position: relative; min-width: 0; min-height: 0; overflow: hidden; border: 1px solid var(--eg-line); border-radius: 20px;
+  background: radial-gradient(ellipse 70% 60% at 30% 12%, #16223a 0, transparent 70%), var(--eg-ground); }
+.ep-on .ep-fallback { display: none; }
+.ep-fallback { list-style: none; padding: 18px 22px; display: grid; gap: 16px; }
+.ep-fallback h2 { font: 400 1.3rem/1.2 var(--eg-text); } .ep-fallback p { font: 400 .98rem/1.5 var(--eg-text); color: var(--eg-muted); max-width: 70ch; } .ep-fallback a { color: var(--eg-blue); }
+.ep-links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.ep-l { fill: none; stroke: color-mix(in srgb, var(--eg-gold) calc(var(--hot, 0) * 100%), #a9bbde); stroke-width: calc(2px + var(--hot, 0) * 1px); stroke-linecap: round; }
+.ep-lh { fill: #a9bbde; }
+.ep-l-supports { stroke-dasharray: 2 6; stroke-width: 2.2px; } .ep-l.ep-g-cost, .ep-lh.ep-g-cost { stroke: var(--eg-cost-line); } .ep-l.ep-g-phases { stroke: var(--eg-phases-line); } .ep-l.ep-g-memory { stroke: var(--eg-memory-line); }
+.ep-lh.ep-g-cost { fill: var(--eg-cost-line); stroke: none; } .ep-lh.ep-g-phases { fill: var(--eg-phases-line); } .ep-lh.ep-g-memory { fill: var(--eg-memory-line); }
+.ep-l-then, .ep-lh.ep-l-then { display: none !important; }
+.ep-ll { font: 500 12px var(--eg-label); fill: var(--eg-ink); text-anchor: middle; paint-order: stroke; stroke: var(--eg-ground); stroke-width: 4px; stroke-linejoin: round; opacity: 0; }
+.ep-route { fill: none; stroke: var(--eg-gold); stroke-width: 2.6; stroke-linecap: round; }
+.ep-pulse { fill: var(--eg-gold); filter: drop-shadow(0 0 5px var(--eg-gold)); }
+.ep-say { position: absolute; left: 14px; right: 14px; bottom: 9px; z-index: 90; margin: 0 auto !important; max-width: 780px; text-align: center; pointer-events: none; font: italic 400 1.02rem/1.36 var(--eg-text); color: var(--eg-ink); transition: opacity .18s; text-shadow: 0 1px 10px var(--eg-ground), 0 0 3px var(--eg-ground); }
+.ep-say i { font-style: normal; color: var(--eg-gold); }
+.ep-reset { position: absolute; right: 12px; top: 12px; z-index: 91; background: var(--eg-surface); border: 1px solid var(--eg-gold); border-radius: 9px; padding: 5px 11px; font: 500 .8rem var(--eg-label); color: var(--eg-ink); cursor: pointer; }
+.ep-pick .ep-n { cursor: crosshair; }
+
+/* ---- a node: the same element whether it is a tile, a card, a frame or the open node --------------------------- */
+.ep-n { position: absolute; left: 0; top: 0; box-sizing: border-box; overflow: hidden; cursor: pointer; contain: layout paint; outline: none;
+  --a: #1d2b44; --b: #151e30; --c: #0f1522; --edge: #4f5f80; --art-ink: var(--eg-blue); --art-hot: var(--eg-gold); --fs: 18;
+  border-radius: calc(5px + 11px * var(--tt, 1)); border: 1px solid color-mix(in srgb, var(--eg-gold) calc(var(--heat, 0) * 100%), var(--edge));
+  background: radial-gradient(ellipse at 91% 24%, var(--a) 0, var(--b) 40%, var(--c));
+  box-shadow: 0 0 calc(var(--heat, 0) * 40px) calc(var(--heat, 0) * 3px) color-mix(in srgb, var(--eg-gold) calc(var(--heat, 0) * 62%), transparent), 0 calc(20px * var(--o, 0)) calc(54px * var(--o, 0)) rgba(0, 0, 0, calc(.55 * var(--o, 0))); }
+.ep-n.ep-g-cost { --a: var(--eg-cost-a); --b: var(--eg-cost-b); --c: var(--eg-cost-c); --edge: var(--eg-cost-edge); --art-ink: var(--eg-cost-line); }
+.ep-n.ep-g-phases { --a: var(--eg-phases-a); --b: var(--eg-phases-b); --c: var(--eg-phases-c); --edge: var(--eg-phases-edge); --art-ink: var(--eg-phases-line); }
+.ep-n.ep-g-memory { --a: var(--eg-memory-a); --b: var(--eg-memory-b); --c: var(--eg-memory-c); --edge: var(--eg-memory-edge); --art-ink: var(--eg-memory-line); --art-hot: #cfe6f7; }
+.ep-n.egn-theory, .ep-n.egn-made-cost { --art-ink: var(--eg-cost-line); }
+.ep-n.egn-theory { --a: var(--eg-cost-a); --b: var(--eg-cost-b); --c: var(--eg-cost-c); --edge: var(--eg-cost-edge); } .ep-n.egn-theory > .ep-bg { opacity: calc(1 - var(--o, 0)); }
+.ep-n.egn-made-phases { --art-ink: var(--eg-phases-line); }
+.ep-n:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: -3px; }
+.ep-n:not([data-mode="open"]):not([data-mode="frame"]):hover { border-color: var(--eg-gold); }
+.ep-n[data-mode="frame"] { background: color-mix(in srgb, var(--b) 60%, var(--eg-ground)); }
+.ep-bg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 0 0; will-change: transform; opacity: calc(1 - var(--o, 0)); pointer-events: none; }
+.ep-bg svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ep-box > .ep-bg { opacity: calc((1 - var(--o, 0)) * .62); }
+.ep-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 66%; pointer-events: none; opacity: calc(var(--tt, 1) * (1 - var(--o, 0)));
+  background: linear-gradient(0deg, rgba(10, 14, 26, .97) 26%, rgba(10, 14, 26, .84) 62%, transparent); }
+.ep-face { position: absolute; left: 0; top: 0; width: 100%; box-sizing: border-box; pointer-events: none; display: flex; flex-direction: column; justify-content: flex-end;
+  height: calc(100% - var(--o, 0) * (100% - 36px - 22px * var(--f, 0))); opacity: var(--tt, 1);
+  padding: 0 calc(var(--fs) * .72px + var(--o, 0) * 96px) calc(var(--fs) * .55px - var(--o, 0) * (1 - var(--f, 0)) * 3px) calc(var(--fs) * .72px + var(--o, 0) * 4px); }
+.ep-has-ord > .ep-face { padding-left: calc(var(--fs) * .72px + var(--o, 0) * 40px); }
+.ep-app .ep-t { font: 400 calc(var(--fs) * 1px)/1.12 var(--eg-text); letter-spacing: -.028em; color: var(--eg-ink); text-wrap: balance; }
+.ep-app .ep-line { font: 400 calc(var(--fs) * .52px + 3.2px)/1.3 var(--eg-label); color: var(--eg-muted); margin-top: 0; overflow: hidden; opacity: 0; max-height: 0; transition: opacity .3s, max-height .3s, margin-top .3s; }
+.ep-app .ep-has-line > .ep-face > .ep-line { opacity: 1; max-height: 5.4em; margin-top: .34em; }
+.ep-ord { position: absolute; left: 7px; top: 7px; z-index: 2; min-width: 26px; height: 26px; box-sizing: border-box; padding: 0 5px; border-radius: 13px; display: grid; place-items: center; pointer-events: none;
+  background: var(--eg-gold); color: #171a20; font: 600 .86rem var(--eg-label); opacity: 0; transform: scale(.4); transition: opacity .35s, transform .45s cubic-bezier(.2, .9, .3, 1.2); }
+.ep-has-ord > .ep-ord { opacity: var(--tt, 1); transform: scale(calc(.62 + .38 * var(--tl, 1))); transform-origin: 0 0; }
+.ep-sum { position: absolute; right: 8px; top: 8px; z-index: 2; padding: 2px 8px; border-radius: 10px; pointer-events: none; background: var(--eg-gold); color: #171a20; font: 600 .74rem var(--eg-label); opacity: 0; transition: opacity .4s; }
+.ep-has-sum > .ep-sum { opacity: calc(var(--tl, 1) * (1 - var(--o, 0)) * min(1, var(--heat, 0) * 6)); }
+
+/* ---- the inside of an open node -------------------------------------------------------------------------------- */
+.ep-in { position: absolute; left: 0; top: 0; width: var(--ow); height: var(--oh); box-sizing: border-box; opacity: calc(var(--o, 0) * 7 - 6); cursor: default; }
+.ep-n:not([data-mode="open"]) > .ep-in { pointer-events: none; visibility: hidden; }
+.ep-n[data-mode="open"] > .ep-in { visibility: visible; }
+.ep-bar { position: absolute; right: 12px; top: 11px; display: flex; align-items: center; gap: 8px; z-index: 3; }
+.ep-x { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--eg-line); background: var(--eg-surface); font-size: 1.3rem; line-height: 1; cursor: pointer; } .ep-x:hover { border-color: var(--eg-gold); }
+.ep-lone .ep-x { display: none; } .ep-lone .ep-text { display: none; }
+.ep-walk { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--eg-gold); border-radius: 18px; padding: 2px 4px; background: var(--eg-surface); } .ep-walk[hidden] { display: none; }
+.ep-walk b { font: 500 .8rem var(--eg-label); padding: 0 4px; white-space: nowrap; } .ep-walk button { width: 28px; height: 28px; border: 0; border-radius: 50%; background: none; font-size: 1.15rem; cursor: pointer; } .ep-walk button:disabled { opacity: .3; cursor: default; } .ep-walk button:not(:disabled):hover { background: color-mix(in srgb, var(--eg-gold) 22%, transparent); }
+.ep-leaf > .ep-in { display: grid; padding: 60px 14px 12px; gap: 0 16px; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(300px, 1fr) auto auto auto; grid-template-areas: "ex" "steps" "cap" "side"; overflow-y: auto; }
+.ep-leaf.ep-wide .ep-cap { min-height: 4.4em; }
+.ep-leaf.ep-wide > .ep-in { grid-template-columns: minmax(0, 1fr) clamp(214px, 27%, 320px); grid-template-rows: minmax(0, 1fr) auto auto; grid-template-areas: "ex side" "steps side" "cap side"; overflow: hidden; }
+.ep-ex { grid-area: ex; position: relative; min-height: 0; overflow: hidden; border: 1px solid var(--eg-line); border-radius: 13px; background: color-mix(in srgb, var(--eg-surface) 78%, var(--eg-ground)); }
+.ep-ex > * { opacity: 0; } .ep-ex.ep-in-view > * { opacity: 1; transition: opacity .45s; }
+.ep-steps { grid-area: steps; display: flex; flex-wrap: wrap; gap: 6px; padding-top: 10px; } .ep-steps:empty { display: none; }
+.ep-steps button { position: relative; overflow: hidden; background: none; border: 1px solid var(--eg-line); border-radius: 9px; padding: 5px 10px; font: 500 .8rem/1.2 var(--eg-label); color: var(--eg-muted); cursor: pointer; transition: border-color .25s, background-color .25s, color .25s; }
+.ep-steps button.done { color: var(--eg-ink); } .ep-steps button.on { color: var(--eg-ink); border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
+.ep-auto .ep-steps button.on::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--eg-gold); transform-origin: 0 50%; animation: ep-prog 4.2s linear both; }
+@keyframes ep-prog { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.ep-cap { grid-area: cap; font: italic 400 .98rem/1.42 var(--eg-text); color: var(--eg-ink); padding-top: 8px; min-height: 3.1em; transition: opacity .17s; } .ep-cap:empty { display: none; }
+.ep-cap i { font-style: normal; }
+.ep-side { grid-area: side; min-height: 0; overflow-y: auto; padding-top: 2px; }
+.ep-leaf:not(.ep-wide) .ep-side { padding-top: 10px; columns: 2; column-gap: 30px; overflow: visible; } .ep-leaf:not(.ep-wide) .ep-text { font-size: .93rem; line-height: 1.5; } .ep-leaf:not(.ep-wide) .ep-out { break-inside: avoid; }
+.ep-app .ep-text { font: 400 .98rem/1.56 var(--eg-text); color: var(--eg-muted); } .ep-text i { color: var(--eg-ink); }
+.ep-short { display: none; }
+.ep-out { margin-top: 12px !important; display: grid; gap: 6px; } .ep-out a { font: 500 .86rem var(--eg-label); color: var(--eg-blue); text-decoration: none; } .ep-out a:hover { color: var(--eg-gold); }
+.ep-box > .ep-in > .ep-side { position: absolute; left: 16px; right: 16px; top: 58px; height: var(--th); overflow: hidden; }
+.ep-box .ep-text { display: inline; font-size: .96rem; line-height: 1.5; } .ep-box .ep-out { display: inline; margin: 0 0 0 10px !important; }
+
+/* ---- card art --------------------------------------------------------------------------------------------------- */
+.ea-frame { fill: none; stroke: var(--art-ink); stroke-opacity: .24; stroke-width: 1; } .ea-dash { stroke-dasharray: 4 5; }
+.ea-guide { fill: none; stroke: var(--art-ink); stroke-width: 1.6; opacity: .25; stroke-linecap: round; stroke-linejoin: round; } .ea-guide.ea-on { opacity: .4; }
+.ea-ink { fill: none; stroke: color-mix(in srgb, var(--art-hot) calc(var(--lit, 0) * 100%), var(--art-ink)); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+.ea-thin { stroke-width: 1.4; } .ea-text { stroke-width: 3.4; opacity: .8; }
+.ea-node { fill: color-mix(in srgb, var(--art-hot) calc(var(--lit, 0) * 34%), #0d1424); stroke: color-mix(in srgb, var(--art-hot) calc(var(--lit, 0) * 100%), var(--art-ink)); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.ea-big { stroke-width: 2.6; } .ea-inner { fill: none; stroke: var(--art-ink); stroke-width: 1.3; opacity: .7; } .ea-dot { fill: var(--art-ink); }
+.ea-wake { fill: none; stroke: color-mix(in srgb, var(--art-hot) 72%, #fff); stroke-width: 4.4; stroke-linecap: round; stroke-linejoin: round; }
+.ea-glow { fill: none; stroke: var(--art-hot); stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; opacity: .2; }
+.ea-tip { fill: #fff9e9; stroke: var(--art-hot); stroke-width: 1.5; }
+.ea-heat { fill: none; stroke: var(--art-hot); stroke-linecap: round; opacity: 0; } .ea-heat.ea-coral { stroke: var(--eg-coral); stroke-width: 3; }
+.ea-blob { fill: var(--art-hot); opacity: 0; } .ea-fill { fill: var(--art-hot); } .ea-caret { fill: none; stroke: var(--art-hot); stroke-width: 2.4; stroke-linecap: round; }
+.ea-state { stroke: color-mix(in srgb, var(--eg-teal) calc(var(--ok, 0) * 100%), color-mix(in srgb, var(--eg-coral) calc(var(--rev, 0) * 100%), var(--art-ink))); fill: color-mix(in srgb, var(--eg-coral) calc(var(--rev, 0) * 34%), #0d1424); }
+.ea-cover { opacity: .92; }
+
+/* ---- exhibits drawn with the scene kit --------------------------------------------------------------------------- */
+.ex-svg { position: absolute; inset: 0; width: 100%; height: 100%; font-family: var(--eg-label); }
+.ex-tile { fill: #121b2e; stroke: #7186ad; stroke-width: 1.6; transition: stroke .35s, fill .35s, stroke-width .35s; }
+.ex-k-src .ex-tile, .ex-k-doc .ex-tile, .ex-k-sect .ex-tile { stroke: var(--eg-blue); } .ex-k-run .ex-tile, .ex-k-fig .ex-tile { stroke: var(--eg-teal); } .ex-k-idea .ex-tile, .ex-k-term .ex-tile { stroke: var(--eg-gold); }
+.ex-k-dot .ex-tile { fill: var(--eg-blue); stroke: none; }
+.ex-glyph { fill: none; stroke: var(--eg-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; opacity: .92; }
+.ex-lab { font: 500 12.5px var(--eg-label); fill: var(--eg-ink); text-anchor: middle; }
+.ex-halo { fill: var(--eg-gold); opacity: 0; }
+.ex-s-changed .ex-tile { stroke: var(--eg-gold); stroke-width: 3; fill: color-mix(in srgb, var(--eg-gold) 18%, #121b2e); }
+.ex-s-review .ex-tile { stroke: var(--eg-coral); stroke-width: 3; fill: color-mix(in srgb, var(--eg-coral) 20%, #121b2e); }
+.ex-s-ok .ex-tile { stroke: var(--eg-teal); stroke-width: 2.4; }
+.ex-click { cursor: pointer; outline: none; } .ex-click:hover .ex-tile, .ex-click:focus-visible .ex-tile { stroke: var(--eg-ink); }
+.ex-ord { opacity: 0; transition: opacity .35s; } .ex-has-ord .ex-ord { opacity: 1; } .ex-ord circle { fill: var(--eg-gold); } .ex-ord text { font: 600 12px var(--eg-label); fill: #171a20; text-anchor: middle; }
+.ex-l { fill: none; stroke: #8094b8; stroke-width: 1.6; stroke-linecap: round; }
+.ex-l-cites { stroke: var(--eg-blue); stroke-dasharray: 4 5; } .ex-l-computed-by, .ex-l-shown-by, .ex-l-shows { stroke: var(--eg-teal); } .ex-l-is-part-of { stroke-dasharray: 1 5; }
+.ex-ll { font: 500 11.5px var(--eg-label); fill: var(--eg-muted); text-anchor: middle; paint-order: stroke; stroke: #111827; stroke-width: 4px; stroke-linejoin: round; }
+.ex-g { fill: rgba(255, 255, 255, .028); stroke: color-mix(in srgb, var(--eg-gold) calc(var(--heat, 0) * 100%), #4f5f80); stroke-width: calc(1.3px + var(--heat, 0) * 1.6px); }
+.ex-gl { font: 600 11.5px var(--eg-label); letter-spacing: .05em; fill: var(--eg-muted); }
+.ex-thread { fill: none; stroke: var(--eg-gold); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.ex-pulse { fill: var(--eg-gold); }
+.ex-ml { font: 500 12.5px var(--eg-label); fill: var(--eg-muted); }
+.ex-mtrack { fill: #1a2438; stroke: #3a4866; } .ex-mbase { fill: #61719a; } .ex-mfill { fill: var(--eg-gold); }
+.ex-axis { fill: none; stroke: #3f4d6c; } .ex-curve { fill: none; stroke: var(--eg-phases-line); stroke-width: 2.2; stroke-linejoin: round; } .ex-cd { fill: var(--eg-phases-line); }
+.ex-layer { fill: color-mix(in srgb, var(--eg-phases-line) 26%, transparent); stroke: var(--eg-phases-line); stroke-width: 1.4; }
+.ex-cover { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: #0b0f1a; } .ex-cover img { max-width: min(100%, var(--nw, 100%)); max-height: 100%; width: auto; height: auto; border: 1px solid var(--eg-line); border-radius: 10px; box-shadow: 0 18px 50px rgba(0, 0, 0, .5); } .ex-cover svg { width: 100%; height: 100%; --art-ink: inherit; }
+.ex-shot { position: absolute; inset: 14px; display: flex; align-items: center; justify-content: center; transition: opacity .5s; } .ex-shot img { max-width: 100%; max-height: 100%; border: 1px solid var(--eg-line); border-radius: 10px; box-shadow: 0 18px 50px rgba(0, 0, 0, .5); }
+.ex-two { transition: opacity .5s; } [data-view="shot"] > .ex-two { opacity: 0; pointer-events: none; } [data-view="two"] > .ex-shot { opacity: 0; pointer-events: none; }
+.ex-two { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1.15fr) 46px minmax(0, 1fr); align-items: center; padding: 18px; box-sizing: border-box; }
+.ex-ms, .ex-rec { position: relative; border: 1px solid var(--eg-line); border-radius: 12px; padding: 30px 18px 16px; background: #0f1626; transition: border-color .5s, box-shadow .5s; }
+.ex-ms { background: #f3efe6; color: #23262d; border-color: #c9c2b0; }
+.ex-tag { position: absolute; left: 14px; top: 9px; font: 600 .66rem var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-gold); } .ex-ms .ex-tag { color: #8a6d35; }
+.ex-app .ex-ms p, .ep-app .ex-ms p { font: 400 .95rem/1.5 var(--eg-text); margin: 0 0 .5em; } .ex-ms .ex-dim { color: #7b7a74; }
+.ex-sent { background: #fff7dd; border-radius: 3px; padding: 1px 2px; } .ex-new { color: #a5421f; } [data-state="proposed"] .ex-old { text-decoration: line-through; color: #8f8a7c; } [data-state="typing"] .ex-old::after { content: ""; border-right: 2px solid #23262d; margin-left: 1px; }
+.ex-act { visibility: hidden; display: flex; gap: 8px; margin: 8px 0 0 !important; } [data-state="proposed"] .ex-act { visibility: visible; }
+.ex-act button { font: 600 .78rem var(--eg-label); color: #23262d; background: #e4d5b1; border: 1px solid #b7a476; border-radius: 7px; padding: 4px 10px; cursor: pointer; }
+.ex-rec dl { display: grid; grid-template-columns: auto 1fr; gap: 5px 12px; font: 400 .84rem/1.35 var(--eg-label); } .ex-rec dt { color: var(--eg-faint); } .ex-rec dd { color: var(--eg-ink); } [data-state="drafting"] .ex-stmt, [data-state="proposed"] .ex-stmt { color: var(--eg-gold); }
+.ex-flash .ex-rec, .ex-flash .ex-ms { box-shadow: 0 0 0 2px var(--eg-teal); }
+.ex-wire { position: relative; height: 2px; background: #56658a; margin: 0 4px; } .ex-wire i { position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--eg-gold); opacity: 0; }
+.ex-wire[data-dir="left"] i { animation: ex-left .9s ease-in-out; } .ex-wire[data-dir="right"] i { animation: ex-right .9s ease-in-out; }
+@keyframes ex-left { 0% { left: calc(100% - 10px); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { left: 0; opacity: 0; } }
+@keyframes ex-right { 0% { left: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { left: calc(100% - 10px); opacity: 0; } }
+
+/* ---- a node on its own page ------------------------------------------------------------------------------------- */
+.ep-solo { --nav-height: 0px; min-height: 100svh; } html.ep-html, .ep-body { margin: 0; background: var(--eg-ground); }
+.ep-sections { max-width: 1180px; margin: 0 auto; padding: 10px 24px 60px; } .ep-sections h2 { font: 400 1.7rem var(--eg-text); margin: 34px 0 12px; }
+
+/* ---- short windows, then phones -------------------------------------------------------------------------------- */
+@media (max-height: 880px) and (min-width: 761px) { .ep-lede { display: none; } .ep-release { margin-bottom: 8px; } .ep-map svg { max-height: 150px; } }
+@media (max-height: 700px) and (min-width: 761px) { .ep-chip { padding: 3px 9px; font-size: .8rem; } .ep-map svg { max-height: 112px; } .ep-tray { gap: 6px; } }
+@media (max-width: 760px) {
+  .ep-app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "head" "stage" "tray"; padding: 8px 8px 8px; gap: 8px; min-height: 560px; }
+  .ep-app.ep-open .ep-console { display: none; } .ep-app.ep-open { grid-template-rows: 0 minmax(0, 1fr) auto; gap: 0 8px; } .ep-app.ep-open .ep-tray { margin-top: 8px; }
+  .ep-release { font-size: .68rem; margin-bottom: 4px; } .ep-console h1 { font-size: 1.9rem; display: inline; } .ep-def { font-size: .92rem; margin-top: 2px; } .ep-lede { display: none; }
+  .ep-tray { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+  .ep-grp { display: contents; }
+  .ep-tab { order: 1; margin: 0; padding: 6px 0 4px; cursor: pointer; color: var(--eg-faint); border-bottom: 2px solid transparent; }
+  .ep-tray[data-tab="q"] [data-tab="q"], .ep-tray[data-tab="r"] [data-tab="r"], .ep-tray[data-tab="l"] [data-tab="l"] { color: var(--eg-gold); border-bottom-color: var(--eg-gold); }
+  .ep-chips { order: 3; display: none; width: 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .ep-tray[data-tab="q"] [data-grp="q"] .ep-chips, .ep-tray[data-tab="r"] [data-grp="r"] .ep-chips, .ep-tray[data-tab="l"] [data-grp="l"] .ep-chips { display: flex; }
+  .ep-chip, [data-grp="q"] .ep-chip { flex: 0 0 auto; white-space: nowrap; padding: 8px 11px; }
+  .ep-m-t, .ep-direct { display: none; }
+  .ep-map { order: 2; margin: 0 0 0 auto; width: 86px; border-radius: 8px; } .ep-map svg { max-height: 62px; }
+  .ep-where { order: 4; width: 100%; min-height: 1.35em; font-size: .72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ep-motion { order: 5; }
+  .ep-stage { border-radius: 14px; } .ep-say { font-size: .86rem; bottom: 6px; } .ep-reset { top: 6px; right: 6px; padding: 4px 9px; font-size: .74rem; }
+  .ep-leaf > .ep-in { padding: 50px 10px 10px; grid-template-rows: minmax(210px, 46%) auto auto auto; } .ep-leaf:not(.ep-wide) .ep-side { columns: 1; } .ep-cap { font-size: .9rem; min-height: 0; } .ep-app .ep-text { font-size: .92rem; } .ep-bar { top: 7px; right: 8px; }
+  .ep-box > .ep-in > .ep-side { top: 46px; left: 12px; right: 12px; } .ep-box .ep-text, .ep-box .ep-out { display: none; } .ep-app .ep-short { display: block; font: 400 .84rem/1.36 var(--eg-label); color: var(--eg-muted); }
+  .ex-two { grid-template-columns: 1fr; grid-template-rows: auto 22px auto; padding: 10px; } .ex-wire { width: 2px; height: 100%; margin: 0 auto; } .ex-wire i { display: none; } .ex-ms, .ex-rec { padding: 24px 12px 10px; } .ep-app .ex-ms p { font-size: .82rem; } .ex-ms .ex-dim { display: none; }
+}
+
+/* ---- very wide windows: the words grow with the cards ------------------------------------------------------------- */
+@media (min-width: 2000px) and (min-height: 1000px) {
+  .ep-release { font-size: .88rem; } .ep-tab { font-size: .76rem; } .ep-chip { font-size: .96rem; padding: 6px 12px; } .ep-where { font-size: .9rem; } .ep-motion { font-size: .84rem; }
+  .ep-map svg { max-height: 220px; }
+  .ep-say { font-size: 1.22rem; max-width: 980px; } .ep-app .ep-text { font-size: 1.12rem; } .ep-box .ep-text { font-size: 1.1rem; } .ep-cap { font-size: 1.12rem; } .ep-steps button { font-size: .92rem; padding: 6px 12px; } .ep-out a { font-size: .96rem; }
+}
+
+/* the foot of the console: the level switch and the motion switch on one line */
+.ep-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+.ep-foot .eg-level { font-size: .74rem; }
+.ep-foot .eg-level button { padding: 3px 9px; }
+@media (max-width: 760px) { .ep-foot { order: 5; width: 100%; } }
+@media (max-height: 960px) and (min-width: 761px) { .ep-map svg { max-height: 96px; } .ep-tray { gap: 5px; } .ep-chips { gap: 5px; } }
+@media (max-width: 760px) { .ep-leaf .ep-side .ep-text { display: none; } }   /* on a phone an open card keeps its caption and links; the paragraph is on the card's own page */

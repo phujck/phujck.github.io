@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#131c1b">
+<title>The human interface · EigenEngine</title>
+<meta name="description" content="The human interface is the side of EigenEngine which faces a person. The author works on a manuscript and an agent on linked records of the same object, so that a change made in either arrives in the other.">
+<link rel="canonical" href="https://gmccaul.co.uk/eigenengine/interface/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+<link rel="stylesheet" href="/eigenengine/projection/level.css">
+<link rel="stylesheet" href="/eigenengine/interface/node.css">
+<style>
+/* The page around the node, on the interface's green ground. The synthesis may replace it with the pattern's shell;
+   the node itself is node.js. */
+html { font-size: clamp(16px, .55vw + 8px, 23px); background: var(--eg-interface-c); }
+html, body { margin: 0; }
+body.egip { min-height: 100vh; display: flex; flex-direction: column; color: var(--eg-ink); font: 400 1rem/1.5 var(--eg-text); -webkit-font-smoothing: antialiased;
+  background: radial-gradient(ellipse 72rem 40rem at 12% -8rem, var(--eg-interface-a), transparent 70%), linear-gradient(180deg, var(--eg-interface-b), var(--eg-interface-c) 46rem) var(--eg-interface-c); }
+.egip a { color: var(--eg-interface-line); text-underline-offset: .2em; } .egip a:hover { color: var(--eg-gold); }
+.egip-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem 1.4rem; padding: .7rem 1.75rem; border-bottom: 1px solid color-mix(in srgb, var(--eg-interface-edge) 60%, transparent); font: 500 .86rem/1.3 var(--eg-label); }
+.egip-bar a { text-decoration: none; color: var(--eg-muted); } .egip-bar a:hover { color: var(--eg-gold); }
+.egip-crumbs { display: flex; flex-wrap: wrap; gap: 0 .5rem; color: var(--eg-faint); } .egip-crumbs b { color: var(--eg-ink); font-weight: 500; }
+.egip-level { margin-left: auto; }
+.egip-motion { font: 500 .82rem var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-interface-edge); border-radius: 8px; padding: .34rem .7rem; cursor: pointer; transition: border-color .25s, color .25s; }
+.egip-motion:hover { border-color: var(--eg-gold); color: var(--eg-ink); }
+.egip-main { display: grid; grid-template-columns: minmax(17rem, 21.5rem) minmax(0, 1fr); gap: 1.9rem; padding: 1.3rem 1.75rem 1.2rem; box-sizing: border-box; flex: 1 1 auto; width: 100%; min-height: 40rem; max-width: 150rem; margin: 0 auto; }
+@media (min-width: 901px) and (min-height: 721px) { body.egip { height: 100vh; } .egip-main { min-height: 0; } }
+.egip-side { display: flex; flex-direction: column; min-height: 0; }
+.egip-card { position: relative; flex: none; aspect-ratio: 7 / 5; overflow: hidden; border-radius: var(--eg-radius); border: 1px solid var(--eg-interface-edge); background: radial-gradient(ellipse at 91% 24%, var(--eg-interface-a) 0, var(--eg-interface-b) 40%, var(--eg-interface-c)); }
+.egip-card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.egip-card div { position: absolute; left: 0; right: 0; bottom: 0; padding: 2.4rem 1.1rem .9rem; background: linear-gradient(0deg, color-mix(in srgb, var(--eg-interface-c) 96%, transparent) 42%, transparent); }
+.egip-q { margin: 0 0 .3rem; font: 600 .72rem/1.2 var(--eg-label); letter-spacing: .1em; text-transform: uppercase; color: var(--eg-interface-line); }
+.egip-card h1 { margin: 0; font: 400 1.7rem/1.08 var(--eg-text); letter-spacing: -.03em; }
+.egip-text { margin: 1.05rem 0 0; color: var(--eg-muted); font-size: 1rem; line-height: 1.56; }
+.egip-text i { color: var(--eg-ink); }
+.egip-links { margin: 1.05rem 0 0; padding: .85rem 0 0; border-top: 1px solid color-mix(in srgb, var(--eg-interface-edge) 60%, transparent); display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; font: 500 .84rem/1.3 var(--eg-label); }
+.egip-links span { color: var(--eg-faint); font-weight: 400; margin-right: .2rem; }
+.egip-links a { text-decoration: none; color: var(--eg-ink); border: 1px solid color-mix(in srgb, var(--eg-interface-edge) 80%, transparent); border-radius: 99px; padding: .28rem .7rem; transition: border-color .25s; }
+.egip-links a:hover { border-color: var(--eg-gold); color: var(--eg-ink); }
+.egip-stage { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.egip-steps { display: flex; flex-wrap: wrap; gap: .42rem; }
+.egip-steps button { font: 500 .86rem/1.2 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid color-mix(in srgb, var(--eg-interface-edge) 80%, transparent); border-radius: 9px; padding: .42rem .75rem; cursor: pointer; transition: border-color .25s, color .25s, background-color .25s; }
+.egip-steps button span { color: var(--eg-faint); margin-right: .38rem; }
+.egip-steps button:hover { border-color: var(--eg-interface-line); color: var(--eg-ink); }
+.egip-steps button[aria-pressed="true"] { border-color: var(--eg-gold); color: var(--eg-ink); background: color-mix(in srgb, var(--eg-gold) 12%, transparent); }
+.egip-steps button[aria-pressed="true"] span { color: var(--eg-gold); }
+.egip-steps button:focus-visible, .egip-motion:focus-visible, .egip-links a:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egip-cap { margin: .7rem 0; min-height: 3.1em; height: 3.1em; max-width: 86ch; color: var(--eg-ink); font: italic 400 1.02rem/1.5 var(--eg-text); transition: opacity .22s ease; }
+.egip-cap i { font-style: normal; }
+.egip-exhibit { position: relative; flex: 1 1 auto; min-height: 26rem; border: 1px solid var(--eg-interface-edge); border-radius: var(--eg-radius); overflow: hidden; background: var(--eg-interface-c); }
+.egip-doors { flex: none; margin-top: .75rem; }
+.egip-fallback { max-width: 70ch; margin: 0 auto; padding: .5rem 1.75rem 2.5rem; color: var(--eg-muted); }
+.egip-fallback li { margin-bottom: .6em; }
+@media (max-width: 900px) {
+  .egip-bar { padding: .6rem 1rem; }
+  .egip-main { grid-template-columns: 1fr; min-height: 0; padding: 1rem 1rem 1.75rem; gap: 1.1rem; }
+  .egip-card { max-width: 28rem; aspect-ratio: 16 / 9; }
+  .egip-stage { order: -1; }
+  .egip-exhibit { flex: none; height: max(30rem, calc(100svh - 15rem)); min-height: 0; }
+  .egip-cap { min-height: 6.2em; height: auto; margin: .5rem 0; font-size: .96rem; }
+  .egip-steps { flex-wrap: nowrap; gap: .3rem; } .egip-steps button { padding: .42rem .6rem; white-space: nowrap; }
+  .egip-steps button:not([aria-pressed="true"]) { font-size: 0; } .egip-steps button:not([aria-pressed="true"]) span { font-size: .86rem; margin: 0; }
+}
+@media (min-width: 901px) and (max-height: 720px) { .egip-exhibit { flex: none; height: 32rem; } }
+</style>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
+</head>
+<body class="egip">
+<header class="egip-bar">
+  <nav class="egip-crumbs" aria-label="Where this page sits"><a href="/eigenengine.html">← EigenEngine</a> › <b>The human interface</b></nav>
+  <span class="egip-level" data-eg-level-switch></span>
+  <button class="egip-motion" type="button" id="egip-motion">Turn motion off</button>
+</header>
+<main class="egip-main">
+  <aside class="egip-side">
+    <div class="egip-card egn-interface"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" id="egip-art"></svg><div><h1 id="egip-title">The human interface</h1></div></div>
+    <p class="egip-text" id="egip-text">No author should have to think in graphs. <i>The interface</i> is the side of EigenEngine which faces a person, and it reads as a manuscript: prose, equations and figures. An agent works on the same object as linked records. These are conjugate representations, meaning that each can be rebuilt from the other. A change made in either arrives in the other, and the author decides which changes stand.</p>
+    <nav class="egip-links" aria-label="Linked to this" id="egip-links"></nav>
+  </aside>
+  <section class="egip-stage" aria-label="One object in two forms">
+    <div class="egip-steps" id="egip-steps" role="group" aria-label="Steps of the demonstration"></div>
+    <p class="egip-cap" id="egip-cap" aria-live="polite"></p>
+    <div class="egip-exhibit egn-interface" id="egip-exhibit"></div>
+    <div class="egip-doors" id="egip-doors" aria-label="The interface at work"></div>
+  </section>
+</main>
+<noscript>
+  <div class="egip-fallback">
+    <p>This page shows one paragraph of <i>The Cost of Complexity</i> in two forms, and follows a change from each form into the other.</p>
+    <ol>
+      <li><b>One object, two forms.</b> The author reads a manuscript. The agent works on the same paragraph as linked records: a premise, a step, a claim, a figure and the recorded run from which the figure is drawn.</li>
+      <li><b>The agent proposes.</b> A change to the record of the claim reaches the manuscript as a marked change, which alters nothing until the author accepts it, rewords it or dismisses it.</li>
+      <li><b>The author rewrites.</b> An author’s own edit waits for no approval. The record changes at once, and every record that requires it is marked for review.</li>
+    </ol>
+    <p><a href="/demo/writing/">Watch a session, filmed</a> · <a href="/demo/writing/simulation/">From a run to a figure</a> · <a href="/demo/writing/project-record/">The work behind the paper</a></p>
+  </div>
+</noscript>
+<script src="/assets/js/eigen-motion.js"></script>
+<script src="/eigenengine/_graph/site-graph.js"></script>
+<script src="/eigenengine/projection/level.js"></script>
+<script src="/eigenengine/interface/node.js"></script>
+<script>
+(() => {
+  const id = 'interface', N = window.EIGEN_NODES[id], G = window.EIGEN_GRAPH, M = window.EG_MOTION, $ = i => document.getElementById(i);
+  $('egip-title').textContent = N.title; $('egip-text').innerHTML = N.text;
+  const art = N.art($('egip-art')), t0 = performance.now();
+  (function loop(now) { if (!M.off) art.tick((now - t0) / 1000); requestAnimationFrame(loop); })(t0);
+  art.tick(3.1);
+
+  const bar = $('egip-steps'), cap = $('egip-cap'), q = new URLSearchParams(location.search);
+  const show = i => {
+    [...bar.children].forEach((b, k) => b.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
+    if (cap.dataset.i === String(i)) return;
+    cap.dataset.i = i; cap.style.opacity = 0;
+    setTimeout(() => { if (cap.dataset.i === String(i)) { cap.innerHTML = N.exhibit.steps[i].caption; cap.style.opacity = 1; } }, M.off ? 0 : 200);
+  };
+  const ex = N.exhibit.mount($('egip-exhibit'), { compact: false, onStep: show });
+  N.exhibit.steps.forEach((s, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = `<span>${i + 1}</span>${s.label}`; b.onclick = () => { ex.step(i); show(i); }; bar.appendChild(b);
+  });
+  const first = q.has('step') ? +q.get('step') : 0; ex.step(first); show(first);
+  N.sections[0].mount($('egip-doors'));
+
+  /* the neighbours, read from the site's own graph */
+  const links = $('egip-links'), word = { requires: ['Requires', 'Required by'], supports: ['Supports', 'Supported by'] };
+  G.links.filter(l => l[0] === id || l[1] === id).forEach((l, k) => {
+    const out = l[0] === id, other = out ? l[1] : l[0], n = G.nodes[other];
+    if (!k) links.insertAdjacentHTML('beforeend', `<span>${(word[l[2]] || [l[2], l[2]])[out ? 0 : 1]}</span>`);
+    links.insertAdjacentHTML('beforeend', `<a href="/eigenengine.html#${other}">${n.title}</a>`);
+  });
+
+  const mo = $('egip-motion'), label = () => mo.textContent = M.off ? 'Turn motion on' : 'Turn motion off';
+  mo.onclick = () => { M.off = !M.off; try { localStorage.setItem('eg-motion', M.off ? 'off' : 'on'); } catch (e) {} label(); };
+  label();
+  window.EGIP = { ex };
+})();
+</script>
+<script src="/assets/js/eigen-shell.js"></script>
+</body>
+</html>

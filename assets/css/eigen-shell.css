@@ -1,0 +1,52 @@
+/* The shell every EigenEngine page shares (see eigen-shell.js): the header bar and the pop-out map.
+   Colours and faces from eigen-tokens.css only. */
+
+/* ---- the header bar of a node's own page ---- */
+.egs-bar { display: flex !important; flex-wrap: wrap; align-items: center; justify-content: flex-start !important; gap: 6px 16px; }
+.egs-crumbs { font: 400 .86rem/1.3 var(--eg-label); color: var(--eg-faint); min-width: 0; }
+.egs-crumbs a { color: var(--eg-blue); text-decoration: none; } .egs-crumbs a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.egs-crumbs i { font-style: normal; margin: 0 .3em; } .egs-crumbs b { font-weight: 500; color: var(--eg-ink); }
+.egs-kick { margin: 0 !important; font: 500 .74rem/1.3 var(--eg-label) !important; letter-spacing: .06em; text-transform: uppercase; color: var(--eg-gold); }
+.egs-kick span { margin-left: .8em; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--eg-faint); }
+.egs-tools { margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px 14px; }
+.egs-tools > button:not(.egs-pill) { font: 400 .78rem/1.2 var(--eg-label); color: var(--eg-faint); background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.egs-tools > button:not(.egs-pill):hover { color: var(--eg-ink); }
+
+/* ---- the map's button ---- */
+.egs-pill { display: inline-flex; align-items: center; gap: 7px; font: 500 .8rem/1 var(--eg-label); color: var(--eg-muted); background: color-mix(in srgb, var(--eg-surface) 92%, transparent);
+  border: 1px solid var(--eg-line); border-radius: 999px; padding: 6px 12px 6px 10px; cursor: pointer; transition: color .2s, border-color .2s; }
+.egs-pill svg { width: 18px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.3; }
+.egs-pill:hover, .egs-pill.on { color: var(--eg-ink); border-color: var(--eg-gold); }
+.egs-pill:focus-visible, .egs-map-x:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egs-pill:not(.egs-pill-in) { position: fixed; right: 14px; bottom: 14px; z-index: 60; box-shadow: 0 6px 22px rgba(0, 0, 0, .45); }
+
+/* ---- the map itself ---- */
+.egs-map { position: fixed; right: 14px; bottom: 54px; z-index: 61; width: min(440px, calc(100vw - 28px)); box-sizing: border-box; padding: 10px 12px 10px;
+  background: color-mix(in srgb, var(--eg-surface) 96%, transparent); border: 1px solid var(--eg-line); border-radius: var(--eg-radius-s); box-shadow: 0 18px 50px rgba(0, 0, 0, .55);
+  font-family: var(--eg-label); color: var(--eg-ink); animation: egs-in .28s cubic-bezier(.3, .1, .2, 1) both; transform-origin: 100% 100%; }
+.egs-map[hidden] { display: none; }
+.egs-map.egs-map-top { top: 52px; bottom: auto; transform-origin: 100% 0; }
+@keyframes egs-in { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+.egs-map-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.egs-map-head b { font: 500 .74rem/1 var(--eg-label); letter-spacing: .08em; text-transform: uppercase; color: var(--eg-gold); }
+.egs-map-where { font: 400 .84rem/1.2 var(--eg-label); color: var(--eg-muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.egs-map-x { font: 400 1.1rem/1 var(--eg-label); color: var(--eg-muted); background: none; border: 0; padding: 0 2px; cursor: pointer; } .egs-map-x:hover { color: var(--eg-ink); }
+.egs-map-svg svg { display: block; width: 100%; height: auto; }
+.egs-map-route { margin: 6px 0 0; font: 400 .76rem/1.4 var(--eg-label); color: var(--eg-faint); }
+.egs-map-route a { color: var(--eg-blue); text-decoration: none; } .egs-map-route a:hover { text-decoration: underline; }
+.egs-m-links line { stroke: var(--eg-line); stroke-width: 1; stroke-dasharray: 3 4; }
+.egs-m-node rect { fill: var(--eg-raise); stroke: var(--eg-line); stroke-width: 1; transition: fill .3s, stroke .3s; }
+.egs-m-node.egs-m-holds rect { fill: color-mix(in srgb, var(--eg-surface) 70%, var(--eg-ground)); }
+.egs-m-node text { font: 400 10px var(--eg-label); fill: var(--eg-muted); pointer-events: none; }
+.egs-m-node.egs-m-holds text { fill: var(--eg-faint); }
+.egs-m-node { cursor: pointer; outline: none; }
+.egs-m-node:hover rect, .egs-m-node:focus-visible rect { stroke: var(--eg-gold); }
+.egs-m-node.egs-m-cost rect { fill: var(--eg-cost-b); stroke: var(--eg-cost-edge); } .egs-m-node.egs-m-phases rect { fill: var(--eg-phases-b); stroke: var(--eg-phases-edge); }
+.egs-m-node.egs-m-memory rect { fill: var(--eg-memory-b); stroke: var(--eg-memory-edge); } .egs-m-node.egs-m-interface rect { fill: var(--eg-interface-b); stroke: var(--eg-interface-edge); }
+.egs-m-node.seen rect { stroke: color-mix(in srgb, var(--eg-gold) 55%, var(--eg-line)); } .egs-m-node.seen text { fill: var(--eg-ink); }
+.egs-m-node.here rect { stroke: var(--eg-gold); stroke-width: 1.6; } .egs-m-node.here text { fill: var(--eg-ink); }
+.egs-m-trail { fill: none; stroke: var(--eg-gold); stroke-width: 1.4; stroke-dasharray: 1 5; stroke-linecap: round; opacity: .9; pointer-events: none; }
+.egs-m-you { fill: var(--eg-gold); stroke: none; pointer-events: none; }
+@media (max-width: 520px) { .egs-map.egs-map-top { top: auto; bottom: 54px; } .egs-crumbs { font-size: .8rem; } }
+.egs-map.egs-map-home { left: 14px; right: auto; bottom: 50px; transform-origin: 0 100%; }
+.ep-foot .egs-pill { margin-left: auto; padding: 4px 10px 4px 8px; font-size: .74rem; }

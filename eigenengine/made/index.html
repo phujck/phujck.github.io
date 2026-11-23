@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What it has made · EigenEngine</title>
+<meta name="description" content="Nine things made with EigenEngine, in the order they were made: talks, papers, a benchmark, a map of a journey and a film, each opening onto the thing itself.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+<link rel="stylesheet" href="/eigenengine/projection/level.css">
+<link rel="stylesheet" href="/eigenengine/made/node.css">
+<style>
+/* The node's own page: one screen, the timeline as the whole stage. The synthesis wraps this in the pattern's shell. */
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: clamp(16px, .55vw + 8px, 23px); height: 100%; }
+body.mp { margin: 0; color: var(--eg-ink); font: 400 1rem/1.5 var(--eg-text);
+  background: radial-gradient(ellipse 60rem 34rem at 10% 0, color-mix(in srgb, var(--eg-raise) 60%, transparent), transparent) var(--eg-ground); }
+.mp-screen { height: 100dvh; display: grid; grid-template-rows: auto auto minmax(0, 1fr); overflow: hidden; }
+.mp a { color: inherit; }
+.mp-top { display: flex; align-items: center; gap: .9rem; padding: .55rem clamp(16px, 2.4vw, 34px); border-bottom: 1px solid var(--eg-line); font: 500 .86rem/1 var(--eg-label); }
+.mp-back { text-decoration: none; padding: .5rem .8rem; border-radius: 9px; background: var(--eg-gold); color: var(--eg-ground) !important; font-weight: 600; white-space: nowrap; }
+.mp-where { color: var(--eg-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .mp-where b { color: var(--eg-muted); font-weight: 500; }
+.mp-tools { margin-left: auto; display: flex; align-items: center; gap: .7rem; }
+.mp-top button { font: 500 .8rem/1 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 8px; padding: .45rem .7rem; cursor: pointer; white-space: nowrap; }
+.mp-top button:hover, .mp-top button:focus-visible { border-color: var(--eg-gold); color: var(--eg-ink); outline: none; }
+.mp-head { display: grid; grid-template-columns: minmax(0, 34rem) minmax(0, 1fr); gap: clamp(18px, 3.4vw, 60px); align-items: end; padding: .85rem clamp(16px, 2.4vw, 34px) .75rem; }
+.mp-head h1 { margin: 0 0 .3rem; font: 400 clamp(1.8rem, 2.5vw, 2.6rem)/1.05 var(--eg-text); letter-spacing: -.03em; }
+.mp-text { margin: 0; min-height: 7.5em; font-size: .92rem; line-height: 1.5; color: var(--eg-muted); }
+.mp-steps { display: flex; flex-wrap: wrap; gap: .4rem; }
+.mp-steps button { position: relative; overflow: hidden; background: none; border: 1px solid var(--eg-line); border-radius: 9px; padding: .38rem .75rem; font: 500 .86rem/1.2 var(--eg-label); color: var(--eg-muted); cursor: pointer; transition: border-color .25s, background-color .25s, color .25s; }
+.mp-steps button.on { color: var(--eg-ink); border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
+.mp-steps button:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.mp-cap { margin: .5rem 0 0; min-height: 2.9em; max-width: 70ch; font: italic 400 .98rem/1.42 var(--eg-text); color: var(--eg-ink); transition: opacity .17s; }
+.mp-stage { position: relative; min-height: 0; margin: 0 clamp(16px, 2.4vw, 34px) clamp(12px, 1.6vw, 22px); border: 1px solid var(--eg-line); border-radius: var(--eg-radius); overflow: hidden; }
+.mp-list { margin: 0; padding: 1.2rem 1.4rem 1.2rem 2.6rem; columns: 2; font: 400 .95rem/1.5 var(--eg-text); color: var(--eg-muted); } .mp-list li { break-inside: avoid; margin-bottom: .5rem; } .mp-list a { color: var(--eg-blue); }
+.mp-more { display: none; }
+@media (max-width: 760px) {
+  html { font-size: 16px; height: auto; }
+  .mp-screen { min-height: 560px; }
+  .mp-head { grid-template-columns: minmax(0, 1fr); gap: .7rem; padding-bottom: .6rem; }
+  .mp-head .mp-text { display: none; }
+  .mp-stage { margin: 0 10px 10px; }
+  .mp-head h1 { font-size: 1.6rem; margin: 0; }
+  .mp-more { display: none; margin: 0; padding: .6rem 16px 1.4rem; font-size: .95rem; color: var(--eg-muted); }
+  .mp-where { display: none; } .mp-list { columns: 1; }
+  .mp-top { flex-wrap: wrap; gap: .5rem; padding: .5rem 16px; } .mp-tools { gap: .5rem; } .mp-top button { padding: .4rem .55rem; }
+  .mp-cap { min-height: 4.2em; margin-top: .4rem; font-size: .88rem; }
+  .mp-steps button { padding: .32rem .55rem; font-size: .78rem; }
+}
+</style>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
+</head>
+<body class="mp">
+<div class="mp-screen">
+<header class="mp-top">
+  <a class="mp-back" href="/eigenengine.html#made">← EigenEngine</a>
+  <span class="mp-where">EigenEngine › <b>What it has made</b></span>
+  <span class="mp-tools"><span data-eg-level-switch></span><button type="button" id="mp-motion">Turn motion off</button></span>
+</header>
+<section class="mp-head">
+  <div><h1 id="mp-title">What it has made</h1><p class="mp-text" id="mp-text"></p></div>
+  <div><div class="mp-steps" id="mp-steps" role="group" aria-label="Arrange the nine pieces"></div><p class="mp-cap" id="mp-cap" aria-live="polite"></p></div>
+</section>
+<main class="mp-stage egn-made" id="mp-stage">
+  <ol class="mp-list">
+    <li><a href="/talks/laws-of-learning-v3/">The Laws of Learning</a>, a talk, June 2026.</li>
+    <li><a href="/eigenengine/phases-of-hierarchy/">The Phases of Hierarchy</a>, a paper, May to November 2026.</li>
+    <li><a href="/unlisted/eigenengine/twinning/">Optical twinning trees</a>, a paper and a talk, July 2026.</li>
+    <li><a href="/unlisted/eigenengine/superarc/">SuperARC</a>, a benchmark and a paper, August 2026.</li>
+    <li><a href="/trip.html">The Long Way Round</a>, a map, September 2026.</li>
+    <li><a href="/talks/synthetics/">Synthetics</a>, a talk, October 2026.</li>
+    <li><a href="/eigenengine/cost-of-complexity/">The Cost of Complexity</a>, a paper, November 2026.</li>
+    <li><a href="/eigenengine/kalmar-constant/">The Kalmár constant</a>, a draft, November 2026.</li>
+    <li><a href="/demo/writing/">The interface at work</a>, a film, November 2026.</li>
+  </ol>
+</main>
+</div>
+<p class="mp-more" id="mp-more"></p>
+<script src="/assets/js/eigen-motion.js"></script>
+<script src="/eigenengine/_graph/site-graph.js"></script>
+<script src="/eigenengine/projection/level.js"></script>
+<script src="/eigenengine/made/node.js"></script>
+<script>
+(() => {
+  const N = window.EIGEN_NODES.made, L = window.EigenLevel, M = window.EG_MOTION, $ = id => document.getElementById(id);
+  const stage = $('mp-stage'), bar = $('mp-steps'), cap = $('mp-cap'), S = N.exhibit.steps;
+  const put = (el, field) => { el.innerHTML = L ? L.html(field) : String(field); if (L) L.typeset(el); };
+  put($('mp-text'), N.text); put($('mp-more'), N.text);
+  stage.innerHTML = '';
+  const X = N.exhibit.mount(stage, { compact: stage.clientWidth < 900, say: false });
+  let at = 0, tour = 0;
+  const show = i => { at = i; X.step(i); [...bar.children].forEach((b, j) => { b.classList.toggle('on', j === i); b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); }); cap.style.opacity = 0; setTimeout(() => { put(cap, S[i].caption); cap.style.opacity = 1; }, M.off ? 0 : 170); };
+  const rest = () => { clearInterval(tour); tour = 0; };
+  S.forEach((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = s.label; b.addEventListener('click', () => { rest(); show(i); }); bar.appendChild(b); });
+  show(0);
+  // the page shows its three arrangements once, unasked, and stops as soon as the reader does anything
+  const open = (location.hash || '').slice(1);
+  if (open && window.EIGEN_NODES[open] && open !== 'made') setTimeout(() => X.open(open), 500);
+  else if (!M.off) tour = setInterval(() => { if (at >= S.length - 1) { rest(); show(0); return; } show(at + 1); }, 5600);
+  stage.addEventListener('pointerdown', rest, true); stage.addEventListener('keydown', rest, true);
+  stage.addEventListener('egmd-open', ev => { rest(); history.replaceState(null, '', ev.detail.id ? '#' + ev.detail.id : location.pathname + location.search); });
+  window.addEventListener('hashchange', () => { const id = (location.hash || '').slice(1); rest(); if (id && window.EIGEN_NODES[id] && id !== 'made') X.open(id); else X.close(); });
+  const mo = $('mp-motion'), label = () => { mo.textContent = M.off ? 'Turn motion on' : 'Turn motion off'; mo.setAttribute('aria-pressed', M.off ? 'false' : 'true'); };
+  mo.addEventListener('click', () => { M.off = !M.off; try { localStorage.setItem('eg-motion', M.off ? 'off' : 'on'); } catch (e) {} if (M.off) rest(); label(); }); label();
+})();
+</script>
+<script src="/assets/js/eigen-shell.js"></script>
+</body>
+</html>

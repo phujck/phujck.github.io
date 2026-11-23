@@ -1,0 +1,141 @@
+/* "What has it made?": the timeline (.egmd), the reel of real material inside an item (.egr), the computed figures (.egf).
+   Colours come from assets/css/eigen-tokens.css only. Lora for text, Outfit for labels and every word in a figure. */
+
+/* ---- the timeline ------------------------------------------------------------------------------------------ */
+.egmd { position: relative; }
+.egmd-tl { position: absolute; inset: 0; overflow: hidden; font-family: var(--eg-label); color: var(--eg-ink);
+  background: radial-gradient(ellipse 70% 60% at 82% 0%, color-mix(in srgb, var(--eg-raise) 70%, transparent) 0, transparent 70%), color-mix(in srgb, var(--eg-surface) 78%, var(--eg-ground)); }
+.egmd-tl *, .egmd-tl *::before { box-sizing: border-box; }
+.egmd-wires { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
+.egmd-axis { stroke: var(--eg-line); stroke-width: 1.5; transition: opacity .5s; }
+.egmd-tick { stroke: var(--eg-faint); stroke-width: 1; transition: opacity .5s; }
+.egmd-month { font: 500 .72rem var(--eg-label); fill: var(--eg-muted); letter-spacing: .04em; transition: opacity .5s; }
+.egmd-thread { fill: none; stroke: var(--eg-gold); stroke-width: 1.5; stroke-linejoin: round; opacity: .38; transition: opacity .6s; }
+.egmd-tl[data-mode="links"] .egmd-thread { opacity: .1; }
+.egmd-tl[data-mode="open"] .egmd-thread { opacity: .5; }
+.egmd-wake { fill: none; stroke: var(--eg-gold); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.egmd-tl[data-mode="links"] .egmd-wake, .egmd-tl[data-mode="links"] .egmd-glow, .egmd-tl[data-mode="links"] .egmd-spark { visibility: hidden; }
+.egmd-glow { fill: var(--eg-gold); } .egmd-spark { fill: var(--eg-ink); }
+.egmd-stem { stroke: var(--eg-gold); stroke-width: 1.2; stroke-dasharray: 2 4; stroke-linecap: round; }
+.egmd-pin { fill: var(--eg-gold); }
+.egmd-link { fill: none; stroke: var(--eg-blue); stroke-width: 1.6; stroke-dasharray: 6 5; stroke-linecap: round; }
+.egmd-linklab { font: 500 .76rem var(--eg-label); fill: var(--eg-blue); text-anchor: middle; paint-order: stroke; stroke: var(--eg-surface); stroke-width: 5px; stroke-linejoin: round; }
+
+.egmd-say { position: absolute; z-index: 2; left: 22px; right: 22px; top: 12px; margin: 0; font: italic 400 .95rem/1.35 var(--eg-text); color: var(--eg-ink); transition: opacity .18s; pointer-events: none; }
+.egmd-tl.is-compact .egmd-say { left: 12px; right: 12px; top: 8px; font-size: .84rem; }
+
+.egmd-card { --a: var(--eg-raise); --b: var(--eg-surface); --c: var(--eg-ground); --edge: var(--eg-line);
+  position: absolute; left: 0; top: 0; z-index: 2; display: block; margin: 0; padding: 0; overflow: hidden; text-align: left; color: inherit; cursor: pointer;
+  border: 1px solid var(--edge); border-radius: 12px; background: radial-gradient(ellipse at 91% 24%, var(--a) 0, var(--b) 42%, var(--c)); will-change: transform; transition: border-color .25s, box-shadow .25s; }
+.egmd-g-cost { --a: var(--eg-cost-a); --b: var(--eg-cost-b); --c: var(--eg-cost-c); --edge: var(--eg-cost-edge); }
+.egmd-g-phases { --a: var(--eg-phases-a); --b: var(--eg-phases-b); --c: var(--eg-phases-c); --edge: var(--eg-phases-edge); }
+.egmd-g-interface { --a: var(--eg-interface-a); --b: var(--eg-interface-b); --c: var(--eg-interface-c); --edge: var(--eg-interface-edge); }
+.egmd-card:hover, .egmd-card:focus-visible, .egmd-card.is-here { border-color: var(--eg-gold); box-shadow: 0 0 0 1px color-mix(in srgb, var(--eg-gold) 55%, transparent), 0 10px 26px color-mix(in srgb, var(--eg-ground) 70%, transparent); outline: none; }
+.egmd-art { position: absolute; inset: 0; } .egmd-art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.egmd-cap { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: auto 1fr; column-gap: .45em; align-items: baseline; padding: 1.5em .65em .5em;
+  background: linear-gradient(0deg, color-mix(in srgb, var(--eg-ground) 95%, transparent) 46%, transparent); transition: opacity .3s; }
+.egmd-n { font: 600 max(.76em, 11px)/1 var(--eg-label); color: var(--eg-gold); min-width: 1ch; }
+.egmd-t { font: 400 1em/1.14 var(--eg-text); letter-spacing: -.01em; }
+.egmd-d { grid-column: 2; font: 400 max(.76em, 11px)/1.3 var(--eg-label); color: var(--eg-muted); margin-top: .15em; }
+.egmd-card.is-small .egmd-d { display: none; }
+.egmd-card.is-tile { border-radius: 8px; }
+.egmd-card.is-tile .egmd-t, .egmd-card.is-tile .egmd-d { display: none; }
+.egmd-card.is-tile .egmd-cap { padding: 10px 5px 3px; background: linear-gradient(0deg, color-mix(in srgb, var(--eg-ground) 90%, transparent) 30%, transparent); }
+
+/* an item opened in place */
+.egmd-panel { --a: var(--eg-raise); --b: var(--eg-surface); --c: var(--eg-ground); --edge: var(--eg-line); --in: 1;
+  position: absolute; left: 0; top: 0; z-index: 5; display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--eg-gold); border-radius: 14px; will-change: transform;
+  background: radial-gradient(ellipse 80% 70% at 92% 0%, var(--a) 0, var(--b) 46%, var(--c)); box-shadow: 0 18px 50px color-mix(in srgb, var(--eg-ground) 80%, transparent); }
+.egmd-panel.is-open { display: flex; }
+.egmd-panel > header { display: flex; align-items: center; gap: 10px; padding: 9px 10px 7px 14px; opacity: var(--in); }
+.egmd-pn { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--eg-gold); font: 600 .78rem/1 var(--eg-label); color: var(--eg-gold); }
+.egmd-ph { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.egmd-ph h3 { margin: 0; font: 400 1.3rem/1.1 var(--eg-text); letter-spacing: -.02em; }
+.egmd-pd { margin: 0; font: 400 .8rem/1.2 var(--eg-label); color: var(--eg-muted); }
+.egmd-walk { display: flex; gap: 4px; }
+.egmd-panel header button { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--eg-line); background: color-mix(in srgb, var(--eg-ground) 50%, transparent); color: var(--eg-ink); font: 400 1.05rem/1 var(--eg-label); cursor: pointer; transition: border-color .2s; }
+.egmd-panel header button:hover, .egmd-panel header button:focus-visible { border-color: var(--eg-gold); outline: none; }
+.egmd-body { flex: 1; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr); grid-template-columns: minmax(0, 1fr) 15.5rem; gap: 16px; padding: 0 12px 11px 12px; opacity: var(--in); }
+.egmd-main { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.egmd-ex { position: relative; flex: 1; min-height: 0; overflow: hidden; border: 1px solid var(--eg-line); border-radius: 11px; background: color-mix(in srgb, var(--eg-ground) 82%, var(--eg-surface)); }
+.egmd-steps { flex: none; display: flex; flex-wrap: wrap; gap: 6px; padding-top: 9px; }
+.egmd-steps button { background: none; border: 1px solid var(--eg-line); border-radius: 9px; padding: 5px 10px; font: 500 .8rem/1.2 var(--eg-label); color: var(--eg-muted); cursor: pointer; transition: border-color .25s, background-color .25s, color .25s; }
+.egmd-steps button.on { color: var(--eg-ink); border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
+.egmd-pcap { flex: none; margin: 0; padding-top: 7px; min-height: 3.5em; font: italic 400 .92rem/1.4 var(--eg-text); color: var(--eg-ink); transition: opacity .17s; }
+.egmd-side { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding-top: 2px; }
+.egmd-text { margin: 0; font: 400 .9rem/1.5 var(--eg-text); color: var(--eg-muted); }
+.egmd-text i { color: var(--eg-ink); }
+.egmd-out { margin: 0; display: flex; flex-direction: column; gap: 5px; }
+.egmd-out a, .egmd-pcap a { font: 500 .84rem/1.3 var(--eg-label); color: var(--eg-blue); text-underline-offset: .2em; }
+.egmd-out a:hover { color: var(--eg-gold); }
+.egmd-math { font-style: italic; white-space: nowrap; }
+.egmd-tl.is-compact .egmd-body, .egmd-tl.is-vert .egmd-body { grid-template-columns: minmax(0, 1fr); padding: 0 8px 8px; }
+.egmd-tl.is-compact .egmd-side, .egmd-tl.is-vert .egmd-side { display: none; }
+.egmd-tl.is-compact .egmd-panel > header, .egmd-tl.is-vert .egmd-panel > header { padding: 6px 7px 5px 10px; gap: 7px; }
+.egmd-tl.is-compact .egmd-ph h3, .egmd-tl.is-vert .egmd-ph h3 { font-size: 1.05rem; }
+.egmd-tl.is-compact .egmd-pcap, .egmd-tl.is-vert .egmd-pcap { font-size: .82rem; min-height: 3.4em; padding-top: 5px; }
+.egmd-tl.is-compact .egmd-steps, .egmd-tl.is-vert .egmd-steps { padding-top: 6px; gap: 5px; }
+.egmd-tl.is-compact .egmd-steps button, .egmd-tl.is-vert .egmd-steps button { padding: 4px 8px; font-size: .74rem; }
+
+/* ---- inside an item: its own art while the material loads ---------------------------------------------------- */
+.egmd-wait { position: absolute; inset: 0; display: grid; place-items: center; }
+.egmd-wait svg { width: min(100%, 133vh); height: 100%; opacity: .8; }
+
+/* ---- the reel: the thing's own material as tiles; one is large and live, the rest wait beside it ------------- */
+.egr { position: absolute; inset: 0; overflow: hidden; font-family: var(--eg-label); color: var(--eg-ink); }
+.egr *, .egr *::before { box-sizing: border-box; }
+.egr-tile { position: absolute; left: 0; top: 0; margin: 0; padding: 0; overflow: hidden; border: 1px solid var(--eg-line); border-radius: 9px; background: var(--eg-ground); color: inherit; text-align: left; will-change: transform; transition: border-color .25s; }
+.egr-tile.is-thumb { cursor: pointer; }
+.egr-tile.is-thumb:hover, .egr-tile.is-thumb:focus-visible { border-color: var(--eg-gold); outline: none; }
+.egr-tile.is-main { border-color: color-mix(in srgb, var(--eg-gold) 55%, var(--eg-line)); }
+.egr-media, .egr-live { position: absolute; inset: 0; }
+.egr-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; display: block; }
+.egr-live { opacity: 0; transition: opacity .45s; pointer-events: none; }
+.egr-live.is-on { opacity: 1; pointer-events: auto; }
+.egr-live iframe { position: absolute; left: 0; top: 0; width: 960px; height: 540px; border: 0; transform-origin: 0 0; background: var(--eg-ground); }
+.egr-live video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; background: var(--eg-ground); }
+.egr-tile:has(.egr-rail) .egr-media img { object-position: 50% 100%; }
+.egr-lab { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 8px 5px; font: 500 .72rem/1.2 var(--eg-label); color: var(--eg-ink); background: linear-gradient(0deg, color-mix(in srgb, var(--eg-ground) 94%, transparent) 40%, transparent); pointer-events: none; transition: opacity .3s; }
+.egr-tile.is-main .egr-lab { opacity: 0; }
+.egr-pages { position: absolute; inset: 0; display: flex; justify-content: center; align-items: stretch; gap: 2.2%; padding: 2.4% 2.4%; background: radial-gradient(ellipse at 50% 0, var(--eg-raise), var(--eg-ground) 75%); }
+.egr-pages img { position: static; height: 100%; width: auto; max-width: 49%; object-fit: contain; object-position: 50% 0; border-radius: 3px; box-shadow: 0 6px 22px color-mix(in srgb, var(--eg-ground) 80%, transparent); }
+.egr-slides { position: absolute; inset: 0; background: var(--eg-ground); cursor: pointer; }
+.egr-slides img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: translateX(3.5%); transition: opacity .6s, transform .7s cubic-bezier(.2, .7, .2, 1); }
+.egr-slides img.is-on { opacity: 1; transform: none; } .egr-slides img.is-gone { opacity: 0; transform: translateX(-3.5%); }
+.egr-dots { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; justify-content: center; gap: 5px; pointer-events: none; transition: opacity .3s; }
+.egr-dots i { width: 14px; height: 3px; border-radius: 2px; background: color-mix(in srgb, var(--eg-ink) 30%, transparent); transition: background-color .3s; }
+.egr-dots i.on { background: var(--eg-gold); }
+.egr-tile.is-thumb .egr-dots { opacity: 0; }
+.egr-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.egr-rail { position: absolute; left: 3%; right: 3%; bottom: 9px; height: 16px; cursor: pointer; transition: opacity .3s; }
+.egr-rail::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; border-radius: 1px; background: color-mix(in srgb, var(--eg-ink) 35%, transparent); }
+.egr-rail i { position: absolute; top: 3px; width: 2px; height: 10px; margin-left: -1px; background: var(--eg-interface-line); }
+.egr-rail b { position: absolute; top: 2px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--eg-ink); box-shadow: 0 0 0 4px color-mix(in srgb, var(--eg-interface-line) 45%, transparent); }
+.egr-rail u { position: absolute; left: 0; top: 7px; height: 2px; background: var(--eg-interface-line); }
+.egr-tile.is-thumb .egr-rail { opacity: 0; }
+
+/* ---- the computed figures: SuperARC, the journey, the Kalmár layouts ------------------------------------------ */
+.egf { position: absolute; inset: 0; overflow: hidden; font-family: var(--eg-label); color: var(--eg-ink); }
+.egf canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.egf-note { position: absolute; left: 12px; right: 12px; bottom: 6px; margin: 0; min-height: 1.3em; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font: 400 .8rem/1.3 var(--eg-label); color: var(--eg-muted); pointer-events: none; transition: opacity .18s; }
+.egf-note b { font-weight: 600; color: var(--eg-ink); }
+.egf-pick { position: absolute; left: 12px; top: 9px; right: 12px; display: flex; flex-wrap: wrap; gap: 5px; transition: opacity .3s; }
+.egf-pick button { background: none; border: 1px solid var(--eg-line); border-radius: 8px; padding: 3px 8px; font: 500 .74rem/1.2 var(--eg-label); color: var(--eg-muted); cursor: pointer; transition: border-color .25s, background-color .25s, color .25s; }
+.egf-pick button.on { color: var(--eg-ink); border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
+.egf-pick[hidden] { display: none; }
+
+/* the film's card carries the interface's green ground wherever a host draws it from --a, --b, --c and --edge */
+.egn-made-film { --a: var(--eg-interface-a); --b: var(--eg-interface-b); --c: var(--eg-interface-c); --edge: var(--eg-interface-edge); }
+
+/* where a host draws these nine cards itself (the pattern), each still says where it stands in the order and when it was made */
+.ep-n[class*="egn-made-"] .ep-t::before { margin-right: .5em; font: 600 .62em/1 var(--eg-label); color: var(--eg-gold); vertical-align: .14em; }
+.ep-n[class*="egn-made-"] .ep-t::after { display: block; margin-top: .3em; font: 400 max(.56em, 11px)/1.2 var(--eg-label); letter-spacing: 0; color: var(--eg-muted); }
+.ep-n.egn-made-learning .ep-t::before { content: "1"; } .ep-n.egn-made-learning .ep-t::after { content: "June 2026"; } :root[data-level="expert"] .ep-n.egn-made-learning .ep-t::after { content: "1 June 2026"; }
+.ep-n.egn-made-phases .ep-t::before { content: "2"; } .ep-n.egn-made-phases .ep-t::after { content: "May to November 2026"; } :root[data-level="expert"] .ep-n.egn-made-phases .ep-t::after { content: "29 May to 23 November 2026"; }
+.ep-n.egn-made-twinning .ep-t::before { content: "3"; } .ep-n.egn-made-twinning .ep-t::after { content: "July 2026"; } :root[data-level="expert"] .ep-n.egn-made-twinning .ep-t::after { content: "24 July 2026"; }
+.ep-n.egn-made-superarc .ep-t::before { content: "4"; } .ep-n.egn-made-superarc .ep-t::after { content: "August 2026"; } :root[data-level="expert"] .ep-n.egn-made-superarc .ep-t::after { content: "5 August 2026"; }
+.ep-n.egn-made-trip .ep-t::before { content: "5"; } .ep-n.egn-made-trip .ep-t::after { content: "September 2026"; } :root[data-level="expert"] .ep-n.egn-made-trip .ep-t::after { content: "2 September 2026"; }
+.ep-n.egn-made-synthetics .ep-t::before { content: "6"; } .ep-n.egn-made-synthetics .ep-t::after { content: "October 2026"; } :root[data-level="expert"] .ep-n.egn-made-synthetics .ep-t::after { content: "21 October 2026"; }
+.ep-n.egn-made-cost .ep-t::before { content: "7"; } .ep-n.egn-made-cost .ep-t::after { content: "November 2026"; } :root[data-level="expert"] .ep-n.egn-made-cost .ep-t::after { content: "19 November 2026"; }
+.ep-n.egn-made-kalmar .ep-t::before { content: "8"; } .ep-n.egn-made-kalmar .ep-t::after { content: "November 2026"; } :root[data-level="expert"] .ep-n.egn-made-kalmar .ep-t::after { content: "19 November 2026"; }
+.ep-n.egn-made-film .ep-t::before { content: "9"; } .ep-n.egn-made-film .ep-t::after { content: "November 2026"; } :root[data-level="expert"] .ep-n.egn-made-film .ep-t::after { content: "19 November 2026"; }

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Phases of Hierarchy · EigenEngine</title>
+<meta name="description" content="How deep should a hierarchy be? A visual overview of The Phases of Hierarchy, and of what it gives the design of EigenEngine.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+<link rel="stylesheet" href="/eigenengine/phases-of-hierarchy/node.css">
+<style>
+/* The node's own page: one screen, the paper as a path of reader states. The synthesis wraps this in the pattern's shell. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body.pp { margin: 0; background: radial-gradient(ellipse 60rem 40rem at 12% 0, #3a202455, transparent) var(--eg-ground); color: var(--eg-ink); font: 400 16px/1.5 var(--eg-text); display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 100dvh; height: 100dvh; }
+.pp a { color: inherit; }
+.pp-top { display: flex; align-items: center; gap: 14px; padding: 10px clamp(16px, 2.4vw, 34px); border-bottom: 1px solid var(--eg-line); font: 500 .86rem/1 var(--eg-label); }
+.pp-back { text-decoration: none; padding: 8px 13px; border-radius: 9px; background: #edc2b6; color: #1c181c !important; font-weight: 600; white-space: nowrap; }
+.pp-where { color: var(--eg-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pp-where b { color: var(--eg-muted); font-weight: 500; }
+.pp-top button { margin-left: auto; font: 500 .8rem/1 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 8px; padding: 7px 11px; cursor: pointer; white-space: nowrap; }
+.pp-main { display: grid; grid-template-columns: minmax(280px, 31%) minmax(0, 1fr); gap: clamp(14px, 1.8vw, 28px); padding: clamp(12px, 1.6vw, 22px) clamp(16px, 2.4vw, 34px) clamp(12px, 1.6vw, 20px); min-height: 0; }
+.pp-side { display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow: hidden; }
+.pp-card { position: relative; flex: 1 1 250px; min-height: 190px; max-height: 44dvh; overflow: hidden; border-radius: var(--eg-radius); border: 1px solid var(--eg-phases-edge); background: radial-gradient(ellipse at 91% 24%, var(--eg-phases-a) 0, var(--eg-phases-b) 40%, var(--eg-phases-c)); }
+.pp-card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pp-card-t { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 20px 16px; background: linear-gradient(0deg, #1c181cf2 38%, transparent); }
+.pp-tag { margin: 0 0 6px; font: 600 .68rem/1 var(--eg-label); letter-spacing: .13em; text-transform: uppercase; color: #f3b6a8; }
+.pp h1 { margin: 0; font: 400 clamp(1.7rem, 2.5vw, 2.5rem)/1.04 var(--eg-text); letter-spacing: -.03em; }
+.pp-line { margin: 8px 0 0; font: 400 .98rem/1.35 var(--eg-label); color: var(--eg-muted); max-width: 34ch; }
+.pp-text { margin: 0; font-size: clamp(.94rem, 1.02vw, 1.04rem); line-height: 1.55; color: var(--eg-muted); }
+.pp-text i { color: var(--eg-ink); }
+.pp-links { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font: 500 .86rem/1 var(--eg-label); color: var(--eg-faint); }
+.pp-pdf { text-decoration: none; padding: 9px 14px; border-radius: 9px; background: #edc2b6; color: #1c181c !important; font-weight: 600; } .pp-pdf span { font-size: .7rem; letter-spacing: .08em; margin-left: 5px; opacity: .75; }
+.pp-near { margin: auto 0 0; padding: 10px 0 0; border-top: 1px solid var(--eg-line); display: grid; gap: 7px; font: 500 .8rem/1.2 var(--eg-label); color: var(--eg-faint); }
+.pp-near div { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 7px; }
+.pp-near a { text-decoration: none; padding: 5px 10px; border: 1px solid var(--eg-line); border-radius: 999px; color: var(--eg-muted); transition: border-color .2s, color .2s; }
+.pp-near a:hover { border-color: var(--eg-gold); color: var(--eg-ink); }
+.pp-near a[data-ground=cost] { border-color: var(--eg-cost-edge); } .pp-near a[data-ground=memory] { border-color: var(--eg-memory-edge); }
+.pp-stage { display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 9px; min-height: 0; min-width: 0; }
+.pp-tabs { display: flex; flex-wrap: wrap; gap: 7px; }
+.pp-tabs button, .pp-path button { font: 500 .82rem/1.15 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 9px; padding: 8px 12px; cursor: pointer; transition: border-color .25s, background .25s, color .25s; text-align: left; }
+.pp-tabs button[aria-selected=true] { border-color: var(--eg-phases-line); background: #d98a7c22; color: var(--eg-ink); }
+.pp-head { display: grid; gap: 8px; grid-template-rows: auto 4.7rem; } .pp-head.sec { grid-template-rows: auto; }   /* the caption has three lines' room, so the steps never move */
+.pp-path { position: relative; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; } .pp-path[hidden] { display: none; }
+.pp-path button { border-radius: 999px; padding: 6px 11px 6px 7px; display: inline-flex; align-items: center; gap: 7px; position: relative; overflow: hidden; }
+.pp-path button b { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font: 600 .72rem/1 var(--eg-label); background: var(--eg-raise); color: var(--eg-muted); transition: background .25s, color .25s; }
+.pp-path button[aria-current=step] { border-color: var(--eg-gold); color: var(--eg-ink); background: #e4bf7d1c; } .pp-path button[aria-current=step] b { background: var(--eg-gold); color: #1c181c; }
+.pp-path button.done b { background: #e4bf7d55; color: var(--eg-ink); }
+.pp-path button i { position: absolute; left: 0; bottom: 0; height: 2px; width: calc(var(--p, 0) * 100%); background: var(--eg-gold); }
+.pp-path .pp-play { border-radius: 9px; padding: 7px 10px; color: var(--eg-faint); min-width: 4.4em; justify-content: center; }
+.pp-cap { margin: 0; align-self: end; font: 400 clamp(.96rem, 1.08vw, 1.06rem)/1.45 var(--eg-text); color: var(--eg-ink); max-width: 96ch; transition: opacity .22s; }
+.pp-cap.out { opacity: 0; }
+.pp-box { position: relative; min-height: 0; border: 1px solid var(--eg-phases-edge); border-radius: var(--eg-radius); overflow: hidden; background: var(--eg-phases-c); }
+.pp-box > * { transition: opacity .28s; } .pp-box.swap > * { opacity: 0; }
+.pp :focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+@media (max-width: 900px), (max-height: 560px) {
+  .pp-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 16px; } .pp-tabs button { flex: none; }
+  html, body { height: auto; } body.pp { height: auto; display: block; }
+  .pp-main { grid-template-columns: 1fr; }
+  .pp-side { overflow: visible; } .pp-card { flex: none; height: 230px; max-height: none; } .pp-near { margin-top: 2px; }
+  .pp-head { grid-template-rows: auto auto; } .pp-card { height: 290px; } .pp-box { height: min(640px, 86dvh); }
+  .pp-where { display: none; }
+}
+</style>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
+</head>
+<body class="pp egn-phases">
+<header class="pp-top">
+  <a class="pp-back" href="/eigenengine.html">&larr; EigenEngine</a>
+  <span class="pp-where">Why should it scale? &rsaquo; <b>The Phases of Hierarchy</b></span>
+  <button type="button" id="pp-motion"></button>
+</header>
+<main class="pp-main">
+  <section class="pp-side" aria-label="The paper">
+    <div class="pp-card egn-phases">
+      <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+      <div class="pp-card-t"><p class="pp-tag" id="pp-tag">Pre-pre-print · an early example</p><h1 id="pp-title">The Phases of Hierarchy</h1><p class="pp-line" id="pp-line"></p></div>
+    </div>
+    <p class="pp-text" id="pp-text"></p>
+    <p class="pp-links"><a class="pp-pdf" href="/assets/docs/the-phases-of-hierarchy.pdf" target="_blank" rel="noopener">Read the paper <span>PDF</span></a><span>Gerard McCaul · 23 pages</span></p>
+    <nav class="pp-near" id="pp-near" aria-label="Where this paper sits in EigenEngine"></nav>
+  </section>
+  <section class="pp-stage" aria-label="The paper, shown">
+    <div class="pp-tabs" role="tablist" id="pp-tabs"></div>
+    <div class="pp-head"><div class="pp-path" id="pp-path"></div><p class="pp-cap" id="pp-cap" aria-live="polite"></p></div>
+    <div class="pp-box egn-phases" id="pp-box"></div>
+  </section>
+</main>
+<noscript><p style="padding:0 34px 30px;max-width:70ch;color:#b4bccb">The figures on this page are computed in the browser from the paper's model. Without scripts, the paper itself is the place to read: <a href="/assets/docs/the-phases-of-hierarchy.pdf" style="color:#e4bf7d">The Phases of Hierarchy (PDF)</a>.</p></noscript>
+<script src="/assets/js/eigen-motion.js"></script>
+<script src="/eigenengine/_graph/site-graph.js"></script>
+<script src="/eigenengine/phases-of-hierarchy/node.js"></script>
+<script>
+(() => {
+  const N = window.EIGEN_NODES.phases, M = window.EG_MOTION, G = window.EIGEN_GRAPH, $ = id => document.getElementById(id);
+  $('pp-title').textContent = N.title; $('pp-line').textContent = N.line; $('pp-text').innerHTML = N.text; $('pp-tag').textContent = N.tag;
+  const card = N.art(document.querySelector('.pp-card svg')), t0 = performance.now();
+  (function loop(now) { card.tick((now - t0) / 1000); requestAnimationFrame(loop); })(t0);
+
+  /* where this node sits: read from the site's own graph */
+  if (G) {
+    const href = id => { const n = G.nodes[id]; return n.page || `/eigenengine/${n.slug || id}/`; }, chip = id => `<a href="${href(id)}"${G.nodes[id].ground ? ` data-ground="${G.nodes[id].ground}"` : ''}>${G.nodes[id].title}</a>`;
+    const out = G.links.filter(l => l[0] === 'phases').map(l => l[1]), parent = Object.keys(G.nodes).find(k => (G.nodes[k].children || []).includes('phases')), sibs = parent ? G.nodes[parent].children.filter(k => k !== 'phases') : [];
+    $('pp-near').innerHTML = (out.length ? `<div><span>It supports</span>${out.map(chip).join('')}</div>` : '') + (sibs.length ? `<div><span>Beside it</span>${sibs.map(chip).join('')}</div>` : '');
+  }
+
+  /* the stage: the paper in six steps, or one of its parts */
+  const box = $('pp-box'), cap = $('pp-cap'), path = $('pp-path'), tabs = $('pp-tabs'), steps = N.exhibit.steps, HOLD = 9;
+  let live = null, tab = -1, at = 0, playing = !M.off, held = 0, last = null;
+  const say = html => { if (M.off) { cap.innerHTML = html; return; } cap.classList.add('out'); setTimeout(() => { cap.innerHTML = html; cap.classList.remove('out'); }, 200); };
+  const mark = () => [...path.querySelectorAll('[data-step]')].forEach((b, i) => { i === at ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current'); b.classList.toggle('done', i < at); b.style.setProperty('--p', i === at && playing ? held / HOLD : 0); });
+  const play = path.appendChild(Object.assign(document.createElement('button'), { type: 'button', className: 'pp-play' }));
+  const showPlay = () => { play.textContent = playing ? 'Pause' : 'Play'; play.setAttribute('aria-label', playing ? 'Pause the steps' : 'Play the steps'); play.setAttribute('aria-pressed', playing); };
+  function go(i, byHand) { at = i; held = 0; if (byHand) { playing = false; showPlay(); } live && live.step && live.step(i); say(steps[i].caption); mark(); }
+  steps.forEach((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.step = i; b.innerHTML = `<b>${i + 1}</b>${s.label}<i></i>`; b.onclick = () => go(i, true); path.insertBefore(b, play); });
+  play.onclick = () => { playing = !playing; showPlay(); if (playing && (at < 0 || at === steps.length - 1)) go(0); mark(); };
+  box.addEventListener('eigen-exhibit-change', e => {      // the reader has taken over: stop the tour, drop the step mark, say what is now shown
+    if (tab !== 0) return; playing = false; showPlay(); at = -1; mark(); say(e.detail.text);
+  });
+  (function clock(now) { requestAnimationFrame(clock); const dt = last === null ? 0 : Math.min(.1, (now - last) / 1000); last = now; if (tab !== 0 || !playing || M.off || document.hidden) return; held += dt; if (held >= HOLD) { if (at < steps.length - 1) go(at + 1); else { playing = false; showPlay(); } } mark(); })(performance.now());
+
+  const views = [{ title: 'The paper in six steps', mount: el => N.exhibit.mount(el, { compact: false }) }].concat(N.sections);
+  function open(i) {
+    if (i === tab) return; tab = i;
+    [...tabs.children].forEach((b, k) => { b.setAttribute('aria-selected', k === i); b.tabIndex = k === i ? 0 : -1; });
+    const swap = () => { live && live.destroy(); box.innerHTML = ''; live = views[i].mount(box); path.hidden = i !== 0; path.parentNode.classList.toggle('sec', i !== 0); if (i === 0) { if (at < 0) at = 0; live.step(at); cap.innerHTML = steps[at].caption; mark(); } else cap.innerHTML = views[i].line || ''; box.classList.remove('swap'); cap.classList.remove('out'); };
+    if (live && !M.off) { box.classList.add('swap'); cap.classList.add('out'); setTimeout(swap, 260); } else swap();
+  }
+  views.forEach((v, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.textContent = v.title; b.onclick = () => open(i); tabs.appendChild(b); });
+  tabs.addEventListener('keydown', e => { const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return; const k = (tab + d + views.length) % views.length; open(k); tabs.children[k].focus(); e.preventDefault(); });
+  showPlay(); open(0);
+
+  const mo = $('pp-motion'), showMo = () => { mo.textContent = M.off ? 'Turn motion on' : 'Turn motion off'; };
+  mo.onclick = () => { M.off = !M.off; try { localStorage.setItem('eg-motion', M.off ? 'off' : 'on'); } catch (e) { } if (M.off) { playing = false; showPlay(); mark(); } showMo(); };
+  showMo();
+  window.PP = { get live() { return live; }, card, go, open };
+})();
+</script>
+<script src="/assets/js/eigen-shell.js"></script>
+</body>
+</html>

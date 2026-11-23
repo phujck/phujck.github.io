@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Node harness</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+<link rel="stylesheet" href="/eigenengine/projection/level.css">
+<style>
+body{margin:0;background:var(--eg-ground);color:var(--eg-ink);font:400 16px/1.5 var(--eg-text);padding:24px 28px 80px}
+h1{font:400 1.6rem var(--eg-text);margin:0 0 4px} h2{font:600 .7rem var(--eg-label);letter-spacing:.13em;text-transform:uppercase;color:var(--eg-gold);margin:34px 0 12px}
+.row{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.card{position:relative;overflow:hidden;border-radius:var(--eg-radius);border:1px solid var(--edge,#4a5874);background:radial-gradient(ellipse at 91% 24%,var(--a,#1c2a40) 0,var(--b,#151e30) 40%,var(--c,#0f1522))}
+.card svg{position:absolute;inset:0;width:100%;height:100%}
+.card .t{position:absolute;left:0;right:0;bottom:0;padding:16px 18px;background:linear-gradient(0deg,#0b0f1aee 30%,transparent)}
+.card h3{font:400 1.5rem/1.1 var(--eg-text);letter-spacing:-.03em;margin:0} .card p{font:400 .9rem/1.35 var(--eg-label);color:var(--eg-muted);margin:6px 0 0}
+.card.m h3{font-size:1.05rem}.card.m p{display:none}
+.box{border:1px solid var(--eg-line);border-radius:var(--eg-radius);overflow:hidden;position:relative;background:var(--eg-surface)}
+.cap{font:400 .9rem/1.4 var(--eg-label);color:var(--eg-muted);max-width:70ch;min-height:2.8em;margin:8px 0}
+button{font:500 .82rem var(--eg-label);color:var(--eg-ink);background:none;border:1px solid var(--eg-line);border-radius:8px;padding:6px 11px;cursor:pointer;margin:0 6px 6px 0}button.on{border-color:var(--eg-gold);background:#e4bf7d1f}
+.text{max-width:62ch;color:var(--eg-muted)}
+.cost{--a:var(--eg-cost-a);--b:var(--eg-cost-b);--c:var(--eg-cost-c);--edge:var(--eg-cost-edge)}.phases{--a:var(--eg-phases-a);--b:var(--eg-phases-b);--c:var(--eg-phases-c);--edge:var(--eg-phases-edge)}.interface{--a:var(--eg-interface-a);--b:var(--eg-interface-b);--c:var(--eg-interface-c);--edge:var(--eg-interface-edge)}.memory{--a:var(--eg-memory-a);--b:var(--eg-memory-b);--c:var(--eg-memory-c);--edge:var(--eg-memory-edge)}
+</style></head><body>
+<h1 id="h">Node harness</h1><p class="text" id="where"></p><button id="mo"></button>
+<h2>The closed card, three sizes</h2><div class="row" id="cards"></div>
+<h2>Words when open</h2><p class="text" id="text"></p>
+<h2>The exhibit, compact (as inside the main page)</h2><div id="s1"></div><p class="cap" id="c1"></p><div class="box" id="e1" style="width:620px;height:460px;max-width:100%"></div>
+<h2>The exhibit, full (as on the node's own page)</h2><div id="s2"></div><p class="cap" id="c2"></p><div class="box" id="e2" style="width:1100px;height:640px;max-width:100%"></div>
+<script src="/assets/js/eigen-motion.js"></script><script src="/eigenengine/_graph/site-graph.js"></script><script src="/eigenengine/projection/level.js"></script>
+<script>
+const q = new URLSearchParams(location.search), id = q.get('node'), G = window.EIGEN_GRAPH.nodes[id] || {}, slug = q.get('slug') || G.slug || id;
+const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = `/eigenengine/${slug}/node.css`; document.head.appendChild(css);
+const s = document.createElement('script'); s.src = `/eigenengine/${slug}/node.js?${Date.now()}`;
+s.onerror = () => document.getElementById('where').textContent = `No node.js at /eigenengine/${slug}/node.js yet.`;
+s.onload = () => {
+  const N = (window.EIGEN_NODES || {})[id]; if (!N) { document.getElementById('where').textContent = `node.js loaded but did not register EIGEN_NODES['${id}'].`; return; }
+  document.getElementById('h').textContent = N.title; document.getElementById('text').innerHTML = N.text || '';
+  const L = window.EIGEN_GRAPH.links, out = L.filter(l => l[0] === id).map(l => `${l[2]} ${l[1]}`), inn = L.filter(l => l[1] === id).map(l => `${l[0]} ${l[2]} this`);
+  document.getElementById('where').textContent = `Node “${id}”. Links out: ${out.join('; ') || 'none'}. Links in: ${inn.join('; ') || 'none'}.`;
+  const arts = [];
+  [['', 420, 300], ['', 300, 215], ['m', 200, 143]].forEach(([c, w, h]) => {
+    const d = document.createElement('div'); d.className = `card ${c} ${G.ground || ''} egn-${id}`; d.style.width = w + 'px'; d.style.height = h + 'px';
+    d.innerHTML = `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg><div class="t"><h3>${N.title}</h3><p>${N.line || ''}</p></div>`;
+    document.getElementById('cards').appendChild(d); if (N.art) arts.push(N.art(d.querySelector('svg')));
+  });
+  const t0 = performance.now(); (function loop(now) { arts.forEach(a => a && a.tick && a.tick((now - t0) / 1000)); requestAnimationFrame(loop); })(t0);
+  if (N.exhibit) [['e1', 's1', 'c1', true], ['e2', 's2', 'c2', false]].forEach(([e, sb, cb, compact]) => {
+    const host = document.getElementById(e); host.classList.add('egn-' + id);
+    const h = N.exhibit.mount(host, { compact }), bar = document.getElementById(sb), cap = document.getElementById(cb);
+    (N.exhibit.steps || []).forEach((st, i) => { const b = document.createElement('button'); b.textContent = st.label; b.onclick = () => { h.step(i); cap.innerHTML = st.caption || ''; [...bar.children].forEach(x => x.classList.toggle('on', x === b)); }; bar.appendChild(b); });
+  });
+};
+document.body.appendChild(s);
+const mo = document.getElementById('mo'), M = window.EG_MOTION; const show = () => mo.textContent = M.off ? 'Motion is off: turn on' : 'Turn motion off'; mo.onclick = () => { M.off = !M.off; show(); }; show();
+</script></body></html>

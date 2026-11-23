@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dynamic Memory · EigenEngine</title>
+<meta name="description" content="What does a question cost, and what does a correction disturb? A visual overview of Dynamic Memory, an early experiment, and of what it gives the design of EigenEngine.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+<link rel="stylesheet" href="/eigenengine/projection/level.css">
+<link rel="stylesheet" href="/eigenengine/dynamic-memory/node.css">
+<style>
+/* The node's own page: one screen, the paper as a path of reader states. The synthesis wraps this in the pattern's shell. */
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: clamp(15px, calc(8.2px + .54vw), 26px); height: 100%; }   /* type grows with the window, for a 2560 px screen */
+body { height: 100%; }
+body.dm { margin: 0; background: radial-gradient(ellipse 60rem 40rem at 12% 0, color-mix(in srgb, var(--eg-memory-a) 42%, transparent), transparent) var(--eg-ground); color: var(--eg-ink); font: 400 1rem/1.5 var(--eg-text); display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 100dvh; height: 100dvh; }
+.dm a { color: inherit; }
+.dm-top { display: flex; align-items: center; gap: .9rem; padding: .6rem clamp(16px, 2.4vw, 3rem); border-bottom: 1px solid var(--eg-line); font: 500 .86rem/1 var(--eg-label); }
+.dm-back { text-decoration: none; padding: .5rem .8rem; border-radius: .55rem; background: #c3def1; color: var(--eg-memory-c) !important; font-weight: 600; white-space: nowrap; }
+.dm-where { color: var(--eg-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .dm-where b { color: var(--eg-muted); font-weight: 500; }
+.dm-top .dm-tools { margin-left: auto; display: flex; align-items: center; gap: .9rem; }
+.dm-top button.dm-motion { font: 500 .8rem/1 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: .5rem; padding: .45rem .7rem; cursor: pointer; white-space: nowrap; }
+.dm-main { display: grid; grid-template-columns: minmax(280px, 30%) minmax(0, 1fr); gap: clamp(14px, 1.8vw, 2.4rem); padding: clamp(12px, 1.5vw, 1.6rem) clamp(16px, 2.4vw, 3rem) clamp(12px, 1.5vw, 1.4rem); min-height: 0; }
+.dm-side { display: flex; flex-direction: column; gap: .75rem; min-height: 0; overflow: hidden; }
+.dm-card { position: relative; flex: 1 1 12rem; min-height: 10rem; max-height: 31dvh; overflow: hidden; border-radius: var(--eg-radius); border: 1px solid var(--eg-memory-edge); background: radial-gradient(ellipse at 91% 24%, var(--eg-memory-a) 0, var(--eg-memory-b) 40%, var(--eg-memory-c)); }
+.dm-card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dm-card-t { position: absolute; left: 0; right: 0; bottom: 0; padding: 2.4rem 1.2rem .95rem; background: linear-gradient(0deg, color-mix(in srgb, var(--eg-memory-c) 95%, transparent) 40%, transparent); }
+.dm-tag { margin: 0 0 .4rem; font: 600 .72rem/1 var(--eg-label); letter-spacing: .13em; text-transform: uppercase; color: #a9d3ee; }
+.dm h1 { margin: 0; font: 400 clamp(1.7rem, 2.5vw, 2.5rem)/1.04 var(--eg-text); letter-spacing: -.03em; }
+.dm-line { margin: .5rem 0 0; font: 400 .98rem/1.35 var(--eg-label); color: var(--eg-muted); max-width: 34ch; }
+.dm-text { margin: 0; font-size: 1rem; line-height: 1.55; color: var(--eg-muted); }
+.dm-text i { color: var(--eg-ink); }
+.dm-links { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .85rem; font: 500 .86rem/1 var(--eg-label); color: var(--eg-faint); }
+.dm-pdf { text-decoration: none; padding: .55rem .85rem; border-radius: .55rem; background: #c3def1; color: var(--eg-memory-c) !important; font-weight: 600; } .dm-pdf span { font-size: .7rem; letter-spacing: .08em; margin-left: .3rem; opacity: .75; }
+.dm-near { margin: auto 0 0; padding: .6rem 0 0; border-top: 1px solid var(--eg-line); display: grid; gap: .42rem; font: 500 .8rem/1.2 var(--eg-label); color: var(--eg-faint); }
+.dm-near div { display: flex; flex-wrap: wrap; align-items: center; gap: .36rem .42rem; }
+.dm-near a { text-decoration: none; padding: .3rem .62rem; border: 1px solid var(--eg-line); border-radius: 999px; color: var(--eg-muted); transition: border-color .2s, color .2s; }
+.dm-near a:hover { border-color: var(--eg-gold); color: var(--eg-ink); }
+.dm-near a[data-ground=cost] { border-color: var(--eg-cost-edge); } .dm-near a[data-ground=phases] { border-color: var(--eg-phases-edge); }
+.dm-stage { display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: .55rem; min-height: 0; min-width: 0; }
+.dm-tabs { display: flex; flex-wrap: wrap; gap: .42rem; }
+.dm-tabs button, .dm-path button { font: 500 .82rem/1.15 var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: .55rem; padding: .5rem .75rem; cursor: pointer; transition: border-color .25s, background .25s, color .25s; text-align: left; }
+.dm-tabs button[aria-selected=true] { border-color: var(--eg-memory-line); background: color-mix(in srgb, var(--eg-memory-line) 14%, transparent); color: var(--eg-ink); }
+.dm-head { display: grid; gap: .5rem; grid-template-rows: auto 4.7rem; } .dm-head.sec { grid-template-rows: auto; }   /* the caption keeps three lines' room, so the steps never move */
+.dm-path { position: relative; display: flex; flex-wrap: wrap; gap: .36rem; align-items: center; } .dm-path[hidden] { display: none; }
+.dm-path button { border-radius: 999px; padding: .36rem .7rem .36rem .42rem; display: inline-flex; align-items: center; gap: .42rem; position: relative; overflow: hidden; }
+.dm-path button b { width: 1.25rem; height: 1.25rem; border-radius: 50%; display: grid; place-items: center; font: 600 .72rem/1 var(--eg-label); background: var(--eg-raise); color: var(--eg-muted); transition: background .25s, color .25s; }
+.dm-path button[aria-current=step] { border-color: var(--eg-gold); color: var(--eg-ink); background: color-mix(in srgb, var(--eg-gold) 11%, transparent); } .dm-path button[aria-current=step] b { background: var(--eg-gold); color: var(--eg-memory-c); }
+.dm-path button.done b { background: color-mix(in srgb, var(--eg-gold) 34%, transparent); color: var(--eg-ink); }
+.dm-path button i { position: absolute; left: 0; bottom: 0; height: 2px; width: calc(var(--p, 0) * 100%); background: var(--eg-gold); }
+.dm-path .dm-play { border-radius: .55rem; padding: .44rem .62rem; color: var(--eg-faint); min-width: 4.4em; justify-content: center; }
+/* the reader's state: what has been established so far, filling as the steps are taken */
+.dm-holds { margin: 0; padding: 0; list-style: none; display: grid; gap: .16rem; font: 400 .84rem/1.25 var(--eg-label); color: var(--eg-faint); }
+.dm-holds-h { margin: 0 0 -.35rem; font: 600 .72rem/1 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-gold); }
+.dm-holds button { display: flex; gap: .55rem; align-items: center; width: 100%; text-align: left; font: inherit; color: inherit; background: none; border: 0; padding: .1rem 0; cursor: pointer; transition: color .3s; }
+.dm-holds b { flex: none; width: 1.2rem; height: 1.2rem; border-radius: 50%; display: grid; place-items: center; font: 600 .72rem/1 var(--eg-label); border: 1px solid var(--eg-line); color: var(--eg-faint); transition: background .3s, color .3s, border-color .3s; }
+.dm-holds li.done button { color: var(--eg-muted); } .dm-holds li.done b { background: color-mix(in srgb, var(--eg-gold) 30%, transparent); border-color: transparent; color: var(--eg-ink); }
+.dm-holds li.now button { color: var(--eg-ink); } .dm-holds li.now b { background: var(--eg-gold); border-color: var(--eg-gold); color: var(--eg-memory-c); }
+.dm-cap { margin: 0; align-self: start; font: 400 1.02rem/1.45 var(--eg-text); color: var(--eg-ink); max-width: 100ch; transition: opacity .22s; }
+.dm-cap.out { opacity: 0; }
+.dm-box { position: relative; min-height: 0; border: 1px solid var(--eg-memory-edge); border-radius: var(--eg-radius); overflow: hidden; background: var(--eg-memory-c); }
+.dm-box > * { transition: opacity .28s; } .dm-box.swap > * { opacity: 0; }
+.dm :focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+@media (max-width: 900px), (max-height: 560px) {
+  html { font-size: 16px; height: auto; } body { height: auto; } body.dm { height: auto; display: block; }
+  .dm-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 16px; } .dm-tabs button { flex: none; }
+  .dm-main { grid-template-columns: 1fr; }
+  .dm-side { overflow: visible; } .dm-card { flex: none; height: 250px; max-height: none; } .dm-near { margin-top: 2px; }
+  .dm-head { grid-template-rows: auto auto; } .dm-cap { min-height: 9.6rem; } .dm-box { height: 940px; }
+  .dm-where, .dm-motion { display: none; }
+}
+</style>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
+</head>
+<body class="dm egn-memory">
+<header class="dm-top">
+  <a class="dm-back" href="/eigenengine.html#memory">&larr; EigenEngine</a>
+  <span class="dm-where" id="dm-where"><b>Dynamic Memory</b></span>
+  <span class="dm-tools"><span data-eg-level-switch></span><button type="button" class="dm-motion" id="dm-motion"></button></span>
+</header>
+<main class="dm-main">
+  <section class="dm-side" aria-label="The paper">
+    <div class="dm-card egn-memory">
+      <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMin slice" aria-hidden="true"></svg>
+      <div class="dm-card-t"><p class="dm-tag" id="dm-tag"></p><h1 id="dm-title">Dynamic Memory</h1><p class="dm-line" id="dm-line"></p></div>
+    </div>
+    <p class="dm-text" id="dm-text"></p>
+    <p class="dm-links"><a class="dm-pdf" href="/assets/docs/dynamic-memory-early-experiment.pdf" target="_blank" rel="noopener">Read the paper <span>PDF</span></a><span>Gerard McCaul · 22 pages</span></p>
+    <p class="dm-holds-h">The reader now holds</p><ol class="dm-holds" id="dm-holds"></ol>
+    <nav class="dm-near" id="dm-near" aria-label="Where this paper sits in EigenEngine"></nav>
+  </section>
+  <section class="dm-stage" aria-label="The paper, shown">
+    <div class="dm-tabs" role="tablist" id="dm-tabs"></div>
+    <div class="dm-head"><div class="dm-path" id="dm-path"></div><p class="dm-cap" id="dm-cap" aria-live="polite"></p></div>
+    <div class="dm-box egn-memory" id="dm-box"></div>
+  </section>
+</main>
+<noscript><p style="padding:0 34px 30px;max-width:70ch;color:#b4bccb">The figure on this page is a memory computed in the browser from the paper's construction. Without scripts, the paper itself is the place to read: <a href="/assets/docs/dynamic-memory-early-experiment.pdf" style="color:#e4bf7d">Dynamic Memory (PDF)</a>.</p></noscript>
+<script src="/assets/js/eigen-motion.js"></script>
+<script src="/eigenengine/_graph/site-graph.js"></script>
+<script src="/eigenengine/projection/level.js"></script>
+<script src="/eigenengine/dynamic-memory/node.js"></script>
+<script>
+(() => {
+  const N = window.EIGEN_NODES.memory, M = window.EG_MOTION, G = window.EIGEN_GRAPH, LV = window.EigenLevel, $ = id => document.getElementById(id);
+  const words = f => LV ? LV.html(f) : String(f);            // both readings of a two-level field; the level in force shows
+  $('dm-title').textContent = N.title; $('dm-line').innerHTML = words(N.line); $('dm-text').innerHTML = words(N.text); $('dm-tag').innerHTML = words(N.tag);
+  const card = N.art(document.querySelector('.dm-card svg')); let cardT = 0, cardLast = performance.now();   // the card keeps its own clock, so it resumes where it stopped
+  (function loop(now) { const dt = Math.min(.1, (now - cardLast) / 1000); cardLast = now; if (!M.off) card.tick(cardT += dt); requestAnimationFrame(loop); })(cardLast);
+
+  /* where this node sits: read from the site's own graph */
+  if (G) {
+    const href = id => { const n = G.nodes[id]; return n.page || `/eigenengine/${n.slug || id}/`; }, chip = id => `<a href="${href(id)}"${G.nodes[id].ground ? ` data-ground="${G.nodes[id].ground}"` : ''}>${G.nodes[id].title}</a>`;
+    const out = G.links.filter(l => l[0] === 'memory').map(l => l[1]), parent = Object.keys(G.nodes).find(k => (G.nodes[k].children || []).includes('memory')), sibs = parent ? G.nodes[parent].children.filter(k => k !== 'memory') : [];
+    if (parent) $('dm-where').innerHTML = `${G.nodes[parent].title} &rsaquo; <b>${N.title}</b>`;
+    $('dm-near').innerHTML = (out.length ? `<div><span>It supports</span>${out.map(chip).join('')}</div>` : '') + (sibs.length ? `<div><span>Beside it</span>${sibs.map(chip).join('')}</div>` : '');
+  }
+
+  /* the stage: the paper as six states of its reader, or one of its parts */
+  const box = $('dm-box'), cap = $('dm-cap'), holds = $('dm-holds'), path = $('dm-path'), tabs = $('dm-tabs'), steps = N.exhibit.steps, HOLD = 9;
+  let live = null, tab = -1, at = 0, playing = !M.off, held = 0, last = null;
+  const put = html => { cap.innerHTML = html; LV && LV.typeset && LV.typeset(cap); };
+  const say = html => { if (M.off) { put(html); return; } cap.classList.add('out'); setTimeout(() => { put(html); cap.classList.remove('out'); }, 200); };
+  let reached = 0;
+  const mark = () => [...path.querySelectorAll('[data-step]')].forEach((b, i) => { const li = holds.children[i]; if (at > reached) reached = at; li.classList.toggle('now', i === at); li.classList.toggle('done', i !== at && i <= reached); i === at ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current'); b.classList.toggle('done', at >= 0 && i < at); b.style.setProperty('--p', i === at && playing ? held / HOLD : 0); });
+  const play = path.appendChild(Object.assign(document.createElement('button'), { type: 'button', className: 'dm-play' }));
+  const showPlay = () => { play.textContent = playing ? 'Pause' : 'Play'; play.setAttribute('aria-label', playing ? 'Pause the steps' : 'Play the steps'); play.setAttribute('aria-pressed', playing); };
+  function go(i, byHand) { at = i; held = 0; if (byHand) { playing = false; showPlay(); } live && live.step && live.step(i); say(words(steps[i].caption)); mark(); }
+  steps.forEach((s, i) => { const li = document.createElement('li'), hb = document.createElement('button'); hb.type = 'button'; hb.innerHTML = `<b>${i + 1}</b><span>${s.holds}</span>`; hb.onclick = () => go(i, true); li.appendChild(hb); holds.appendChild(li); });
+  steps.forEach((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.step = i; b.innerHTML = `<b>${i + 1}</b>${words(s.label)}<i></i>`; b.onclick = () => go(i, true); path.insertBefore(b, play); });
+  play.onclick = () => { playing = !playing; showPlay(); if (playing && (at < 0 || at === steps.length - 1)) go(0); mark(); };
+  box.addEventListener('eigen-exhibit-change', e => {      // the reader has taken over: stop the tour, drop the step mark, say what is now shown
+    if (tab !== 0) return; playing = false; showPlay(); at = -1; mark(); say(e.detail.text);
+  });
+  (function clock(now) { requestAnimationFrame(clock); const dt = last === null ? 0 : Math.min(.1, (now - last) / 1000); last = now; if (tab !== 0 || !playing || M.off || document.hidden) return; held += dt; if (held >= HOLD) { if (at < steps.length - 1) go(at + 1); else { playing = false; showPlay(); } } mark(); })(performance.now());
+
+  const views = [{ title: 'The paper in six steps', mount: el => N.exhibit.mount(el, { compact: false }) }].concat(N.sections);
+  function open(i) {
+    if (i === tab) return; tab = i;
+    [...tabs.children].forEach((b, k) => { b.setAttribute('aria-selected', k === i); b.tabIndex = k === i ? 0 : -1; });
+    const swap = () => { live && live.destroy(); box.innerHTML = ''; live = views[i].mount(box); path.hidden = i !== 0; path.parentNode.classList.toggle('sec', i !== 0); if (i === 0) { if (at < 0) at = 0; live.step(at); put(words(steps[at].caption)); mark(); } else { cap.innerHTML = words(views[i].line || ''); LV && LV.typeset && LV.typeset(cap); } box.classList.remove('swap'); cap.classList.remove('out'); };
+    if (live && !M.off) { box.classList.add('swap'); cap.classList.add('out'); setTimeout(swap, 260); } else swap();
+  }
+  views.forEach((v, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.innerHTML = words(v.title); b.onclick = () => open(i); tabs.appendChild(b); });
+  tabs.addEventListener('keydown', e => { const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return; const k = (tab + d + views.length) % views.length; open(k); tabs.children[k].focus(); e.preventDefault(); });
+  showPlay(); open(0);
+
+  const mo = $('dm-motion'), showMo = () => { mo.textContent = M.off ? 'Turn motion on' : 'Turn motion off'; };
+  mo.onclick = () => { M.off = !M.off; try { localStorage.setItem('eg-motion', M.off ? 'off' : 'on'); } catch (e) { } if (M.off) { playing = false; showPlay(); mark(); } showMo(); };
+  showMo();
+  window.DM = { get live() { return live; }, card, go, open };
+})();
+</script>
+<script src="/assets/js/eigen-shell.js"></script>
+</body>
+</html>

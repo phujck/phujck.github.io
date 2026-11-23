@@ -706,7 +706,7 @@
       if (phase !== phases.length - 1) return;
       select('fig3');
       answer.insertAdjacentHTML('beforeend', `<blockquote>“a price set by area (γ = 2) adds the same increment … at every depth”</blockquote>
-        <a href="/demo/writing/">Watch the Writing App film ↗</a>`);
+        <a href="/demo/writing/">Watch the interface film ↗</a>`);
       const run = $('[data-run]');
       run.textContent = 'Trace again';
       run.disabled = false;

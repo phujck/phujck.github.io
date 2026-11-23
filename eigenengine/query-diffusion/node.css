@@ -1,0 +1,136 @@
+/* Node "search" (query diffusion). Everything is scoped under .egn-search. Colours come from eigen-tokens.css:
+   gold is query weight and what is selected, blue is sources, teal is what was computed or drawn. Lora for text,
+   Outfit for every word inside the figure. */
+.egn-search .qd { position: absolute; inset: 0; display: flex; flex-direction: column; font-family: var(--eg-label); color: var(--eg-ink); background: radial-gradient(ellipse at 70% 12%, #16233a 0, var(--eg-surface) 46%, #0e1524 100%); overflow: hidden; }
+.egn-search .qd-ask { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; padding: 10px 12px 8px; border-bottom: 1px solid var(--eg-line); }
+.egn-search .qd-qs, .egn-search .qd-file { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 7px; }
+.egn-search .qd-qs { display: contents; }
+.egn-search .qd-file { margin-left: auto; }
+.egn-search .qd-f { text-transform: none; }
+.egn-search .qd-asked { margin: 0; padding: 5px 12px 6px; font: 500 .8rem/1.3 var(--eg-label); color: var(--eg-ink); border-bottom: 1px solid var(--eg-line); }
+.egn-search .qd-asked mark { background: none; color: var(--eg-gold); border-bottom: 1.5px solid var(--eg-gold); }
+.egn-search .qd-lab { font: 600 .74rem var(--eg-label); letter-spacing: .13em; text-transform: uppercase; color: var(--eg-gold); margin-right: 3px; }
+.egn-search .qd-q { font: 500 .86rem/1.2 var(--eg-label); color: var(--eg-muted); background: #0e1626; border: 1px solid var(--eg-line); border-radius: 999px; padding: 6px 12px; margin: 0; cursor: pointer; transition: border-color .25s, color .25s, background-color .25s; }
+.egn-search .qd-q:hover { border-color: var(--eg-blue); color: var(--eg-ink); }
+.egn-search .qd-q:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egn-search .qd-pbox:focus, .egn-search .qd-gbox:focus { outline: none; }
+.egn-search .qd-pbox:focus-visible, .egn-search .qd-gbox:focus-visible { stroke: var(--eg-gold); stroke-width: 2.2; }
+.egn-search .qd-q[aria-pressed=true] { border-color: var(--eg-gold); color: var(--eg-ink); background: #e4bf7d1c; }
+.egn-search .qd-q mark { background: none; color: var(--eg-gold); border-bottom: 1.5px solid var(--eg-gold); }
+.egn-search .qd-stage { position: relative; flex: 1 1 auto; min-height: 0; }
+.egn-search .qd-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.egn-search .qd-foot { display: flex; align-items: center; gap: 16px; padding: 7px 12px 9px; border-top: 1px solid var(--eg-line); min-height: 3.3em; box-sizing: border-box; }
+.egn-search .qd-say { flex: 1 1 auto; margin: 0; font: 400 .86rem/1.36 var(--eg-label); color: var(--eg-muted); transition: opacity .16s; }
+.egn-search .qd-say.qd-out { opacity: 0; }
+.egn-search .qd-say b { font-weight: 500; color: var(--eg-ink); }
+.egn-search .qd-key { display: flex; gap: 11px; flex: 0 0 auto; font: 400 .74rem var(--eg-label); color: var(--eg-faint); }
+.egn-search .qd-key span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.egn-search .qd-key svg { width: 15px; height: 15px; overflow: visible; }
+.egn-search .qd-compact .qd-key, .egn-search .qd-narrow .qd-key { display: none; }
+.egn-search .qd-compact .qd-q { font-size: .8rem; padding: 5px 10px; }
+
+/* boxes */
+.egn-search .qd-pbox { fill: #131d30; stroke: #3b4a69; stroke-width: 1.2; cursor: pointer; transition: stroke .25s; }
+.egn-search .qd-pbox:hover { stroke: var(--eg-blue); }
+.egn-search .qd-tint { fill: var(--eg-gold); pointer-events: none; }
+.egn-search .qd-gbox { fill: #0c1423; stroke: #33415d; stroke-width: 1; cursor: pointer; transition: stroke .25s; }
+.egn-search .qd-gbox:hover { stroke: var(--eg-blue); }
+.egn-search .qd-rim { fill: none; stroke: var(--eg-gold); stroke-width: 2.4; stroke-linecap: round; pointer-events: none; }
+.egn-search .qd-ptitle { font: 500 .88rem var(--eg-label); fill: var(--eg-ink); pointer-events: none; }
+.egn-search .qd-gtitle { font: 500 .76rem var(--eg-label); fill: var(--eg-muted); letter-spacing: .02em; pointer-events: none; }
+.egn-search .qd-pct { font: 600 .86rem var(--eg-label); fill: var(--eg-gold); pointer-events: none; }
+.egn-search .qd-gpct { font-size: .76rem; }
+
+/* links, by kind */
+.egn-search .qd-link { fill: none; stroke: #8794ad; stroke-width: 1.1; pointer-events: none; }
+.egn-search .qd-l-supported-by { stroke: var(--eg-blue); stroke-dasharray: 4 3; }
+.egn-search .qd-l-computed-by { stroke: var(--eg-teal); }
+.egn-search .qd-l-shown-by { stroke: var(--eg-teal); stroke-dasharray: 1.5 3; stroke-linecap: round; }
+
+/* records */
+.egn-search .qd-rec { pointer-events: none; }
+.egn-search .qd-glyph > * { fill: #0e1626; stroke: var(--eg-ink); stroke-width: 1.5; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.egn-search .qd-glyph .qd-fine { fill: none; stroke-width: 1.1; stroke-linecap: round; }
+.egn-search .qd-k-claim .qd-glyph > * { fill: var(--eg-ink); }
+.egn-search .qd-k-source .qd-glyph > * { stroke: var(--eg-blue); }
+.egn-search .qd-k-run .qd-glyph > *, .egn-search .qd-k-figure .qd-glyph > * { stroke: var(--eg-teal); }
+.egn-search .qd-label { font: 500 .84rem var(--eg-label); fill: var(--eg-ink); }
+.egn-search .qd-sum { font: 400 .76rem var(--eg-label); fill: var(--eg-faint); }
+.egn-search .qd-sub { font: 400 .76rem var(--eg-label); fill: var(--eg-muted); }
+.egn-search .qd-card { fill: #18233a; stroke: #4a5874; stroke-width: 1; }
+.egn-search .qd-ring { fill: none; stroke: var(--eg-gold); stroke-width: 2; }
+.egn-search .qd-badge circle { fill: var(--eg-gold); }
+.egn-search .qd-badge text { font: 700 .76rem var(--eg-label); fill: #14161c; }
+.egn-search .qd-hit { fill: transparent; pointer-events: all; cursor: default; }
+.egn-search .qd-halo { pointer-events: none; mix-blend-mode: screen; }
+.egn-search .qd-ghost { fill: none; stroke: var(--eg-gold); stroke-width: 1.4; pointer-events: none; }
+.egn-search .qd-lead { fill: none; stroke: var(--eg-gold); stroke-width: 1; stroke-dasharray: 2 4; stroke-linecap: round; pointer-events: none; }
+.egn-search .qd-flow { fill: #ffe3a8; pointer-events: none; filter: drop-shadow(0 0 3px #ffd58b); }
+.egn-search .qd-flow-idle { fill: var(--eg-blue); filter: none; }
+.egn-search .qd-thread { fill: none; stroke: var(--eg-gold); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+.egn-search .qd-via { font: 500 .74rem var(--eg-label); fill: var(--eg-gold); paint-order: stroke; stroke: #0e1524; stroke-width: 5px; stroke-linejoin: round; pointer-events: none; }
+.egn-search .qd-head { font: 600 .74rem var(--eg-label); letter-spacing: .13em; text-transform: uppercase; fill: var(--eg-gold); pointer-events: none; }
+
+/* the label that follows the pointer */
+.egn-search .qd-tip { position: absolute; left: 0; top: 0; width: 220px; padding: 8px 10px; border-radius: var(--eg-radius-s); background: #1b2740f2; border: 1px solid #4a5874; font: 400 .76rem/1.35 var(--eg-label); color: var(--eg-muted); pointer-events: none; opacity: 0; transition: opacity .18s; z-index: 3; }
+.egn-search .qd-tip.qd-on { opacity: 1; }
+.egn-search .qd-tip b { display: block; font: 500 .86rem var(--eg-label); color: var(--eg-ink); }
+.egn-search .qd-tip span { display: block; }
+.egn-search .qd-tip span:first-of-type { color: var(--eg-gold); margin-bottom: 2px; }
+.egn-search .qd-stage { background-image: radial-gradient(#7598b326 1px, transparent 1.3px); background-size: 22px 22px; }
+.egn-search .qd-cnt { font: 400 .76rem var(--eg-label); fill: var(--eg-faint); pointer-events: none; }
+.egn-search .qd-label, .egn-search .qd-sum, .egn-search .qd-ptitle, .egn-search .qd-gtitle { paint-order: stroke; stroke: #0d1524; stroke-width: 4px; stroke-linejoin: round; }
+.egn-search .qd-sub .qd-nm { fill: var(--eg-ink); }
+
+/* the second exhibit: the same records filed two ways */
+.egn-search .qo-bar { gap: 7px 22px; }
+.egn-search .qo-bar > div { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 7px; }
+.egn-search .qo .qo-file, .egn-search .qo .qo-askb { display: inline-flex; flex-wrap: wrap; gap: 6px 7px; }
+.egn-search .qo-edge { fill: none; stroke: #6f7d98; stroke-width: 1.2; }
+.egn-search .qo-edge.qo-gold { stroke: var(--eg-gold); stroke-width: 2.6; stroke-linecap: round; }
+.egn-search .qo-node circle { fill: #0e1626; stroke: var(--eg-muted); stroke-width: 1.5; transition: stroke .3s, fill .3s; }
+.egn-search .qo-node.qo-lit circle { stroke: var(--eg-gold); fill: #e4bf7d33; }
+.egn-search .qo-node text { font: 500 .8rem var(--eg-label); fill: var(--eg-ink); paint-order: stroke; stroke: #0d1524; stroke-width: 4px; stroke-linejoin: round; }
+.egn-search .qo-leaf { font: 400 .76rem var(--eg-label); fill: var(--eg-muted); }
+.egn-search .qo-pip { fill: var(--eg-faint); }
+.egn-search .qo-hit { fill: #e4bf7d2e; stroke: var(--eg-gold); stroke-width: 1.6; }
+.egn-search .qo-big { font: 500 1.7rem var(--eg-label); fill: var(--eg-gold); transition: opacity .3s; }
+.egn-search .qo-small { font: 400 .8rem var(--eg-label); fill: var(--eg-muted); transition: opacity .3s; }
+.egn-search .qo-tab { position: absolute; right: 12px; top: 10px; border-collapse: collapse; font: 400 .76rem var(--eg-label); color: var(--eg-muted); background: #0e1626d9; border: 1px solid var(--eg-line); border-radius: var(--eg-radius-s); }
+.egn-search .qo-tab th, .egn-search .qo-tab td { padding: 5px 10px; text-align: right; font-weight: 400; }
+.egn-search .qo-tab th:first-child { text-align: left; }
+.egn-search .qo-tab .on { color: var(--eg-ink); }
+.egn-search .qo-tab td { font: 600 .9rem var(--eg-label); color: var(--eg-muted); min-width: 2.2em; }
+.egn-search .qo-tab td.on { color: var(--eg-gold); }
+.egn-search .qo-tab td.best { text-decoration: underline; text-decoration-color: var(--eg-gold); text-underline-offset: 4px; }
+@media (max-width: 620px) { .egn-search .qo-tab { position: static; margin: 6px 10px 0; float: right; } }
+
+.egn-search .qd-page { pointer-events: none; cursor: pointer; }
+.egn-search .qd-reading .qd-in-order .qd-page { pointer-events: auto; }
+.egn-search .qd-page text { font: 500 .76rem var(--eg-label); fill: var(--eg-blue); }
+.egn-search .qd-page:hover text, .egn-search .qd-page:focus-visible text { fill: var(--eg-gold); text-decoration: underline; }
+.egn-search .qd-page:focus { outline: none; }
+
+
+/* short hosts (the pattern mounts a leaf at about 700 x 350): smaller chips on two rows, one line of narration */
+.egn-search .qd-short .qd-ask { padding: 6px 10px 5px; gap: 4px 14px; }
+.egn-search .qd-short .qd-qs, .egn-search .qd-short .qd-file { gap: 4px 5px; }
+.egn-search .qd-short .qd-q { font-size: .78rem; padding: 3px 9px; }
+.egn-search .qd-short .qd-lab { font-size: .74rem; }
+.egn-search .qd-short .qd-foot { min-height: 0; padding: 5px 10px 6px; }
+.egn-search .qd-short .qd-say { font-size: .8rem; }
+.egn-search .qd-short .qd-key, .egn-search .qd-tiny .qd-foot, .egn-search .qd-tiny .qd-file { display: none; }
+/* narrow hosts: the four questions as short chips in one row, with the question asked written out beneath */
+.egn-search .qd-narrow .qd-ask { padding: 6px 8px 5px; gap: 4px 10px; }
+.egn-search .qd-narrow .qd-qs { display: flex; flex-wrap: nowrap; gap: 4px; }
+.egn-search .qd-narrow .qd-file { margin-left: 0; }
+.egn-search .qd-narrow .qd-qs .qd-lab { display: none; }
+.egn-search .qd-narrow .qd-q { font-size: .78rem; padding: 4px 9px; white-space: nowrap; }
+/* where the questions already fill the bar, the filing switch sits at the foot, beside the narration */
+.egn-search .qd-compact .qd-file { position: absolute; right: 10px; bottom: 9px; margin: 0; }
+.egn-search .qd-compact .qd-foot { padding-right: 186px; }
+.egn-search .qd-compact.qd-short .qd-file { bottom: 4px; }
+.egn-search .qd-compact.qd-narrow .qd-file { position: static; }
+.egn-search .qd-compact.qd-narrow .qd-foot { padding-right: 10px; }
+
+.egn-search .qd-narrow .qd-label { font-size: .78rem; }

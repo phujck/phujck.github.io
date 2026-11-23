@@ -1,0 +1,125 @@
+/* Node "network": How do projects join up? Every rule is scoped under .egn-network; colours come from eigen-tokens.css. */
+.egn-network.nw { position: absolute; inset: 0; overflow: hidden; outline: none; font-family: var(--eg-label); color: var(--eg-ink); -webkit-user-select: none; user-select: none;
+  background: var(--eg-surface); }
+.egn-network.nw:focus-visible { box-shadow: inset 0 0 0 2px var(--eg-gold); }
+.egn-network .nw-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: manipulation; }
+.egn-network .nw-top { pointer-events: none; will-change: transform; }
+
+/* the world: every stroke keeps its width on screen whatever the camera does */
+.egn-network .nw-hull { stroke-width: 1.15; fill-opacity: .05; stroke-opacity: .5; }
+.egn-network .nw-hull--tone { stroke-width: 1.5; }
+.egn-network .nw-disc { stroke-width: 1.2; }
+.egn-network .nw-disc--open { fill: var(--eg-surface) !important; fill-opacity: .92 !important; }
+.egn-network .nw-glyph { fill: none; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.egn-network .nw-link { fill: none; stroke-width: 1.1; stroke-linecap: round; pointer-events: none; opacity: 0; }
+.egn-network .nw-link--cross { stroke-width: 1.25; }
+.egn-network .nw-link.is-touch { stroke-width: 1.9; }
+.egn-network .nw-link.is-lit { stroke: var(--eg-gold) !important; stroke-width: 2.1; stroke-dasharray: none; }
+.egn-network .nw-ring { fill: none; stroke: var(--eg-gold); stroke-width: 2; opacity: 0; pointer-events: none; }
+.egn-network .nw-flag { fill: none; stroke: var(--eg-coral); stroke-width: 2.4; opacity: 0; pointer-events: none; }
+.egn-network .nw-flag--review { stroke-dasharray: 4 3.2; }
+
+/* words and lights sit above the world and do not scale with it */
+.egn-network .nw-lab { font: 500 12px/1 var(--eg-label); fill: var(--eg-ink); text-anchor: middle; pointer-events: none; paint-order: stroke; stroke: var(--eg-ground); stroke-width: 3.4px; stroke-linejoin: round; letter-spacing: .005em; }
+.egn-network .nw-lab--leaf { font-weight: 400; fill: var(--eg-muted); }
+.egn-network .nw-lab--soft { fill: var(--eg-faint); font-weight: 400; }
+.egn-network .nw-lab--on { fill: var(--eg-gold); }
+.egn-network .nw-lab--link { fill: var(--eg-gold); font-weight: 500; font-size: 11.5px; letter-spacing: .03em; }
+.egn-network .nw-pulse { pointer-events: none; }
+.egn-network .nw-pulse--ink { fill: var(--eg-ink); }
+.egn-network .nw-pulse--blue { fill: var(--eg-blue); }
+.egn-network .nw-pulse--teal { fill: var(--eg-teal); }
+.egn-network .nw-pulse--gold { fill: var(--eg-gold); filter: drop-shadow(0 0 4px var(--eg-gold)); }
+.egn-network .nw-pulse--coral { fill: var(--eg-coral); filter: drop-shadow(0 0 4px var(--eg-coral)); }
+.egn-network .nw-pulse--end { fill: var(--eg-ground); stroke: var(--eg-gold); stroke-width: 1.6; }
+
+/* where the reader is: the levels above, each a step out */
+.egn-network .nw-path { position: absolute; left: 0.75rem; top: 0.625rem; right: 0.75rem; display: flex; align-items: center; gap: 0.625rem; pointer-events: none; }
+.egn-network .nw-path > * { pointer-events: auto; }
+.egn-network button { font: 500 0.781rem/1.2 var(--eg-label); color: var(--eg-ink); background: color-mix(in srgb, var(--eg-ground) 78%, transparent); border: 1px solid var(--eg-line); border-radius: 0.5rem; padding: 0.375rem 0.625rem; cursor: pointer; transition: border-color .25s, color .25s, background-color .25s; }
+.egn-network button:hover:not(:disabled) { border-color: var(--eg-gold); }
+.egn-network button:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egn-network button:disabled { color: var(--eg-faint); cursor: default; opacity: .6; }
+.egn-network .nw-out::before { content: "\2191"; margin-right: 0.375rem; color: var(--eg-gold); }
+.egn-network .nw-rungs { list-style: none; margin: 0; padding: 0; display: flex; gap: 0.25rem; min-width: 0; }
+.egn-network .nw-rungs li { display: none; min-width: 0; }
+.egn-network .nw-rungs li:last-child { display: block; }
+.egn-network .nw-rungs button { border-color: transparent; background: none; padding: 0.375rem 0.25rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--eg-gold); cursor: default; }
+.egn-network .nw-rungs button i { display: none; }
+.egn-network.nw--wide .nw-path { right: auto; width: 9.5rem; flex-direction: column; align-items: stretch; gap: 0.75rem; top: 0.75rem; }
+.egn-network.nw--wide .nw-rungs { flex-direction: column; gap: 0; }
+.egn-network.nw--wide .nw-rungs li { display: block; position: relative; padding-left: calc(var(--i, 0) * 0rem); }
+.egn-network.nw--wide .nw-rungs button { display: flex; align-items: center; gap: 0.5rem; width: 100%; text-align: left; white-space: normal; padding: 0.312rem 0.375rem 0.312rem calc(0.25rem + var(--d) * 0.562rem); color: var(--eg-muted); cursor: pointer; border-radius: 0.438rem; }
+.egn-network.nw--wide .nw-rungs button:hover { color: var(--eg-ink); border-color: transparent; background: color-mix(in srgb, var(--eg-blue) 9%, transparent); }
+.egn-network.nw--wide .nw-rungs button i { display: block; flex: none; width: calc(0.938rem - var(--d) * 0.125rem); height: calc(0.938rem - var(--d) * 0.125rem); border-radius: 50%; border: 1.2px solid currentColor; opacity: .8; }
+.egn-network.nw--wide .nw-rungs button[aria-current] { color: var(--eg-gold); cursor: default; background: color-mix(in srgb, var(--eg-gold) 9%, transparent); }
+.egn-network.nw--wide .nw-rungs button[aria-current] i { background: color-mix(in srgb, var(--eg-gold) 28%, transparent); }
+
+.egn-network .nw-legend { display: none; }
+.egn-network.nw--legend .nw-legend { position: absolute; right: 0.625rem; top: 0.625rem; width: 8.25rem; padding: 0.625rem 0.688rem 0.688rem; border-radius: 0.625rem; background: color-mix(in srgb, var(--eg-ground) 74%, transparent); display: grid; gap: 0.25rem; font: 400 0.719rem/1.25 var(--eg-label); color: var(--eg-muted); pointer-events: none; }
+.egn-network .nw-legend b { font: 600 0.7rem/1 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-faint); margin-top: 0.438rem; }
+.egn-network .nw-legend b:first-child { margin-top: 0; }
+.egn-network .nw-legend span { display: flex; align-items: center; gap: 0.5rem; }
+.egn-network .nw-legend svg { flex: none; width: 15px; height: 15px; overflow: visible; }
+.egn-network .nw-legend svg[viewBox="0 0 22 8"] { width: 22px; height: 8px; }
+.egn-network .nw-legend svg[viewBox="0 0 22 8"] path { fill: none; stroke-width: 1.5; }
+.egn-network .nw-legend svg .nw-disc { stroke-width: .15; fill: none !important; } .egn-network .nw-legend svg .nw-glyph { stroke-width: .17; }
+.egn-network .nw-dot { flex: none; width: 0.562rem; height: 0.562rem; margin: 0 0.188rem; border-radius: 50%; background: var(--eg-coral); }
+
+.egn-network .nw-bar { position: absolute; left: 0.75rem; right: 0.75rem; bottom: 0.562rem; display: flex; align-items: flex-end; gap: 0.75rem; pointer-events: none; }
+.egn-network .nw-status { flex: 1 1 auto; margin: 0; font: 400 0.781rem/1.35 var(--eg-label); color: var(--eg-muted); min-height: 2.7em; display: flex; align-items: flex-end; text-wrap: pretty; }
+.egn-network .nw-act { flex: none; pointer-events: auto; white-space: nowrap; }
+.egn-network .nw-act.is-hot { border-color: var(--eg-coral); color: var(--eg-ink); background: color-mix(in srgb, var(--eg-coral) 16%, transparent); }
+.egn-network.nw--small .nw-status { font-size: 0.719rem; }
+.egn-network.nw--small button { font-size: 0.719rem; padding: 0.312rem 0.5rem; }
+
+/* the ladder and the words at the foot sit on small panels of their own. A full-height veil or a gradient ground
+   would be painted again over the whole stage on every frame of a camera move. */
+.egn-network .nw-path, .egn-network .nw-legend, .egn-network .nw-bar { z-index: 2; }
+.egn-network.nw--wide .nw-path { padding: 0.5rem; margin: -0.5rem; border-radius: 0.75rem; background: color-mix(in srgb, var(--eg-ground) 70%, transparent); }
+.egn-network .nw-status { padding: 0.35rem 0.6rem; margin: 0 0 0 -0.6rem; border-radius: 0.6rem; background: color-mix(in srgb, var(--eg-ground) 74%, transparent); flex: 0 1 auto; }
+.egn-network .nw-act { margin-left: auto; }
+
+/* a change on the link, and the marks it leaves on the way up */
+.egn-network .nw-link.is-alarm { stroke: var(--eg-coral) !important; stroke-width: 2.3; stroke-dasharray: none; }
+.egn-network .nw-pulse--alarm { fill: none; stroke: var(--eg-coral); stroke-width: 2.6; }
+.egn-network .nw-pulse--flag { fill: none; stroke: var(--eg-coral); stroke-width: 2.4; }
+.egn-network .nw-pulse--flag-review { fill: none; stroke: var(--eg-coral); stroke-width: 2.4; stroke-dasharray: 4 3.2; }
+.egn-network .nw-pulse--flag-proposed { fill: none; stroke: var(--eg-teal); stroke-width: 2.4; stroke-dasharray: 4 3.2; }
+.egn-network .nw-pulse--badge { fill: var(--eg-coral); stroke: var(--eg-ground); stroke-width: 1.6; }
+.egn-network .nw-lead { fill: none; stroke: var(--eg-faint); stroke-width: 1.1; stroke-dasharray: 2 4; pointer-events: none; }
+
+/* who is acting on the claim: the agent proposes, the author decides */
+.egn-network .nw-note { position: absolute; z-index: 2; transform: translateX(-50%); display: grid; gap: 0.25rem; padding: 0.5rem 0.75rem; border-radius: 0.6rem; border: 1px solid var(--eg-line); background: color-mix(in srgb, var(--eg-ground) 82%, transparent); pointer-events: none; opacity: 0; transition: opacity .45s ease; white-space: nowrap; }
+.egn-network .nw-note.is-on { opacity: 1; }
+.egn-network .nw-note p { margin: 0; display: flex; align-items: center; gap: 0.5rem; font: 400 0.781rem/1.3 var(--eg-label); color: var(--eg-faint); transition: color .4s ease; }
+.egn-network .nw-note svg { flex: none; width: 0.95rem; height: 0.95rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.egn-network .nw-note p.is-next { color: var(--eg-muted); }
+.egn-network .nw-note p:first-child.is-lit { color: var(--eg-teal); }
+.egn-network .nw-note p:last-child.is-lit { color: var(--eg-gold); }
+.egn-network .nw-act { transition: opacity .35s ease, border-color .25s, background-color .25s; }
+.egn-network .nw-act.is-off { opacity: 0; pointer-events: none; }
+
+/* where the full legend will not fit beside the stage, a key in a row above it */
+.egn-network.nw--key .nw-legend { position: absolute; right: 0.625rem; top: 0.5rem; left: 11.5rem; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.15rem 0.85rem; font: 400 0.719rem/1.25 var(--eg-label); color: var(--eg-muted); pointer-events: none; }
+.egn-network.nw--key .nw-legend b { display: none; }
+.egn-network.nw--key .nw-legend span { gap: 0.35rem; }
+/* the smallest stage keeps the picture and the one button; the words are still spoken */
+.egn-network.nw--tiny .nw-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); min-height: 0; padding: 0; }
+.egn-network .nw-legend { transition: opacity .4s ease; }
+.egn-network.nw--key.nw--noting .nw-legend { opacity: 0; }
+
+/* the cited figure, from the published page, and the second choice open to the author */
+.egn-network .nw-fig { position: absolute; z-index: 2; margin: 0; transform: translateX(-50%); pointer-events: none; opacity: 0; transition: opacity .5s ease; border: 1px solid var(--eg-line); border-radius: 0.5rem; overflow: hidden; background: var(--eg-ink); }
+.egn-network .nw-fig.is-on { opacity: 1; }
+.egn-network .nw-fig svg { display: block; width: 100%; height: auto; }
+.egn-network .nw-fig figcaption { font: 500 0.7rem/1 var(--eg-label); color: var(--eg-gold); background: var(--eg-ground); padding: 0.32rem 0.5rem 0.36rem; white-space: nowrap; }
+.egn-network .nw-alt { flex: none; pointer-events: auto; white-space: nowrap; margin-left: auto; }
+.egn-network .nw-alt.is-off { display: none; }
+.egn-network .nw-alt:not(.is-off) + .nw-act { margin-left: 0; }
+.egn-network .nw-note p:nth-child(3).is-lit { color: var(--eg-gold); }
+.egn-network .nw-note p:nth-child(3):not(.is-lit) { display: none; }
+.egn-network .nw-note p:nth-child(2).is-lit { color: var(--eg-gold); }
+.egn-network.nw--tiny .nw-note { display: grid; left: 0.5rem !important; top: auto !important; bottom: 2.65rem; transform: none; padding: 0.3rem 0.5rem; gap: 0.1rem; }
+.egn-network.nw--tiny .nw-note p { font-size: 0.69rem; }
+.egn-network.nw--small .nw-note p { font-size: 0.719rem; }

@@ -1,0 +1,34 @@
+/* The Phases of Hierarchy: styles for the node's exhibit and sections. Colours are the shared tokens; the ground is red. */
+.egp { position: relative; width: 100%; height: 100%; min-height: 300px; display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: hidden;
+  font-family: var(--eg-label); color: var(--eg-ink); border-radius: inherit;
+  background: radial-gradient(ellipse at 24% 34%, var(--eg-phases-a) 0, var(--eg-phases-b) 34%, var(--eg-phases-c) 78%); }
+.egp-stage { position: relative; min-height: 0; }
+.egp-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.egp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 9px 14px 11px; border-top: 1px solid color-mix(in srgb, var(--eg-phases-edge) 55%, transparent); background: #0b0a1040; }
+.egp-ctl { display: inline-flex; align-items: center; border: 1px solid var(--eg-phases-edge); border-radius: 999px; background: #1c181c99; }
+.egp-ctl span { min-width: 6.3em; text-align: center; font: 500 .84rem/1 var(--eg-label); white-space: nowrap; padding: 0 2px; }
+.egp button { font: 500 .84rem/1 var(--eg-label); color: var(--eg-ink); background: none; border: 0; cursor: pointer; margin: 0; }
+.egp-ctl button { width: 32px; height: 32px; border-radius: 50%; font-size: 1.05rem; transition: background .2s, color .2s; }
+.egp-ctl button:hover:not(:disabled) { background: color-mix(in srgb, var(--eg-phases-line) 26%, transparent); }
+.egp-ctl button:disabled { color: var(--eg-faint); cursor: default; opacity: .5; }
+.egp .egp-kick { height: 34px; padding: 0 14px; border: 1px solid var(--eg-gold); border-radius: 999px; color: var(--eg-gold); white-space: nowrap; transition: background .2s; }
+.egp .egp-kick:hover { background: color-mix(in srgb, var(--eg-gold) 16%, transparent); }
+.egp button:focus-visible, .egp input:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egp-say { flex: 1 1 15em; margin: 0; min-height: 2.5em; display: flex; align-items: center; font: 400 .86rem/1.32 var(--eg-label); color: var(--eg-muted); }
+.egp-say::before { content: ''; flex: none; width: 9px; height: 9px; border-radius: 50%; margin-right: 9px; background: var(--eg-gold); transition: background .4s; }
+.egp-say[data-state=ok]::before { background: var(--eg-teal); }
+.egp-say[data-state=swing]::before { background: var(--eg-coral); }
+.egp-say[data-state=late]::before { background: var(--eg-faint); }
+.egp-range { display: inline-flex; align-items: center; gap: 9px; font: 500 .84rem/1 var(--eg-label); color: var(--eg-ink); white-space: nowrap; }
+.egp-range input { width: clamp(110px, 16vw, 200px); accent-color: var(--eg-phases-line); margin: 0; height: 30px; }
+.egp-range output { min-width: 2.6em; color: var(--eg-gold); font-variant-numeric: tabular-nums; }
+.egp-sec .egp-say { flex-basis: 100%; }
+.egp-compact .egp-bar { padding: 7px 10px 8px; gap: 6px 9px; }
+.egp-compact .egp-say { font-size: .82rem; }
+@media (max-width: 560px) {
+  .egp-bar { padding: 8px 9px 9px; gap: 7px 8px; }
+  .egp-ctl button { width: 40px; height: 40px; }
+  .egp .egp-kick { height: 40px; }
+  .egp-say { flex-basis: 100%; }
+  .egp-range input { width: 42vw; }
+}

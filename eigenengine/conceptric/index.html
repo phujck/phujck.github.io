@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>The conceptric · EigenEngine</title>
+<meta name="description" content="A conceptric is an envelope around one concept. Envelopes nest, and their order depends on the relationship followed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+<link rel="stylesheet" href="/eigenengine/conceptric/node.css">
+<style>
+/* The standalone page for this node: its card, its words, the exhibit at full size and what it links to.
+   The synthesis wraps this in the shared shell; nothing here is needed by the node itself. */
+html { background: var(--eg-ground); }
+body.cqp { margin: 0; background: var(--eg-ground); color: var(--eg-ink); font: 400 1rem/1.6 var(--eg-text); -webkit-font-smoothing: antialiased; }
+.cqp a { color: inherit; }
+.cqp-shell { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+.cqp-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0 6px; font: 500 .84rem/1 var(--eg-label); }
+.cqp-top a { color: var(--eg-muted); text-decoration: none; }
+.cqp-top a:hover { color: var(--eg-ink); }
+.cqp-top button, .cqp-steps button { font: 500 .82rem/1 var(--eg-label); color: var(--eg-ink); background: none; border: 1px solid var(--eg-line); border-radius: 8px; padding: 7px 11px; cursor: pointer; transition: border-color .25s, background-color .25s; }
+.cqp-top button:focus-visible, .cqp-steps button:focus-visible, .cqp-near a:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.cqp-head { display: grid; grid-template-columns: minmax(0, 1fr) 232px; gap: 30px; align-items: end; padding: 2px 0 8px; }
+.cqp-eyebrow { font: 600 .74rem/1 var(--eg-label); letter-spacing: .13em; text-transform: uppercase; color: var(--eg-gold); margin: 0 0 10px; }
+.cqp-eyebrow a { text-decoration: none; }
+.cqp h1 { font: 400 clamp(1.9rem, 3vw, 2.5rem)/1.02 var(--eg-text); letter-spacing: -.035em; margin: 0 0 8px; }
+.cqp-text { color: var(--eg-muted); max-width: 92ch; margin: 0; font-size: 1rem; line-height: 1.5; }
+.cqp-text em { color: var(--eg-ink); }
+.cqp-text2 { display: none; }
+.cqp-card { position: relative; overflow: hidden; height: 128px; border-radius: var(--eg-radius); border: 1px solid var(--eg-line); background: radial-gradient(ellipse at 91% 24%, var(--eg-raise) 0, var(--eg-surface) 46%, var(--eg-ground)); }
+.cqp-card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cqp-steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 8px; }
+.cqp-steps button.on { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 13%, transparent); }
+.cqp-steps button span { color: var(--eg-faint); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.cqp-cap { color: var(--eg-muted); max-width: 118ch; min-height: 3.1em; margin: 0 0 10px; font-size: 1rem; line-height: 1.55; transition: opacity .35s ease; }
+.cqp-cap i { color: var(--eg-ink); }
+.cqp-box { position: relative; overflow: hidden; height: clamp(480px, calc(100vh - 372px), 660px); border: 1px solid var(--eg-line); border-radius: var(--eg-radius); background: var(--eg-surface); }
+.cqp-more { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 44px; padding: 44px 0 70px; }
+.cqp h2 { font: 400 1.5rem/1.15 var(--eg-text); letter-spacing: -.02em; margin: 0 0 14px; }
+.cqp-near { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cqp-near a { position: relative; display: block; overflow: hidden; height: 118px; border-radius: var(--eg-radius-s); border: 1px solid var(--eg-line); text-decoration: none; background: radial-gradient(ellipse at 91% 24%, var(--a, var(--eg-raise)) 0, var(--b, var(--eg-surface)) 46%, var(--c, var(--eg-ground))); transition: border-color .25s; }
+.cqp-near a:hover { border-color: var(--eg-gold); }
+.cqp-near a.plain { height: 74px; } .cqp-near a.plain svg { display: none; }
+.cqp-near a.cost { --a: var(--eg-cost-a); --b: var(--eg-cost-b); --c: var(--eg-cost-c); border-color: var(--eg-cost-edge); }
+.cqp-near a.phases { --a: var(--eg-phases-a); --b: var(--eg-phases-b); --c: var(--eg-phases-c); border-color: var(--eg-phases-edge); }
+.cqp-near svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .85; }
+.cqp-near div { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 13px 11px; background: linear-gradient(0deg, color-mix(in srgb, var(--eg-ground) 94%, transparent) 38%, transparent); }
+.cqp-near small { display: block; font: 600 .74rem/1 var(--eg-label); letter-spacing: .08em; text-transform: uppercase; color: var(--eg-gold); margin-bottom: 5px; }
+.cqp-near strong { font: 400 1.08rem/1.15 var(--eg-text); letter-spacing: -.015em; }
+@media (max-width: 760px) {
+  .cqp-shell { padding: 0 16px; }
+  .cqp-head { grid-template-columns: 1fr; gap: 0; padding: 2px 0 6px; }
+  .cqp-head .cqp-text, .cqp-card, .cqp-eyebrow { display: none; }
+  .cqp h1 { font-size: 1.7rem; margin: 0 0 4px; }
+  .cqp-steps { flex-wrap: nowrap; gap: 5px; margin: 4px 0 6px; }
+  .cqp-steps button { padding: 7px 9px; white-space: nowrap; }
+  .cqp-steps button:not(.on) { font-size: 0; } .cqp-steps button:not(.on) span { font-size: .82rem; margin: 0; }
+  .cqp-cap { font-size: .92rem; line-height: 1.45; min-height: 6.6em; margin: 0 0 6px; }
+  .cqp-box { height: max(440px, calc(100svh - 300px)); }
+  .cqp-more { grid-template-columns: 1fr; gap: 30px; padding-top: 26px; }
+  .cqp-text2 { display: block !important; margin: 0 0 22px; }
+}
+</style>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
+</head>
+<body class="cqp">
+<div class="cqp-shell">
+  <nav class="cqp-top" aria-label="EigenEngine"><a href="/eigenengine.html">← EigenEngine</a><button id="cqp-motion" type="button"></button></nav>
+  <header class="cqp-head">
+    <div>
+      <p class="cqp-eyebrow"><a href="/eigenengine/research-object/">The research object</a></p>
+      <h1 id="cqp-title">The conceptric</h1>
+      <p class="cqp-text" id="cqp-text"></p>
+    </div>
+    <div class="cqp-card egn-conceptric" aria-hidden="true"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"></svg></div>
+  </header>
+  <main>
+    <div class="cqp-steps" id="cqp-steps" role="group" aria-label="Steps of the demonstration"></div>
+    <p class="cqp-cap" id="cqp-cap" aria-live="polite"></p>
+    <div class="cqp-box egn-conceptric" id="cqp-box"></div>
+    <div class="cqp-more">
+      <section class="egn-conceptric" id="cqp-sections"><p class="cqp-text cqp-text2" id="cqp-text2"></p></section>
+      <section aria-labelledby="cqp-near-h"><h2 id="cqp-near-h">What it is tied to</h2><div class="cqp-near" id="cqp-near"></div></section>
+    </div>
+  </main>
+</div>
+<script src="/assets/js/eigen-motion.js"></script>
+<script src="/eigenengine/_graph/site-graph.js"></script>
+<script src="/eigenengine/conceptric/node.js"></script>
+<script>
+(() => {
+  const id = 'conceptric', N = window.EIGEN_NODES[id], G = window.EIGEN_GRAPH, M = window.EG_MOTION;
+  document.getElementById('cqp-title').textContent = N.title;
+  document.getElementById('cqp-text').innerHTML = document.getElementById('cqp-text2').innerHTML = N.text;
+  const arts = [N.art(document.querySelector('.cqp-card svg'))];
+  const t0 = performance.now(); (function loop(now) { arts.forEach(a => a && a.tick && a.tick((now - t0) / 1000)); requestAnimationFrame(loop); })(t0);
+
+  const ex = N.exhibit.mount(document.getElementById('cqp-box'), { compact: false }), bar = document.getElementById('cqp-steps'), cap = document.getElementById('cqp-cap');
+  const go = i => { ex.step(i); [...bar.children].forEach((b, n) => { b.classList.toggle('on', n === i); b.setAttribute('aria-pressed', n === i); }); cap.style.opacity = 0; setTimeout(() => { cap.innerHTML = N.exhibit.steps[i].caption; cap.style.opacity = 1; }, M.off ? 0 : 180); };
+  N.exhibit.steps.forEach((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.innerHTML = `<span>${i + 1}</span>${s.label}`; b.onclick = () => go(i); bar.appendChild(b); });
+  go(0);
+
+  (N.sections || []).forEach(s => { const sec = document.getElementById('cqp-sections'), h2 = document.createElement('h2'), body = document.createElement('div'); h2.textContent = s.title; sec.append(h2, body); s.mount(body); });
+
+  /* the neighbours, read from the site's own graph and drawn as cards of the same kind */
+  const near = document.getElementById('cqp-near'), word = { requires: ['Requires', 'Required by'], supports: ['Supports', 'Supported by'] };
+  G.links.filter(l => l[0] === id || l[1] === id).forEach(l => {
+    const out = l[0] === id, other = out ? l[1] : l[0], n = G.nodes[other], slug = n.slug || other, a = document.createElement('a');
+    a.href = n.page || `/eigenengine/${slug}/`; a.className = `egn-${other} ${n.ground || ''}`;
+    a.innerHTML = `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg><div><small>${(word[l[2]] || [l[2], l[2]])[out ? 0 : 1]}</small><strong>${n.title}</strong></div>`;
+    near.appendChild(a);
+    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = `/eigenengine/${slug}/node.css`; document.head.appendChild(css);
+    const s = document.createElement('script'); s.src = `/eigenengine/${slug}/node.js`;
+    s.onload = () => { const O = (window.EIGEN_NODES || {})[other]; if (O && O.art) { try { arts.push(O.art(a.querySelector('svg'))); } catch (e) {} if (O.title) a.querySelector('strong').textContent = O.title; } };
+    s.onerror = () => a.classList.add('plain'); document.body.appendChild(s);
+  });
+
+  const mo = document.getElementById('cqp-motion'), show = () => mo.textContent = M.off ? 'Turn motion on' : 'Turn motion off';
+  mo.onclick = () => { M.off = !M.off; try { localStorage.setItem('eg-motion', M.off ? 'off' : 'on'); } catch (e) {} show(); }; show();
+})();
+</script>
+<script src="/assets/js/eigen-shell.js"></script>
+</body>
+</html>

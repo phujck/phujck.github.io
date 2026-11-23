@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Navigating conceptrics · EigenEngine</title>
+<meta name="description" content="Query diffusion: a question spreads its weight along the links of a research object, and only the heaviest boxes are opened.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+<link rel="stylesheet" href="/eigenengine/projection/level.css">
+<link rel="stylesheet" href="./node.css">
+<style>
+/* The node's own page: card and words on the left, the exhibit on the right, one screen. */
+html, body { margin: 0; height: 100%; background: var(--eg-ground); color: var(--eg-ink); }
+body { font: 400 17px/1.55 var(--eg-text); display: flex; flex-direction: column; min-height: 100svh; }
+a { color: var(--eg-blue); text-underline-offset: .2em; }
+.qp-top { display: flex; align-items: center; gap: 14px; padding: 12px clamp(16px, 3vw, 40px); font: 500 .86rem var(--eg-label); color: var(--eg-muted); }
+.qp-top a { color: var(--eg-muted); text-decoration: none; } .qp-top a:hover { color: var(--eg-gold); }
+.qp-top .sep { color: var(--eg-faint); } .qp-top .here { color: var(--eg-ink); }
+.qp-top .qp-level { margin-left: auto; } .qp-top .qp-level:empty + button { margin-left: auto; }
+.qp-btn { font: 500 .82rem var(--eg-label); color: var(--eg-muted); background: none; border: 1px solid var(--eg-line); border-radius: 8px; padding: 6px 11px; cursor: pointer; transition: border-color .25s, color .25s, background-color .25s; }
+.qp-btn:hover { border-color: var(--eg-blue); color: var(--eg-ink); } .qp-btn[aria-pressed=true] { border-color: var(--eg-gold); color: var(--eg-ink); background: #e4bf7d1f; }
+.qp-btn:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.qp-main { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: clamp(18px, 2.4vw, 36px); padding: 4px clamp(16px, 3vw, 40px) 22px; }
+.qp-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.qp-card { position: relative; aspect-ratio: 4 / 3; border-radius: var(--eg-radius); overflow: hidden; border: 1px solid #4a5874; background: radial-gradient(ellipse at 91% 24%, #1c2a40 0, #151e30 40%, #0f1522); flex: 0 0 auto; }
+.qp-card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.qp-card .t { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 20px; background: linear-gradient(0deg, #0b0f1af2 34%, transparent); }
+.qp-card h1 { font: 400 clamp(1.5rem, 2.2vw, 1.95rem)/1.1 var(--eg-text); letter-spacing: -.03em; margin: 0; }
+.qp-card p { font: 400 .92rem/1.35 var(--eg-label); color: var(--eg-muted); margin: 7px 0 0; }
+.qp-text { margin: 0; color: #d7d3ca; max-width: 46ch; } .qp-text i { color: var(--eg-ink); }
+.qp-links { display: flex; flex-direction: column; gap: 6px; margin-top: auto; font: 400 .86rem/1.3 var(--eg-label); color: var(--eg-faint); }
+.qp-links a { color: var(--eg-ink); text-decoration: none; border-bottom: 1px solid #4a5874; } .qp-links a:hover { color: var(--eg-gold); border-color: var(--eg-gold); }
+.qp-links span { display: inline-block; min-width: 7.2em; }
+.qp-show { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.qp-tabs { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.qp-tabs .qp-btn { font-size: .9rem; padding: 7px 13px; }
+.qp-steps { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+.qp-cap { font: italic 400 1rem/1.45 var(--eg-text); color: #d7d3ca; margin: 10px 0 10px; min-height: 2.9em; max-width: 92ch; transition: opacity .18s; } .qp-cap i { font-style: normal; color: var(--eg-ink); }
+.qp-box { position: relative; flex: 1 1 auto; min-height: 470px; border: 1px solid var(--eg-line); border-radius: var(--eg-radius); overflow: hidden; background: var(--eg-surface); }
+.qp-box > div { position: absolute; inset: 0; } .qp-box > div[hidden] { display: none; }
+@media (max-width: 900px) {
+  /* one column, with the step buttons directly above the figure so that a press and its effect share the screen */
+  html, body { height: auto; } body { font-size: 16px; display: block; }
+  .qp-top { flex-wrap: wrap; gap: 6px 10px; } .qp-top button { white-space: nowrap; }
+  .qp-main { display: flex; flex-direction: column; gap: 16px; } .qp-side { display: contents; }
+  .qp-card { order: 1; aspect-ratio: 16 / 9; } .qp-show { order: 2; display: flex; } .qp-text { order: 3; } .qp-links { order: 4; margin-top: 0; }
+  .qp-steps { margin-left: 0; width: 100%; } .qp-box { order: 2; flex: 0 0 auto; height: min(640px, 78svh); min-height: 520px; margin-top: 10px; }
+  .qp-cap { order: 3; min-height: 4.4em; margin-bottom: 0; }
+}
+</style>
+  <link rel="stylesheet" href="/assets/css/eigen-shell.css">
+</head>
+<body>
+<header class="qp-top">
+  <a href="/eigenengine.html">EigenEngine</a><span class="sep">›</span><a href="/eigenengine/research-object/">The research object</a><span class="sep">›</span><span class="here" id="here"></span>
+  <span class="qp-level" data-eg-level-switch></span><button class="qp-btn" id="mo" type="button"></button>
+</header>
+<main class="qp-main">
+  <div class="qp-side">
+    <div class="qp-card egn-search"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg><div class="t"><h1 id="title"></h1><p id="line"></p></div></div>
+    <p class="qp-text" id="text"></p>
+    <nav class="qp-links" id="links" aria-label="Linked ideas"></nav>
+  </div>
+  <div class="qp-show">
+    <div class="qp-tabs" role="group" aria-label="Demonstrations"><span id="tabs"></span><span class="qp-steps" id="steps" role="group" aria-label="Steps of the search"></span></div>
+    <p class="qp-cap" id="cap" aria-live="polite"></p>
+    <div class="qp-box"><div id="ex"></div></div>
+  </div>
+</main>
+<noscript><p style="padding:0 40px 40px;max-width:60ch">Query diffusion: a question places weight on the records it matches, the weight spreads along their links, each container reports its total before it is opened, and the search descends only into the heaviest.</p></noscript>
+<script src="/assets/js/eigen-motion.js"></script>
+<script src="/eigenengine/_graph/site-graph.js"></script>
+<script src="/eigenengine/projection/level.js"></script>
+<script src="./node.js"></script>
+<script>
+(() => {
+  const N = window.EIGEN_NODES.search, G = window.EIGEN_GRAPH || { nodes: {}, links: [] }, M = window.EG_MOTION, $ = id => document.getElementById(id);
+  $('title').textContent = N.title; $('here').textContent = N.title; $('line').textContent = N.line; $('text').innerHTML = N.text;
+  /* the card */
+  const a = N.art(document.querySelector('.qp-card svg')), t0 = performance.now();
+  (function loop(now) { if (!M.off) a.tick((now - t0) / 1000); requestAnimationFrame(loop); })(t0);
+  /* links to the neighbouring nodes, read from the site's own graph */
+  const href = id => { const n = G.nodes[id] || {}; return n.page || `/eigenengine/${n.slug || id}/`; }, name = id => (G.nodes[id] || {}).title || id;
+  const rows = [];
+  G.links.forEach(([from, to, kind]) => {
+    if (from === 'search') rows.push(['requires', to]);
+    else if (to === 'search') rows.push([kind === 'supports' ? 'supported by' : 'required by', from]);
+  });
+  $('links').innerHTML = rows.map(([k, id]) => `<div><span>${k}</span><a href="${href(id)}">${name(id)}</a></div>`).join('');
+  /* the exhibit, its steps, and the second demonstration as a tab beside it */
+  const box = $('ex'), cap = $('cap'), steps = $('steps'), tabs = $('tabs'), hosts = [box], handles = [];
+  const say = html => { cap.style.opacity = 0; setTimeout(() => { cap.innerHTML = html; cap.style.opacity = 1; }, M.off ? 0 : 170); };
+  handles[0] = N.exhibit.mount(box, { compact: false });
+  const sb = N.exhibit.steps.map((s, i) => { const b = document.createElement('button'); b.className = 'qp-btn'; b.type = 'button'; b.textContent = s.label; b.onclick = () => handles[0].step(i); steps.appendChild(b); return b; });
+  const mark = i => { sb.forEach((b, k) => b.setAttribute('aria-pressed', k === i ? 'true' : 'false')); say(N.exhibit.steps[i] ? N.exhibit.steps[i].caption : 'A box is open by hand, and the line under the figure says what it holds. Any step returns to the search.'); };      // i is -1 while the reader has a box open by hand
+  box.addEventListener('eg-step', e => { if (cur === 0) mark(e.detail.i); });
+  let cur = 0;
+  const names = ['The search'].concat((N.sections || []).map(s => s.title));
+  const tb = names.map((nm, k) => { const b = document.createElement('button'); b.className = 'qp-btn'; b.type = 'button'; b.textContent = nm; b.onclick = () => show(k); tabs.appendChild(b); tabs.appendChild(document.createTextNode(' ')); return b; });
+  function show(k) {
+    cur = k; tb.forEach((b, j) => b.setAttribute('aria-pressed', j === k ? 'true' : 'false'));
+    if (!hosts[k]) { const d = document.createElement('div'); box.parentNode.appendChild(d); hosts[k] = d; handles[k] = N.sections[k - 1].mount(d); }
+    hosts.forEach((h, j) => { h.hidden = j !== k; });
+    steps.style.visibility = k ? 'hidden' : 'visible';
+    if (k) say(N.sections[k - 1].caption || '');
+    else mark(handles[0].state.step);
+  }
+  show(location.hash === '#one-tree' && N.sections && N.sections.length ? 1 : 0);
+  const mo = $('mo'), lab = () => { mo.textContent = M.off ? 'Turn motion on' : 'Turn motion off'; };
+  mo.onclick = () => { M.off = !M.off; try { localStorage.setItem('eg-motion', M.off ? 'off' : 'on'); } catch (e) {} lab(); }; lab();
+})();
+</script>
+<script src="/assets/js/eigen-shell.js"></script>
+</body>
+</html>

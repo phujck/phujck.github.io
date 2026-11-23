@@ -1,0 +1,169 @@
+/* The node "How does a person work on it?" Everything is scoped under .egn-interface and coloured from the shared
+   tokens. The manuscript sheet is the two tokens --eg-ink and --eg-ground exchanged: light paper, dark words. */
+
+/* ---- card art ---- */
+.egn-interface .egi-art { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.egn-interface .egi-a-page { stroke: var(--eg-interface-edge); stroke-width: 1.4; fill: color-mix(in srgb, var(--eg-interface-a) 46%, transparent); }
+.egn-interface .egi-a-line { stroke: var(--eg-interface-line); stroke-width: 3.2; opacity: .55; }
+.egn-interface .egi-a-thread { stroke: var(--eg-interface-line); stroke-width: 1.2; stroke-dasharray: 1.5 5; opacity: .34; }
+.egn-interface .egi-a-link { stroke: var(--eg-interface-line); stroke-width: 1.4; opacity: .4; }
+.egn-interface .egi-a-rec rect { stroke: var(--eg-interface-line); stroke-width: 1.5; fill: var(--eg-interface-c); }
+.egn-interface .egi-a-rec rect + path { stroke: var(--eg-interface-line); stroke-width: 2.2; opacity: calc(.5 + var(--lit, 0) * .5); }
+.egn-interface .egi-a-rec { filter: drop-shadow(0 0 calc(var(--lit, 0) * 7px) var(--eg-gold)); }
+.egn-interface .egi-a-wake { stroke: var(--eg-gold); }
+.egn-interface .egi-a-wake.w1 { stroke-width: 3.2; opacity: .92; } .egn-interface .egi-a-wake.w2 { stroke-width: 2.4; opacity: .42; } .egn-interface .egi-a-wake.w3 { stroke-width: 1.8; opacity: .18; }
+.egn-interface .egi-a-tip { fill: var(--eg-ink); stroke: none; filter: drop-shadow(0 0 5px var(--eg-gold)); }
+
+/* ---- the exhibit ---- */
+.egn-interface .egi { position: absolute; inset: 0; overflow: hidden; font: 400 13px/1.4 var(--eg-label); color: var(--eg-ink);
+  background: radial-gradient(ellipse 80% 90% at 88% 12%, color-mix(in srgb, var(--eg-interface-a) 58%, transparent), transparent 70%), linear-gradient(160deg, var(--eg-interface-b), var(--eg-interface-c) 58%); }
+.egn-interface .egi *, .egn-interface .egi *::before { box-sizing: border-box; }
+.egn-interface .egi-shot { position: absolute; left: 0; top: 0; width: 1440px; height: 900px; padding: 0; border: 0; background: none; cursor: zoom-in; transform-origin: 0 0; will-change: transform, opacity; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 2px var(--eg-interface-edge), 0 30px 80px color-mix(in srgb, var(--eg-ground) 70%, transparent); }
+.egn-interface .egi-shot img { position: absolute; left: 0; top: 0; display: block; width: 1440px; height: 900px; object-fit: cover; object-position: 50% 0; }
+.egn-interface .egi-shot-a { object-fit: contain; background: var(--eg-ground); }
+.egn-interface .egi-shot-b { opacity: 0; clip-path: inset(45.3% 0 15% 0); }
+.egn-interface .egi-shot:focus-visible { outline: 6px solid var(--eg-gold); outline-offset: 4px; }
+.egn-interface .egi-ring { position: absolute; left: 244px; top: 400px; width: 924px; height: 132px; border-radius: 8px; border: 3px solid var(--eg-gold); opacity: .0; animation: egi-ring 2.6s ease-in-out infinite; }
+@keyframes egi-ring { 0%, 100% { opacity: .15; } 50% { opacity: .85; } }
+.egn-interface .egi-shotnote { position: absolute; left: 0; right: 0; bottom: 10px; margin: 0; text-align: center; font: 500 .86rem/1.3 var(--eg-label); color: var(--eg-muted); pointer-events: none; }
+.egn-interface .egi-wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; overflow: visible; }
+.egn-interface .egi-thread { fill: none; stroke: var(--eg-interface-line); stroke-width: 1.3; stroke-dasharray: 2 5; stroke-linecap: round; transition: stroke .3s; }
+.egn-interface .egi-thread.egi-sel { stroke: var(--eg-gold); stroke-width: 1.9; }
+.egn-interface .egi-link { fill: none; stroke: var(--eg-interface-edge); stroke-width: 1.5; }
+.egn-interface .egi-knot { fill: var(--eg-interface-line); }
+.egn-interface .egi-linklab { font: 500 11px var(--eg-label); fill: var(--eg-muted); text-anchor: middle; paint-order: stroke; stroke: var(--eg-interface-c); stroke-width: 4px; stroke-linejoin: round; }
+.egn-interface .egi[data-tier="full"] .egi-linklab { font-size: 12.5px; }
+.egn-interface .egi-pulse path { fill: none; stroke: var(--eg-gold); stroke-width: 3; stroke-linecap: round; opacity: .55; }
+.egn-interface .egi-pulse circle { fill: var(--eg-ink); filter: drop-shadow(0 0 5px var(--eg-gold)); }
+.egn-interface .egi-pulse.agent path { stroke: var(--eg-interface-line); } .egn-interface .egi-pulse.agent circle { filter: drop-shadow(0 0 5px var(--eg-interface-line)); }
+.egn-interface .egi-pulse.review path { stroke: var(--eg-coral); } .egn-interface .egi-pulse.review circle { filter: drop-shadow(0 0 5px var(--eg-coral)); }
+
+.egn-interface .egi-tag { position: absolute; margin: 0; font: 600 11px/1 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-interface-line); white-space: nowrap; z-index: 2; }
+.egn-interface .egi-tag span { color: var(--eg-faint); letter-spacing: .04em; text-transform: none; font-weight: 400; margin-left: 6px; }
+.egn-interface .egi[data-tier="narrow"] .egi-tag span, .egn-interface .egi[data-tiny="1"] .egi-tag { display: none; }
+
+/* the author's form */
+.egn-interface .egi-sheet { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform, opacity; z-index: 2; overflow: hidden; padding: 14px 18px 12px; border-radius: 6px 12px 12px 6px;
+  background: var(--eg-ink); color: var(--eg-ground); font: 400 12.6px/1.42 var(--eg-text); box-shadow: 0 18px 50px color-mix(in srgb, var(--eg-ground) 62%, transparent), inset 3px 0 0 var(--eg-interface-edge); }
+.egn-interface .egi-sheet h4 { margin: 0 0 7px; font: 600 1.12em/1.2 var(--eg-text); letter-spacing: -.01em; }
+.egn-interface .egi-b { position: relative; margin: 0 -8px 5px; padding: 3px 8px; border-radius: 5px; cursor: pointer; transition: background-color .35s, box-shadow .35s; }
+.egn-interface .egi-b:hover { background: color-mix(in srgb, var(--eg-interface-line) 20%, transparent); }
+.egn-interface .egi-b:focus-visible { outline: 2px solid var(--eg-interface-edge); outline-offset: 1px; }
+.egn-interface .egi-b.egi-sel { background: color-mix(in srgb, var(--eg-gold) 34%, transparent); box-shadow: inset 3px 0 0 var(--eg-gold); }
+.egn-interface .egi-b.egi-review { box-shadow: inset 3px 0 0 var(--eg-coral); background: color-mix(in srgb, var(--eg-coral) 15%, transparent); }
+.egn-interface .egi-flag { position: absolute; right: 6px; top: -8px; padding: 1px 7px; border-radius: 9px; font: 600 11px/1.35 var(--eg-label); letter-spacing: .04em; color: var(--eg-ink); background: color-mix(in srgb, var(--eg-coral) 78%, var(--eg-ground)); opacity: 0; transform: translateY(4px); transition: opacity .4s, transform .4s; pointer-events: none; }
+.egn-interface .egi-review .egi-flag { opacity: 1; transform: none; }
+.egn-interface .egi-eq { font-style: normal; color: color-mix(in srgb, var(--eg-ground) 82%, var(--eg-ink)); }
+.egn-interface .egi-eq sup, .egn-interface .egi-rec sup { font-size: max(11.5px, .82em); line-height: 0; }
+.egn-interface .egi-ins { border-radius: 3px; background: color-mix(in srgb, var(--eg-interface-line) 55%, transparent); box-shadow: 0 1.5px 0 var(--eg-interface-edge); transition: background-color .4s, box-shadow .4s; }
+.egn-interface .egi-ins.egi-author { background: color-mix(in srgb, var(--eg-gold) 55%, transparent); box-shadow: 0 1.5px 0 color-mix(in srgb, var(--eg-gold) 60%, var(--eg-ground)); }
+.egn-interface .egi-del { text-decoration: line-through; text-decoration-color: var(--eg-coral); background: color-mix(in srgb, var(--eg-coral) 24%, transparent); border-radius: 3px; opacity: .78; transition: background-color .4s, text-decoration-color .4s, opacity .4s; }
+.egn-interface .egi-out { opacity: .55; }
+.egn-interface .egi-settle .egi-ins { background: transparent; box-shadow: none; }
+.egn-interface .egi-settle .egi-del { background: transparent; text-decoration-color: transparent; opacity: 1; }
+.egn-interface .egi-caret { display: inline-block; width: 1.5px; height: 1.05em; margin: 0 -1px -2px 0; background: currentColor; vertical-align: baseline; }
+.egn-interface .egi-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin: 0; max-height: 0; opacity: 0; overflow: hidden; transition: max-height .4s ease, opacity .35s ease, margin .4s ease; }
+.egn-interface .egi[data-proposal="open"] .egi-acts, .egn-interface .egi[data-proposal="stale"] .egi-acts { max-height: 64px; opacity: 1; margin: 0 0 7px; }
+.egn-interface .egi-acts-note { font: 500 11px/1.2 var(--eg-label); color: color-mix(in srgb, var(--eg-ground) 62%, var(--eg-ink)); margin-right: 3px; }
+.egn-interface .egi-acts button { font: 600 11px/1 var(--eg-label); padding: 5px 9px; border-radius: 6px; cursor: pointer; color: var(--eg-ground); background: color-mix(in srgb, var(--eg-interface-line) 50%, var(--eg-ink)); border: 1px solid var(--eg-interface-edge); transition: background-color .2s, transform .2s; }
+.egn-interface .egi-acts button:hover { background: var(--eg-interface-line); transform: translateY(-1px); }
+.egn-interface .egi-acts button:focus-visible, .egn-interface .egi-bar button:focus-visible, .egn-interface .egi-rec:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egn-interface .egi-acts button[data-do="dismiss"] { background: transparent; }
+.egn-interface .egi[data-canedit="0"] .egi-acts button[data-do="edit"], .egn-interface .egi[data-proposal="stale"] .egi-acts button[data-do="accept"], .egn-interface .egi[data-proposal="stale"] .egi-acts button[data-do="edit"] { display: none; }
+.egn-interface .egi[data-proposal="stale"] .egi-acts-note { color: color-mix(in srgb, var(--eg-coral) 60%, var(--eg-ground)); }
+.egn-interface .egi-fig { margin-top: 2px; }
+.egn-interface .egi-plot { display: block; width: 100%; height: auto; aspect-ratio: 220 / 56; }
+.egn-interface .egi-fig figcaption { font: 400 .82em/1.3 var(--eg-text); color: color-mix(in srgb, var(--eg-ground) 74%, var(--eg-ink)); margin-top: 1px; }
+.egn-interface .egi-axis { fill: none; stroke: color-mix(in srgb, var(--eg-ground) 45%, var(--eg-ink)); stroke-width: 1; }
+.egn-interface .egi-sheet .egi-curve { fill: none; stroke: color-mix(in srgb, var(--eg-interface-edge) 80%, var(--eg-ground)); stroke-linejoin: round; stroke-linecap: round; }
+.egn-interface .egi-sheet .egi-dot { fill: color-mix(in srgb, var(--eg-interface-edge) 80%, var(--eg-ground)); }
+.egn-interface .egi-plotlab { font: 500 10.4px var(--eg-label); fill: color-mix(in srgb, var(--eg-ground) 78%, var(--eg-ink)); }
+
+/* the agent's form */
+.egn-interface .egi-rec { position: absolute; left: 0; top: 0; z-index: 4; display: flex; flex-direction: column; justify-content: center; gap: 0; padding: 4px 10px; text-align: left; cursor: pointer; overflow: hidden; will-change: transform, opacity;
+  color: var(--eg-ink); font: 400 11.5px/1.22 var(--eg-label); border-radius: var(--eg-radius-s); border: 1px solid var(--eg-interface-edge); background: color-mix(in srgb, var(--eg-interface-b) 82%, var(--eg-ground)); box-shadow: 0 8px 22px color-mix(in srgb, var(--eg-ground) 50%, transparent); transition: border-color .35s, background-color .35s; }
+.egn-interface .egi-rec small { font: 600 11px/1.1 var(--eg-label); letter-spacing: .08em; text-transform: uppercase; color: var(--eg-interface-line); transition: color .35s; }
+.egn-interface .egi-rec strong { font: 600 1.1em/1.15 var(--eg-label); }
+.egn-interface .egi-rec-t { color: var(--eg-muted); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.egn-interface .egi-rec .egi-ins { background: color-mix(in srgb, var(--eg-interface-line) 30%, transparent); box-shadow: none; color: var(--eg-ink); }
+.egn-interface .egi-rec .egi-ins.egi-author { background: color-mix(in srgb, var(--eg-gold) 30%, transparent); }
+.egn-interface .egi-rel { display: none; font: 400 11px/1.25 var(--eg-label); color: var(--eg-interface-line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.egn-interface .egi[data-level="expert"][data-tier="full"] .egi-rel { display: block; font-size: calc(11.4px * var(--k, 1)); }
+.egn-interface .egi-rec em { font: 500 11px/1.2 var(--eg-label); font-style: normal; color: var(--eg-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .35s; }
+.egn-interface .egi-rec:hover { border-color: var(--eg-interface-line); }
+.egn-interface .egi-rec.egi-sel { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 14%, var(--eg-interface-b)); }
+.egn-interface .egi-rec[data-state="proposal"] { border-color: var(--eg-gold); } .egn-interface .egi-rec[data-state="proposal"] em { color: var(--eg-gold); }
+.egn-interface .egi-rec[data-state="review"], .egn-interface .egi-rec[data-state="stale"] { border-color: var(--eg-coral); background: color-mix(in srgb, var(--eg-coral) 13%, var(--eg-interface-c)); }
+.egn-interface .egi-rec[data-state="review"] em, .egn-interface .egi-rec[data-state="stale"] em { color: var(--eg-coral); }
+.egn-interface .egi-rec[data-state="review"] small { color: var(--eg-coral); }
+.egn-interface .egi-flash { animation: egi-flash .9s ease-out; }
+@keyframes egi-flash { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--eg-gold) 80%, transparent); } 100% { box-shadow: 0 0 0 14px transparent; } }
+
+/* the strip beneath: one move for each hand, and what the state now is */
+.egn-interface .egi-bar { position: absolute; left: 14px; right: 14px; bottom: 9px; z-index: 6; display: flex; align-items: center; gap: 8px; }
+.egn-interface .egi-status { flex: 1 1 auto; min-width: 0; margin: 0; text-align: center; font: 400 .84rem/1.25 var(--eg-label); color: var(--eg-muted); }
+.egn-interface .egi-bar button { flex: none; font: 500 .8rem/1 var(--eg-label); padding: 8px 11px; border-radius: 8px; cursor: pointer; color: var(--eg-ink); background: color-mix(in srgb, var(--eg-interface-c) 80%, transparent); border: 1px solid var(--eg-interface-edge); transition: border-color .25s, background-color .25s, transform .2s; }
+.egn-interface .egi-bar button:hover { border-color: var(--eg-interface-line); transform: translateY(-1px); }
+.egn-interface .egi-go-author { border-color: color-mix(in srgb, var(--eg-gold) 60%, var(--eg-interface-edge)) !important; }
+.egn-interface .egi-again { color: var(--eg-muted) !important; border-color: transparent !important; background: none !important; }
+.egn-interface .egi[data-view="shot"] .egi-bar { pointer-events: none; }
+
+/* sizes: at full size everything grows with the stage (--k), so a wide window is not read at arm's length */
+.egn-interface .egi[data-tier="full"] { font-size: calc(15px * var(--k, 1)); }
+.egn-interface .egi[data-tier="full"] .egi-sheet { font-size: calc(16px * var(--k, 1)); line-height: 1.5; padding: calc(24px * var(--k, 1)) calc(30px * var(--k, 1)) calc(18px * var(--k, 1)); }
+.egn-interface .egi[data-tier="full"] .egi-b { margin-bottom: calc(11px * var(--k, 1)); padding: 5px 9px; }
+.egn-interface .egi[data-tier="full"] .egi-rec { font-size: calc(13.4px * var(--k, 1)); padding: calc(6px * var(--k, 1)) calc(14px * var(--k, 1)); gap: 1px; }
+.egn-interface .egi[data-cap="0"] .egi-fig figcaption { display: none; }
+.egn-interface .egi[data-tier="full"] .egi-rec small, .egn-interface .egi[data-tier="full"] .egi-tag, .egn-interface .egi[data-tier="full"] .egi-flag { font-size: calc(11px * var(--k, 1)); }
+.egn-interface .egi[data-tier="full"] .egi-rec em { font-size: calc(11.6px * var(--k, 1)); }
+.egn-interface .egi[data-tier="full"] .egi-linklab { font-size: calc(12.5px * var(--k, 1)); }
+.egn-interface .egi[data-tier="full"] .egi-acts { gap: calc(6px * var(--k, 1)); } .egn-interface .egi[data-tier="full"][data-proposal="open"] .egi-acts, .egn-interface .egi[data-tier="full"][data-proposal="stale"] .egi-acts { max-height: calc(64px * var(--k, 1)); margin-bottom: calc(10px * var(--k, 1)); }
+.egn-interface .egi[data-tier="full"] .egi-acts button { font-size: calc(13px * var(--k, 1)); padding: calc(7px * var(--k, 1)) calc(12px * var(--k, 1)); } .egn-interface .egi[data-tier="full"] .egi-acts-note { font-size: calc(12.5px * var(--k, 1)); }
+.egn-interface .egi[data-tier="full"] .egi-plotlab { font-size: 7px; }
+.egn-interface .egi[data-tier="full"] .egi-bar { left: calc(24px * var(--k, 1)); right: calc(24px * var(--k, 1)); bottom: calc(13px * var(--k, 1)); }
+.egn-interface .egi[data-tier="full"] .egi-bar button { font-size: calc(13px * var(--k, 1)); padding: calc(8px * var(--k, 1)) calc(12px * var(--k, 1)); } .egn-interface .egi[data-tier="full"] .egi-status { font-size: calc(13.6px * var(--k, 1)); }
+.egn-interface .egi[data-tier="full"] .egi-shotnote { font-size: calc(13.6px * var(--k, 1)); }
+.egn-interface .egi[data-tier="compact"] .egi-fig figcaption, .egn-interface .egi[data-tier="compact"] .egi[data-proposal="open"] .egi-acts-note { display: none; }
+.egn-interface .egi[data-tier="compact"][data-proposal="open"] .egi-acts-note { display: none; }
+.egn-interface .egi[data-tier="narrow"] .egi-sheet { font-size: 11.6px; line-height: 1.34; padding: 9px 10px; }
+.egn-interface .egi[data-tier="narrow"] .egi-sheet h4, .egn-interface .egi[data-tier="narrow"] .egi-fig figcaption, .egn-interface .egi[data-tier="narrow"] .egi-rec-t, .egn-interface .egi[data-tier="narrow"] .egi-again { display: none; }
+.egn-interface .egi[data-tier="narrow"] .egi-rec { padding: 3px 8px; font-size: 11px; }
+.egn-interface .egi[data-tier="narrow"] .egi-plotlab { display: none; }
+.egn-interface .egi[data-short="1"] .egi-sheet { font-size: 12px; line-height: 1.34; padding: 10px 16px 8px; } .egn-interface .egi[data-short="1"] .egi-sheet h4 { display: none; } .egn-interface .egi[data-short="1"] .egi-b { margin-bottom: 3px; padding: 2px 8px; }
+.egn-interface .egi[data-tier="compact"] .egi-rec[data-id="step"] .egi-rec-t, .egn-interface .egi[data-tier="compact"] .egi-rec[data-id="fig"] .egi-rec-t, .egn-interface .egi[data-tier="compact"] .egi-rec[data-id="run"] .egi-rec-t { -webkit-line-clamp: 1; }
+.egn-interface .egi[data-tier="narrow"] .egi-status { display: none; } .egn-interface .egi[data-tier="narrow"] .egi-bar { justify-content: space-between; left: 8px; right: 8px; bottom: 6px; }
+.egn-interface .egi[data-tiny="1"] .egi-eq, .egn-interface .egi[data-tiny="1"] .egi-fig, .egn-interface .egi[data-tiny="1"] .egi-acts, .egn-interface .egi[data-tiny="1"] .egi-bar, .egn-interface .egi[data-tiny="1"] .egi-shotnote { display: none; }
+
+/* ---- the three doors on the node's own page ---- */
+.egn-interface .egi-doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.egn-interface .egi-door { position: relative; display: grid; grid-template-columns: 38% 1fr; min-height: 104px; overflow: hidden; text-decoration: none; color: var(--eg-ink); border-radius: var(--eg-radius-s); border: 1px solid var(--eg-interface-edge);
+  background: radial-gradient(ellipse at 8% 20%, var(--eg-interface-a), var(--eg-interface-b) 46%, var(--eg-interface-c)); transition: border-color .25s, transform .3s; }
+.egn-interface .egi-door:hover { border-color: var(--eg-gold); transform: translateY(-2px); }
+.egn-interface .egi-door:focus-visible { outline: 2px solid var(--eg-gold); outline-offset: 2px; }
+.egn-interface .egi-door-art { position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; overflow: hidden; border-right: 1px solid color-mix(in srgb, var(--eg-interface-edge) 60%, transparent); }
+.egn-interface .egi-door-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 30% 20%; opacity: .8; }
+.egn-interface .egi-play { position: relative; width: 34px; height: 34px; border-radius: 50%; background: color-mix(in srgb, var(--eg-ground) 70%, transparent); border: 1.5px solid var(--eg-gold); }
+.egn-interface .egi-play::after { content: ''; position: absolute; left: 13px; top: 9px; border: 7px solid transparent; border-left: 11px solid var(--eg-gold); border-right: 0; }
+.egn-interface .egi-door-art svg { width: 86%; height: 78%; }
+.egn-interface .egi-door-art .egi-axis { stroke: var(--eg-interface-edge); }
+.egn-interface .egi-door-art .egi-curve { fill: none; stroke: var(--eg-interface-line); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.egn-interface .egi-door-art .egi-curve.w { stroke: var(--eg-gold); }
+.egn-interface .egi-bars { display: flex; flex-direction: column; gap: 7px; width: 74%; }
+.egn-interface .egi-bars i { display: block; height: 7px; width: var(--w); border-radius: 4px; background: linear-gradient(90deg, var(--eg-interface-line) calc(100% - var(--f)), var(--eg-coral) 0); transform-origin: 0 50%; animation: egi-bar 1.1s cubic-bezier(.2, .8, .2, 1) var(--d) both; }
+@keyframes egi-bar { from { transform: scaleX(0); opacity: 0; } }
+.egn-interface .egi-count { display: flex; flex-direction: column; align-items: center; font: 500 .62rem/1.2 var(--eg-label); letter-spacing: .06em; text-transform: uppercase; color: var(--eg-muted); }
+.egn-interface .egi-count b { font: 400 1.5rem/1 var(--eg-text); letter-spacing: -.03em; color: var(--eg-gold); text-transform: none; }
+.egn-interface .egi-door-t { display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 10px 14px; min-width: 0; }
+.egn-interface .egi-door-t small { font: 600 .7rem/1 var(--eg-label); letter-spacing: .12em; text-transform: uppercase; color: var(--eg-interface-line); }
+.egn-interface .egi-door-t strong { font: 400 1.14rem/1.15 var(--eg-text); letter-spacing: -.015em; }
+.egn-interface .egi-door-t em { font: 400 .8rem/1.35 var(--eg-label); font-style: normal; color: var(--eg-muted); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+@media (max-width: 900px) { .egn-interface .egi-doors { grid-template-columns: 1fr; } .egn-interface .egi-door { min-height: 84px; } }
+
+.egn-interface .egi[data-tier="compact"] .egi-status, .egn-interface .egi[data-tier="compact"] .egi-bar button { font-size: 12px; }
+.egn-interface .egi[data-tier="compact"] .egi-rec[data-id="claim"] .egi-rec-t { -webkit-line-clamp: 3; }
+.egn-interface .egi[data-tier="narrow"] .egi-acts-note { display: none; }
+.egn-interface .egi[data-tier="narrow"][data-proposal="open"] .egi-acts, .egn-interface .egi[data-tier="narrow"][data-proposal="stale"] .egi-acts { max-height: 96px; }
+
+/* at the sizes of the main page a block marked for review makes room for its flag */
+.egn-interface .egi-b { transition: background-color .35s, box-shadow .35s, padding .35s ease, margin .35s ease; }
+.egn-interface .egi[data-tier="compact"] .egi-b.egi-review, .egn-interface .egi[data-tier="narrow"] .egi-b.egi-review { padding-top: 12px; margin-top: 6px; }
