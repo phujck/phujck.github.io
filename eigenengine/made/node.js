@@ -327,7 +327,7 @@
     const names = short => ticks.forEach(k => { const t = k.m === 5 ? '2026' : short ? MONTH[k.m - 1].slice(0, 3) : MONTH[k.m - 1]; if (k.text.textContent !== t) k.text.textContent = t; }); names(false);
     const sayEl = h('p', 'egmd-say', '', root); sayEl.setAttribute('aria-live', 'polite'); if (quiet) sayEl.hidden = true;
     const cards = ITEMS.map((it, i) => {
-      const b = h('button', 'egmd-card' + (it.ground ? ' egmd-g-' + it.ground : ''), `<span class="egmd-art"><svg viewBox="0 0 400 300" preserveAspectRatio="xMaxYMin slice" aria-hidden="true"></svg></span><span class="egmd-cap"><b class="egmd-n">${i + 1}</b><span class="egmd-t">${it.title}</span><span class="egmd-d"></span></span>`, root);
+      const b = h('button', 'egmd-card' + (it.ground ? ' egmd-g-' + it.ground : ''), `<span class="egmd-art"><svg viewBox="0 0 400 300" preserveAspectRatio="xMaxYMin slice" aria-hidden="true"></svg></span><span class="egmd-cap"><b class="egmd-n">${i + 1}</b><span class="egmd-t">${it.title}</span><span class="egmd-d"></span><span class="egmd-l"></span></span>`, root);
       b.type = 'button'; b.dataset.id = it.id; b.setAttribute('aria-expanded', 'false');
       const c = { it, i, el: b, d: b.querySelector('.egmd-d'), art: ART[it.id](b.querySelector('svg')), x: new Spring(0), y: new Spring(0), w: new Spring(10), h: new Spring(10), R: { x: 0, y: 0, w: 10, h: 10 }, tile: false,
         stem: sv('line', { class: 'egmd-stem' }, gStem), pin: sv('circle', { class: 'egmd-pin', r: 3 }, gStem), sa: new Spring(0), px: new Spring(0), py: new Spring(0) };
@@ -351,7 +351,7 @@
     let dead = false, raf = 0, last = 0, t0 = performance.now(), sayT = 0, frame = 0;
 
     const speak = v => { clearTimeout(sayT); const html = say(v); if (MOT().off) { sayEl.innerHTML = html; sayEl.style.opacity = html ? 1 : 0; return; } sayEl.style.opacity = 0; sayT = setTimeout(() => { sayEl.innerHTML = html; sayEl.style.opacity = html ? 1 : 0; }, 180); };
-    const dates = () => cards.forEach(c => { c.d.textContent = dateText(c.it); });
+    const dates = () => cards.forEach(c => { c.d.textContent = c.it.what + ' · ' + dateText(c.it); const l = c.el.querySelector('.egmd-l'); if (l) l.innerHTML = say(c.it.line); });
     const stopAuto = p => { clearInterval(p.auto); p.auto = 0; };
     const mark = (p, i) => { const S = ITEMS[p.i] && ITEMS[p.i].steps || []; if (!S[i]) return; p.at = i; p.el.querySelectorAll('.egmd-steps button').forEach((b, j) => { b.classList.toggle('on', j === i); b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); }); const cap = p.el.querySelector('.egmd-pcap'); cap.style.opacity = 0; clearTimeout(p.capT); p.capT = setTimeout(() => { cap.innerHTML = say(S[i].caption); cap.style.opacity = 1; typeset(cap); }, MOT().off ? 0 : 170); };
     const stepItem = (p, i) => { mark(p, i); try { p.ex && p.ex.step(i); } catch (e) {} };

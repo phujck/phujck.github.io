@@ -100,10 +100,12 @@
       const d = n.d, leaf = !n.kids.length, e = el('div', 'ep-n' + (leaf ? ' ep-leaf' : ' ep-box') + (n.ground ? ' ep-g-' + n.ground : '') + ' egn-' + n.id);
       e.dataset.id = n.id; e.tabIndex = -1; e.setAttribute('role', 'button'); e.setAttribute('aria-expanded', 'false'); e.setAttribute('aria-label', n.title + (n.line ? '. ' + (window.EigenLevel ? window.EigenLevel.pick(n.line) : n.line) : ''));
       const steps = leaf && d.exhibit && d.exhibit.steps || [];
+      const go = d.page ? { href: d.page, label: 'Its page →' } : /^made-/.test(n.id) && d.out && d.out[0] ? { href: d.out[0].href, label: String(d.out[0].label) } : null;   // where the card leads: its own page, or the thing itself
       const out = (d.out || []).filter(o => !(n === this.root && o.href === d.page)).map(o => `<a href="${o.href}"${/^https?:|\.pdf$/.test(o.href) ? ' target="_blank" rel="noopener"' : ''}>${o.label}</a>`).join('');
       e.innerHTML =
         `<div class="ep-bg"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div><div class="ep-scrim"></div>` +
         `<span class="ep-ord"></span><span class="ep-sum"></span>` +
+        (go && n !== this.root ? `<a class="ep-go" href="${go.href}"${/^https?:|\.pdf$/.test(go.href) ? ' target="_blank" rel="noopener"' : ''} aria-label="${esc(go.label.replace(/\s*[→↗]\s*$/, ''))}: ${esc(n.title)}">${go.label}</a>` : '') +
         `<div class="ep-face"><h3 class="ep-t">${n.title}</h3><p class="ep-line">${n.line}</p></div>` +
         `<div class="ep-in" inert>` +
           `<div class="ep-bar"><span class="ep-walk"><button type="button" class="ep-prev" aria-label="Previous in the reading order">‹</button><b></b><button type="button" class="ep-next" aria-label="Next in the reading order">›</button></span><button type="button" class="ep-x" aria-label="Close ${esc(n.title)}">×</button></div>` +
@@ -194,7 +196,7 @@
     }
     arrange(st, W, H) {
       const T = {}, N = this.N, root = this.root, nar = this.narrow, G = 8;
-      const area = { x: G, y: G, w: W - 2 * G, h: H - 2 * G - this.capH };
+      const area = { x: G, y: G, w: W - 2 * G, h: H - 2 * G - (nar && st.path.length ? 0 : this.capH) };   // on a phone an open card takes the room of the line beneath the stage
       const put = (n, r, o) => (T[n.id] = Object.assign({ x: r.x, y: r.y, w: Math.max(0, r.w), h: Math.max(0, r.h), a: 1, o: 0, f: 0, mode: 'card', ord: 0, z: n.depth * 10, unit: false, lead: n.id }, o));
       if (!root.kids.length) { put(root, { x: 0, y: 0, w: W, h: H }, { o: 1, f: 1, mode: 'open', lone: true }); return T; }
       const flat = !!st.order || st.lift !== 'part';
@@ -296,6 +298,7 @@
         e.setAttribute('aria-expanded', open || t.mode === 'frame'); e.tabIndex = (t.unit || t.mode === 'in') && !open ? 0 : -1;
         n.in.inert = !open; n.z = t.z;
         e.classList.toggle('ep-has-line', t.w >= 236 && t.h >= 126 && (t.mode === 'card' || t.mode === 'in'));
+        e.classList.toggle('ep-has-go', t.w >= 104 && t.h >= 70 && (t.mode === 'card' || t.mode === 'in'));
         if (t.ord) n.ordEl.textContent = t.ord; e.classList.toggle('ep-has-ord', !!t.ord && t.mode !== 'frame');
         if (open && !wasOpen) this.opened(n); if (!open && wasOpen) this.closed(n);
         if (open) { const i = st.order ? st.order.indexOf(n.id) : -1, wk = e.querySelector('.ep-walk'); wk.hidden = i < 0; if (i >= 0) { wk.querySelector('b').textContent = `${i + 1} of ${st.order.length}`; wk.querySelector('.ep-prev').disabled = i === 0; wk.querySelector('.ep-next').disabled = i === st.order.length - 1; } }

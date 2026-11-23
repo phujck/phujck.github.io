@@ -130,12 +130,20 @@
 /* where a host draws these nine cards itself (the pattern), each still says where it stands in the order and when it was made */
 .ep-n[class*="egn-made-"] .ep-t::before { margin-right: .5em; font: 600 .62em/1 var(--eg-label); color: var(--eg-gold); vertical-align: .14em; }
 .ep-n[class*="egn-made-"] .ep-t::after { display: block; margin-top: .3em; font: 400 max(.56em, 11px)/1.2 var(--eg-label); letter-spacing: 0; color: var(--eg-muted); }
-.ep-n.egn-made-learning .ep-t::before { content: "1"; } .ep-n.egn-made-learning .ep-t::after { content: "June 2026"; } :root[data-level="expert"] .ep-n.egn-made-learning .ep-t::after { content: "1 June 2026"; }
-.ep-n.egn-made-phases .ep-t::before { content: "2"; } .ep-n.egn-made-phases .ep-t::after { content: "May to November 2026"; } :root[data-level="expert"] .ep-n.egn-made-phases .ep-t::after { content: "29 May to 23 November 2026"; }
-.ep-n.egn-made-twinning .ep-t::before { content: "3"; } .ep-n.egn-made-twinning .ep-t::after { content: "July 2026"; } :root[data-level="expert"] .ep-n.egn-made-twinning .ep-t::after { content: "24 July 2026"; }
-.ep-n.egn-made-superarc .ep-t::before { content: "4"; } .ep-n.egn-made-superarc .ep-t::after { content: "August 2026"; } :root[data-level="expert"] .ep-n.egn-made-superarc .ep-t::after { content: "5 August 2026"; }
-.ep-n.egn-made-trip .ep-t::before { content: "5"; } .ep-n.egn-made-trip .ep-t::after { content: "September 2026"; } :root[data-level="expert"] .ep-n.egn-made-trip .ep-t::after { content: "2 September 2026"; }
-.ep-n.egn-made-synthetics .ep-t::before { content: "6"; } .ep-n.egn-made-synthetics .ep-t::after { content: "October 2026"; } :root[data-level="expert"] .ep-n.egn-made-synthetics .ep-t::after { content: "21 October 2026"; }
-.ep-n.egn-made-cost .ep-t::before { content: "7"; } .ep-n.egn-made-cost .ep-t::after { content: "November 2026"; } :root[data-level="expert"] .ep-n.egn-made-cost .ep-t::after { content: "19 November 2026"; }
-.ep-n.egn-made-kalmar .ep-t::before { content: "8"; } .ep-n.egn-made-kalmar .ep-t::after { content: "November 2026"; } :root[data-level="expert"] .ep-n.egn-made-kalmar .ep-t::after { content: "19 November 2026"; }
-.ep-n.egn-made-film .ep-t::before { content: "9"; } .ep-n.egn-made-film .ep-t::after { content: "November 2026"; } :root[data-level="expert"] .ep-n.egn-made-film .ep-t::after { content: "19 November 2026"; }
+.ep-n.egn-made-learning .ep-t::before { content: "1"; } .ep-n.egn-made-learning .ep-t::after { content: "A talk · June 2026"; } :root[data-level="expert"] .ep-n.egn-made-learning .ep-t::after { content: "A talk · 1 June 2026"; }
+.ep-n.egn-made-phases .ep-t::before { content: "2"; } .ep-n.egn-made-phases .ep-t::after { content: "A paper · May to November 2026"; } :root[data-level="expert"] .ep-n.egn-made-phases .ep-t::after { content: "A paper · 29 May to 23 November 2026"; }
+.ep-n.egn-made-twinning .ep-t::before { content: "3"; } .ep-n.egn-made-twinning .ep-t::after { content: "A paper and a talk · July 2026"; } :root[data-level="expert"] .ep-n.egn-made-twinning .ep-t::after { content: "A paper and a talk · 24 July 2026"; }
+.ep-n.egn-made-superarc .ep-t::before { content: "4"; } .ep-n.egn-made-superarc .ep-t::after { content: "A benchmark and a paper · August 2026"; } :root[data-level="expert"] .ep-n.egn-made-superarc .ep-t::after { content: "A benchmark and a paper · 5 August 2026"; }
+.ep-n.egn-made-trip .ep-t::before { content: "5"; } .ep-n.egn-made-trip .ep-t::after { content: "A map · September 2026"; } :root[data-level="expert"] .ep-n.egn-made-trip .ep-t::after { content: "A map · 2 September 2026"; }
+.ep-n.egn-made-synthetics .ep-t::before { content: "6"; } .ep-n.egn-made-synthetics .ep-t::after { content: "A talk · October 2026"; } :root[data-level="expert"] .ep-n.egn-made-synthetics .ep-t::after { content: "A talk · 21 October 2026"; }
+.ep-n.egn-made-cost .ep-t::before { content: "7"; } .ep-n.egn-made-cost .ep-t::after { content: "A paper · November 2026"; } :root[data-level="expert"] .ep-n.egn-made-cost .ep-t::after { content: "A paper · 19 November 2026"; }
+.ep-n.egn-made-kalmar .ep-t::before { content: "8"; } .ep-n.egn-made-kalmar .ep-t::after { content: "A draft · November 2026"; } :root[data-level="expert"] .ep-n.egn-made-kalmar .ep-t::after { content: "A draft · 19 November 2026"; }
+.ep-n.egn-made-film .ep-t::before { content: "9"; } .ep-n.egn-made-film .ep-t::after { content: "A film · November 2026"; } :root[data-level="expert"] .ep-n.egn-made-film .ep-t::after { content: "A film · 19 November 2026"; }
+
+/* what each piece is: its kind with its date, and one sentence, on the card itself */
+.egmd-d { color: var(--eg-gold); letter-spacing: .01em; }
+.egmd-l { grid-column: 1 / -1; display: block; margin-top: .4em; font: 400 max(.74em, 11px)/1.32 var(--eg-label); color: var(--eg-muted); }
+.egmd-card.is-small .egmd-l, .egmd-card.is-tile .egmd-l { display: none; }
+.egmd-card:not(.is-small):not(.is-tile) .egmd-cap { padding-top: 2.4em; background: linear-gradient(0deg, color-mix(in srgb, var(--eg-ground) 96%, transparent) 62%, transparent); }
+.ep-n[class*="egn-made-"] .ep-t::after { color: var(--eg-gold); }
+@media (max-width: 760px) { .egmd-l { display: none; } .egmd-card:not(.is-small):not(.is-tile) .egmd-cap { padding-top: 1.5em; } }

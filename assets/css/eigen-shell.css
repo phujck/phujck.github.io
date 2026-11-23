@@ -62,10 +62,14 @@ html.egs-node body { font-size: 1rem; }
 .egs-m-trail { fill: none; stroke: var(--eg-gold); stroke-width: 1.4; stroke-dasharray: 1 5; stroke-linecap: round; opacity: .9; pointer-events: none; }
 .egs-m-you { fill: var(--eg-gold); stroke: none; pointer-events: none; }
 
+.egs-wide { display: none; }
 /* ---- a phone: the bar wraps; where a page has no bar the button sits at the foot of the window, the map above it ---- */
 @media (max-width: 760px) {
   .egs-bar { padding: .5em 14px !important; }
   .egs-pill:not(.egs-pill-in) { top: auto; bottom: 12px; right: 12px; }
   .egs-map { top: auto; bottom: 54px; right: 14px; transform-origin: 100% 100%; }
   .ep-foot { padding-right: 6.4em; }
+  .egs-wide { display: flex; align-items: flex-start; gap: 8px; box-sizing: border-box; width: 100%; flex: 1 0 100%; margin: 2px 0 4px !important; padding: 7px 8px 7px 10px !important;
+    font: 400 12.5px/1.35 var(--eg-label) !important; color: var(--eg-ink) !important; background: color-mix(in srgb, var(--eg-gold) 12%, var(--eg-surface)); border: 1px solid color-mix(in srgb, var(--eg-gold) 45%, var(--eg-line)); border-radius: 9px; }
+  .egs-wide span { flex: 1; } .egs-wide button { flex: none; font: 400 16px/1 var(--eg-label) !important; color: var(--eg-muted) !important; background: none !important; border: 0 !important; padding: 0 2px !important; cursor: pointer; }
 }

@@ -34,6 +34,7 @@
       if (g.title) d.title = g.title;
       if (g.question) d.question = g.question;
       if (g.slug && !d.page) d.page = `/eigenengine/${g.slug}/`;
+      if (g.page && id !== G.root && !d.page) d.page = g.page;
       if (d.page && !(d.out || []).some(o => o.href === d.page)) d.out = [{ href: d.page, label: 'This card on its own page →' }].concat(d.out || []);
       if (g.question && id !== G.root) {
         const seed = {}; (g.children && g.children.length ? g.children : [id]).forEach(k => { seed[k] = 1; });

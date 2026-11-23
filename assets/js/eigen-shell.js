@@ -101,7 +101,16 @@
     nav.innerHTML = rows.join(''); others.forEach(a => nav.appendChild(a));
   }
 
+  /* on a phone: one line, said once a visit, that these pages are drawn for a wide screen */
+  function wide() {
+    if (store.get('eg-wide-seen', false) || !(onHome || nodePage)) return;
+    const p = document.createElement('p'); p.className = 'egs-wide';
+    p.innerHTML = '<span>These pages are drawn for a wide screen. They work on a phone, and are easier to follow on a desktop.</span><button type="button" aria-label="Dismiss">×</button>';
+    p.querySelector('button').addEventListener('click', () => { p.remove(); store.set('eg-wide-seen', true); window.dispatchEvent(new Event('resize')); });
+    const bar = document.querySelector('.egs-bar'), con = document.querySelector('.ep-console');
+    if (bar) bar.appendChild(p); else if (con) con.insertBefore(p, con.firstChild);
+  }
   window.EigenShell = { visit, here: () => now, pageOf, toggle: to => toggle(to) };
-  const start = () => { try { bar(); links(); } catch (e) {} build(); if (here && here !== G.root) visit(here); else draw(); };
+  const start = () => { try { bar(); links(); wide(); } catch (e) {} build(); if (here && here !== G.root) visit(here); else draw(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

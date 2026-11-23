@@ -523,7 +523,7 @@
         toks.forEach(k2 => {
           const a = clamp(k2.a.v), gl = Math.max(k2.glow, k2.hold || 0);
           k2.g.setAttribute('transform', `translate(${f1(k2.x.v)} ${f1(k2.y.v)})`); k2.g.style.opacity = a.toFixed(3);
-          k2.rect.setAttribute('x', -t / 2); k2.rect.setAttribute('y', -t / 2); k2.rect.setAttribute('width', t); k2.rect.setAttribute('height', t); k2.rect.setAttribute('rx', t * .2);
+          k2.rect.setAttribute('x', -t / 2); k2.rect.setAttribute('y', -t / 2); k2.rect.setAttribute('width', Math.max(0, t)); k2.rect.setAttribute('height', Math.max(0, t)); k2.rect.setAttribute('rx', Math.max(0, t * .2));
           k2.v.setAttribute('d', `M${f1(-t / 2 + 1.5)} ${f1(-t / 2 + 1.5)}L0 ${f1(-t * .08)}L${f1(t / 2 - 1.5)} ${f1(-t / 2 + 1.5)}`);
           k2.g.style.setProperty('--glow', gl.toFixed(3)); hd += (hd ? 'L' : 'M') + f1(k2.x.v) + ' ' + f1(k2.y.v);
         });

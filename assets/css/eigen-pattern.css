@@ -225,3 +225,29 @@
 @media (max-width: 760px) { .ep-foot { order: 5; width: 100%; } }
 @media (max-height: 960px) and (min-width: 761px) { .ep-map svg { max-height: 96px; } .ep-tray { gap: 5px; } .ep-chips { gap: 5px; } }
 @media (max-width: 760px) { .ep-leaf .ep-side .ep-text { display: none; } }   /* on a phone an open card keeps its caption and links; the paragraph is on the card's own page */
+
+/* ---- where a card leads: its own page, findable on the card itself ------------------------------------------------- */
+.ep-go { position: absolute; right: 8px; top: 8px; z-index: 4; display: none; font: 500 .72rem/1 var(--eg-label); color: var(--eg-ink); text-decoration: none; white-space: nowrap; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis;
+  padding: 5px 9px; border: 1px solid color-mix(in srgb, var(--eg-gold) 45%, var(--eg-line)); border-radius: 999px; background: color-mix(in srgb, var(--eg-ground) 78%, transparent); transition: border-color .2s, background-color .2s; }
+.ep-go:hover, .ep-go:focus-visible { border-color: var(--eg-gold); background: color-mix(in srgb, var(--eg-gold) 16%, var(--eg-ground)); outline: none; }
+.ep-n.ep-has-go > .ep-go { display: block; }
+.ep-n[data-mode="open"] > .ep-go { display: block; right: 58px; top: 13px; font-size: .82rem; padding: 9px 14px; max-width: 46%; }
+.ep-lone > .ep-go { display: none !important; }
+.ep-has-ord.ep-has-go > .ep-go { top: 8px; }
+@media (min-width: 2000px) and (min-height: 1000px) { .ep-go { font-size: .86rem; padding: 6px 11px; } .ep-n[data-mode="open"] > .ep-go { font-size: .96rem; } }
+
+/* ---- a phone: the stage takes the room, and an open card takes the stage ---------------------------------------------- */
+@media (max-width: 760px) {
+  .ep-where { display: none; }
+  .ep-map { position: absolute; left: -9999px; width: 86px; visibility: hidden; pointer-events: none; }   /* the Map button opens the whole map; the miniature keeps its size so that it still draws */
+  .ep-tray { gap: 4px 12px; } .ep-chip, [data-grp="q"] .ep-chip { padding: 6px 10px; font-size: .8rem; }
+  .ep-foot { order: 5; width: 100%; padding-right: 6.4em; min-height: 28px; }
+  .ep-app.ep-open .ep-say { display: none; }
+  .ep-leaf > .ep-in { padding: 48px 8px 8px; grid-template-rows: minmax(0, 1fr) auto auto auto; overflow: hidden; }
+  .ep-steps { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-top: 7px; gap: 5px; } .ep-steps::-webkit-scrollbar { display: none; } .ep-steps button { flex: 0 0 auto; white-space: nowrap; padding: 6px 10px; }
+  .ep-cap { padding-top: 6px; max-height: 5.7em; overflow-y: auto; }
+  .ep-leaf .ep-side { padding-top: 4px; overflow: visible; } .ep-leaf .ep-out { margin: 0; }
+  .ep-n.ep-has-go > .ep-go { display: none; }                 /* a closed card is too small for it on a phone: it waits in the open card's bar */
+  .ep-n[data-mode="open"] > .ep-go { display: block; right: 50px; top: 9px; font-size: .76rem; padding: 8px 11px; max-width: 44%; }
+  .ep-leaf[data-mode="open"] .ep-out a[href^="/eigenengine/"]:first-child { display: none; }   /* the page link is in the card's bar */
+}
