@@ -143,12 +143,12 @@
 
   /* ---------- the exhibit: the hierarchy, the mandate it holds, and the map of where it works ---------- */
   const steps = [
-    { label: 'A small group', N: 51, L: 1, caption: 'Fifty-one voters correct their <i>mandate</i> by one direct vote at each review, which we count as a single layer. When a change disturbs the mandate, each correction is smaller than the last, and it settles.' },
-    { label: 'The group grows', N: 301, L: 1, caption: 'A larger group votes more sharply, so its corrections grow with its size. Past 139 voters each correction overshoots the last, and the mandate swings without end.' },
-    { label: 'Layers steady it', N: 301, L: 4, caption: 'We pass the vote up through four layers, and each handover keeps four fifths of the signal. The corrections shrink again and the swing dies away.' },
-    { label: 'Too deep', N: 301, L: 6, caption: 'A change crosses one layer per review and weakens at each. Through six layers it takes six reviews to arrive, and this group needs it within four.' },
-    { label: 'The window', N: 301, L: 3, win: 1, caption: 'Between the two failures lies a window of workable depths, here three or four layers. It narrows as the group grows, and at 527 voters it closes.' },
-    { label: 'In EigenEngine', N: 301, L: 4, win: 1, design: 1, caption: 'A research object is corrected the same way: when a passage changes a term, the change climbs one level of nesting per review - passage, claim, section, paper - until the shared term is revised. We therefore nest deeply enough that a correction cannot overshoot, and no deeper than it can travel in time.' }
+    { label: 'A small group', N: 51, L: 1, caption: 'A population holds a <i>mandate</i>, the setting under which a larger system runs, and at each review it votes on whether the outcome fell above or below what was expected. In a small group the verdict is mild. Each correction is smaller than the last, and a disturbance dies away.' },
+    { label: 'The group grows', N: 301, L: 1, caption: 'Each voter leans only slightly, yet a majority counted over many voters turns that lean into a near-certain verdict, which is what makes a large group a good judge. Fed back into the mandate it is overcorrection, and past a critical size the mandate reverses at every review without end.' },
+    { label: 'Layers steady it', N: 301, L: 4, caption: 'We now pass the vote upwards through layers, each handing on only a fraction of what it receives. Every layer weakens the verdict by the same factor, so the depth needed grows only as the logarithm of the population, and the mandate settles again.' },
+    { label: 'Too deep', N: 301, L: 6, caption: 'A genuine change must climb the same layers, and at each it loses strength and one review of time. A deep enough hierarchy is perfectly steady and cannot be moved before its deadline. The paper calls this the <i>inertial</i> phase.' },
+    { label: 'Three phases', N: 301, L: 3, win: 1, caption: 'Depth therefore sorts a hierarchy into three phases. A shallow one is unstable and a deep one inert, and only in a band of depths between them do corrections both settle and arrive in time. The band rises as the population grows, and under a fixed deadline it closes.' },
+    { label: 'In EigenEngine', N: 301, L: 4, win: 1, design: 1, caption: 'A research object is corrected in the same way. A change to one passage climbs a level of nesting per review - passage, claim, section, paper - until the shared term is revised. The nesting is deep enough that many records correcting one term cannot overshoot, and no deeper than a correction can travel in time.' }
   ];
   function mount(host, opts = {}) {
     const root = document.createElement('div'); root.className = 'egp' + (opts.compact ? ' egp-compact' : ''); host.appendChild(root);
@@ -417,16 +417,16 @@
   window.EIGEN_NODES = window.EIGEN_NODES || {};
   window.EIGEN_NODES.phases = {
     title: 'The Phases of Hierarchy',
-    line: 'How many layers stop a growing group from overshooting, and how many make its corrections arrive too late?',
-    text: 'Suppose a group - a committee, an electorate, a set of agents - shares one setting, its <i>mandate</i>, and corrects it by vote at each review. Past 139 voters each correction overshoots the last. Layers between voters and mandate damp the swing, but a change crosses one layer per review, so too many deliver it too late. The paper finds the depths between these failures, and EigenEngine nests its records within them.',
+    line: 'What does a layer of hierarchy do to the feedback between a population and the system it steers?',
+    text: 'Hierarchies appear wherever many parts steer one whole, and they are usually taken as a fixed fact of architecture. We ask instead what a layer does to a feedback loop. Suppose a population sets a <i>mandate</i> for a larger system and revises it whenever the outcome departs from what was expected. A larger population gives a sharper verdict, which is why large groups judge well, and in a loop that sharpness is overcorrection. Layers weaken the verdict until the loop settles, though each also delays a genuine change. Depth therefore has three phases, which the paper calls unstable, modular and inertial, and EigenEngine nests its records in the second.',
     tag: 'Pre-pre-print · an early example',
     pdf: '/assets/docs/the-phases-of-hierarchy.pdf',
     art,
     exhibit: { steps: steps.map(({ label, caption }) => ({ label, caption })), mount },
     sections: [
-      { title: 'Why does a larger group overshoot?', line: 'The same slight lean, counted among more voters, becomes a near-certain verdict, so even a small error draws a full correction.', mount: voteSection },
-      { title: 'Where does the swing begin?', line: 'A disturbance is multiplied by the same factor at each review. When that factor falls below minus one, each correction reverses and outgrows the last.', mount: discSection },
-      { title: 'What does a layer cost?', line: 'A change crosses one layer per review, and each handover keeps four fifths of it.', mount: layerSection }
+      { title: 'Why does a larger group overshoot?', line: 'A slight lean in each voter becomes a near-certain verdict once enough voters are counted. These are the statistics that make a jury reliable, and in a feedback loop they act as a gain which grows with the square root of the number of voters.', mount: voteSection },
+      { title: 'Where does the swing begin?', line: 'Each review multiplies a disturbance by a fixed factor, and once the collective response is strong enough every correction reverses the last and outgrows it. A rule that is sensible for each voter has become pathological in the sum, which the paper names the ultraepistemic catastrophe. A longer wait between reviews lets the system settle and admits a larger group.', mount: discSection },
+      { title: 'What does a layer cost?', line: 'Every layer hands on a fraction of a change and holds it for one review. The effort needed to move the top therefore grows geometrically with depth, and within a fixed number of reviews a deep enough hierarchy cannot be moved at all.', mount: layerSection }
     ],
     model
   };
