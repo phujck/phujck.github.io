@@ -18,7 +18,7 @@
   ];
   const evidence = {
     revision: 1, figure: 'Figure 2(b,c)', page: 5,
-    record: '6a609122932f28d4c5ce19296b919598ca7b213d0e7734ecbf41a47d2dadb737'
+    record: '4f36219c0e10273b4d5e3924c176724c72ea6fe5c66edb7d5d1c913ba06bc1bf'
   };
 
   const clamp = value => Math.max(0, Math.min(1, value));

@@ -2,11 +2,11 @@ The Cost of Complexity: A Physical Theory of Representation
 Gerard McCaul · EigenEngine
 eigen@gmccaul.co.uk
 
-Prose and mathematical expressions from the submission TeX. Its compiled text was checked on all 21 published pages. Figure images are crops of the published PDF.
+Prose and mathematical expressions from the Writing App manuscript of 23 November 2026. Its compiled text was checked on all 21 pages. Figure images are crops of the PDF.
 
 Abstract
 
-Every representation must be embodied in matter, including the structures that organise its symbols. The same distinctions can nevertheless be prohibitively expensive in one organisation and accessible in another. We ask what constrains this freedom when the apparatus that organises a representation must itself be represented. Our central observation is recursive: a register holds distinctions at one level and is itself selected by a distinction at the next. With additive positional composition and a positive limiting price per nat, we derive logarithmic growth of the efficient register budget and show that symbol costs can approach the same asymptotic rate. We demonstrate this bound is universal, but the rate at which it can be approached depend on the particular representation. Homogeneous refinement makes the logarithmic law exact, while maximum entropy at fixed mean logarithmic rank cost yields the Zipf family of distributions. We then independently show that this result can be observed in a thermodynamic computer, where the mean log probability rank gives a lower bound on the heat of erasure. Requiring fidelity to a target extends the account to the information a representation must preserve. The resulting theory makes the physical organisation of information an object of optimisation, providing a static foundation for representation learning and systems that can revise their own architecture.
+Every representation must be embodied in matter, and this embodiment carries a cost. This cost extends not only to the symbols being manipulated, but the structure of the registers which hold those symbols. Utilising the same set of distinctions can therefore be prohibitively expensive in one organisation and accessible in another. We ask what constrains this freedom of representation when the apparatus that organises a representation must itself be represented. Our central observation is recursive: a register holds distinctions at one level and is itself selected by a distinction at the next. With additive positional composition and a positive limiting price per nat, we derive logarithmic growth of the efficient register budget and show that symbol costs can approach the same asymptotic rate. We demonstrate this bound is universal, but the rate at which it can be approached depend on the particular representation. Homogeneous refinement makes the logarithmic law exact, while maximum entropy at fixed mean logarithmic rank cost yields the Zipf family of distributions. We then independently show that this result can be observed in a thermodynamic computer, where the mean log probability rank gives a lower bound on the heat of erasure. Requiring fidelity to a target extends the account to the information a representation must preserve. The resulting theory makes the physical organisation of information an object of optimisation, providing a static foundation for representation learning and systems that can revise their own architecture
 
 I. Introduction  (PDF pp. 1–2)
 
@@ -997,39 +997,39 @@ In either case the conditional entropy must be fixed, vanish, or be explicitly o
 
 References  (PDF pp. 20–21)
 
-[1] B. Neal, S. Mittal, A. Baratin, V. Tantia, M. Scicluna, S. Lacoste-Julien, and I. Mitliagkas, A modern take on the bias-variance tradeoff in neural networks (2018).
+[1] B. Neal, S. Mittal, A. Baratin, V. Tantia, M. Scicluna, S. Lacoste-Julien, and I. Mitliagkas, in ICML 2019 Workshop on Identifying and Understanding Deep Learning Phenomena (2019) arXiv:1810.08591.
 
-[2] J. W. Rocks and P. Mehta, Memorizing without overfitting: Bias, variance, and interpolation in overparameterized models (2022).
+[2] J. W. Rocks and P. Mehta, Physical Review Research 4, 013201 (2022), arXiv:2010.13933.
 
-[3] Y. Blau and T. Michaeli, Rethinking lossy compression: The rate-distortion-perception tradeoff (2019).
+[3] Y. Blau and T. Michaeli, in Proceedings of the 36th International Conference on Machine Learning, Proceedings of Machine Learning Research, Vol. 97, edited by K. Chaudhuri and R. Salakhutdinov (PMLR, 2019) pp. 675–685, arXiv:1901.07821.
 
-[4] S. Han, H. Mao, and W. J. Dally, Deep compression: Compressing deep neural networks with pruning, trained quantization and huffman coding (2016).
+[4] S. Han, H. Mao, and W. J. Dally, in 4th International Conference on Learning Representations (2016) arXiv:1510.00149.
 
-[5] J. Frankle and M. Carbin, The lottery ticket hypothesis: Finding sparse, trainable neural networks (2019).
+[5] J. Frankle and M. Carbin, in 7th International Conference on Learning Representations (2019) arXiv:1803.03635.
 
-[6] J. Schmidhuber, Gödel machines: Self-referential universal problem solvers making provably optimal self-improvements (2006).
+[6] J. Schmidhuber, Gödel machines: Self-referential universal problem solvers making provably optimal self-improvements (2006), arXiv:cs/0309048v5.
 
-[7] J. Zhang, S. Hu, C. Lu, R. Lange, and J. Clune, Darwin godel machine: Open-ended evolution of self-improving agents (2025).
+[7] J. Zhang, S. Hu, C. Lu, R. T. Lange, and J. Clune, in 14th International Conference on Learning Representations (2026) arXiv:2505.22954v3.
 
-[8] J. Zhang, B. Zhao, W. Yang, J. Foerster, J. Clune, M. Jiang, S. Devlin, and T. Shavrina, Hyperagents (2026).
+[8] J. Zhang, B. Zhao, W. Yang, J. N. Foerster, J. Clune, M. Jiang, S. Devlin, and T. Shavrina, in 40th Conference on Neural Information Processing Systems (accepted poster) (2026) arXiv:2603.19461v2.
 
 [9] L. P. Kadanoff, Physics Physique Fizika 2, 263 (1966).
 
 [10] C. R. Shalizi and J. P. Crutchfield, Journal of Statistical Physics 104, 817 (2001).
 
-[11] G. M. G. McCaul, C. D. Lorenz, and L. Kantorovich, Partition-free approach to open quantum systems in harmonic environments: an exact stochastic liouville equation (2017).
+[11] G. M. G. McCaul, C. D. Lorenz, and L. Kantorovich, Physical Review B 95, 125124 (2017), arXiv:1612.05466.
 
-[12] G. McCaul and D. I. Bondar, How to win friends and influence functionals: Deducing stochasticity from deterministic dynamics (2020).
+[12] G. McCaul and D. I. Bondar, The European Physical Journal Special Topics 230, 733 (2021), arXiv:1904.04918.
 
-[13] G. McCaul, Mean-force hamiltonians from influence functionals (2026).
+[13] G. McCaul, Low Temperature Physics 52, 1027 (2026), arXiv:2602.13146.
 
-[14] J. M. Leamer, A. B. Magann, D. I. Bondar, and G. Mc- Caul, Quantum dynamical emulation of imaginary time evolution (2024).
+[14] J. M. Leamer, A. B. Magann, D. I. Bondar, and G. Mc- Caul, Quantum dynamical emulation of imaginary time evolution (2024), arXiv:2403.03350.
 
-[15] G. McCaul, Free snacks in quantum complexity (2025).
+[15] G. McCaul, Free snacks in quantum complexity (2025), arXiv:2509.04618.
 
-[16] G. McCaul and D. I. Bondar, Free to harmonic unitary transformations in quantum and koopman dynamics (2022).
+[16] G. McCaul and D. I. Bondar, Journal of Physics A: Mathematical and Theoretical 55, 434003 (2022), arXiv:2207.09515.
 
-[17] G. McCaul, D. V. Zhdanov, and D. I. Bondar, The waveoperator representation of quantum and classical dynamics (2023).
+[17] G. McCaul, D. V. Zhdanov, and D. I. Bondar, Physical Review A 108, 052208 (2023), arXiv:2302.13208.
 
 [18] R. Landauer, IBM Journal of Research and Development 5, 183 (1961).
 
@@ -1037,23 +1037,23 @@ References  (PDF pp. 20–21)
 
 [20] D. Reeb and M. M. Wolf, New Journal of Physics 16, 103011 (2014).
 
-[21] W. Bialek, R. R. de Ruyter van Steveninck, and N. Tishby, Efficient representation as a design principle for neural coding and computation (2007).
+[21] W. Bialek, R. R. de Ruyter van Steveninck, and N. Tishby, Efficient representation as a design principle for neural coding and computation (2007), arXiv:0712.4381.
 
-[22] N. Tishby, F. C. Pereira, and W. Bialek, The information bottleneck method, arXiv:physics/0004057 (2000).
+[22] N. Tishby, F. C. Pereira, and W. Bialek, in Proceedings of the 37th Annual Allerton Conference on Communication, Control, and Computing (1999) pp. 368–377, arXiv:physics/0004057.
 
 [23] S. Still, D. A. Sivak, A. J. Bell, and G. E. Crooks, Physical Review Letters 109, 120604 (2012).
 
-[24] F. G. S. L. Brandão, M. Horodecki, J. Oppenheim, J. M. Renes, and R. W. Spekkens, The resource theory of quantum states out of thermal equilibrium (2013).
+[24] F. G. S. L. Brandão, M. Horodecki, J. Oppenheim, J. M. Renes, and R. W. Spekkens, Physical Review Letters 111, 250404 (2013), arXiv:1111.3882.
 
-[25] E. Chitambar and G. Gour, Quantum resource theories (2019).
+[25] E. Chitambar and G. Gour, Reviews of Modern Physics 91, 025001 (2019), arXiv:1806.06107.
 
-[26] D. Deutsch and C. Marletto, Constructor theory of information (2015).
+[26] D. Deutsch and C. Marletto, Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences 471, 20140540 (2015), arXiv:1405.5563.
 
-[27] C. Marletto, Constructor theory of thermodynamics (2017).
+[27] C. Marletto, Constructor theory of thermodynamics (2017), arXiv:1608.02625.
 
-[28] A. Kolchinsky and D. H. Wolpert, Thermodynamic costs of turing machines (2020).
+[28] A. Kolchinsky and D. H. Wolpert, Physical Review Research 2, 033312 (2020), arXiv:1912.04685.
 
-[29] D. H. Wolpert, A. Kolchinsky, and J. A. Owen, Nature Communications 10, 10.1038/s41467-019-09542-x (2019).
+[29] D. H. Wolpert, A. Kolchinsky, and J. A. Owen, Nature Communications 10, 1727 (2019).
 
 [30] J. A. Owen, A. Kolchinsky, and D. H. Wolpert, New Journal of Physics 21, 013022 (2019).
 
@@ -1067,23 +1067,23 @@ References  (PDF pp. 20–21)
 
 [35] A. Bérut, A. Petrosyan, and S. Ciliberto, Journal of Statistical Mechanics: Theory and Experiment 2015, P06015 (2015).
 
-[36] J. Hong, B. Lambson, S. Dhuey, and J. Bokor, Experimental verification of landauer’s principle in erasure of nanomagnetic memory bits (2014).
+[36] J. Hong, B. Lambson, S. Dhuey, and J. Bokor, Science Advances 2, e1501492 (2016), arXiv:1411.6730.
 
-[37] T. Kamijima, K. Funo, and T. Sagawa, Finite-time thermodynamic bounds and tradeoff relations for information processing (2024).
+[37] T. Kamijima, K. Funo, and T. Sagawa, Physical Review Research 7, 013329 (2025), arXiv:2409.08606.
 
 [38] C. E. Shannon, Bell System Technical Journal 27, 379 (1948).
 
 [39] D. Huffman, Proceedings of the IRE 40, 1098 (1952).
 
-[40] V. Garcia-Morales, Quantum mechanics and the principle of least radix economy (2014), arXiv:1401.0963.
+[40] V. Garcia-Morales, Foundations of Physics 45, 295 (2015), arXiv:1401.0963.
 
 [41] D. Etiemble, Ternary circuits: why r=3 is not the optimal radix for computation (2019), arXiv:1908.06841.
 
-[42] B. Mandelbrot, in Communication Theory (Academic Press, 1953) pp. 486–502.
+[42] B. Mandelbrot, in Communication Theory, edited by W. Jackson (Academic Press, 1953) pp. 486–502.
 
 [43] P. Elias, IEEE Transactions on Information Theory 21, 194 (1975).
 
-[44] L. Allison, A. Konagurthu, and D. Schmidt, On universal codes for integers: Wallace tree, elias omega and variations (2019), arXiv:1906.05004.
+[44] L. Allison, A. S. Konagurthu, and D. F. Schmidt, in 2021 Data Compression Conference (DCC) (IEEE, 2021) pp. 313–322, arXiv:1906.05004.
 
 [45] J. Rissanen, The Annals of Statistics 11, 416 (1983).
 
@@ -1111,23 +1111,23 @@ References  (PDF pp. 20–21)
 
 [57] C. L. Buckley, C. S. Kim, S. McGregor, and A. K. Seth, Journal of Mathematical Psychology 81, 55 (2017).
 
-[58] M. Karjula, T. Ojanen, K. Pöyhönen, T. Ala-Nissila, and M. N. Ivaki, Universal entanglement embezzlement and divergent nonlocal magic from generic local chaotic quantum evolution (2026).
+[58] M. Karjula, T. Ojanen, K. Pöyhönen, T. Ala-Nissila, and M. N. Ivaki, Universal entanglement embezzlement and divergent nonlocal magic from generic local chaotic quantum evolution (2026), arXiv:2609.18691v1.
 
-[59] M. N. Ivaki, A. J. Szuminsky, A. Lazarides, A. Zagoskin, G. McCaul, and T. Ala-Nissila, Dynamical learning and quantum memory with non-hermitian many-body systems (2025).
+[59] M. N. Ivaki, A. J. Szuminsky, A. Lazarides, A. Zagoskin, G. McCaul, and T. Ala-Nissila, Dynamical learning and quantum memory with non-hermitian many-body systems (2025), arXiv:2506.07676v1.
 
-[60] M. N. Ivaki, M. Karjula, and T. Ala-Nissila, Physical Review A 113, 10.1103/tnfv-lzfx (2026).
+[60] M. N. Ivaki, M. Karjula, and T. Ala-Nissila, Physical Review A 113, L060401 (2026).
 
-[61] M. Karjula, T. Ojanen, T. Ala-Nissila, and M. N. Ivaki, The ebbs and flows of quantum learning and sensing (2026).
+[61] M. Karjula, T. Ojanen, T. Ala-Nissila, and M. N. Ivaki, The ebbs and flows of quantum learning and sensing (2026), arXiv:2608.20155v1.
 
 [62] Y. Bengio, A. Courville, and P. Vincent, IEEE Transactions on Pattern Analysis and Machine Intelligence 35, 1798 (2013).
 
-[63] B. Zoph and Q. V. Le, Neural architecture search with reinforcement learning (2016), arXiv:1611.01578.
+[63] B. Zoph and Q. V. Le, in 5th International Conference on Learning Representations (arXiv, 2017) arXiv:1611.01578.
 
 [64] H. A. Simon, Proceedings of the American Philosophical Society 106, 467 (1962).
 
-[65] H. Boche, Y. Böck, and C. Deppe, On effective convergence in fekete’s lemma and related combinatorial problems in information theory (2020), arXiv:2010.09896.
+[65] H. Boche, Y. Böck, and C. Deppe, in Information Theory and Related Fields, Lecture Notes in Computer Science, Vol. 14620, edited by C. Deppe, A. Winter, R. W. Yeung, H. Boche, I. Althöfer, J. Stoye, U. Tamm, and R. Ezzine (Springer Nature Switzerland, Cham, 2025) pp. 286–313, arXiv:2010.09896.
 
-[66] M. Li and P. Vitányi, An Introduction to Kolmogorov Complexity and Its Applications, 3rd ed. (Springer, New York, 2008).
+[66] M. Li and P. Vitányi, An Introduction to Kolmogorov Complexity and Its Applications, 3rd ed., Texts in Computer Science (Springer, New York, 2008).
 
 [67] C. Tsallis, Journal of Statistical Physics 52, 479 (1988).
 

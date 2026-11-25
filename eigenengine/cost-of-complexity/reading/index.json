@@ -5,10 +5,10 @@
       "id": "cost",
       "title": "The Cost of Complexity: A Physical Theory of Representation",
       "pdf": "/eigenengine/guide/the-cost-of-complexity.pdf",
-      "sha256": "e9c6dabb85d252a81c6e27fc575e7c1bb3e7a90973533fe6b6b3c09c98b9fb98",
-      "abstract": "Every representation must be embodied in matter, including the structures that organise its symbols. The same distinctions can nevertheless be prohibitively expensive in one organisation and accessible in another. We ask what constrains this freedom when the apparatus that organises a representation must itself be represented. Our central observation is recursive: a register holds distinctions at one level and is itself selected by a distinction at the next. With additive positional composition and a positive limiting price per nat, we derive logarithmic growth of the efficient register budget and show that symbol costs can approach the same asymptotic rate. We demonstrate this bound is universal, but the rate at which it can be approached depend on the particular representation. Homogeneous refinement makes the logarithmic law exact, while maximum entropy at fixed mean logarithmic rank cost yields the Zipf family of distributions. We then independently show that this result can be observed in a thermodynamic computer, where the mean log probability rank gives a lower bound on the heat of erasure. Requiring fidelity to a target extends the account to the information a representation must preserve. The resulting theory makes the physical organisation of information an object of optimisation, providing a static foundation for representation learning and systems that can revise their own architecture.",
+      "sha256": "3f99bae5393b10ffd28e049e6d4955b69568e7371a54edd8c46d3b9c346586a6",
+      "abstract": "Every representation must be embodied in matter, and this embodiment carries a cost. This cost extends not only to the symbols being manipulated, but the structure of the registers which hold those symbols. Utilising the same set of distinctions can therefore be prohibitively expensive in one organisation and accessible in another. We ask what constrains this freedom of representation when the apparatus that organises a representation must itself be represented. Our central observation is recursive: a register holds distinctions at one level and is itself selected by a distinction at the next. With additive positional composition and a positive limiting price per nat, we derive logarithmic growth of the efficient register budget and show that symbol costs can approach the same asymptotic rate. We demonstrate this bound is universal, but the rate at which it can be approached depend on the particular representation. Homogeneous refinement makes the logarithmic law exact, while maximum entropy at fixed mean logarithmic rank cost yields the Zipf family of distributions. We then independently show that this result can be observed in a thermodynamic computer, where the mean log probability rank gives a lower bound on the heat of erasure. Requiring fidelity to a target extends the account to the information a representation must preserve. The resulting theory makes the physical organisation of information an object of optimisation, providing a static foundation for representation learning and systems that can revise their own architecture",
       "abstractUrl": "/eigenengine/cost-of-complexity/reading/cost/abstract.json",
-      "sourceNote": "Prose and mathematical expressions from the submission TeX. Its compiled text was checked on all 21 published pages. Figure images are crops of the published PDF.",
+      "sourceNote": "Prose and mathematical expressions from the Writing App manuscript of 23 November 2026. Its compiled text was checked on all 21 pages. Figure images are crops of the PDF.",
       "sections": [
         {
           "id": "i",
@@ -214,7 +214,7 @@
       "correspondence": "eigen@gmccaul.co.uk",
       "readingUrl": "/eigenengine/cost-of-complexity/reading/cost/",
       "pages": 21,
-      "sourceDate": "18 November 2026"
+      "sourceDate": "23 November 2026"
     },
     {
       "id": "kalmar",

@@ -53,20 +53,20 @@
     },
     "cost_record": {
       "url": "cost-addresses-v1.json",
-      "sha256": "6a609122932f28d4c5ce19296b919598ca7b213d0e7734ecbf41a47d2dadb737",
+      "sha256": "4f36219c0e10273b4d5e3924c176724c72ea6fe5c66edb7d5d1c913ba06bc1bf",
       "bytes": 775,
       "kind": "byte-identical copy of public source"
     },
     "kalmar_record": {
       "url": "kalmar-layouts-v1.json",
-      "sha256": "b184c1d83a8d22e4eb4e08e59f2ec5eb5ccc1abcf5b1f646441b8878337d67f0",
+      "sha256": "22d4679ba30eb3154c40ee5c3600e0f0434b8b1e649a4f1ad3d7b4d410c90d09",
       "bytes": 1417,
       "kind": "byte-identical copy of public source"
     },
     "cost_pdf": {
       "url": "https://gmccaul.co.uk/assets/docs/the-cost-of-complexity.pdf",
-      "sha256": "e9c6dabb85d252a81c6e27fc575e7c1bb3e7a90973533fe6b6b3c09c98b9fb98",
-      "bytes": 636644,
+      "sha256": "3f99bae5393b10ffd28e049e6d4955b69568e7371a54edd8c46d3b9c346586a6",
+      "bytes": 644531,
       "kind": "published manuscript PDF"
     },
     "kalmar_pdf": {

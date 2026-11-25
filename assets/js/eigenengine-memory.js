@@ -6,7 +6,7 @@
   mount.dataset.ready = 'true';
 
   const paper = '/demo/view/?asset=cost-paper';
-  const version = 'e9c6dabb85d252a81c6e27fc575e7c1bb3e7a90973533fe6b6b3c09c98b9fb98';
+  const version = '3f99bae5393b10ffd28e049e6d4955b69568e7371a54edd8c46d3b9c346586a6';
   const narrow = window.matchMedia('(max-width: 540px)');
   const svgNS = 'http://www.w3.org/2000/svg';
   const topics = [

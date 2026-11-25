@@ -1,10 +1,10 @@
 """Build the section-by-section reading edition and its full, scriptless transcripts.
 
 Run without arguments to rebuild the index, HTML and opening from the published
-section JSONs. Supply --cost-submission with the frozen eleven-file submission
-ZIP to regenerate all section texts and figure crops. That pass requires
-pdfLaTeX, Poppler, mutool, Pandoc and Pillow; rebuilding the views needs Pandoc.
-The source build is checked against every page of the released Cost PDF.
+section JSONs. Supply --cost-build with a compiled manuscript directory to
+regenerate section texts and figure crops. A standalone submission ZIP can
+also be built with --cost-submission. Regeneration requires Poppler, mutool,
+Pandoc and Pillow. The build is checked against every page of the public Cost PDF.
 Kalmár has no embedded TeX. Its displayed mathematics is transcribed against the
 PDF, with checked offsets in the original Poppler text stream.
 """
@@ -175,7 +175,7 @@ def generate_cost(src):
     pdf = SITE / "eigenengine/guide/the-cost-of-complexity.pdf"
     if (
         hashlib.sha256(pdf.read_bytes()).hexdigest()
-        != "e9c6dabb85d252a81c6e27fc575e7c1bb3e7a90973533fe6b6b3c09c98b9fb98"
+        != "3f99bae5393b10ffd28e049e6d4955b69568e7371a54edd8c46d3b9c346586a6"
     ):
         raise ValueError("Unexpected edition of The Cost of Complexity")
     assert call("pdftotext", "-raw", src / "main.pdf", "-") == call(
@@ -379,7 +379,7 @@ def generate_cost(src):
         "sha256": hashlib.sha256(pdf.read_bytes()).hexdigest(),
         "abstract": abstract,
         "abstractUrl": ar["url"],
-        "sourceNote": "Prose and mathematical expressions from the submission TeX. Its compiled text was checked on all 21 published pages. Figure images are crops of the published PDF.",
+        "sourceNote": "Prose and mathematical expressions from the Writing App manuscript of 23 November 2026. Its compiled text was checked on all 21 pages. Figure images are crops of the PDF.",
         "sections": out,
     }
 
@@ -922,7 +922,7 @@ def join(papers):
         paper["readingUrl"] = WEB + paper["id"] + "/"
         paper["pages"] = 21 if paper["id"] == "cost" else 8
         paper["sourceDate"] = (
-            "18 November 2026" if paper["id"] == "cost" else "Draft of 19 November 2026"
+            "23 November 2026" if paper["id"] == "cost" else "Draft of 19 November 2026"
         )
     full = {"format": "eigenengine/sequential-manuscripts@1", "papers": papers}
     emit(OUT / "corpus.json", full)
@@ -1210,18 +1210,17 @@ def from_packets():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--cost-submission", type=Path, help="Frozen Cost manuscript submission archive"
+    source = parser.add_mutually_exclusive_group()
+    source.add_argument(
+        "--cost-build", type=Path, help="Compiled Cost manuscript directory"
+    )
+    source.add_argument(
+        "--cost-submission", type=Path, help="Standalone Cost manuscript submission archive"
     )
     args = parser.parse_args()
-    if args.cost_submission:
-        if (
-            hashlib.sha256(args.cost_submission.read_bytes()).hexdigest()
-            != "e944c402062bf75e6fef400ae7be14493d28f2817cf3b30712e0fba870724c9d"
-        ):
-            raise ValueError(
-                "Supply the verified eleven-file submission ZIP for this PDF edition"
-            )
+    if args.cost_build:
+        papers = [generate_cost(args.cost_build), generate_kalmar()]
+    elif args.cost_submission:
         with tempfile.TemporaryDirectory() as work:
             src = Path(work)
             with ZipFile(args.cost_submission) as archive:
