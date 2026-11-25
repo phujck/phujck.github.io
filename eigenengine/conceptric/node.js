@@ -61,7 +61,7 @@
   /* ───────────────────────── the records ─────────────────────────
      Nine pieces of one result in The Cost of Complexity: the law of word frequencies, what it rests on,
      the calculation and figure that show it, and the sections that hold it. */
-  const PDF = '/assets/docs/the-cost-of-complexity.pdf';
+  const PDF = '/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5';
   const P = {
     paper:   { kind: 'Project', t: ['The Cost of', 'Complexity'], tone: 'ink', says: 'The research object behind the paper, holding its sections, its calculation and its figures.', inside: '21 pages', more: 'A paper of 21 pages, with the calculation behind its figures.', href: PDF },
     sec3:    { kind: 'Section', t: ['The cost of', 'a word'], tone: 'ink', says: 'The section that prices a word by how common it is.', inside: 'Section III', more: 'Section III, pages 4 to 11.', href: PDF + '#page=4' },
@@ -581,7 +581,7 @@
     mount(el) {
       el.classList.add('cq-why');
       el.innerHTML = '<p>The nesting is taken from <a href="/eigenengine/cost-of-complexity/"><i>The Cost of Complexity</i></a>, where a register holds distinctions at one level and is itself selected by a distinction at the next. An envelope is a register of this kind, so that the same picture repeats at every depth. Reaching a piece costs the choice of its envelope together with the choice made inside it, and the paper prices both.</p>' +
-        '<p>If every question arranges the pieces differently, then no single tree is the right one to search. This is the problem that <a href="/eigenengine/query-diffusion/">query diffusion</a> addresses. How deep the nesting can usefully go is a separate matter, and the subject of <a href="/assets/docs/the-phases-of-hierarchy.pdf"><i>The Phases of Hierarchy</i></a>.</p>' +
+        '<p>If every question arranges the pieces differently, then no single tree is the right one to search. This is the problem that <a href="/eigenengine/query-diffusion/">query diffusion</a> addresses. How deep the nesting can usefully go is a separate matter, and the subject of <a href="/assets/docs/the-phases-of-hierarchy.pdf?v=fb917942"><i>The Phases of Hierarchy</i></a>.</p>' +
         '<p class="cq-note"><i>The Cost of Complexity</i> and <i>The Phases of Hierarchy</i> are pre-pre-prints, early examples of work done in EigenEngine.</p>';
     },
   }];

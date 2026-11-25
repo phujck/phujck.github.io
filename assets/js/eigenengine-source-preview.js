@@ -132,7 +132,10 @@
     dialog.querySelector("#ee-source-region").textContent = region.label;
     dialog.querySelector("#ee-source-description").textContent = region.description;
     const fullPaper = dialog.querySelector("[data-source-paper]");
-    fullPaper.href = paper.asset + "#page=" + region.page;
+    const pdf = new URL(paper.asset, location.origin);
+    if (region.paper === "cost") pdf.searchParams.set("v", paper.sha256.slice(0, 8));
+    pdf.hash = "page=" + region.page;
+    fullPaper.href = pdf.href;
     fullPaper.textContent = "Open page " + region.page + " in the full paper ↗";
     fullPaper.setAttribute("aria-label", "Open page " + region.page + " in the full paper (opens in a new tab)");
     dialog.querySelector("svg").style.removeProperty("display");

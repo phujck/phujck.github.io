@@ -60,7 +60,7 @@
           <div class="el-passage-head"><p>Next author request</p>
             <button class="el-mark" type="button" data-step="0" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 13 8.3-8.3 3 3L7 16l-4 1zM11 6l3 3"/></svg>Show the nesting</button>
           </div>
-          <a class="el-inset-example" data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf#page=11" target="_blank" rel="noopener" aria-label="Inspect the magnified children and physical width labels in published Figure 4(b)">
+          <a class="el-inset-example" data-source-region="cost-fig-4b" href="/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5#page=11" target="_blank" rel="noopener" aria-label="Inspect the magnified children and physical width labels in published Figure 4(b)">
             <img src="/demo/writing/media/hilbert-inset.webp" alt=""><span>Each child is enlarged as its <mark>physical width shrinks</mark>. <b>Figure 4(b) ↗</b></span>
           </a>
         </div>

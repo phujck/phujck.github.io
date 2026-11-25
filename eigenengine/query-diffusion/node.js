@@ -172,7 +172,7 @@
   const INVERSE = { 'requires': 'needed by', 'supported by': 'supports', 'computed by': 'computes', 'shown by': 'shows' };
 
   /* Where a record sits in the published paper (page of the PDF), for those whose place we can point to. */
-  const PAPER = '/assets/docs/the-cost-of-complexity.pdf';
+  const PAPER = '/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5';
   const PAGE = { 'sym-reg': 2, 'fig1': 3, 'sym-typ': 4, 'nest-sum': 4, 'bud-man': 8, 'fg-mach': 11, 'fg-ber': 3, 'fg-hong': 3, 'bud-hom': 6, 'bud-log': 6, 'bud-fek': 17, 'bud-rank': 8, 'hil-four': 9, 'pr-area': 10, 'pr-wall': 10, 'pr-const': 10, 'pr-double': 10, 'fig3': 10, 'fig4': 11,
     'fig5': 12, 'fg-test': 12, 'fg-land': 12, 'fg-heat': 12, 'fg-ineq': 12, 'fg-rank': 12, 'wf-rare': 13, 'wf-mean': 13, 'wf-flat': 13, 'wf-step': 13, 'wf-law': 13, 'wf-run': 14, 'fig6': 14 };
   recs.forEach(r => { r.page = PAGE[r.id] || 0; });

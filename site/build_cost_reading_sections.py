@@ -1110,9 +1110,10 @@ def transcript(p):
         f'<li><a href="#{s["id"]}">{esc(n)}</a></li>'
         for n, s in zip(heads, p["sections"])
     )
-    authority = (
-        f'<a href="{esc(p["pdf"])}">Original published PDF ({p["pages"]} pages)</a>'
-    )
+    pdf_url = p["pdf"]
+    if p["id"] == "cost":
+        pdf_url += f'?v={p["sha256"][:8]}'
+    authority = f'<a href="{esc(pdf_url)}">Original published PDF ({p["pages"]} pages)</a>'
     nav = '<nav><a href="../">Return to the reading session</a></nav>'
     credit = "Gerard McCaul · EigenEngine"
     if p["id"] == "kalmar":

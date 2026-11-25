@@ -16,7 +16,7 @@
       model: [.15, .85],
       simulation: [.35, .65],
       answer: 'The model prices each split by its area. That assumption makes each round add the same cost.',
-      source: { href: '/assets/docs/the-cost-of-complexity.pdf#page=10', label: 'Inspect the area-pricing result', region: 'cost-fig-3b' },
+      source: { href: '/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5#page=10', label: 'Inspect the area-pricing result', region: 'cost-fig-3b' },
     },
   };
 

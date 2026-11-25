@@ -603,9 +603,9 @@
     sections: [{
       title: 'Where the example comes from',
       mount(el) {
-        el.innerHTML = '<div class="egb-src egn-build"><a class="egb-src-fig" href="/assets/docs/the-cost-of-complexity.pdf#page=14" target="_blank" rel="noopener"><img src="/eigenengine/cost-of-complexity/reading/cost/figure-6.webp" width="533" height="505" alt="Figure 6 of The Cost of Complexity: the family of rank distributions, with the word frequency law in red" loading="lazy"></a>' +
+        el.innerHTML = '<div class="egb-src egn-build"><a class="egb-src-fig" href="/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5#page=14" target="_blank" rel="noopener"><img src="/eigenengine/cost-of-complexity/reading/cost/figure-6.webp" width="533" height="505" alt="Figure 6 of The Cost of Complexity: the family of rank distributions, with the word frequency law in red" loading="lazy"></a>' +
           '<div><p>The example is Theorem 5 of <a href="/eigenengine/cost-of-complexity/"><i>The Cost of Complexity</i></a>. Given a cost which grows as the logarithm of rank, and no knowledge beyond its average, maximum entropy returns a power law in rank. With exponent one this is Zipf’s law, the red line of the paper’s Figure 6.</p>' +
-          '<p class="egb-src-links"><a href="/assets/docs/the-cost-of-complexity.pdf#page=13" target="_blank" rel="noopener">Theorem 5, p. 13 ↗</a><a href="/assets/docs/the-cost-of-complexity.pdf#page=14" target="_blank" rel="noopener">Figure 6, p. 14 ↗</a></p></div></div>';
+          '<p class="egb-src-links"><a href="/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5#page=13" target="_blank" rel="noopener">Theorem 5, p. 13 ↗</a><a href="/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5#page=14" target="_blank" rel="noopener">Figure 6, p. 14 ↗</a></p></div></div>';
         return { destroy() { el.innerHTML = ''; } };
       },
     }],

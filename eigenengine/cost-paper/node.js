@@ -111,7 +111,7 @@
   }
 
   /* ---------- inside: the exhibit ---------- */
-  const PDF = '/assets/docs/the-cost-of-complexity.pdf';
+  const PDF = '/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5';
   const STEPS = [
     { label: 'One register', holds: 'A register holds alternatives', source: { text: 'Figure 2, p. 5', page: 5, region: 'cost-fig-2' },
       caption: 'A <i>register</i> is any physical system whose distinguishable states stand for alternatives. Here it holds sixteen symbols, ranked from the most typical to the least, and we suppose it needs one element for every alternative it must tell apart.' },
@@ -636,12 +636,12 @@
 
   function thePaper(host) {
     const root = H(host, 'div', 'egn-cost egc-paper', `
-      <figure class="egc-fig1"><a href="/assets/docs/the-cost-of-complexity.pdf#page=3" target="_blank" rel="noopener"><img src="/eigenengine/cost-of-complexity/reading/cost/figure-1.webp" alt="Figure 1 of the paper. Sixteen symbols are followed from their microscopic realisations to four registers of four, above three panels on capacity, occupation and erasure." loading="lazy"></a><figcaption>Figure 1 of the paper, which follows sixteen symbols from their microscopic realisations to an organised register.</figcaption></figure>
+      <figure class="egc-fig1"><a href="/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5#page=3" target="_blank" rel="noopener"><img src="/eigenengine/cost-of-complexity/reading/cost/figure-1.webp" alt="Figure 1 of the paper. Sixteen symbols are followed from their microscopic realisations to four registers of four, above three panels on capacity, occupation and erasure." loading="lazy"></a><figcaption>Figure 1 of the paper, which follows sixteen symbols from their microscopic realisations to an organised register.</figcaption></figure>
       <div class="egc-read">
         <p class="egc-lab">Pre-pre-print · an early example of what EigenEngine makes</p>
         <p class="egc-ttl"><i>The Cost of Complexity: A Physical Theory of Representation</i><br><span>Gerard McCaul · 21 pages</span></p>
         <ul>
-          <li><a href="/assets/docs/the-cost-of-complexity.pdf" target="_blank" rel="noopener">Read the paper <span>PDF ↗</span></a></li>
+          <li><a href="/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5" target="_blank" rel="noopener">Read the paper <span>PDF ↗</span></a></li>
           <li><a href="/eigenengine/cost-of-complexity/">Work through its results one at a time <span>→</span></a></li>
           <li><a href="/eigenengine/cost-of-complexity/#agent-reading">Have a language model explain it <span>→</span></a></li>
           <li><a href="/eigenengine/kalmar-constant/">What if the layout itself has to be stored? The Kalmár companion <span>→</span></a></li>
