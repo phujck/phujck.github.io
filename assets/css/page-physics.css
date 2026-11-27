@@ -1,0 +1,37 @@
+/* The physics page: the figure at the top (the Phases crowd steering the Cost register) and the arc of the work
+   beneath it. Colours come from the site's identity tokens and from eigen-tokens.css (each paper's ground); nothing
+   is recoloured here. */
+
+/* ---- the hero: the claim, and the figure --------------------------------------------------------------------- */
+.rep-hero { min-height: 0; margin-bottom: var(--space-lg); padding-bottom: var(--space-2xl); }
+.rep-hero-grid { display: grid; grid-template-columns: minmax(0, 11fr) minmax(0, 10fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: center; }
+.rep-hero .page-hero-title { font-size: clamp(2.3rem, 4.6vw, 3.8rem); letter-spacing: -.02em; max-width: 12ch; }
+.rep-lede { font-family: var(--font-body); font-size: clamp(1rem, 1.2vw, 1.12rem); line-height: 1.62; color: var(--text-secondary); max-width: 58ch; margin: 0; }
+.rep-lede i { color: var(--text-primary); font-style: normal; }
+.rep-lede a { color: var(--link); text-decoration: none; } .rep-lede a:hover { color: var(--link-hover); text-decoration: underline; }
+
+.rep-figure { position: relative; margin: 0; border-radius: var(--eg-radius, 16px); border: 1px solid var(--border-glass); overflow: hidden; box-shadow: 0 30px 70px rgba(0, 0, 0, .45);
+  background: radial-gradient(ellipse at 30% 48%, #4e2a28 0, rgba(53, 34, 37, .4) 36%, transparent 64%), radial-gradient(ellipse at 60% 52%, #3f3a2c 0, #24262b 44%, #151822 78%); }
+.rep-figure svg { display: block; width: 100%; height: auto; }
+.rep-fig-cap { margin: 0; padding: 2px 18px 10px; font: italic 400 .92rem/1.45 var(--font-body); color: var(--text-secondary); min-height: 3.6em; }
+.rep-fig-from { margin: 0; padding: 0 18px 14px; font: 500 .72rem/1.5 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+.rep-fig-from a { text-decoration: none; } .rep-fig-from a:hover { text-decoration: underline; }
+.rep-fig-from .rep-phases { color: var(--eg-phases-line, #d98a7c); } .rep-fig-from .rep-cost { color: var(--eg-cost-line, #b69961); }
+.rep-motion { position: absolute; right: 12px; top: 12px; z-index: 3; font: 500 .74rem/1 var(--font-display); color: var(--eg-muted, #b4bccb); background: rgba(10, 14, 26, .62); border: 1px solid var(--border-glass); border-radius: 999px; padding: 6px 11px; cursor: pointer; }
+.rep-motion:hover { color: var(--eg-ink, #f2eee6); border-color: var(--accent); } .rep-motion[hidden] { display: none; }
+@media (max-width: 900px) { .rep-hero-grid { grid-template-columns: 1fr; } .rep-hero .page-hero-title { max-width: none; } .rep-lede { max-width: 64ch; } }
+
+/* ---- the problems: six claims and what they add up to ----------------------------------------------------- */
+.rep-themes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2xl) var(--space-3xl); }
+.rep-theme h3 { font-size: 1.22rem; margin: 0 0 .6rem; letter-spacing: -.01em; max-width: 24ch; }
+.rep-theme p { font-size: .96rem; line-height: 1.66; color: var(--text-secondary); max-width: 62ch; }
+.rep-theme p i { color: var(--text-primary); font-style: normal; }
+.rep-papers { margin-top: var(--space-sm); font-family: var(--font-display); font-size: .8rem; line-height: 1.8; color: var(--text-muted); }
+.rep-papers a { color: var(--link); text-decoration: none; } .rep-papers a:hover { color: var(--link-hover); text-decoration: underline; }
+.rep-now { grid-column: 1 / -1; margin-top: var(--space-md); padding: var(--space-xl) var(--space-2xl); border-radius: var(--radius-lg); border: 1px solid var(--border-glass); border-top: 2px solid var(--eg-phases-line, #d98a7c);
+  background: linear-gradient(180deg, rgba(90, 42, 40, .22), rgba(60, 56, 44, .14) 50%, transparent); }
+.rep-now h3 { font-size: 1.55rem; max-width: none; }
+.rep-now p { max-width: 80ch; color: var(--text-primary); }
+.rep-now .rep-papers a { color: var(--accent-light, #dfc599); }
+.pub-item { scroll-margin-top: calc(var(--nav-height) + 16px); }
+@media (max-width: 760px) { .rep-themes { grid-template-columns: 1fr; gap: var(--space-xl); } .rep-now { padding: var(--space-lg); } }

@@ -1,56 +1,127 @@
-  <!-- Page Header -->
-  <header class="page-hero">
-    <div class="page-hero-bg" style="background-image: url('/assets/img/physics_hero.jpg');"></div>
-    <div class="container">
-      <h1 class="page-hero-title fade-in">Physics</h1>
-      <p class="page-hero-subtitle fade-in fade-in-delay-1">Research areas, publications, and talks  -  the complete
-        academic oeuvre.</p>
+  <link rel="stylesheet" href="/assets/css/eigen-tokens.css">
+  <link rel="stylesheet" href="/assets/css/page-physics.css">
+
+  <!-- Page Header: the claim, and the two papers it has become, running on one clock -->
+  <header class="page-hero rep-hero" id="representation">
+    <div class="container rep-hero-grid">
+      <div class="rep-hero-text">
+        <span class="section-label fade-in">Research</span>
+        <h1 class="page-hero-title fade-in fade-in-delay-1">I work on representation.</h1>
+        <p class="rep-lede fade-in fade-in-delay-2">A theory carves the world into categories, keeps them in
+          symbols, and discards everything except the distinctions its predictions need. That is a physical act. The
+          symbols occupy matter, the discarding has a price, and a theory built by throwing detail away ends up
+          thermodynamic whether or not it started that way. Open systems, control, Koopman mechanics, superoscillations,
+          reservoir computing and imaginary-time methods are one problem worked in six settings, and the sum is a
+          thermodynamics of representation.</p>
+      </div>
+      <figure class="rep-figure fade-in fade-in-delay-2" data-rep-figure>
+        <svg viewBox="0 0 640 460" role="img"
+          aria-label="Many parts arranged on a ring steer a description at the centre, drawn as a space-filling curve. As layers form between them the description grows finer and its swings settle, and a trace of its state runs out through the ring."></svg>
+        <figcaption class="rep-fig-cap" data-rep-caption>Many parts steer one whole, with nothing between them and it.
+          The more parts there are, the sharper their joint response, and a sharp response to a small error
+          overshoots.</figcaption>
+        <p class="rep-fig-from"><a class="rep-phases" href="/eigenengine/phases-of-hierarchy/">The Phases of Hierarchy</a>
+          steering <a class="rep-cost" href="/eigenengine/cost-paper/">The Cost of Complexity</a></p>
+        <button type="button" class="rep-motion" data-rep-motion hidden>Pause the figure</button>
+      </figure>
     </div>
   </header>
 
-  <!-- Research Areas -->
+  <!-- Research: six problems that are one problem, and the theory they add up to -->
   <section class="section" id="research">
     <div class="container">
       <span class="section-label fade-in">Research</span>
       <h2 class="section-title fade-in">What I work on</h2>
-      <div class="research-grid stagger-children">
-        <div class="research-card">
-          <div class="research-emoji">🎛️</div>
-          <h3>Quantum Control</h3>
-          <p>Designing laser fields and control protocols to steer quantum systems toward desired behaviours  -  from
-            mimicking materials to suppressing optical responses.</p>
-        </div>
-        <div class="research-card">
-          <div class="research-emoji">🌊</div>
-          <h3>Open Quantum Systems</h3>
-          <p>Exact stochastic methods and influence functionals for systems interacting with complex environments. My
-            PhD focus and an enduring interest.</p>
-        </div>
-        <div class="research-card">
-          <div class="research-emoji">🧠</div>
-          <h3>Reservoir Computing</h3>
-          <p>Quantum and photonic reservoir architectures. What is the minimum structure needed for memory and
-            expressivity  -  and whether the quantum part actually helps, or just complicates the story, is genuinely open.</p>
-        </div>
-        <div class="research-card">
-          <div class="research-emoji">〰️</div>
-          <h3>Superoscillations</h3>
-          <p>Band-limited waves oscillating faster than their fastest component  -  applied to spectroscopy, sensing, and
-            Bose-Einstein condensate confinement.</p>
-        </div>
-        <div class="research-card">
-          <div class="research-emoji">🔄</div>
-          <h3>Koopman Methods</h3>
-          <p>Hilbert-space representations of classical mechanics. Once you lift the dynamics to operator space, the
-            difference from quantum mechanics becomes structurally locatable  -  no longer a matter of philosophy but of
-            which specific algebraic operation is absent.</p>
-        </div>
-        <div class="research-card">
-          <div class="research-emoji">⚡</div>
-          <h3>Non-Linear Optics</h3>
-          <p>Non-uniqueness of driving fields, optical indistinguishability, and the engineering of optical responses in
-            strongly interacting systems.</p>
-        </div>
+      <div class="rep-themes">
+        <article class="rep-theme fade-in">
+          <h3>An environment is a representation of its influence</h3>
+          <p>Trace out a harmonic bath exactly and what remains is the system driven by coloured noise: a closed, exact
+            equation in which the whole of the environment survives as the statistics of a few random fields. The noise
+            is derived by a two-time Hubbard-Stratonovich transformation rather than postulated, the construction holds
+            from an equilibrated start, and its classical limit is the generalised Langevin equation. The mean-force
+            Hamiltonian is the equilibrium form of the same statement: the bath as imaginary-time noise, and the
+            operator form of the reduced state as an inverse representability problem.</p>
+          <p class="rep-papers"><a href="#pub-partition-free">Partition-free open systems</a> ·
+            <a href="#pub-spin-boson">Driven spin-boson models</a> · <a href="#pub-thesis">Stochastic representations</a> ·
+            <a href="#pub-influence-functionals">Influence functionals</a> ·
+            <a href="#pub-rank-truncation">Rank truncation</a> · <a href="#pub-mean-force">Mean-force Hamiltonians</a></p>
+        </article>
+        <article class="rep-theme fade-in">
+          <h3>Identity of response is not identity of system</h3>
+          <p>Tracking control inverts the usual question: given the trajectory an observable should follow, solve for
+            the field. The equation is nonlinear and explicit, and it lets one many-body system reproduce another's
+            optical spectrum. The limit of the idea is the twinning field, a single pulse under which two distinct
+            materials are optically indistinguishable, and for generic pairs it exists. Non-uniqueness of the driving
+            field, the distinguishability of Mott insulators in time against frequency, and the sequential silencing of
+            a mixture's components are the same fact in three guises.</p>
+          <p class="rep-papers"><a href="#pub-driven-imposters">Driven Imposters</a> ·
+            <a href="#pub-controlling-observables">Controlling arbitrary observables</a> ·
+            <a href="#pub-twinning">Twinning fields</a> · <a href="#pub-non-uniqueness">Non-uniqueness</a> ·
+            <a href="#pub-mott">Optical distinguishability</a> ·
+            <a href="#pub-sequential-suppression">Sequential suppression</a> · <a href="#pub-enz">Epsilon-near-zero</a></p>
+        </article>
+        <article class="rep-theme fade-in">
+          <h3>Classical and quantum mechanics differ by an algebraic operation</h3>
+          <p>Koopman and von Neumann put classical mechanics on a Hilbert space with commuting position and momentum.
+            Once both theories share a space their difference is locatable: a commutator that is present or absent, a
+            term the minimal-coupling rule carries on one side only. The wave operator, the square root of the density
+            matrix, unifies Hilbert space, Wigner phase space and Koopman mechanics with positivity automatic and the
+            Wigner function as a phase-space wavefunction, and the free particle and the harmonic oscillator are one
+            unitary and a change of clock apart. Observables in Motion is the textbook treatment.</p>
+          <p class="rep-papers"><a href="#pub-free-harmonic">Free to harmonic</a> ·
+            <a href="#pub-wave-operator">The wave operator</a> · <a href="#pub-textbook">Observables in Motion</a></p>
+        </article>
+        <article class="rep-theme fade-in">
+          <h3>A signal can carry more than its bandwidth</h3>
+          <p>A band-limited wave can oscillate locally faster than any of its Fourier components. The mechanism is
+            destructive interference arranged on purpose, there is a constructive recipe for it from arbitrary
+            waveforms, and it has been realised with terahertz fields. Pointed at a resonance beyond the component
+            bandwidth it buys an order of magnitude in spectroscopic sensitivity and more, and it confines a condensate
+            below the wavelength of the light that traps it.</p>
+          <p class="rep-papers"><a href="#pub-superspectroscopy">Superspectroscopy</a> ·
+            <a href="#pub-super-sensing">Super-sensing</a> · <a href="#pub-bec">Condensate confinement</a></p>
+        </article>
+        <article class="rep-theme fade-in">
+          <h3>Computation is a question of dimensionality</h3>
+          <p>Encode the input in the Hamiltonian of a few qubits, evolve for a fixed time and read out local
+            expectations: the result is a feature map, and a linear readout over it regresses, synthesises and
+            forecasts. The reservoir has no memory, so temporal dependence is reconstructed at the readout from delayed
+            copies. The capacity comes from the dimension of the function space the dynamics spans rather than from
+            entanglement or recurrence, which is why less machinery is more. Unwrapping a photonic reservoir's phase
+            past its natural period buys the same thing through synthetic frequencies, and a single atom under
+            high-harmonic generation is, in this sense, a computer.</p>
+          <p class="rep-papers"><a href="#pub-reservoirs">Minimal quantum reservoirs</a> ·
+            <a href="#pub-unwrapping">Unwrapping photonic reservoirs</a> ·
+            <a href="#pub-single-atom">Single atom computing</a></p>
+        </article>
+        <article class="rep-theme fade-in">
+          <h3>Resolution is a resource</h3>
+          <p>Imaginary time is the dynamics of thermalisation, and a unitary device can emulate it: a binomially weighted
+            sum of overlaps between a state run forwards and backwards in real time is the imaginary-time propagator
+            exactly, and one trajectory of measurements yields the ground state and the spectrum. The cost is in the
+            shots. Resolving the smallest gap while staying stable against the largest costs exponentially in their
+            ratio, which is where the hardness of ground-state estimation lives. Coarse-grained spectral information at
+            a precision set by the local gaps is polynomial. There are no free lunches, but there are free snacks.</p>
+          <p class="rep-papers"><a href="#pub-itqde">Imaginary time emulation</a> ·
+            <a href="#pub-free-snacks">Free Snacks</a></p>
+        </article>
+        <article class="rep-theme rep-now fade-in">
+          <h3>A thermodynamic theory of representation</h3>
+          <p>Each of these prices something: the statistics a bath is reduced to, the field that makes two systems one,
+            the operation that separates two mechanics, the bandwidth a wave exceeds, the dimension a reservoir spans,
+            the shots a spectrum costs. <i>The Cost of Complexity</i> makes the price the object of study. A
+            representation must be embodied, the apparatus that organises it must itself be represented, and under
+            additive composition with a positive price per nat the efficient register grows logarithmically; maximum
+            entropy at fixed mean cost gives the Zipf family, and the mean log-rank of a memory's contents bounds the
+            heat its erasure must release. <i>The Phases of Hierarchy</i> is the dynamical half: a register revised by
+            the population it describes. Aggregation sharpens with number, a sharp enough response flips the loop,
+            layers attenuate it at a cost in delay, and depth becomes a phase variable with a flat unstable phase, a
+            frozen inertial phase and a logarithmic window between. The figure above is the two theories on one clock.
+            EigenEngine is their engineering consequence.</p>
+          <p class="rep-papers"><a href="/eigenengine/cost-paper/">The Cost of Complexity</a> ·
+            <a href="#pub-phases">The Phases of Hierarchy</a> · <a href="/eigenengine.html">EigenEngine</a> ·
+            <a href="/assets/writing/spanspermia.pdf" target="_blank" rel="noopener">Spanspermia</a></p>
+        </article>
       </div>
     </div>
   </section>
@@ -82,7 +153,21 @@
         <div class="pub-year-group fade-in" data-year="2026">
           <div class="pub-year">2026</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-phases">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2611.33566" target="_blank" rel="noopener">The Phases of
+                Hierarchy</a></div>
+            <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span></div>
+            <div class="pub-journal">Preprint  -  arXiv:2611.33566</div>
+            <div class="pub-blurb">Why a crowd that judges well still overshoots, and how many layers it takes to stop it.
+              Treats depth as a phase variable  -  too flat and the loop flips, too deep and it freezes  -  and finds the
+              logarithmic window between, with the measurements that would show it in a real adaptive system.</div>
+            <div class="pub-links">
+              <a href="https://arxiv.org/abs/2611.33566" target="_blank" rel="noopener" class="pub-link">arXiv</a>
+              <a href="/eigenengine/phases-of-hierarchy/" class="pub-link">In EigenEngine</a>
+            </div>
+          </div>
+
+          <div class="pub-item" id="pub-mean-force">
             <div class="pub-title"><a href="https://arxiv.org/abs/2602.13146" target="_blank" rel="noopener">Mean-Force
                 Hamiltonians from Influence Functionals</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span> et al.</div>
@@ -100,7 +185,7 @@
         <div class="pub-year-group fade-in" data-year="2025">
           <div class="pub-year">2025</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-free-snacks">
             <div class="pub-title"><a href="https://arxiv.org/abs/2509.04618" target="_blank" rel="noopener">Free Snacks
                 in Quantum Complexity</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span></div>
@@ -113,7 +198,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-reservoirs">
             <div class="pub-title"><a
                 href="https://pubs.aip.org/aip/cha/article/35/9/093135/3363544/Minimal-quantum-reservoirs-with-Hamiltonian"
                 target="_blank" rel="noopener">Minimal Quantum Reservoirs with Hamiltonian Encoding</a></div>
@@ -125,21 +210,24 @@
             <div class="pub-links">
               <a href="https://pubs.aip.org/aip/cha/article/35/9/093135/3363544/Minimal-quantum-reservoirs-with-Hamiltonian"
                 target="_blank" rel="noopener" class="pub-link">Chaos</a>
-              <a href="https://arxiv.org/abs/2505.22606" target="_blank" rel="noopener" class="pub-link">arXiv</a>
+              <a href="https://arxiv.org/abs/2505.22575" target="_blank" rel="noopener" class="pub-link">arXiv</a>
             </div>
           </div>
 
-          <div class="pub-item">
-            <div class="pub-title">Unwrapping photonic reservoirs: Enhanced expressivity via random Fourier encoding
-              over stretched domains</div>
+          <div class="pub-item" id="pub-unwrapping">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2506.01410" target="_blank" rel="noopener">Unwrapping
+                photonic reservoirs: Enhanced expressivity via random Fourier encoding over stretched domains</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, G. Tripathy, G. Marcucci, J. S.
               Totero Gongora</div>
             <div class="pub-journal">Chaos <strong>35</strong>(9), 2025</div>
             <div class="pub-blurb">More expressivity squeezed from a photonic reservoir via the elegant application of
               slightly more mathematics. The word "unwrapping" is doing real work in the title.</div>
+            <div class="pub-links">
+              <a href="https://arxiv.org/abs/2506.01410" target="_blank" rel="noopener" class="pub-link">arXiv</a>
+            </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-bec">
             <div class="pub-title"><a href="https://doi.org/10.1063/10.0039901" target="_blank"
                 rel="noopener">Bose–Einstein condensate sub-wavelength confinement via superoscillations</a></div>
             <div class="pub-authors">D. R. Lindberg, <span class="me">G. M<sup>c</sup>Caul</span>, P. Peng, L. Kaplan,
@@ -152,7 +240,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-textbook">
             <div class="pub-title"><a href="https://arxiv.org/abs/2509.20403" target="_blank" rel="noopener">Observables
                 in Motion: A guide to simulating classical and quantum dynamics</a></div>
             <div class="pub-authors">D. I. Bondar, <span class="me">G. M<sup>c</sup>Caul</span>, A. Sotnikov</div>
@@ -169,7 +257,7 @@
         <div class="pub-year-group fade-in" data-year="2024">
           <div class="pub-year">2024</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-itqde">
             <div class="pub-title"><a href="https://arxiv.org/abs/2403.03350" target="_blank" rel="noopener">Quantum
                 Dynamical Emulation of Imaginary Time Evolution</a></div>
             <div class="pub-authors">J. M. Leamer, A. B. Magann, D. I. Bondar, <span class="me">G.
@@ -184,7 +272,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-super-sensing">
             <div class="pub-title"><a href="https://arxiv.org/abs/2306.12665" target="_blank"
                 rel="noopener">Super-sensing: 100-Fold enhancement in THz time-domain spectroscopy contrast via
                 superoscillating waveform shaping</a></div>
@@ -204,7 +292,7 @@
         <div class="pub-year-group fade-in" data-year="2023">
           <div class="pub-year">2023</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-superspectroscopy">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevLett.131.153803" target="_blank"
                 rel="noopener">Superoscillations Deliver Superspectroscopy</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, P. Peng, M. O. Martinez, D. R.
@@ -220,7 +308,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-wave-operator">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevA.108.052208" target="_blank"
                 rel="noopener">Wave operator representation of quantum and classical dynamics</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, D. V. Zhdanov, D. I. Bondar</div>
@@ -234,7 +322,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-single-atom">
             <div class="pub-title"><a href="https://doi.org/10.1140/epjp/s13360-023-03649-3" target="_blank"
                 rel="noopener">Towards single atom computing via high harmonic generation</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, K. Jacobs, D. I. Bondar</div>
@@ -248,7 +336,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-enz">
             <div class="pub-title"><a href="https://arxiv.org/abs/2301.12069" target="_blank" rel="noopener">Dynamical
                 Generation of Epsilon-Near-Zero Behaviour via Tracking and Feedback Control</a></div>
             <div class="pub-authors">J. Masur, D. I. Bondar, <span class="me">G. M<sup>c</sup>Caul</span></div>
@@ -266,7 +354,7 @@
         <div class="pub-year-group fade-in" data-year="2022">
           <div class="pub-year">2022</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-non-uniqueness">
             <div class="pub-title"><a href="https://doi.org/10.1002/andp.202100523" target="_blank"
                 rel="noopener">Non-Uniqueness of Driving Fields Generating Non-Linear Optical Response</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, A. F. King, D. I. Bondar</div>
@@ -279,7 +367,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-mott">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevA.106.013110" target="_blank"
                 rel="noopener">Optical distinguishability of Mott insulators in the time versus frequency domain</a>
             </div>
@@ -294,7 +382,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-sequential-suppression">
             <div class="pub-title"><a href="https://quantum-journal.org/papers/q-2022-01-20-626/" target="_blank"
                 rel="noopener">Sequential optical response suppression for chemical mixture characterization</a></div>
             <div class="pub-authors">A. B. Magann, <span class="me">G. M<sup>c</sup>Caul</span>, H. A. Rabitz, D. I.
@@ -309,7 +397,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-free-harmonic">
             <div class="pub-title"><a href="https://iopscience.iop.org/article/10.1088/1751-8121/ac97cf/meta"
                 target="_blank" rel="noopener">Free to harmonic unitary transformations in quantum and Koopman
                 dynamics</a></div>
@@ -329,7 +417,7 @@
         <div class="pub-year-group fade-in" data-year="2021">
           <div class="pub-year">2021</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-twinning">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevLett.127.113201" target="_blank"
                 rel="noopener">Optical Indistinguishability via Twinning Fields</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, A. F. King, D. I. Bondar</div>
@@ -344,7 +432,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-rank-truncation">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevResearch.3.013017" target="_blank"
                 rel="noopener">Fast computation of dissipative quantum systems with ensemble rank truncation</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, K. Jacobs, D. I. Bondar</div>
@@ -358,7 +446,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-influence-functionals">
             <div class="pub-title"><a href="https://doi.org/10.1140/epjs/s11734-021-00068-2" target="_blank"
                 rel="noopener">How to win friends and influence functionals: deducing stochasticity from deterministic
                 dynamics</a></div>
@@ -373,7 +461,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-diffusion">
             <div class="pub-title"><a href="https://doi.org/10.1063/5.0044064" target="_blank" rel="noopener">Diffusion
                 fails to make a stink</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, A. Mershin, D. I. Bondar</div>
@@ -386,7 +474,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-entropic-gravity">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevResearch.3.033065" target="_blank"
                 rel="noopener">Decoherence-free entropic gravity: Model and experimental tests</a></div>
             <div class="pub-authors">A. J. Schimmoller, <span class="me">G. M<sup>c</sup>Caul</span>, H. Abele, D. I.
@@ -406,7 +494,7 @@
         <div class="pub-year-group fade-in" data-year="2020">
           <div class="pub-year">2020</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-driven-imposters">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevLett.124.183201" target="_blank"
                 rel="noopener">Driven Imposters: Controlling Expectations in Many-Body Systems</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, C. Orthodoxou, K. Jacobs, G. H.
@@ -423,7 +511,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-controlling-observables">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevA.101.053408" target="_blank"
                 rel="noopener">Controlling arbitrary observables in correlated many-body systems</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, C. Orthodoxou, K. Jacobs, G. H.
@@ -443,7 +531,7 @@
         <div class="pub-year-group fade-in" data-year="2019">
           <div class="pub-year">2019</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-entropy">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevE.99.062121" target="_blank"
                 rel="noopener">Entropy nonconservation and boundary conditions for Hamiltonian dynamical systems</a>
             </div>
@@ -458,7 +546,7 @@
             </div>
           </div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-thesis">
             <div class="pub-title"><a
                 href="https://kclpure.kcl.ac.uk/portal/files/106792202/2019_McCaul_Gerard_0905559_ethesis.pdf"
                 target="_blank" rel="noopener">Stochastic representations of open systems</a></div>
@@ -478,7 +566,7 @@
         <div class="pub-year-group fade-in" data-year="2018">
           <div class="pub-year">2018</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-spin-boson">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevB.97.224310" target="_blank"
                 rel="noopener">Driving spin-boson models from equilibrium using exact quantum dynamics</a></div>
             <div class="pub-authors"><span class="me">G. M<sup>c</sup>Caul</span>, C. D. Lorenz, L. Kantorovich</div>
@@ -497,7 +585,7 @@
         <div class="pub-year-group fade-in" data-year="2017">
           <div class="pub-year">2017</div>
 
-          <div class="pub-item">
+          <div class="pub-item" id="pub-partition-free">
             <div class="pub-title"><a href="https://doi.org/10.1103/PhysRevB.95.125124" target="_blank"
                 rel="noopener">Partition-free approach to open quantum systems in harmonic environments: An exact
                 stochastic Liouville equation</a></div>
@@ -615,3 +703,6 @@
   </section>
 
   
+
+  <script src="/assets/js/eigen-motion.js" defer></script>
+  <script src="/assets/js/physics-representation.js" defer></script>
