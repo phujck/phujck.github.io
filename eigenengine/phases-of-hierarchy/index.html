@@ -32,6 +32,7 @@ body.pp { margin: 0; background: radial-gradient(ellipse 60rem 40rem at 12% 0, #
 .pp-text i { color: var(--eg-ink); }
 .pp-links { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.875rem; font: 500 .86rem/1 var(--eg-label); color: var(--eg-faint); }
 .pp-pdf { text-decoration: none; padding: 0.5625rem 0.875rem; border-radius: 0.5625rem; background: #edc2b6; color: #1c181c !important; font-weight: 600; } .pp-pdf span { font-size: .7rem; letter-spacing: .08em; margin-left: 0.3125rem; opacity: .75; }
+.pp-arxiv { text-decoration: none; padding: 0.5rem 0.8125rem; border-radius: 0.5625rem; border: 1px solid var(--eg-line); color: var(--eg-ink); transition: border-color .25s; } .pp-arxiv:hover { border-color: var(--eg-phases-line); } .pp-arxiv span { opacity: .6; }
 .pp-near { margin: auto 0 0; padding: 0.625rem 0 0; border-top: 1px solid var(--eg-line); display: grid; gap: 0.4375rem; font: 500 .8rem/1.2 var(--eg-label); color: var(--eg-faint); }
 .pp-near div { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem 0.4375rem; }
 .pp-near a { text-decoration: none; padding: 0.3125rem 0.625rem; border: 1px solid var(--eg-line); border-radius: 62.4375rem; color: var(--eg-muted); transition: border-color .2s, color .2s; }
@@ -78,7 +79,7 @@ body.pp { margin: 0; background: radial-gradient(ellipse 60rem 40rem at 12% 0, #
       <div class="pp-card-t"><p class="pp-tag" id="pp-tag">Pre-pre-print · an early example</p><h1 id="pp-title">The Phases of Hierarchy</h1><p class="pp-line" id="pp-line"></p></div>
     </div>
     <p class="pp-text" id="pp-text"></p>
-    <p class="pp-links"><a class="pp-pdf" href="/assets/docs/the-phases-of-hierarchy.pdf?v=fb917942" target="_blank" rel="noopener">Read the paper <span>PDF</span></a><span>Gerard McCaul · 29 pages · <time datetime="2026-11-25">25 November 2026</time></span></p>
+    <p class="pp-links"><a class="pp-pdf" href="/assets/docs/the-phases-of-hierarchy.pdf?v=fb917942" target="_blank" rel="noopener">Read the paper <span>PDF</span></a><a class="pp-arxiv" href="https://arxiv.org/abs/2611.33566" target="_blank" rel="noopener">arXiv:2611.33566 <span>↗</span></a><span>Gerard McCaul · 29 pages · <time datetime="2026-11-25">25 November 2026</time></span></p>
     <nav class="pp-near" id="pp-near" aria-label="Where this paper sits in EigenEngine"></nav>
   </section>
   <section class="pp-stage" aria-label="The paper, shown">
@@ -87,7 +88,7 @@ body.pp { margin: 0; background: radial-gradient(ellipse 60rem 40rem at 12% 0, #
     <div class="pp-box egn-phases" id="pp-box"></div>
   </section>
 </main>
-<noscript><p style="padding:0 34px 30px;max-width:70ch;color:#b4bccb">The figures on this page are computed in the browser from the paper's model. Without scripts, the paper itself is the place to read: <a href="/assets/docs/the-phases-of-hierarchy.pdf?v=fb917942" style="color:#e4bf7d">The Phases of Hierarchy (PDF)</a>.</p></noscript>
+<noscript><p style="padding:0 34px 30px;max-width:70ch;color:#b4bccb">The figures on this page are computed in the browser from the paper's model. Without scripts, the paper itself is the place to read: <a href="/assets/docs/the-phases-of-hierarchy.pdf?v=fb917942" style="color:#e4bf7d">The Phases of Hierarchy (PDF)</a>, also listed as <a href="https://arxiv.org/abs/2611.33566" style="color:#e4bf7d">arXiv:2611.33566</a>.</p></noscript>
 <script src="/assets/js/eigen-motion.js"></script>
 <script src="/eigenengine/_graph/site-graph.js"></script>
 <script src="/eigenengine/phases-of-hierarchy/node.js"></script>

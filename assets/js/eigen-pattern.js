@@ -101,11 +101,14 @@
       e.dataset.id = n.id; e.tabIndex = -1; e.setAttribute('role', 'button'); e.setAttribute('aria-expanded', 'false'); e.setAttribute('aria-label', n.title + (n.line ? '. ' + (window.EigenLevel ? window.EigenLevel.pick(n.line) : n.line) : ''));
       const steps = leaf && d.exhibit && d.exhibit.steps || [];
       const go = d.page ? { href: d.page, label: 'Its page →' } : /^made-/.test(n.id) && d.out && d.out[0] ? { href: d.out[0].href, label: String(d.out[0].label) } : null;   // where the card leads: its own page, or the thing itself
-      const out = (d.out || []).filter(o => !(n === this.root && o.href === d.page)).map(o => `<a href="${o.href}"${/^https?:|\.pdf$/.test(o.href) ? ' target="_blank" rel="noopener"' : ''}>${o.label}</a>`).join('');
+      const ext = h => /^https?:|\.pdf(\?|#|$)/.test(h) ? ' target="_blank" rel="noopener"' : '';
+      const links = (d.out || []).concat(d.pdf ? [{ href: d.pdf, label: 'Read the paper (PDF) ↗', cls: 'ep-out-pdf' }] : [], d.arxiv ? [{ href: d.arxiv, label: 'On arXiv ↗' }] : []);   // a paper card also leads to the paper itself
+      const out = links.filter(o => !(n === this.root && o.href === d.page)).map(o => `<a href="${o.href}"${o.cls ? ` class="${o.cls}"` : ''}${ext(o.href)}>${o.label}</a>`).join('');
+      const pdf = d.pdf ? `<a class="ep-pdf" href="${d.pdf}" target="_blank" rel="noopener" aria-label="Read the paper (PDF): ${esc(n.title)}"><b>Read the paper</b><span>PDF</span></a>` : '';
       e.innerHTML =
         `<div class="ep-bg"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div><div class="ep-scrim"></div>` +
         `<span class="ep-ord"></span><span class="ep-sum"></span>` +
-        (go && n !== this.root ? `<a class="ep-go" href="${go.href}"${/^https?:|\.pdf$/.test(go.href) ? ' target="_blank" rel="noopener"' : ''} aria-label="${esc(go.label.replace(/\s*[→↗]\s*$/, ''))}: ${esc(n.title)}">${go.label}</a>` : '') +
+        (pdf || (go && n !== this.root) ? `<div class="ep-lead">${pdf}${go && n !== this.root ? `<a class="ep-go" href="${go.href}"${ext(go.href)} aria-label="${esc(go.label.replace(/\s*[→↗]\s*$/, ''))}: ${esc(n.title)}">${go.label}</a>` : ''}</div>` : '') +
         `<div class="ep-face"><h3 class="ep-t">${n.title}</h3><p class="ep-line">${n.line}</p></div>` +
         `<div class="ep-in" inert>` +
           `<div class="ep-bar"><span class="ep-walk"><button type="button" class="ep-prev" aria-label="Previous in the reading order">‹</button><b></b><button type="button" class="ep-next" aria-label="Next in the reading order">›</button></span><button type="button" class="ep-x" aria-label="Close ${esc(n.title)}">×</button></div>` +
@@ -299,8 +302,15 @@
         n.in.inert = !open; n.z = t.z;
         e.classList.toggle('ep-has-line', t.w >= 236 && t.h >= 126 && (t.mode === 'card' || t.mode === 'in'));
         e.classList.toggle('ep-has-go', t.w >= 104 && t.h >= 70 && (t.mode === 'card' || t.mode === 'in'));
+        e.classList.toggle('ep-has-pdf', !!n.d.pdf && t.w >= 236 && t.h >= 126 && (t.mode === 'card' || t.mode === 'in'));   // the paper button needs a card the size that shows its line
+        e.classList.toggle('ep-narrow', open && t.w < 620);   // an open card this narrow keeps only the page pill beside its title; the paper button moves into its links
         if (t.ord) n.ordEl.textContent = t.ord; e.classList.toggle('ep-has-ord', !!t.ord && t.mode !== 'frame');
-        if (open && !wasOpen) this.opened(n); if (!open && wasOpen) this.closed(n);
+        if (open && !wasOpen) {   // the title keeps clear of the pills, whatever they hold: measure them unclamped, since the card itself is still growing
+          const ld = e.querySelector(':scope > .ep-lead');
+          if (ld) { ld.style.width = 'max-content'; ld.style.maxWidth = 'none'; const w = ld.offsetWidth; ld.style.width = ''; ld.style.maxWidth = ''; e.style.setProperty('--lead-pad', Math.round(Math.min(w, t.w * .56) + 66) + 'px'); }
+          this.opened(n);
+        }
+        if (!open && wasOpen) this.closed(n);
         if (open) { const i = st.order ? st.order.indexOf(n.id) : -1, wk = e.querySelector('.ep-walk'); wk.hidden = i < 0; if (i >= 0) { wk.querySelector('b').textContent = `${i + 1} of ${st.order.length}`; wk.querySelector('.ep-prev').disabled = i === 0; wk.querySelector('.ep-next').disabled = i === st.order.length - 1; } }
       });
       const deep = this.N[st.path[st.path.length - 1]];

@@ -421,6 +421,7 @@
     text: 'Hierarchies appear wherever many parts steer one whole, and they are usually taken as a fixed fact of architecture. We ask instead what a layer does to a feedback loop. Suppose a population sets a <i>mandate</i> for a larger system and revises it whenever the outcome departs from what was expected. A larger population gives a sharper verdict, which is why large groups judge well, and in a loop that sharpness is overcorrection. Layers weaken the verdict until the loop settles, though each also delays a genuine change. Depth therefore has three phases, which the paper calls unstable, modular and inertial, and EigenEngine nests its records in the second.',
     tag: 'Pre-pre-print · an early example',
     pdf: '/assets/docs/the-phases-of-hierarchy.pdf?v=fb917942',
+    arxiv: 'https://arxiv.org/abs/2611.33566',
     art,
     exhibit: { steps: steps.map(({ label, caption }) => ({ label, caption })), mount },
     sections: [

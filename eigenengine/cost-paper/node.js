@@ -657,6 +657,7 @@
     line: 'What does a representation have to carry, and what does it cost to carry it?',
     text: 'Every representation must be held in matter, and so must the apparatus that organises it. The same distinctions can therefore be prohibitively expensive in one organisation and accessible in another. A <i>register</i> holds distinctions at one level and is itself selected by a distinction at the next, so that a smaller choice inside a register is paid for by a larger choice among registers. Once both are priced, registers used as digits support a range that multiplies while their cost only adds, and the total grows as a logarithm. EigenEngine nests its conceptrics for this reason, and the same account sets how far each should split.',
     kicker: 'Pre-pre-print · an early example',
+    pdf: PDF,
     art,
     exhibit: { steps: STEPS.map(({ label, caption, source }) => ({ label, caption, source: source && { text: source.text, href: PDF + '#page=' + source.page, region: source.region } })), mount },
     sections: [
