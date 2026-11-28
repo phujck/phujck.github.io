@@ -1,13 +1,13 @@
 {
   "id": "appendix-i",
   "label": "Appendix I",
-  "title": "Stability of the convergence threshold",
+  "title": "Critical response of the rank ensemble",
   "kind": "appendix",
   "pages": [
-    19,
-    19
+    20,
+    21
   ],
   "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-i.json",
-  "text": "Write $f(r)=\\ln r+h(r)$ with $h(r)=o(\\ln r)$ and suppose $\\ln w(r)=o(\\ln r)$. For any fixed finite $\\lambda$ and any $\\delta>0$, there is a sufficiently large $r_0$ such that\n\n$$\nr^{-\\lambda-\\delta}\n \\le w(r)e^{-\\lambda f(r)}\n \\le r^{-\\lambda+\\delta},\n \\qquad r\\ge r_0. \\tag{I1}\n$$\n\nFor $\\lambda>1$, choose $\\delta<\\lambda-1$ to obtain convergence. For $\\lambda<1$, choose $\\delta<1-\\lambda$ to obtain divergence. The same upper comparison with an additional power of $\\ln r$ gives finite log-rank moments of every fixed order for $\\lambda>1$. At $\\lambda=1$ neither comparison decides convergence. For $f(r)=\\ln r$ and $w(r)=[\\ln(r+1)]^{-b}$, the integral test applied to $r^{-1}(\\ln r)^{j-b}$ gives a finite $j$th log-rank moment precisely when $b>j+1$. Normalisation is the case $j=0$.",
+  "text": "For $\\varepsilon=\\lambda-1>0$, $\\zeta(1+\\varepsilon)=\\varepsilon^{-1}+O(1)$, with its usual differentiable Laurent expansion. Consequently\n\n$$\nC(1+\\varepsilon)=\\varepsilon^{-1}+O(1),\\qquad\n \\chi(1+\\varepsilon)=\\varepsilon^{-2}+O(1). \\tag{I1}\n$$\n\nThese are infinite-vocabulary asymptotics. At finite cutoff and $\\lambda=1$, integral comparison gives, for $j=0,1,2$,\n\n$$\nA_j(R):=\\sum_{r=1}^R\\frac{(\\ln r)^j}{r}\n       =\\frac{(\\ln R)^{j+1}}{j+1}+O(1). \\tag{I2}\n$$\n\nThe errors are bounded because each summand is eventually decreasing and integrable on any fixed initial interval. With $L=\\ln R$,\n\n$$\n\\begin{aligned}\n C_R(1)&=A_1/A_0=\\tfrac12L+O(1),\\\\\n \\chi_R(1)&=A_2/A_0-(A_1/A_0)^2\n              =\\tfrac1{12}L^2+O(L),\\\\\n H(p_R)&=C_R(1)+\\ln A_0\n              =\\tfrac12L+\\ln L+O(1).\n \\end{aligned} \\tag{I3}\n$$\n\nFinite devices can occupy this ensemble. Divergent heat per complete reset is a statement about the limit $R\\to\\infty$ under the reset assumptions of Eq. (41).",
   "figures": []
 }

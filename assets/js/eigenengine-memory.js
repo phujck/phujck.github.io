@@ -6,7 +6,7 @@
   mount.dataset.ready = 'true';
 
   const paper = '/demo/view/?asset=cost-paper';
-  const version = '3f99bae5393b10ffd28e049e6d4955b69568e7371a54edd8c46d3b9c346586a6';
+  const version = '3d6b0e6712cd9ff6d5c91d152d5cd1a9eeda93862fc90ea2fc02c894383c4c87';
   const narrow = window.matchMedia('(max-width: 540px)');
   const svgNS = 'http://www.w3.org/2000/svg';
   const topics = [
@@ -508,7 +508,7 @@
     receipt.classList.toggle('is-context', state.role === 'figures');
     receiptTitle.setAttribute('x', topics[winner.group].x - x);
     receiptTitle.setAttribute('y', 360 - y);
-    receiptTitle.textContent = state.role === 'paper' ? 'Equation 46 · page 13' : 'Figure 6 · page 14';
+    receiptTitle.textContent = state.role === 'paper' ? 'Equation 49 · page 14' : 'Figure 7 · page 15';
     receiptLine.setAttribute('d', `M0 13L${topics[winner.group].x - x} ${342 - y}`);
     if (visibility === 1) {
       stage.dataset.winner = winner.id;
@@ -533,8 +533,8 @@
       ? '<strong>Sections and figures admitted</strong><p>A separate collection stays closed.</p>'
       : '<strong>Only figures admitted</strong><p>Section text stays closed.</p>';
     if (phase === 3) return '<strong>One unit of query mass</strong><p>Gold shows its distribution over eligible branches.</p>';
-    if (!full) return `<strong>Figure 6 · context only</strong><p>No original passage returned. <a data-source-region="cost-fig-6" target="_blank" rel="noopener" href="${paper}&amp;page=14">Open page 14</a></p>`;
-    return `<strong>A power law</strong><p class="ee-memory__compact-formula">p(r | λ) = r<sup>−λ</sup> / Z<sub>R</sub>(λ)</p><p><a data-source-region="cost-eq-46" target="_blank" rel="noopener" href="${paper}&amp;page=13">Open the original · Eq. 46, p. 13</a></p>`;
+    if (!full) return `<strong>Figure 7 · context only</strong><p>No original passage returned. <a data-source-region="cost-fig-7" target="_blank" rel="noopener" href="${paper}&amp;page=15">Open page 15</a></p>`;
+    return `<strong>A power law</strong><p class="ee-memory__compact-formula">p(r | λ) = r<sup>−λ</sup> / Z<sub>R</sub>(λ)</p><p><a data-source-region="cost-eq-49" target="_blank" rel="noopener" href="${paper}&amp;page=14">Open the original · Eq. 46, p. 13</a></p>`;
   }
 
   function body(phase) {
@@ -549,7 +549,7 @@
       ? '<div class="ee-memory__comparison"><strong>Same question and PDF edition</strong><p>Public paper · 1 original passage<br>Figures only · 0 original passages</p></div>'
       : '';
     if (!full) {
-      return `<h3>Figure 6 gives context</h3><p>The figure plots examples. The section text carries the general formula, so this read returns no supporting passage.</p><p class="ee-memory__detail">Public paper · Figure 6, p. 14 · ${versionLabel}</p><a data-source-region="cost-fig-6" target="_blank" rel="noopener" href="${paper}&amp;page=14">Open Figure 6 in the public PDF <span aria-hidden="true">↗</span></a>${comparison}<button type="button" data-repeat>Repeat question</button>`;
+      return `<h3>Figure 7 gives context</h3><p>The figure plots examples. The section text carries the general formula, so this read returns no supporting passage.</p><p class="ee-memory__detail">Public paper · Figure 7, p. 15 · ${versionLabel}</p><a data-source-region="cost-fig-7" target="_blank" rel="noopener" href="${paper}&amp;page=15">Open Figure 6 in the public PDF <span aria-hidden="true">↗</span></a>${comparison}<button type="button" data-repeat>Repeat question</button>`;
     }
     return `<h3>A power law</h3>
       <p>Frequency falls as a power of rank, the symbol’s position when listed from most to least common.</p>
@@ -557,7 +557,7 @@
       <p>For a finite list of symbols, this is the maximum-entropy distribution when the average logarithm of rank is set.</p>
       <blockquote>“the exponential in cost becomes a power law in rank.”</blockquote>
       <dl class="ee-memory__receipt"><div><dt>Delivered</dt><dd>One original passage</dd></div><div><dt>PDF edition</dt><dd>${versionLabel}</dd></div></dl>
-      <a data-source-region="cost-eq-46" target="_blank" rel="noopener" href="${paper}&amp;page=13">Open page 13, Equation 46 <span aria-hidden="true">↗</span></a>${comparison}<button type="button" data-repeat>Repeat question</button>`;
+      <a data-source-region="cost-eq-49" target="_blank" rel="noopener" href="${paper}&amp;page=14">Open page 14, Equation 49 <span aria-hidden="true">↗</span></a>${comparison}<button type="button" data-repeat>Repeat question</button>`;
   }
 
   function render(time) {

@@ -111,7 +111,7 @@
   }
 
   /* ---------- inside: the exhibit ---------- */
-  const PDF = '/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5';
+  const PDF = '/assets/docs/the-cost-of-complexity.pdf?v=3d6b0e67';
   const STEPS = [
     { label: 'One register', holds: 'A register holds alternatives', source: { text: 'Figure 2, p. 5', page: 5, region: 'cost-fig-2' },
       caption: 'A <i>register</i> is any physical system whose distinguishable states stand for alternatives. Here it holds sixteen symbols, ranked from the most typical to the least, and we suppose it needs one element for every alternative it must tell apart.' },
@@ -121,7 +121,7 @@
       caption: 'Suppose we give every symbol a register of its own, so that nothing is left to choose inside it. The selector now holds all sixteen alternatives, and the original problem has reappeared one level up.' },
     { label: 'Nest it', holds: 'A level multiplies the range', source: { text: 'Theorem 3, p. 7', page: 7, region: 'cost-theorem-3' },
       caption: 'The same move can be repeated, so that every symbol becomes a register of four finer ones, and the row folds into a square. Each square is then a register for the four it contains and one symbol of the square above, so every level multiplies the range by four while adding four elements to the cost.' },
-    { label: 'Price a level', holds: 'A level costs what it divides', source: { text: 'Figure 3, p. 10', page: 10, region: 'cost-fig-3' },
+    { label: 'Price a level', holds: 'A level costs what it divides', source: { text: 'Figure 3, p. 9', page: 9, region: 'cost-fig-3' },
       caption: 'What does another level cost? Priced by the area it divides, every level adds the same amount and the total grows as a logarithm, while priced by the length of wall it builds each level costs twice the last.' },
     { label: 'How far to split', holds: 'A fixed cost sets the split', source: { text: 'The economy of digits, p. 8', page: 8 },
       caption: 'Suppose a register also costs something merely to exist, before it holds anything. When that cost is small the cheapest design is deep with small registers, and as it grows the registers widen.' },
@@ -636,12 +636,12 @@
 
   function thePaper(host) {
     const root = H(host, 'div', 'egn-cost egc-paper', `
-      <figure class="egc-fig1"><a href="/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5#page=3" target="_blank" rel="noopener"><img src="/eigenengine/cost-of-complexity/reading/cost/figure-1.webp" alt="Figure 1 of the paper. Sixteen symbols are followed from their microscopic realisations to four registers of four, above three panels on capacity, occupation and erasure." loading="lazy"></a><figcaption>Figure 1 of the paper, which follows sixteen symbols from their microscopic realisations to an organised register.</figcaption></figure>
+      <figure class="egc-fig1"><a href="/assets/docs/the-cost-of-complexity.pdf?v=3d6b0e67#page=4" target="_blank" rel="noopener"><img src="/eigenengine/cost-of-complexity/reading/cost/figure-1.webp" alt="Figure 1 of the paper. Sixteen symbols are followed from their microscopic realisations to four registers of four, above three panels on capacity, occupation and erasure." loading="lazy"></a><figcaption>Figure 1 of the paper, which follows sixteen symbols from their microscopic realisations to an organised register.</figcaption></figure>
       <div class="egc-read">
         <p class="egc-lab">Pre-pre-print · an early example of what EigenEngine makes</p>
-        <p class="egc-ttl"><i>The Cost of Complexity: A Physical Theory of Representation</i><br><span>Gerard McCaul · 21 pages</span></p>
+        <p class="egc-ttl"><i>The Cost of Complexity: A Physical Theory of Representation</i><br><span>Gerard McCaul · 22 pages</span></p>
         <ul>
-          <li><a href="/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5" target="_blank" rel="noopener">Read the paper <span>PDF ↗</span></a></li>
+          <li><a href="/assets/docs/the-cost-of-complexity.pdf?v=3d6b0e67" target="_blank" rel="noopener">Read the paper <span>PDF ↗</span></a></li>
           <li><a href="/eigenengine/cost-of-complexity/">Work through its results one at a time <span>→</span></a></li>
           <li><a href="/eigenengine/cost-of-complexity/#agent-reading">Have a language model explain it <span>→</span></a></li>
           <li><a href="/eigenengine/kalmar-constant/">What if the layout itself has to be stored? The Kalmár companion <span>→</span></a></li>

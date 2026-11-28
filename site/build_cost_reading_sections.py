@@ -175,7 +175,7 @@ def generate_cost(src):
     pdf = SITE / "eigenengine/guide/the-cost-of-complexity.pdf"
     if (
         hashlib.sha256(pdf.read_bytes()).hexdigest()
-        != "3f99bae5393b10ffd28e049e6d4955b69568e7371a54edd8c46d3b9c346586a6"
+        != "3d6b0e6712cd9ff6d5c91d152d5cd1a9eeda93862fc90ea2fc02c894383c4c87"
     ):
         raise ValueError("Unexpected edition of The Cost of Complexity")
     assert call("pdftotext", "-raw", src / "main.pdf", "-") == call(
@@ -188,7 +188,7 @@ def generate_cost(src):
         for k, n, p in re.findall(r"\\newlabel\{([^{}]+)\}\{\{([^{}]*)\}\{(\d+)\}", aux)
     }
     cite = {k: n for k, n in re.findall(r"\\bibcite\{([^}]+)\}\{\{(\d+)\}", aux)}
-    assert len(cite) == 68
+    assert len(cite) == 76
     number = 0
     theorem = 0
     footnotes = 0
@@ -261,22 +261,42 @@ def generate_cost(src):
             math.append(value)
             return "TEXFORMULA" + str(index) + "ENDMATH"
 
-        def equation(m):
+        def numbered(eq):
             nonlocal number
             number += 1
             n = appendix + str(number)
-            eq = m[1].strip()
-            numbered = re.findall(r"\\label\{([^}]+)\}", eq)
-            assert all(labels[k][0] == n for k in numbered), (
+            eq = eq.strip()
+            labelled = re.findall(r"\\label\{([^}]+)\}", eq)
+            assert all(labels[k][0] == n for k in labelled), (
                 n,
-                numbered,
-                [labels[k] for k in numbered],
+                labelled,
+                [labels[k] for k in labelled],
             )
             eq = re.sub(r"\\label\{[^}]+\}", "", eq).strip()
             return "\n\n" + token("$$\n" + eq + " \\tag{" + n + "}\n$$") + "\n\n"
 
+        def rows(starred, body):
+            # LaTeX numbers every row of an align, except rows marked \nonumber and the single
+            # number of an align that wraps one aligned block; align* numbers nothing.
+            parts = [body] if re.search(r"\\begin\{(aligned|split)\}", body) else re.split(r"\\\\", body)
+            out = []
+            for row in parts:
+                row = row.strip()
+                if not row:
+                    continue
+                if starred or re.search(r"\\(nonumber|notag)\b", row):
+                    row = re.sub(r"\\(nonumber|notag)\b", "", row).strip()
+                    out.append("\n\n" + token("$$\n" + row + "\n$$") + "\n\n")
+                else:
+                    out.append(numbered(row))
+            return "".join(out)
+
+        def display(m):                        # one pass, so the numbers follow the document order
+            env, body = m[1], m[2]
+            return numbered(body) if env == "equation" else rows(env.endswith("*"), body)
+
         tex = re.sub(
-            r"\\begin\{equation\}(.*?)\\end\{equation\}", equation, tex, flags=re.DOTALL
+            r"\\begin\{(equation|align\*?)\}(.*?)\\end\{\1\}", display, tex, flags=re.DOTALL
         )
         tex = re.sub(
             r"\\\[(.*?)\\\]",
@@ -327,6 +347,7 @@ def generate_cost(src):
     ack = re.search(
         r"\\begin\{acknowledgments\}(.*?)\\end\{acknowledgments\}", main, re.DOTALL
     )[1]
+    figures = []
     data.append(
         (
             "acknowledgments",
@@ -335,7 +356,7 @@ def generate_cost(src):
             "acknowledgments",
             titles["Acknowledgments"],
             render(ack),
-            [],
+            figures,
         )
     )
     apps = re.split(
@@ -346,6 +367,8 @@ def generate_cost(src):
         letter = chr(65 + i)
         number = 0
         title = render(title)
+        figures = []                           # an appendix may carry a figure of its own
+        text = render(content, letter)
         data.append(
             (
                 "appendix-" + letter.lower(),
@@ -353,22 +376,22 @@ def generate_cost(src):
                 title,
                 "appendix",
                 titles[title],
-                render(content, letter),
-                [],
+                text,
+                figures,
             )
         )
     raw = call("pdftotext", "-raw", pdf, "-")
     refs = references(raw)
-    assert refs.startswith("[1] ") and "[68] " in refs
+    assert refs.startswith("[1] ") and "[76] " in refs
     data.append(
         ("references", "", "References", "references", titles["References"], refs, [])
     )
     out = []
     for i, (id, l, t, kind, p, tx, fig) in enumerate(data):
-        end = data[i + 1][4] if i + 1 < len(data) else 21
+        end = data[i + 1][4] if i + 1 < len(data) else 22
         # The publication switches to a new page between some complete sections.
         if id == "acknowledgments":
-            end = 16
+            end = p
         end = max([end, *[f["page"] for f in fig]])
         out.append(packet("cost", id, l, t, kind, [p, end], tx, fig))
     ar = packet("cost", "abstract", "", "Abstract", "abstract", [1, 1], abstract)
@@ -379,7 +402,7 @@ def generate_cost(src):
         "sha256": hashlib.sha256(pdf.read_bytes()).hexdigest(),
         "abstract": abstract,
         "abstractUrl": ar["url"],
-        "sourceNote": "Prose and mathematical expressions from the Writing App manuscript of 23 November 2026. Its compiled text was checked on all 21 pages. Figure images are crops of the PDF.",
+        "sourceNote": "Prose and mathematical expressions from the Writing App manuscript of 28 November 2026. Its compiled text was checked on all 22 pages. Figure images are crops of the PDF.",
         "sections": out,
     }
 
@@ -922,7 +945,7 @@ def join(papers):
         paper["readingUrl"] = WEB + paper["id"] + "/"
         paper["pages"] = 21 if paper["id"] == "cost" else 8
         paper["sourceDate"] = (
-            "23 November 2026" if paper["id"] == "cost" else "Draft of 19 November 2026"
+            "28 November 2026" if paper["id"] == "cost" else "Draft of 19 November 2026"
         )
     full = {"format": "eigenengine/sequential-manuscripts@1", "papers": papers}
     emit(OUT / "corpus.json", full)

@@ -10,47 +10,47 @@
     section: {
       region: 'cost-geometry', label: 'Geometry of refinement', kind: 'Section', tone: 'gold',
       summary: 'Each square is a register for its children and a symbol in its parent register. Open a quadrant to repeat the same four-way choice.',
-      next: ['register', 'claim'], page: 9,
+      next: ['register', 'claim'], page: 8,
     },
     register: {
       region: 'cost-fig-3a', label: 'Four-way split', kind: 'Construction', tone: 'gold',
       summary: 'The Hilbert path visits all the cells in one quadrant before entering the next. The path repeats inside each quadrant, rotated or reflected to keep consecutive cells adjacent.',
-      next: ['cell', 'count'], page: 10,
+      next: ['cell', 'count'], page: 9,
     },
     cell: {
-      region: 'cost-fig-4b', label: 'Selected cell', kind: 'Detail', tone: 'gold',
-      summary: 'Following one branch identifies a cell. Figure 4 follows the third child through three levels, with each selected child becoming the register for the next choice.',
-      page: 11,
+      region: 'cost-fig-3a', label: 'Selected cell', kind: 'Detail', tone: 'gold',
+      summary: 'Following one branch identifies a cell. Figure 3(a) shades the quadrant holding rank 11 at depth two, and its cell becomes the register for the next division.',
+      page: 9,
     },
     count: {
       region: 'cost-fig-3a', label: 'Four times as many', kind: 'Premise', tone: 'blue',
       summary: 'At each level every register divides into four. The next level therefore has four times as many divisions to pay for.',
-      page: 10,
+      page: 9,
     },
     width: {
       region: 'cost-width', label: 'Width per register', kind: 'Premise', tone: 'blue',
-      summary: 'On the square, each child is half as wide as its parent. That leaves one quarter of its area. Figure 4 keeps the same nesting and varies the width contraction.',
-      next: ['fig3', 'fig4'], page: 9,
+      summary: 'On the square, each child is half as wide as its parent. That leaves one quarter of its area. Figure 4 keeps the same rank order and varies the partition, so the dimension of the outline sets the exponent.',
+      next: ['fig3', 'fig4'], page: 8,
     },
     price: {
       region: 'cost-fig-3b', label: 'Area or wall length', kind: 'Condition', tone: 'blue',
       summary: 'A division can be priced by the area being divided or by the length of the walls that divide it. On the square, area quarters but wall length halves with each step down.',
-      next: ['fig3'], page: 10,
+      next: ['fig3'], page: 9,
     },
     claim: {
       region: 'cost-fig-3b', label: 'Constant cost per level', kind: 'Claim', tone: 'teal',
       summary: 'On the square, area pricing makes each round cost the same. Four times as many divisions cost one quarter as much each. Wall-length pricing makes each round cost twice as much.',
-      next: ['fig3', 'fig4'], page: 10,
+      next: ['fig3', 'fig4'], page: 9,
     },
     fig3: {
       region: 'cost-fig-3', label: 'Figure 3', kind: 'Evidence', tone: 'teal',
       summary: 'The upper panels show successive levels on the square. Below, the blue area-priced curve rises by the same amount each time. The orange wall-length curve has increments of 1, 2 and 4.',
-      caption: 'The composition correction as geometry', page: 10,
+      caption: 'One rank order, different costs of refinement', page: 9,
     },
     fig4: {
       region: 'cost-fig-4', label: 'Figure 4', kind: 'Evidence', tone: 'teal',
       summary: 'A related construction keeps the rank order and nesting while thinning the geometry. At dimension one, even wall-length pricing gives a constant increment because the width quarters.',
-      caption: 'The Hilbert order at non-integer dimension', page: 11,
+      caption: 'One rank order, four physical partitions', page: 10,
     },
   };
   const ids = Object.keys(records);
@@ -702,7 +702,7 @@
       answer.innerHTML = `<p><strong>Area pricing.</strong> Each round divides four times as many squares, each with one quarter of the area. Under wall-length pricing the cost per round doubles.</p>
         <p>${step.status}</p>
         <a href="/eigenengine/cost-of-complexity/#refinement">Compare the cost curves in the paper ↗</a>
-        <a data-source-region="cost-fig-3" target="_blank" rel="noopener" href="${paper}&amp;page=10">Open Figure 3 ↗</a>`;
+        <a data-source-region="cost-fig-3" target="_blank" rel="noopener" href="${paper}&amp;page=9">Open Figure 3 ↗</a>`;
       if (phase !== phases.length - 1) return;
       select('fig3');
       answer.insertAdjacentHTML('beforeend', `<blockquote>“a price set by area (γ = 2) adds the same increment … at every depth”</blockquote>

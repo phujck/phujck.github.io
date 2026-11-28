@@ -5,10 +5,10 @@
       "id": "cost",
       "title": "The Cost of Complexity: A Physical Theory of Representation",
       "pdf": "/eigenengine/guide/the-cost-of-complexity.pdf",
-      "sha256": "3f99bae5393b10ffd28e049e6d4955b69568e7371a54edd8c46d3b9c346586a6",
-      "abstract": "Every representation must be embodied in matter, and this embodiment carries a cost. This cost extends not only to the symbols being manipulated, but the structure of the registers which hold those symbols. Utilising the same set of distinctions can therefore be prohibitively expensive in one organisation and accessible in another. We ask what constrains this freedom of representation when the apparatus that organises a representation must itself be represented. Our central observation is recursive: a register holds distinctions at one level and is itself selected by a distinction at the next. With additive positional composition and a positive limiting price per nat, we derive logarithmic growth of the efficient register budget and show that symbol costs can approach the same asymptotic rate. We demonstrate this bound is universal, but the rate at which it can be approached depend on the particular representation. Homogeneous refinement makes the logarithmic law exact, while maximum entropy at fixed mean logarithmic rank cost yields the Zipf family of distributions. We then independently show that this result can be observed in a thermodynamic computer, where the mean log probability rank gives a lower bound on the heat of erasure. Requiring fidelity to a target extends the account to the information a representation must preserve. The resulting theory makes the physical organisation of information an object of optimisation, providing a static foundation for representation learning and systems that can revise their own architecture",
+      "sha256": "3d6b0e6712cd9ff6d5c91d152d5cd1a9eeda93862fc90ea2fc02c894383c4c87",
+      "abstract": "Every representation must be embodied in matter, and this embodiment carries a cost. The cost extends beyond the symbols being manipulated to the structure of the registers that hold them, so the same distinctions can be prohibitively expensive in one organisation and accessible in another. We ask what constrains this freedom when the apparatus that organises a representation must itself be represented, and make three contributions. First, we show that efficiency and recursive self-consistency alone fix the form of representational cost: under additive positional composition the efficient register budget grows logarithmically, symbol costs can approach the same rate, and maximum entropy at fixed mean cost yields the Zipf family of distributions. Second, we establish a correspondence between this cost and the geometry of space-filling curves, in which the exponent of a refinement law is set by the dimension of the resource each division consumes and can be read from how often a small perturbation changes a register’s address. Third, we realise the cost thermodynamically in a Diophantine guessing machine, a minimal model of general computation whose heat of erasure is bounded below by the mean logarithm of probability rank. Together these results trace the logarithmic structure common to information theory, thermodynamics and Zipf’s law to a single origin in the efficient embodiment of distinctions. They offer a foundation for a covering theory across these fields, in which the organisation of a representation is itself a physical object of optimisation.",
       "abstractUrl": "/eigenengine/cost-of-complexity/reading/cost/abstract.json",
-      "sourceNote": "Prose and mathematical expressions from the Writing App manuscript of 23 November 2026. Its compiled text was checked on all 21 pages. Figure images are crops of the PDF.",
+      "sourceNote": "Prose and mathematical expressions from the Writing App manuscript of 28 November 2026. Its compiled text was checked on all 22 pages. Figure images are crops of the PDF.",
       "sections": [
         {
           "id": "i",
@@ -38,7 +38,7 @@
           "title": "The Cost of Complexity",
           "kind": "section",
           "pages": [
-            4,
+            3,
             11
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/iii.json"
@@ -49,8 +49,8 @@
           "title": "The Guessing Machine",
           "kind": "section",
           "pages": [
-            10,
-            13
+            11,
+            14
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/iv.json"
         },
@@ -60,8 +60,8 @@
           "title": "The Canonical Cost Curve",
           "kind": "section",
           "pages": [
-            13,
-            15
+            14,
+            16
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/v.json"
         },
@@ -71,8 +71,8 @@
           "title": "Outlook",
           "kind": "section",
           "pages": [
-            15,
-            16
+            16,
+            17
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/vi.json"
         },
@@ -82,8 +82,8 @@
           "title": "Acknowledgments",
           "kind": "acknowledgments",
           "pages": [
-            16,
-            16
+            17,
+            17
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/acknowledgments.json"
         },
@@ -105,7 +105,7 @@
           "kind": "appendix",
           "pages": [
             17,
-            17
+            18
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-b.json"
         },
@@ -115,8 +115,8 @@
           "title": "Cost of a symbol",
           "kind": "appendix",
           "pages": [
-            17,
-            17
+            18,
+            18
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-c.json"
         },
@@ -126,7 +126,7 @@
           "title": "Scale-covariant register budgets",
           "kind": "appendix",
           "pages": [
-            17,
+            18,
             18
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-d.json"
@@ -134,21 +134,21 @@
         {
           "id": "appendix-e",
           "label": "Appendix E",
-          "title": "Diophantine search and witness encoding",
+          "title": "Monte Carlo test of the perimeter readout",
           "kind": "appendix",
           "pages": [
             18,
-            18
+            19
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-e.json"
         },
         {
           "id": "appendix-f",
           "label": "Appendix F",
-          "title": "Scale-dependent erasure costs",
+          "title": "Diophantine search and witness encoding",
           "kind": "appendix",
           "pages": [
-            18,
+            19,
             19
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-f.json"
@@ -156,44 +156,44 @@
         {
           "id": "appendix-g",
           "label": "Appendix G",
-          "title": "Maximum-entropy rank ensembles",
+          "title": "Scale-dependent erasure costs",
           "kind": "appendix",
           "pages": [
             19,
-            19
+            20
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-g.json"
         },
         {
           "id": "appendix-h",
           "label": "Appendix H",
-          "title": "Critical response of the rank ensemble",
+          "title": "Maximum-entropy rank ensembles",
           "kind": "appendix",
           "pages": [
-            19,
-            19
+            20,
+            20
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-h.json"
         },
         {
           "id": "appendix-i",
           "label": "Appendix I",
-          "title": "Stability of the convergence threshold",
+          "title": "Critical response of the rank ensemble",
           "kind": "appendix",
           "pages": [
-            19,
-            19
+            20,
+            21
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-i.json"
         },
         {
           "id": "appendix-j",
           "label": "Appendix J",
-          "title": "The cost–entropy–fidelity functional",
+          "title": "Stability of the convergence threshold",
           "kind": "appendix",
           "pages": [
-            19,
-            20
+            21,
+            21
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-j.json"
         },
@@ -203,8 +203,8 @@
           "title": "References",
           "kind": "references",
           "pages": [
-            20,
-            21
+            21,
+            22
           ],
           "url": "/eigenengine/cost-of-complexity/reading/cost/references.json"
         }
@@ -214,7 +214,7 @@
       "correspondence": "eigen@gmccaul.co.uk",
       "readingUrl": "/eigenengine/cost-of-complexity/reading/cost/",
       "pages": 21,
-      "sourceDate": "23 November 2026"
+      "sourceDate": "28 November 2026"
     },
     {
       "id": "kalmar",

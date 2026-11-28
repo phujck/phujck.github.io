@@ -1,13 +1,13 @@
 {
   "id": "appendix-h",
   "label": "Appendix H",
-  "title": "Critical response of the rank ensemble",
+  "title": "Maximum-entropy rank ensembles",
   "kind": "appendix",
   "pages": [
-    19,
-    19
+    20,
+    20
   ],
   "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-h.json",
-  "text": "For $\\varepsilon=\\lambda-1>0$, $\\zeta(1+\\varepsilon)=\\varepsilon^{-1}+O(1)$, with its usual differentiable Laurent expansion. Consequently\n\n$$\nC(1+\\varepsilon)=\\varepsilon^{-1}+O(1),\\qquad\n \\chi(1+\\varepsilon)=\\varepsilon^{-2}+O(1). \\tag{H1}\n$$\n\nThese are infinite-vocabulary asymptotics. At finite cutoff and $\\lambda=1$, integral comparison gives, for $j=0,1,2$,\n\n$$\nA_j(R):=\\sum_{r=1}^R\\frac{(\\ln r)^j}{r}\n       =\\frac{(\\ln R)^{j+1}}{j+1}+O(1). \\tag{H2}\n$$\n\nThe errors are bounded because each summand is eventually decreasing and integrable on any fixed initial interval. With $L=\\ln R$,\n\n$$\n\\begin{aligned}\n C_R(1)&=A_1/A_0=\\tfrac12L+O(1),\\\\\n \\chi_R(1)&=A_2/A_0-(A_1/A_0)^2\n              =\\tfrac1{12}L^2+O(L),\\\\\n H(p_R)&=C_R(1)+\\ln A_0\n              =\\tfrac12L+\\ln L+O(1).\n \\end{aligned} \\tag{H3}\n$$\n\nFinite devices can occupy this ensemble. Divergent heat per complete reset is a statement about the limit $R\\to\\infty$ under the reset assumptions of Eq. (38).",
+  "text": "With fixed rank labels, normalisation and a mean cost $\\ell$, the entropy Lagrangian is\n\n$$\n\\frac{\\partial}{\\partial p(r)}\\Bigl[\n    S[p] - \\alpha\\bigl(\\textstyle\\sum p(r)-1\\bigr)\n         - \\lambda\\bigl(\\textstyle\\sum p(r)\\log r - \\ell\\bigr)\n  \\Bigr] = 0 \\tag{H1}\n$$\n\nIts stationary condition is $-\\ln p(r)-1-\\alpha-\\lambda\\ln r=0$. Normalisation gives Eq. (49). Strict concavity of entropy gives the unique maximiser for an interior feasible mean. The derivative $dC/d\\lambda=-\\operatorname{Var}_{\\lambda}(\\ln r)<0$ for finite $R\\ge2$ and finite $\\lambda$ gives uniqueness of the multiplier. The endpoint ensembles follow as $\\lambda\\to\\pm\\infty$. If ranks must also follow decreasing occupation probability, $\\lambda\\ge0$ and the maximum mean is the uniform value $\\ln(R!)/R$.\n\nFor the scale-covariant cost of Eq. (D5), the same calculation gives\n\n$$\np_\\alpha(r\\mid\\lambda)\n  =\n  \\frac{1}{Z_{R,\\alpha}(\\lambda)}\n  \\exp\\!\\left[-\\lambda\\,\\frac{r^{\\alpha}-1}{\\alpha}\\right]. \\tag{H2}\n$$\n\nwith the logarithmic limit at $\\alpha=0$. For $\\alpha>0$ and $\\lambda>0$ the large-rank weights decay as $\\exp[-(\\lambda/\\alpha)r^\\alpha]$, giving finite normalisation and mean cost. For $\\alpha<0$ the cost tends to $1/|\\alpha|$, so the weights tend to a positive constant for every finite $\\lambda$ and the infinite sum diverges. Within this exact scale-covariant family, the logarithmic member has the finite positive normalisation boundary discussed in the main text.",
   "figures": []
 }

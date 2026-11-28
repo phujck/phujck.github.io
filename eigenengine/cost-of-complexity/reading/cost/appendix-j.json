@@ -1,13 +1,13 @@
 {
   "id": "appendix-j",
   "label": "Appendix J",
-  "title": "The cost–entropy–fidelity functional",
+  "title": "Stability of the convergence threshold",
   "kind": "appendix",
   "pages": [
-    19,
-    20
+    21,
+    21
   ],
   "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-j.json",
-  "text": "With $W$ the source variable and fixed $p(\\omega,y)$, each encoder $q(x\\mid\\omega)$ induces a different marginal $p_q(x)$ and target information. Dropping constraint constants from the negative of the maximum-entropy Lagrangian gives\n\n$$\n\\mathcal J[q]=\\lambda C[q]-H_q(X)-\\beta I_q(X;Y). \\tag{J1}\n$$\n\nThis is the stated Lagrange functional. A nonconvex encoder class need not allow every constrained optimum to be recovered by a choice of multipliers. For a fixed $K(x)$ and finite $Z(\\lambda)$, expansion of relative entropy gives\n\n$$\nD(p_q\\Vert\\rho_\\lambda)\n =-H_q(X)+\\lambda C[q]+\\ln Z(\\lambda), \\tag{J2}\n$$\n\nwhich proves Eq. (58). This identity needs no assumption that $p_q$ is an equilibrium.\n\nFor deterministic encoders and the additional calibration $C[q]=aH_q(X)+b$, one obtains\n\n$$\n\\mathcal J[q]\n =(\\lambda a-1)I_q(W;X)-\\beta I_q(X;Y)+\\lambda b. \\tag{J3}\n$$\n\nA positive rescaling yields Eq. (60) if $\\lambda a>1$. A lower bound on $C[q]$ in terms of entropy is insufficient to establish equality of the two optimisation problems. An asymptotic coding interpretation requires the calibration error to be controlled across the candidate class, as well as the blocklength limit.\n\nFor stochastic encoders, $H_q(X)=I_q(W;X)+H_q(X\\mid W)$. Retaining the entropy calibration therefore adds $(\\lambda a-1)H_q(X\\mid W)$ to the deterministic expression. Alternatively, calibrating cost to source information, $C[q]=aI_q(W;X)+b$, gives\n\n$$\n\\begin{aligned}\n \\mathcal J[q]={}&(\\lambda a-1)I_q(W;X)\n       -H_q(X\\mid W)\\\\\n       &-\\beta I_q(X;Y)+\\lambda b.\n \\end{aligned} \\tag{J4}\n$$\n\nIn either case the conditional entropy must be fixed, vanish, or be explicitly offset by another cost term to recover the same standard bottleneck over stochastic encoders. Standard information bottleneck can instead be posed directly as minimising $I_q(W;X)$ at prescribed relevance [22]. That is a distinct modelling choice, not an algebraic consequence of rank-cost maximum entropy.",
+  "text": "Write $f(r)=\\ln r+h(r)$ with $h(r)=o(\\ln r)$ and suppose $\\ln w(r)=o(\\ln r)$. For any fixed finite $\\lambda$ and any $\\delta>0$, there is a sufficiently large $r_0$ such that\n\n$$\nr^{-\\lambda-\\delta}\n \\le w(r)e^{-\\lambda f(r)}\n \\le r^{-\\lambda+\\delta},\n \\qquad r\\ge r_0. \\tag{J1}\n$$\n\nFor $\\lambda>1$, choose $\\delta<\\lambda-1$ to obtain convergence. For $\\lambda<1$, choose $\\delta<1-\\lambda$ to obtain divergence. The same upper comparison with an additional power of $\\ln r$ gives finite log-rank moments of every fixed order for $\\lambda>1$. At $\\lambda=1$ neither comparison decides convergence. For $f(r)=\\ln r$ and $w(r)=[\\ln(r+1)]^{-b}$, the integral test applied to $r^{-1}(\\ln r)^{j-b}$ gives a finite $j$th log-rank moment precisely when $b>j+1$. Normalisation is the case $j=0$.",
   "figures": []
 }

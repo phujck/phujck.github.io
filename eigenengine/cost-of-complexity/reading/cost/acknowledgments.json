@@ -4,10 +4,10 @@
   "title": "Acknowledgments",
   "kind": "acknowledgments",
   "pages": [
-    16,
-    16
+    17,
+    17
   ],
   "url": "/eigenengine/cost-of-complexity/reading/cost/acknowledgments.json",
-  "text": "An immense debt of gratitude is owed to a number of friends and colleagues, without whose generosity of time this work would not have been possible. Particular thanks go to Denys Bondar for their formulation of the non-deterministic diophantine machine. Otherwise (in non-canonical order), the author is grateful for discussions with William Handley, Tapio Ala-Nissilä, Moein Ivaki, Matias Karjula, Roland Weiszmuller, Viktor Ivady, Juan Sebastian Totero Gongora, Sasha Balanov, Alex Zagoskin, Alicia Magann, Sarah Cavendish and - the best listener of all - Finlay McCaul.\n\nFormal derivations, figures and manuscript drafting were assisted by EigenEngine, an integrated research environment and model harness, using ChatGPT and Claude. The author remains responsible for the ideas, interpretation and correctness of the results. More information is available at https://gmccaul.co.uk/eigenengine.",
+  "text": "An immense debt of gratitude is owed to a number of friends and colleagues, without whose generosity of time this work would not have been possible. Particular thanks go to Denys Bondar for their formulation of the non-deterministic Diophantine machine. Otherwise (in non-canonical order), the author is grateful for discussions with William Handley, Tapio Ala-Nissilä, Moein Ivaki, Matias Karjula, Roland Weiszmuller, Viktor Ivady, Juan Sebastian Totero Gongora, Sasha Balanov, Alex Zagoskin, Alicia Magann, Sarah Cavendish and - the best listener of all - Finlay McCaul.\n\nFormal derivations, figures and manuscript drafting were assisted by EigenEngine, an integrated research environment and model harness, using ChatGPT and Claude. The author remains responsible for the ideas, interpretation and correctness of the results. More information is available at https://gmccaul.co.uk/eigenengine.",
   "figures": []
 }

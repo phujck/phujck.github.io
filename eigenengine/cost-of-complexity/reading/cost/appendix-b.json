@@ -5,9 +5,9 @@
   "kind": "appendix",
   "pages": [
     17,
-    17
+    18
   ],
   "url": "/eigenengine/cost-of-complexity/reading/cost/appendix-b.json",
-  "text": "For Theorem 3, multiplicative subadditivity becomes ordinary subadditivity along the powers of any base.\n\nProof. Fix $b\\ge2$ and write $f_b(k)=K_{\\mathrm{reg}}(b^k)$. Equation (22) gives $f_b(k+l)\\le f_b(k)+f_b(l)$. For fixed $k$, write $l=qk+s$ with $0\\le s<k$. Then $f_b(l)\\le q\\,f_b(k)+f_b(s)$, and dividing by $l$ and letting $l\\to\\infty$ gives $\\limsup_l f_b(l)/l\\le f_b(k)/k$ for every $k$. Hence $f_b(l)/l$ converges to $L_b:=\\inf_k f_b(k)/k$, which is Fekete’s subadditive lemma [65]. For two bases $a$ and $b$, choose $j=\\lfloor k\\log b/\\log a\\rfloor$, so that $a^j\\le b^k<a^{j+1}$. Monotonicity gives $f_a(j)\\le f_b(k)\\le f_a(j+1)$, and dividing by $k\\log b$ shows that $L_a/\\log a=L_b/\\log b=:\\kappa_\\infty$. The same squeeze between consecutive powers of two extends the limit to all $N$. Taking $b=N$ and $k=1$ in $f_b(k)\\ge kL_b$ gives the lower bound in Eq. (26) and identifies the limit with the infimum. The upper bound follows from monotonicity, $N\\le b^{\\lceil\\log_b N\\rceil}$, and repeated use of Eq. (22).",
+  "text": "For Theorem 3, multiplicative subadditivity becomes ordinary subadditivity along the powers of any base.\n\nProof. Fix $b\\ge2$ and write $f_b(k)=K_{\\mathrm{reg}}(b^k)$. Equation (26) gives $f_b(k+l)\\le f_b(k)+f_b(l)$. For fixed $k$, write $l=qk+s$ with $0\\le s<k$. Then $f_b(l)\\le q\\,f_b(k)+f_b(s)$, and dividing by $l$ and letting $l\\to\\infty$ gives $\\limsup_l f_b(l)/l\\le f_b(k)/k$ for every $k$. Hence $f_b(l)/l$ converges to $L_b:=\\inf_k f_b(k)/k$, which is Fekete’s subadditive lemma [72]. For two bases $a$ and $b$, choose $j=\\lfloor k\\log b/\\log a\\rfloor$, so that $a^j\\le b^k<a^{j+1}$. Monotonicity gives $f_a(j)\\le f_b(k)\\le f_a(j+1)$, and dividing by $k\\log b$ shows that $L_a/\\log a=L_b/\\log b=:\\kappa_\\infty$. The same squeeze between consecutive powers of two extends the limit to all $N$. Taking $b=N$ and $k=1$ in $f_b(k)\\ge kL_b$ gives the lower bound in Eq. (28) and identifies the limit with the infimum. The upper bound follows from monotonicity, $N\\le b^{\\lceil\\log_b N\\rceil}$, and repeated use of Eq. (26).",
   "figures": []
 }

@@ -305,8 +305,8 @@
       { kind: 'applet', label: 'A memory built by diffusion', src: '/talks/synthetics/viz/ingest-diffusion.html', poster: 'synthetics-ingest-diffusion.webp' }], [{ tile: 0 }, { tile: 1 }, { tile: 2 }]),
     cost: (el, o, x) => reel(el, o, 'made-cost', [
       { kind: 'art', label: 'The construction', art: x.ART['made-cost'], box: '176 -8 216 216' },
-      { kind: 'pages', label: 'What a level costs', pages: ['page-cost-01.webp', '/assets/img/eigen/source-pages/cost-10.webp'] },
-      { kind: 'pages', label: 'The word law', pages: ['/assets/img/eigen/source-pages/cost-13.webp', '/assets/img/eigen/source-pages/cost-14.webp'] }], [{ tile: 0 }, { tile: 1 }, { tile: 2 }]),
+      { kind: 'pages', label: 'What a level costs', pages: ['page-cost-01.webp', '/assets/img/eigen/source-pages/cost-09.webp'] },
+      { kind: 'pages', label: 'The word law', pages: ['/assets/img/eigen/source-pages/cost-14.webp', '/assets/img/eigen/source-pages/cost-15.webp'] }], [{ tile: 0 }, { tile: 1 }, { tile: 2 }]),
     kalmar,
     film: (el, o) => reel(el, o, 'made-film', [
       { kind: 'video', label: 'The interface at work', src: '/demo/writing/media/session-tour.mp4', poster: IMG + 'film-still.webp', length: 97, chapters: [0, 9, 42, 55, 85] }], [{ tile: 0, act: 0 }, { tile: 0, act: 9 }, { tile: 0, act: 42 }, { tile: 0, act: 55 }, { tile: 0, act: 85 }])

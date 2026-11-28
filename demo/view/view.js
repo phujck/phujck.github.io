@@ -28,7 +28,7 @@
     "published-figure": ["Figure 3 in the paper", "published-figure"],
   };
   const assets = Object.assign(Object.create(null), window.eigenExampleViews || {}, {
-    "cost-paper": {type: "pdf", title: "The Cost of Complexity", src: "/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5"},
+    "cost-paper": {type: "pdf", title: "The Cost of Complexity", src: "/assets/docs/the-cost-of-complexity.pdf?v=3d6b0e67"},
     "dynamic-memory": {type: "pdf", title: "Dynamic Memory · Early experiment", src: "/assets/docs/dynamic-memory-early-experiment.pdf", preliminary: true},
     "kalmar-paper": {type: "pdf", title: "Physical origins of the Kalmár constant", src: "/assets/docs/physical-origins-of-the-kalmar-constant.pdf"},
     "session-tour": {type: "video", title: "Saved manuscript session", src: "../writing/media/session-tour.mp4", poster: "session-tour-poster.webp", stop: "session-film", transcript: "session-film-transcript"},

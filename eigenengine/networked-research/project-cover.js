@@ -312,7 +312,7 @@
     </div>
     <div class="nr-cover-receipt">
       <span data-cover-status role="status"></span>
-      <a href="/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5#page=${evidence.page}" target="_blank" rel="noopener"
+      <a href="/assets/docs/the-cost-of-complexity.pdf?v=3d6b0e67#page=${evidence.page}" target="_blank" rel="noopener"
         data-source-region="cost-fig-2bc" hidden title="Pinned Cost project record SHA-256: ${evidence.record}">${evidence.figure}, p. ${evidence.page} · project v${evidence.revision} ↗</a>
     </div>`;
   cover.append(footer);

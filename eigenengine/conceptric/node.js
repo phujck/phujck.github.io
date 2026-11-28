@@ -61,7 +61,7 @@
   /* ───────────────────────── the records ─────────────────────────
      Nine pieces of one result in The Cost of Complexity: the law of word frequencies, what it rests on,
      the calculation and figure that show it, and the sections that hold it. */
-  const PDF = '/assets/docs/the-cost-of-complexity.pdf?v=3f99bae5';
+  const PDF = '/assets/docs/the-cost-of-complexity.pdf?v=3d6b0e67';
   const P = {
     paper:   { kind: 'Project', t: ['The Cost of', 'Complexity'], tone: 'ink', says: 'The research object behind the paper, holding its sections, its calculation and its figures.', inside: '21 pages', more: 'A paper of 21 pages, with the calculation behind its figures.', href: PDF },
     sec3:    { kind: 'Section', t: ['The cost of', 'a word'], tone: 'ink', says: 'The section that prices a word by how common it is.', inside: 'Section III', more: 'Section III, pages 4 to 11.', href: PDF + '#page=4' },

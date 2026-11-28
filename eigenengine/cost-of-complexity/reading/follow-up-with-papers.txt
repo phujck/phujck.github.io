@@ -17,11 +17,11 @@ The Cost of Complexity: A Physical Theory of Representation
 Gerard McCaul · EigenEngine
 eigen@gmccaul.co.uk
 
-Prose and mathematical expressions from the Writing App manuscript of 23 November 2026. Its compiled text was checked on all 21 pages. Figure images are crops of the PDF.
+Prose and mathematical expressions from the Writing App manuscript of 28 November 2026. Its compiled text was checked on all 22 pages. Figure images are crops of the PDF.
 
 Abstract
 
-Every representation must be embodied in matter, and this embodiment carries a cost. This cost extends not only to the symbols being manipulated, but the structure of the registers which hold those symbols. Utilising the same set of distinctions can therefore be prohibitively expensive in one organisation and accessible in another. We ask what constrains this freedom of representation when the apparatus that organises a representation must itself be represented. Our central observation is recursive: a register holds distinctions at one level and is itself selected by a distinction at the next. With additive positional composition and a positive limiting price per nat, we derive logarithmic growth of the efficient register budget and show that symbol costs can approach the same asymptotic rate. We demonstrate this bound is universal, but the rate at which it can be approached depend on the particular representation. Homogeneous refinement makes the logarithmic law exact, while maximum entropy at fixed mean logarithmic rank cost yields the Zipf family of distributions. We then independently show that this result can be observed in a thermodynamic computer, where the mean log probability rank gives a lower bound on the heat of erasure. Requiring fidelity to a target extends the account to the information a representation must preserve. The resulting theory makes the physical organisation of information an object of optimisation, providing a static foundation for representation learning and systems that can revise their own architecture
+Every representation must be embodied in matter, and this embodiment carries a cost. The cost extends beyond the symbols being manipulated to the structure of the registers that hold them, so the same distinctions can be prohibitively expensive in one organisation and accessible in another. We ask what constrains this freedom when the apparatus that organises a representation must itself be represented, and make three contributions. First, we show that efficiency and recursive self-consistency alone fix the form of representational cost: under additive positional composition the efficient register budget grows logarithmically, symbol costs can approach the same rate, and maximum entropy at fixed mean cost yields the Zipf family of distributions. Second, we establish a correspondence between this cost and the geometry of space-filling curves, in which the exponent of a refinement law is set by the dimension of the resource each division consumes and can be read from how often a small perturbation changes a register’s address. Third, we realise the cost thermodynamically in a Diophantine guessing machine, a minimal model of general computation whose heat of erasure is bounded below by the mean logarithm of probability rank. Together these results trace the logarithmic structure common to information theory, thermodynamics and Zipf’s law to a single origin in the efficient embodiment of distinctions. They offer a foundation for a covering theory across these fields, in which the organisation of a representation is itself a physical object of optimisation.
 
 I. Introduction  (PDF pp. 1–2)
 
@@ -37,7 +37,7 @@ Representation has long played this organising role in physics. Renormalisation 
 
 Several literatures already orbit aspects of this problem. Landauer’s principle relates the entropy removed by reset to its heat cost [18, 19, 20], while efficient coding asks how signals can be organised economically into useful variables [21]. The information bottleneck makes utility explicit through a target whose information must be preserved [22]. Closer to physics, the thermodynamics of prediction connects predictive organisation to dissipation [23], and resource theories specify which transformations the available operations can achieve [24, 25]. Finally constructor theory formulates physical constraints in terms of possible and impossible transformations [26, 27]. Together these approaches make clear why a theory of representation needs to account for both the cost of distinctions represented, and the operations through which they become useful.
 
-Section II introduces the representation, its target and the efficiency assumptions. In Section III we develop the recursive cost account, derive the register and symbol bounds, and give their geometric interpretation. Section IV connects probability rank to the heat of erasure, using Diophantine search to relate a guessing machine to general computation. Section V derives the conditional Zipf family and extends the cost functional to representations that preserve information about a target. We conclude in Section VI with the consequences for physical learning and self-modification. The individual proofs and technical extensions are collected in Appendices A–J.
+Section II introduces the representation, its target and the efficiency assumptions. In Section III we develop the recursive cost account, derive the register and symbol bounds, and show that the same account describes the geometry of space-filling curves, in which the exponent of a refinement law is set by the dimension of the resource each division consumes. Section IV connects probability rank to the heat of erasure, using Diophantine search to relate a guessing machine to general computation. Section V derives the conditional Zipf family from maximum entropy at fixed mean cost. We conclude in Section VI with representations whose target includes themselves, and with the consequences for physical learning and recursive self-improvement. The individual proofs, technical extensions and a Monte Carlo test of the perimeter readout are collected in Appendices A–J.
 
 II. Representations in Matter  (PDF pp. 2–4)
 
@@ -47,32 +47,26 @@ To explore the consequences of embodiment, we must first establish what is being
 
 We call a physical system a register when its distinguishable states are used to realise a set of alternatives. The term is not restricted to computer memory. The position of a pointer, the level of an electrical signal, or a pattern across several physical elements can all serve this purpose. A register may therefore be a single device or an organised collection of devices. Its range is the number of alternatives it can distinguish at the resolution required by the task.
 
-Write $R$ for the physical register and $X$ for its set of symbols. These play different roles: $R$ is the apparatus, while $x\in X$ names one of the alternatives realised by that apparatus. Sixteen symbols need not require sixteen separate objects. They could be sixteen positions of one pointer or sixteen joint configurations of several elements. The readout specifies which physical configurations count as the same symbol. We express this through the symbol map
+We write $R$ for the physical register and $X$ for the set of symbols it contains. These play different roles - $R$ is the apparatus, while $x\in X$ names one of the distinctions realised by that apparatus. Sixteen symbols need not require sixteen separate objects physically, they simply represent sixteen distinct objects in the theory being embodied in the register. The readout from the register specifies which physical configurations count as the same symbol. We express this through the symbol map
 
 $$
 \pi:\Omega\longrightarrow X. \tag{1}
 $$
 
-The configurations in $A_x=\pi^{-1}(x)$ all realise the same symbol. Microscopic changes within $A_x$ leave the readout unchanged, so the symbol map treats those configurations as indistinguishable. This is the coarse-graining supplied by the representation. What matters is whether the distinctions it removes are needed for the target.
+The configurations in $A_x=\pi^{-1}(x)$ all realise the same symbol. Microscopic changes within $A_x$ leave the readout unchanged, so the symbol map treats those configurations as indistinguishable. This is the coarse-graining supplied by the physical embodiment of the theory being represented. The representation is faithful to the target when $\pi(\omega)=\pi(\omega')$ implies $y(\omega)=y(\omega')$. It may then discard microscopic detail while retaining everything required to describe the target. For a probabilistic target the corresponding condition is that its conditional distribution depend on $\omega$ only through $\pi(\omega)$, the familiar sufficiency condition [33]. When the target is the distribution of future observations, this leads to the causal-state construction of computational mechanics [10].
 
-The representation is faithful to the target when $\pi(\omega)=\pi(\omega')$ implies $y(\omega)=y(\omega')$. It may then discard microscopic detail while retaining everything the target requires. For a probabilistic target the corresponding condition is that its conditional distribution depend on $\omega$ only through $\pi(\omega)$, the familiar sufficiency condition [33]. When the target is the distribution of future observations, this leads to the causal-state construction of computational mechanics [10].
+Critically, the target may include the register itself. This is the situation faced by a system that represents its own organisation, and it requires the apparatus to remain inside the resource account. Exact fidelity is still a question about the chosen target: a one-bit register can preserve a binary property of a much larger system. In the case that the target theory being represented demands more distinctions than the available register can hold, the representation must choose what to retain. There are naturally limits on the capacity of a physical device to faithfully represent its target, which are considered at length within the inference-device framework. This treats observation, prediction and recollection within a common formal account [34], and supplies limits to the fidelity with which a target system can be physically modeled. We therefore take the target as given and instead ask what it costs to support the distinctions needed to represent it.
 
-Critically, the target may include the register itself. This is the situation faced by a system that represents its own organisation, and it requires the apparatus to remain inside the resource account. Exact fidelity is still a question about the chosen target: a one-bit register can preserve a binary property of a much larger system. When the target demands more distinctions than the available register can hold, the representation must choose what to retain.
+Figure 1 illustrates these considerations - and the main results of this article - by following sixteen symbols from their microscopic realisations to an organised register. To reach $x_{11}$ in the arrangement shown, we first select the third subregister, then its third symbol. The choice of register is itself a distinction that must be physically represented however, as changing the organisation leaves the meaning of $x_{11}$ intact, but changes how it is reached, and therefore the cost incurred. The lower panels separate three questions that we will need to answer: how many distinctions a budget supports, how often they are used, and how much uncertainty a reset removes.
 
-Which distinctions can a physical device infer in the first place? This is answered within the inference-device framework, which treats observation, prediction and recollection within a common formal account [34]. We therefore take the target as given and ask what it costs to support the distinctions needed to represent it.
-
-Figure 1 illustrates these considerations - and the main results of this article - by following the sixteen symbols from their microscopic realisations to an organised register. To reach $x_{11}$ in the arrangement shown, we first select the third subregister, then its third symbol. The choice of register is itself a distinction that must be physically represented however, as changing the organisation leaves the meaning of $x_{11}$ intact, but changes how it is reached, and therefore the cost incurred. The lower panels separate three questions that we will need to answer: how many distinctions a budget supports, how often they are used, and how much uncertainty a reset removes.
-
-Figure 1. From distinctions to their physical cost. (a,b) The symbol map $\pi$ identifies microscopic configurations that realise the same target-relevant symbol. Four realisations are drawn for each of sixteen symbols, with $x_{11}$ highlighted. (c) The same symbols occupy four subregisters of four symbols. Selecting $x_{11}$ requires both a register choice $i=3$ and an internal choice $j=3$. Their contributions appear separately in the cost decomposition. Below: capacity concerns the complete register budget. Additive positional composition gives the logarithmic asymptote shown when the limiting rate $\kappa_\infty$ is positive (Section III). Occupation concerns the distribution selected by maximum entropy at fixed mean logarithmic cost (Section V). The bars illustrate the finite $\lambda=1$ ensemble. Erasure concerns the uncertainty removed by resetting a memory. Here $p$ is the actual reset ensemble, and $\ell(p)$ is its mean log probability-rank under the reset assumptions of Section IV. The three panels describe distinct questions, not interchangeable costs.
-[Image: cost/figure-1.webp · PDF p. 3]
+Figure 1. From distinctions to their physical cost. (a,b) The symbol map $\pi$ identifies microscopic configurations that realise the same target-relevant symbol. Four realisations are drawn for each of sixteen symbols, with $x_{11}$ highlighted. (c) The same symbols occupy four subregisters of four symbols. Selecting $x_{11}$ requires both a register choice $i=3$ and an internal choice $j=3$. Their contributions appear separately in the cost decomposition. Below: capacity concerns the complete register budget. Additive positional composition gives the logarithmic asymptote shown when the limiting rate $\kappa_\infty$ is positive (Section III). Occupation concerns the distribution selected by maximum entropy at fixed mean logarithmic cost (Section V). The bars illustrate the finite $\lambda=1$ ensemble. Erasure concerns the uncertainty removed by resetting a memory. Here $p$ is the actual reset ensemble, and $\ell(p)$ is its mean log probability-rank under the reset assumptions of Section IV.
+[Image: cost/figure-1.webp · PDF p. 4]
 
 The price of embodiment
 
-A symbol map tells us which distinction is represented, but not what must be provided to realise it. We therefore assign a realisation cost $K_{\mathcal R}(x)$ to symbol $x$ in an organisation $\mathcal R$. Here $\mathcal R$ specifies the arrangement of registers, the assignment of symbols to their states, and the means of selecting among them. A particular register $R$ is one component of that organisation. Changing $\mathcal R$ can change the cost of reaching $x$ without changing what $x$ represents.
+A symbol map tells us which distinction is represented, but not what must be provided to realise it. We therefore assign a realisation cost $K_{\mathcal R}(x)$ to symbol $x$ in an organisation $\mathcal R$. Here $\mathcal R$ specifies the arrangement of registers, the assignment of symbols to their states, and the means of selecting among them. A particular register $R$ is one component of that organisation. Changing $\mathcal R$ can change the cost of reaching $x$ without changing what $x$ represents. The particulars of where this cost stems from are irrelevant to the argument, we require only that it exists. Physically this requirement is easily motivated by the Landauer bound on information erasure [18, 19, 20], where erasing an unbiased bit at temperature $T$ has a mean heat floor $k_BT\ln2$. This bound has been confirmed experimentally at length [35, 36, 37], and in Sec. IV we will employ it to construct an operational realisation of the results obtained. For the time being however we will proceed with maximum generality, and use only the fact that physical manipulations are never free.
 
-All comparisons use the same resource, operating conditions and task. Depending on the application, the budget may price apparatus, a prescribed operation, or a declared combination of them. Providing a register with sixteen possible states and repeatedly resetting one of those states are different resource questions. Experimental erasure and finite-time information processing illustrate why the operation must be specified when the budget is given an energetic meaning [35, 36, 37]. Under the standard reset assumptions, erasing an unbiased bit at temperature $T$ has a mean heat floor $k_BT\ln2$. The general Landauer bound prices the entropy removed [18, 19, 20]. Section IV will use this operation to calibrate a logarithmic cost in energy units. For the time being however we will proceed with maximum generality, and use only the fact that physical manipulations are never free.
-
-What makes one allocation of these costs more efficient than another? A representation is more than a set of labels. Its symbols stand in correspondence with the observations or alternatives they describe, and some may be encountered more readily than others. We begin with only this relative information, rather than a complete probability measure. Instead we shall rely only on the weaker notion of typicality,
+What makes one allocation of these costs more efficient than another? A representation is more than a set of labels - its symbols stand in correspondence with the distinctions encountered in the world that the theory attempts to describe. The mapping between symbols and events is arbitrary, so the minimum constraining structure on the representation must concern not just the symbols we ascribe, but the frequency with which they are employed. Rather than assume a complete probability measure, we shall rely only on the weaker notion of typicality,
 
 $$
 x\succcurlyeq x'
@@ -80,9 +74,9 @@ x\succcurlyeq x'
   \text{$x$ is at least as typical as $x'$}. \tag{2}
 $$
 
-Typicality records which symbols are more prevalent or readily encountered. It says that one comes before another, without specifying how much more probable it is. If usage probabilities are known, they can supply this order, but the order alone does not determine them. We consider a finite vocabulary or a countable sequence in which every symbol has finitely many predecessors. For clarity we initially take distinct typicalities. The order can be represented by a scalar $\tau$, but changing its numerical scale leaves the ordering intact. Our argument must therefore depend on that order rather than on an arbitrary numerical encoding of it.
+Typicality records which symbols are more prevalent or readily encountered. It supplies a sense in which symbols can be ordered, without requiring the additional constraint of a measure. We now consider a finite vocabulary or a countable sequence in which every symbol has finitely many predecessors. For the sake of simplicity we shall assume distinct typicalities in symbols, to avoid prescribing any otherwise arbitrary procedure for breaking ties. This typicality order can be represented by a scalar $\tau$, but changing its numerical scale leaves the ordering intact. Our argument must therefore depend on that order rather than on an arbitrary numerical encoding of it.
 
-Our efficiency condition asks that cost respect this order:
+With typicality established, the consequences of demanding an efficient representation can be formalised. Specifically, efficiency requires that the cost $K_{\mathcal R}(x)$ of realising a symbol $x$ respect the typicality order of the symbols themselves:
 
 $$
 x\succcurlyeq x'
@@ -90,13 +84,11 @@ x\succcurlyeq x'
   K_{\mathcal R}(x)\le K_{\mathcal R}(x'). \tag{3}
 $$
 
-The motivation is the usual assignment argument. Suppose two physical states have different costs, and the symbol used more often has been assigned to the more expensive state. Exchanging their assignments reduces the mean cost. Repeating this comparison favours placing more probable symbols in cheaper states, whenever the physical implementation permits those exchanges [38, 39, 33].
+A representation need not be efficient of course, but there is little interesting to be learned from the study of the badly implemented. Absent other constraints, more frequently encountered events should correspond to more cheaply realisable symbols. Eq. (3) expresses this condition, retaining only the ordinal part of widely used assignment arguments [38, 39, 33]. Efficiency therefore places a constraint on the cost of realising a symbol, but what about the cost of the register itself? This too must be accounted for, and we must include the cost of selecting a register alongside the cost of distinguishing its contents.
 
-Eq.(3) retains only the ordinal part of this argument. It permits equal costs and does not demand an optimal code. Nor does it specify how much a register costs when its range is enlarged or its contents are redistributed. Those questions concern the organisation of the representation. To answer them, we must include the cost of selecting a register alongside the cost of distinguishing its contents.
+III. The Cost of Complexity  (PDF pp. 3–11)
 
-III. The Cost of Complexity  (PDF pp. 4–11)
-
-Typicality orders the distinctions a representation carries. We now ask how their costs depend on the registers through which they are reached. For a vocabulary with finite typicality prefixes, define
+Typicality orders the distinctions a representation carries. We now ask how their costs depend on the registers through which they are reached. The typicality prefix of $x$ is the vocabulary taken in typicality order down to $x$, including any symbols tied with it. When every such prefix is finite, define the rank of a symbol by
 
 $$
 r(x):=\#\{x'\in X:x'\succcurlyeq x\}, \tag{4}
@@ -122,44 +114,60 @@ $$
 r=n(i-1)+j,\qquad 1\le i\le m,\quad1\le j\le n. \tag{6}
 $$
 
-This is a positional encoding, where one choice among $mn$ alternatives has become a choice among $m$ registers followed by a choice among $n$ symbols. The two indices identify exactly the same distinction as the original rank, without requiring statistical independence between them. We illustrate this in Fig. 2 by returning to the sixteen symbols of Fig. 1. There, two registers of eight symbols and eight registers of two symbols both carry the same sixteen distinctions. The first index now exposes the recursion. At the level where registers are selected, $i$ is itself a symbol. Once that selection has been made, the chosen register supplies the space within which $j$ is distinguished. A register is therefore both the object selected by one distinction and the space supporting the next. Moving the boundary between these roles changes the organisation without changing which symbol is ultimately identified. Our problem is therefore self-similar, a fact which we can exploit.
+This is a positional encoding : one choice among $mn$ alternatives becomes a choice among $m$ registers followed by a choice among $n$ symbols. The two indices identify exactly the same distinction as the original rank, without requiring statistical independence between them. We illustrate this in Fig. 2 by returning to the sixteen symbols of Fig. 1. There, two registers of eight symbols and eight registers of two symbols both carry the same sixteen distinctions. The first index now exposes the recursion. At the level where registers are selected, $i$ is itself a symbol. Once that selection has been made, the chosen register supplies the space within which $j$ is distinguished. Depending on the altitude at which one considers it, a register is therefore both the container for a distinction, and a distinguishable alternative in its own right. Moving the boundary between these roles changes the organisation without changing which symbol is ultimately identified. Our problem is therefore self-similar, a fact which we can exploit.
 
-Figure 2. One distinction, two register organisations. (a) Sixteen ranked distinctions $x_1,\dots,x_{16}$ held in one register, with $x_{11}$ selected. (b,c) The same symbols placed along a finite Hilbert traversal of a $4\times4$ grid. Node $k$ is $x_k$, and the blue path visits the nodes in rank order. Only the register boundaries (orange) differ between the panels: (b) $m=2$ registers of $n=8$ symbols, (c) $m=8$ registers of $n=2$. The selector above each grid is itself a register, holding the register index $i$, while $j$ is the position within the selected register, so that $r=n(i-1)+j$ as in Eq. (6). A smaller internal choice requires a larger choice among registers. The footer is the cost decomposition of Eq. (7), with the structural contribution $C_{\mathcal R}(R_x)$ in orange and the conditional internal contribution $K_{\mathcal R}(x\mid R_x)$ in blue. The panels are alternative static organisations and are not implied to have equal cost.
+Figure 2. One distinction, two register organisations. (a) Sixteen ranked distinctions $x_1,\dots,x_{16}$ held in one register, with $x_{11}$ selected. (b,c) The same symbols placed along a finite Hilbert traversal of a $4\times4$ grid. Node $k$ is $x_k$, and the blue path visits the nodes in rank order. Only the register boundaries (orange) differ between the panels: (b) $m=2$ registers of $n=8$ symbols, (c) $m=8$ registers of $n=2$. The selector above each grid is itself a register, holding the register index $i$, while $j$ is the position within the selected register, so that $r=n(i-1)+j$ as in Eq. (6). A smaller internal choice requires a larger choice among registers. The footer is the cost decomposition of Eq. (7), with the structural contribution $C_{\mathcal R}(R_x)$ in orange and the conditional internal contribution $K_{\mathcal R}(x\mid R_x)$ in blue.
 [Image: cost/figure-2.webp · PDF p. 5]
 
-We can now make the two contributions to the cost explicit. Fix a physical organisation $\mathcal R$ and let $R_x$ denote the register containing symbol $x$. The complete cost includes both providing the apparatus through which $R_x$ is selected and distinguishing $x$ once that register has been selected:
+Let us first make the two contributions to the cost explicit. Fix a physical representation $\mathcal R$, let $R_x$ denote the register containing symbol $x$. The complete cost includes both providing the apparatus through which $R_x$ is selected and distinguishing $x$ once that register has been selected:
 
 $$
 K_{\mathcal R}(x)
  =C_{\mathcal R}(R_x)+K_{\mathcal R}(x\mid R_x). \tag{7}
 $$
 
-We call $C_{\mathcal R}(R_x)$ the structural cost. It includes providing the apparatus and realising the choice of register, rather than merely charging a fixed amount for adding another box. The conditional contribution $K_{\mathcal R}(x\mid R_x)$ is the remaining cost of distinguishing $x$ within that structure. The vertical bar expresses this dependence on a selected register. No probability distribution is needed for the decomposition. It is important to note thatEq. (7) is an accounting identity, and does not rely on any assumption on the form of composition, nor a probabilistic model. The question of how representation compose is critical, as it determines how the two terms of cost change together. Moving symbols into a smaller register may make them cheaper to distinguish internally, but it also changes the selection through which they are reached. A saving in the first task is a saving overall only if it pays for the change in the second.
+We call $C_{\mathcal R}(R_x)$ the structural cost, accounting for all the costs of realisation outside of the cost of the symbol itself. The conditional contribution $K_{\mathcal R}(x\mid R_x)$ is then the remaining cost of using the symbol $x$ within that structure, with the vertical bar expressing its conditional dependence on the selected register.
 
-The limiting cases make this particularly clear. One universal register makes the selector trivial and leaves every distinction inside it. Giving each symbol its own register instead produces the one-to-one correspondence
+Note that the form of Eq. (7) is not arbitrary, but is forced upon us as soon as we demand recursive self-consistency. Explicitly, if the register $R_x$ can itself be treated as a distinction in a higher-level register $S$, the decomposition of costs must respect this. This means that the structural cost of $R_x$ must obey
 
 $$
-x\longleftrightarrow R_x. \tag{8}
+C_{\mathcal R}(R_x)=C_{\mathcal R}(S)+K_{\mathcal R}(R_x\mid S), \tag{8}
 $$
 
-There is then no choice left within a selected register, but selecting that register requires precisely the original distinctions, with their original typicality order. The representational problem has moved into $C_{\mathcal R}$. Neither limiting arrangement removes it. With the full account in place, we can ask when sharing a register reduces the cost and when separating its contents is preferable.
+identically to the form of Eq. (7). Together they force a chain rule for the complete cost:
 
-Recursive composition
+$$
+\begin{aligned}
+ K_{\mathcal R}(x)
+   &=C_{\mathcal R}(S)+K_{\mathcal R}(R_x\mid S)\\
+   &\quad+K_{\mathcal R}(x\mid R_x).
+ \end{aligned} \tag{9}
+$$
 
-A cost for one symbol and a budget for a whole vocabulary answer different questions. To support a range of $N$ alternatives, a register must be able to realise any one of them, including the most expensive. For a prescribed organisation $\mathcal R$, this requires the largest complete symbol cost on that range.
+Again we emphasise that Eq. (7) is simply the unique recursively self-consistent accounting identity for cost. It does not rely on any assumption on the form of composition, nor a probabilistic model. Its form however is - not coincidentally - familiar to any practitioner of thermodynamics or information theory. Here we see that it arises in any consistent treatment of constrained resources, and the particular equation of state it realises depends on the specific demands the theory imposes.
 
-We also want to compare different organisations of the same distinctions. Let $\mathcal A_N$ be the admissible organisations supporting the first $N$ symbols in the common typicality order, with all structural costs included. The choice of this class specifies which physical designs and compositions are available. We distinguish the budget of a particular design from the infimum over those alternatives:
+What distinguishes the present case is that it concerns the demands efficiency imposes on representation itself. This makes the question of how representations compose together critical, as it determines how the two terms of cost change in relation to each other. Moving symbols into a smaller register may make them cheaper to distinguish internally, but it also changes the selection through which they are reached. A saving in the first task is a saving overall only if it pays for the change in the second. The limiting cases make this particularly clear. One universal register makes the selector trivial and leaves every distinction inside it. Giving each symbol its own register instead produces the one-to-one correspondence
+
+$$
+x\longleftrightarrow R_x. \tag{10}
+$$
+
+There is then no choice left within a selected register, but selecting that register requires precisely the original distinctions, with their original typicality order. The representational problem has moved into $C_{\mathcal R}$, forcing our initial question to recur one level higher.
+
+Composing Costs
+
+We can now see how our question begins to stack. A proper accounting of efficiency requires both symbol cost and register cost, but the form these two costs take is necessarily distinct. In the former case it must respect the typicality of a symbol, but the cost of a register is linked to the budget for the entire vocabulary it holds. To support a range of $N$ alternatives, a register must be able to realise any one of them, including the most expensive. For a prescribed organisation $\mathcal R$, this requires the largest complete symbol cost on that range.
+
+Deciding whether a representation is efficient necessitates comparison between different organisations of the same distinctions. Let $\mathcal A_N$ be the admissible organisations supporting the first $N$ symbols in the common typicality order, with all structural costs included. The choice of this class specifies which physical designs and compositions are available. We distinguish the budget of a particular design from the infimum over those alternatives:
 
 $$
 \begin{aligned}
  B_{\mathcal R}(N)&:=\max_{r(x)\le N}K_{\mathcal R}(x),\\
  K_{\mathrm{reg}}(N)&:=\inf_{\mathcal R\in\mathcal A_N}B_{\mathcal R}(N).
- \end{aligned} \tag{9}
+ \end{aligned} \tag{11}
 $$
 
-The maximum in $B_{\mathcal R}$ acts on the complete cost for the same symbol, including both terms of Eq. (7). It is a budget sufficient for any alternative in the vocabulary, not the sum of the costs of realising all alternatives simultaneously. The second quantity, $K_{\mathrm{reg}}$, is the efficient envelope of the available designs. Its infimum need not be attained by a single design [Footnote 2. In future work we shall use this to establish the theory’s connections to non-commutative theories such as quantum mechanics] .
-
-We assume finite budgets and allow an organisation supporting $M$ symbols to serve any smaller prefix, retaining the full cost of its unused capacity. A sixteen-state register can therefore be used for its first ten alternatives without pretending that the other six states cost nothing to provide. This restriction property then lets us compare vocabularies of different sizes.
+The maximum in $B_{\mathcal R}$ acts on the complete cost for the same symbol, including both terms of Eq. (7). It is a budget sufficient for any alternative in the vocabulary, not the sum of the costs of realising all alternatives simultaneously. The second quantity, $K_{\mathrm{reg}}$, is the efficient envelope of the available designs. Its infimum need not be attained by a single representation [Footnote 2. In future work we shall use this to establish the theory’s connections to non-commutative theories such as quantum mechanics.] . We assume finite budgets and allow an organisation supporting $M$ symbols to serve any smaller prefix, retaining the full cost of its unused capacity. A sixteen-state register can therefore be used for its first ten alternatives without pretending that the other six states cost nothing to provide. This restriction property then lets us compare vocabularies of different sizes, and yields the following theorem:
 
 Theorem 1 (Monotonicity of the register budget).
 
@@ -167,28 +175,28 @@ Under this restriction property,
 
 $$
 N\le M\quad\Longrightarrow\quad
- K_{\mathrm{reg}}(N)\le K_{\mathrm{reg}}(M). \tag{10}
+ K_{\mathrm{reg}}(N)\le K_{\mathrm{reg}}(M). \tag{12}
 $$
 
-Any admissible organisation for $M$ is an available alternative for $N\le M$, at no larger maximum cost on that prefix. Taking the infimum over the alternatives proves the inequality. It is important to emphasise this inequality bounds complete budget given by Eq. (7), including both the register structural cost, and the cost of symbols within them.
+Any admissible organisation for $M$ is an available alternative for $N\le M$, at no larger maximum cost on that prefix. Taking the infimum over the alternatives proves the inequality. It is important to emphasise that this inequality bounds the complete budget given by Eq. (7), including both the register structural cost, and the cost of symbols within them.
 
-We are now in a position to formulate the cost of a refinement. Refining each of $m$ alternatives into $n$ alternatives gives a total range of $mn$, not $m+n$. That is, distinctions compose multiplicatively. Let $K_0=K_{\mathrm{reg}}(1)$ be the reference budget for a register with one alternative. We call this the existence cost $K_0$, as even when no internal choice remains, the apparatus can carry a cost. The additional budget for the refinement is the difference
+With this, we are now in a position to formulate the cost of a register based on the range of distinctions it may hold. To do so, we consider a register with a vocabulary of size $m$, and refine each of its $m$ distinctions into $n$ alternatives, such that the total range is $mn$. That is, distinctions compose multiplicatively. Now let $K_0=K_{\mathrm{reg}}(1)$ be the reference budget for a register carrying a single distinction. We call this the existence cost $K_0$, as even when no internal choice remains, the apparatus can carry a cost. The additional budget for the refinement is the difference
 
 $$
 K_0:=K_{\mathrm{reg}}(1),\qquad
- \Delta_m(n):=K_{\mathrm{reg}}(mn)-K_{\mathrm{reg}}(m). \tag{11}
+ \Delta_m(n):=K_{\mathrm{reg}}(mn)-K_{\mathrm{reg}}(m). \tag{13}
 $$
 
-These are differences of static budgets. Deferring the question of path dependence to a full dynamic treatment, we stipulate that budget difference depends only on the end points. Successive differences then telescope,
+Deferring the question of path dependence to a full dynamic treatment, we stipulate that the budget difference depends only on the end points. Successive differences then telescope,
 
 $$
-\Delta_m(np)=\Delta_m(n)+\Delta_{mn}(p), \tag{12}
+\Delta_m(np)=\Delta_m(n)+\Delta_{mn}(p), \tag{14}
 $$
 
-without requiring a model of the work needed to rebuild the register. The price of a refinement can depend on the range already supported. We record that dependence through
+without requiring a model of the work needed to rebuild the register. The price of a refinement may still depend on the range already supported, and we express this by defining $\epsilon$ as the differential cost less the existence cost:
 
 $$
-\epsilon(m,n):=\Delta_m(n)-\Delta_1(n), \tag{13}
+\epsilon(m,n):=\Delta_m(n)-\Delta_1(n), \tag{15}
 $$
 
 which gives the general composition identity
@@ -198,50 +206,50 @@ $$
  K_{\mathrm{reg}}(mn)
  &=K_{\mathrm{reg}}(m)+K_{\mathrm{reg}}(n)\\
  &\quad-K_0+\epsilon(m,n).
- \end{aligned} \tag{14}
+ \end{aligned} \tag{16}
 $$
 
 The definition makes $\epsilon$ symmetric, and consistent under successive composition:
 
 $$
-\epsilon(m,n)=\epsilon(n,m), \tag{15}
+\epsilon(m,n)=\epsilon(n,m), \tag{17}
 $$
 
 $$
 \begin{aligned}
  &\epsilon(m,n)+\epsilon(mn,p)\\
  &\qquad=\epsilon(n,p)+\epsilon(m,np).
- \end{aligned} \tag{16}
+ \end{aligned} \tag{18}
 $$
 
-These identities expose the possible corrections to additivity any self consistent representation may maintain. We first examine the case in which that correction vanishes, then ask what remains when the refinement price varies with scale.
+$\epsilon(m,n)$ measures the possible corrections to additivity any self-consistent representation may maintain. Unsurprisingly, its properties are identical to those of mutual information, $I(A;B)=H(A)+H(B)-H(A,B)$ [33].
 
-Homogeneous refinement
+Pricing Refinement
 
-What happens when the correction to multiplicative additivity vanishes? The simplest case is one in which the same relative refinement has the same price, whatever range the register already supports. In the notation just introduced,
+The simplest case occurs when the cost of a refinement has the same relative price irrespective of the range of distinctions the register already supports, i.e. when distinctions multiply but costs add. In the notation just introduced,
 
 $$
-\Delta_m(n)=\Delta_1(n)\qquad\text{for all }m,n\in\mathbb N. \tag{17}
+\Delta_m(n)=\Delta_1(n)\qquad\text{for all }m,n\in\mathbb N. \tag{19}
 $$
 
 We call this homogeneous refinement. Each multiplication of the supported range has the same price, whatever the range already present. With
 
 $$
-g(n):=K_{\mathrm{reg}}(n)-K_0, \tag{18}
+g(n):=K_{\mathrm{reg}}(n)-K_0, \tag{20}
 $$
 
 the composition identity becomes
 
 $$
-g(mn)=g(m)+g(n). \tag{19}
+g(mn)=g(m)+g(n). \tag{21}
 $$
 
 Theorem 2 (Logarithmic register cost).
 
-Let $K_{\mathrm{reg}}:\mathbb N\to\mathbb R_{\ge0}$ be finite and nondecreasing, and let its conditional increments satisfy Eq. (17). Then
+Let $K_{\mathrm{reg}}:\mathbb N\to\mathbb R_{\ge0}$ be finite and nondecreasing, and let its conditional increments satisfy Eq. (19). Then
 
 $$
-K_{\mathrm{reg}}(n)=K_0+\kappa\log n, \tag{20}
+K_{\mathrm{reg}}(n)=K_0+\kappa\log n, \tag{22}
 $$
 
 where
@@ -251,14 +259,20 @@ $$
   =
   \frac{K_{\mathrm{reg}}(2)-K_{\mathrm{reg}}(1)}
        {\log 2}
-  \ge0. \tag{21}
+  \ge0. \tag{23}
 $$
 
 Moreover, $\kappa>0$ if and only if $K_{\mathrm{reg}}(2)>K_{\mathrm{reg}}(1)$.
 
-This result fixes the entire cost law, not only its large-range limit. Every doubling adds the same budget $\kappa\log2$, and every multiplication by $n$ adds $\kappa\log n$, whatever the range already supported. Monotonicity and homogeneous refinement suffice to determine that law without a probability measure or an assumed code length. The proof in Appendix A brackets $n^k$ between powers of two to fix $g(n)/\log n$.
+This result fixes the entire cost law, not only its large-range limit. Every doubling adds the same budget $\kappa\log2$, and every multiplication by $n$ adds $\kappa\log n$, whatever the range already supported. Monotonicity and homogeneous refinement suffice to determine this, even without a probability measure or an assumed code length. The proof in Appendix A brackets $n^k$ between powers of two to fix $g(n)/\log n$.
 
-Does recursive consistency require refinement to be homogeneous? Not a chance. To see the additional freedom, fix a prescribed architecture with budget $B(N)$ and define its increments by $\Delta^B_m(n)=B(mn)-B(m)$. Suppose the price of the same refinement changes with scale according to $\Delta^B_{qm}(n)=q^\alpha\Delta^B_m(n)$. For a nonzero refinement price, consistency under composition gives the scale-covariant family
+Homogeneous refinement is not required for recursive consistency, and the particulars of embodiment may impose scale-dependent costs on the vocabulary available to a representation. We have already seen however that the form of this cost will depend only on $\Delta$. To see this, take a representation with register budget $B(N)$ whose differential cost is $\Delta^B_m(n)=B(mn)-B(m)$. Suppose the price of the same refinement changes with scale according to
+
+$$
+\Delta^B_{qm}(n)=q^\alpha\Delta^B_m(n) \tag{24}
+$$
+
+For a nonzero refinement price, consistency under composition then gives the scale-covariant family
 
 $$
 B(N)=B(1)+
@@ -266,51 +280,32 @@ B(N)=B(1)+
    \displaystyle\kappa_\alpha\frac{N^\alpha-1}{\alpha},
       &\alpha\ne0,\\[1ex]
    \kappa_0\log N,&\alpha=0.
- \end{cases}
+ \end{cases} \tag{25}
 $$
 
-The homogeneous logarithm is the $\alpha=0$ member. Positive $\alpha$ gives power-law growth, while negative $\alpha$ gives a bounded excess budget. This is the $q$-logarithmic family with $q=1-\alpha$. Appendix D derives it and shows how the power-law scaling factor follows from a monotone dependence on scale ratios. This wider family prices a particular architecture, and does not yet bound efficient envelope over every architecture available. That distinction is decisive, as a representation can obey a perfectly consistent power law and still cost more than a positional construction assembled from its parts. This begs the question as to which of these cost laws can remain efficient once such alternatives are admitted? We now return to $K_{\mathrm{reg}}$ to make that comparison.
+where homogeneous refinement corresponds to $\alpha=0$. Appendix D derives this family and shows how the power-law scaling factor follows from a monotone dependence on scale ratios. The excess budget is $\kappa_\alpha\ln_q N$, where $q=1-\alpha$ and $\ln_q$ is the $q$-logarithm . While formally $\alpha$ can take any real value, negative $\alpha$ implies an unbounded set of distinctions for a bounded price, and should be regarded as unphysical. With this established, we are in a position to derive more general bounds on register costs.
 
-Composition as shared cost
+Bounding Register Costs
 
-Suppose two admissible registers can implement the positional choice in Eq. (6) at the sum of their complete budgets. The infimum for $mn$ distinctions cannot exceed that available construction, and applying the comparison to arbitrarily near-optimal registers gives
+So far we have resisted assuming additive composition of register costs, but ultimately all theories must draw a boundary of independence between their elements at some scale. If two registers with ranges $m$ and $n$ are physically independent, they will support $mn$ distinctions at the sum of their complete budgets. If arbitrarily near-optimal registers at $m$ and $n$ can be combined in this way, the efficient budget for $mn$ distinctions cannot exceed the sum of the separate budgets:
 
 $$
 K_{\mathrm{reg}}(mn)\le
- K_{\mathrm{reg}}(m)+K_{\mathrm{reg}}(n), \tag{22}
+ K_{\mathrm{reg}}(m)+K_{\mathrm{reg}}(n), \tag{26}
 $$
 
-If we then define the shared cost
+The range of distinctions per register can now stay fixed while the total range grows. Iterating Eq. (26), $k$ registers of range $b$ can support $b^k$ distinctions with a budget no greater than $kK_{\mathrm{reg}}(b)$. To support $N$ distinctions it is therefore enough to provide $\lceil\log_b N\rceil$ such registers. From this, we may place bounds on the cost of an efficient representation’s register at any scale:
 
-$$
-\begin{aligned}
- I_K(m{:}n)&:=K_{\mathrm{reg}}(m)+K_{\mathrm{reg}}(n)\\
-           &\quad-K_{\mathrm{reg}}(mn)\\
-           &=K_0-\epsilon(m,n)\ge0.
- \end{aligned} \tag{23}
-$$
+Theorem 3 (Asymptotic price of a register).
 
-we have a measure of the saving available when the two choices are organised together. Its form resembles mutual information, $I(A;B)=H(A)+H(B)-H(A,B)$ [33], and its symmetry and composition identity have the same algebraic form:
-
-$$
-\begin{aligned}
- I_K(m{:}n)+I_K(mn{:}p)
- &=I_K(n{:}p)+I_K(m{:}np).
- \end{aligned} \tag{24}
-$$
-
-Here the quantities are budgets, and their non-negativity comes from the positional construction just specified. We emphasise again that the assumptions required to obtain this are pre-probabilistic, and rely solely on the demand for efficiency of representation. Even without assuming a particular cost law, much can be inferred from this relationship. Once positional composition is available at additive cost, a range need not be expanded by making one monolithic register ever larger. We can instead repeat a fixed digit of range $b$. A string of $k$ such digits distinguishes $b^k$ alternatives for a budget no greater than $kK_{\mathrm{reg}}(b)$. Supporting $N$ alternatives therefore requires at most $\lceil\log_b N\rceil$ digits. This is the origin of the logarithmic ceiling: the range multiplies while the available budget adds. The next result shows that these comparisons also determine a limiting price per nat.
-
-Theorem 3 (Asymptotic price of a distinction).
-
-Let $K_{\mathrm{reg}}$ be nondecreasing and satisfy Eq. (22) for all $m,n\in\mathbb N$. Then the limit
+Let $K_{\mathrm{reg}}$ be nondecreasing and satisfy Eq. (26) for all $m,n\in\mathbb N$. Then the limit
 
 $$
 \kappa_\infty
   :=
   \lim_{N\to\infty}\frac{K_{\mathrm{reg}}(N)}{\log N}
   =
-  \inf_{N\ge2}\frac{K_{\mathrm{reg}}(N)}{\log N} \tag{25}
+  \inf_{N\ge2}\frac{K_{\mathrm{reg}}(N)}{\log N} \tag{27}
 $$
 
 exists, and for every $N\ge2$ and every integer $b\ge2$,
@@ -320,36 +315,18 @@ $$
   \le
   K_{\mathrm{reg}}(N)
   \le
-  K_{\mathrm{reg}}(b)\,\lceil\log_b N\rceil. \tag{26}
+  K_{\mathrm{reg}}(b)\,\lceil\log_b N\rceil. \tag{28}
 $$
 
-The theorem gives more than a logarithmic upper bound. The ratio $K_{\mathrm{reg}}(N)/\log N$ converges to a single rate, and that rate is the infimum over all available register sizes. Any one digit of range $b$ supplies the upper bound in Eq. (26), while the lower bound says that no admissible organisation can undercut $\kappa_\infty\log N$. Together they identify the best asymptotic price of a distinction.
+Appendix B gives the proof. Under homogeneous refinement the lower bound becomes an equality, with $\kappa\equiv \kappa_\infty$ (Theorem 2). Moreover, excluding the possibility of a free lunch requires $\kappa_\infty>0$, meaning the register cost has the leading form $K_{\mathrm{reg}}(N)=\kappa_\infty\log N+o(\log N)$. The upper bound is also informative, as it neatly captures the concept of radix economy [40]. For a register whose budget grows in proportion to its range, the bound is least at $b=e$ among real ranges, and so at $b=3$ among integer ones. No individual element has become cheaper, but a saving is obtained by allowing combinations of registers to carry the distinctions, rather than providing a separate element for each distinction in the combined range. [Footnote 3. There is a great deal more that could be said about the significance of this in relation to the dimensionality of fundamental theories, but only at the expense of more immediate concerns. Fun as such wild numerology can be, in the present work we must content ourselves with this footnote.]
 
-Why does the ceiling also determine a common limiting price? Repeated use of a fixed base turns multiplicative growth of range into an ordinary subadditive sequence of budgets, and the average price therefore converges to the infimum of its block prices. Monotonicity then lets powers of one base be bracketed between neighbouring powers of another, so every base gives the same limiting price per logarithmic range. A final bracket extends the result to arbitrary $N$. Appendix B supplies the inequalities.
+The Canonical Cost
 
-This is the generalisation beyond the homogeneous law of Theorem 2. The register need not have a logarithmic cost at every finite size, and no probability distribution has been introduced. Its implementation may have an uneven refinement price or expensive monolithic components, but once the stated positional alternatives are available, those details enter the limiting rate rather than removing the logarithmic ceiling. A positive $\kappa_\infty$ makes the ceiling an asymptotic law, $K_{\mathrm{reg}}(N)=\kappa_\infty\log N+o(\log N)$.
+Having constrained the price of the representation that contains the whole range of distinctions, we are finally able to return to the question of an individual symbol’s cost within that representation. The $r$ most typical symbols, which make up the typicality prefix of the symbol at rank $r$, are themselves an organisation of $r$ distinctions, and none of them costs more than that symbol. Translating this into a rank cost once again exploits the self-similarity of the problem. A variable-length description can use fewer digits for more typical symbols, but must also record where each description ends. Symbols of equal length then form a register, and distinguishing those lengths is itself a register choice, which a terminator symbol makes explicit. This is enough to bound the form of Eq. (5):
 
-The coefficient is the infimum of the cost per nat over the digits available, and gives radix economy a physical interpretation. Suppose a monolithic digit of base $b$ costs $cb$, one element per state [40]. Repeating such digits costs $cb/\ln b$ per nat. Its continuous minimum is at $b=e$, so the least integer-base price is $3c/\ln3$, attained by ternary digits. The resulting organisation is logarithmic even though each monolithic register has a linear cost law. No element has been made cheaper, but the same elements have been allowed to count in digits rather than paying for one separate element per distinction. This illustrates why the representational organisation must belong in any account of cost - it can change the growth law of the budget, not merely its prefactor. Of course actual circuit costs can favour binary instead [41], so the relevant comparison is the measured price of each available digit, including the apparatus needed to use it.
+Theorem 4 (Symbol cost).
 
-Having priced a whole range, we return to the distinction that motivated it: what does it cost to realise an individual symbol? A budget sufficient for every alternative need not be paid in full every time one of them is used. For a fixed organisation write
-
-$$
-K_{\mathcal R}(x)=f_{\mathcal R}\bigl(r(x)\bigr), \tag{27}
-$$
-
-and let
-
-$$
-X_{\le r}:=\{x':r(x')\le r\}. \tag{28}
-$$
-
-The prefix contains $r$ distinctions. This connects an individual symbol cost to a register budget: because costs respect the order, a design capable of realising the symbol at rank $r$ can realise every symbol in its prefix at no greater cost.
-
-The converse construction must include the means of identifying a symbol’s description. A fixed-width positional code reserves the same number of digits for every symbol in its range. A variable-length code can use fewer digits for more typical symbols, but must also record where each description ends. The words of each length form a register, and distinguishing those lengths is itself a register choice. A terminator is one way to make that choice explicit. Its cost belongs in the same account as the digits, so we must check whether paying it changes the leading symbol-cost rate.
-
-Theorem 4 (Cost of a symbol).
-
-Let $K_{\mathrm{reg}}$ satisfy the hypotheses of Theorem 3 with $\kappa_\infty>0$, and let an organisation $\mathcal R$ realise a ranked vocabulary with nondecreasing symbol cost $f_{\mathcal R}$. (i) If the $r$ most typical symbols of $\mathcal R$ form an available organisation for $r$ distinctions, then
+Let $K_{\mathrm{reg}}$ satisfy the hypotheses of Theorem 3 with $\kappa_\infty>0$, and let a representation $\mathcal R$ realise a ranked vocabulary with nondecreasing symbol cost $f_{\mathcal R}$. (i) If the $r$ most typical symbols of $\mathcal R$ form an available organisation for $r$ distinctions, then
 
 $$
 f_{\mathcal R}(r)\;\ge\;K_{\mathrm{reg}}(r)\;\ge\;\kappa_\infty\log r
@@ -365,97 +342,124 @@ $$
 
 The asymptotic rates $\limsup_{r\to\infty}f_{\mathcal R}(r)/\log r$ of such organisations therefore have infimum $\kappa_\infty$, and an organisation of rate $\kappa_\infty+\delta$ satisfies $\kappa_\infty\log r\le f_{\mathcal R}(r)\le(\kappa_\infty+\delta)\log r+o(\log r)$.
 
-The two parts close the gap between a budget for a range and a cost for one symbol. Part (i) applies to every organisation satisfying the prefix condition. If the symbol at rank $r$ could be realised for less than the budget needed for $r$ distinctions, its entire typicality prefix would provide a cheaper admissible register. The lower bound therefore includes the structural cost of reaching the symbol, not just the cost within its final register.
+Part (i) holds because a symbol realised for less than the budget of $r$ distinctions would make its own typicality prefix a cheaper register, so the bound includes the cost of reaching a symbol as well as that of holding it. Part (ii) approaches the bound by spelling each symbol in $b$ letters closed by a terminator, each position held in a digit of range $b+1$, at a rate $K_{\mathrm{reg}}(b+1)/\log b$ that falls to $\kappa_\infty$ as $b$ grows. Appendix C gives the counting.
 
-Part (ii) supplies a construction approaching that bound in rate. Use $b$ letters and one terminator, with each position held in a digit of range $b+1$. A symbol at rank $r$ needs at most $\log_b r+2$ positions including its terminator. The resulting rate $K_{\mathrm{reg}}(b+1)/\log b$ approaches $\kappa_\infty$ as $b$ grows. Recording where the description ends does not force a larger infimum of leading rates. The complete counting argument is in Appendix C.
-
-This is why the symbol theorem matters. A lower bound alone would leave open whether any code could approach it. An explicit code alone would leave open whether another organisation could do better. The theorem gives both, identifying the same $\kappa_\infty$ for the efficient register budget and the infimum of achievable symbol-cost rates. Organisation and self-delimitation are included in this comparison rather than supplied as free background machinery.
-
-The terminator is Mandelbrot’s space between words [42]. His logarithmic word cost thus acquires a register-budget basis: the $r$ most typical words must support $r$ distinctions, while a positional vocabulary can pay for each word at a rate approaching the register limit. The additional content is that the alphabet and the means of selecting a word are themselves costed registers.
-
-When a finite digit attains the infimum, the length can instead be marked recursively, by writing the number of digits before the digits themselves. Such length coding adds only $O(\log\log r)$ overhead and can attain the same leading rate [43, 44]. In general the result is an infimum of achievable rates. The leading coefficient is fixed by the register comparison, while the lower-order overhead records how a particular code identifies its words. That distinction will matter at the boundary of an infinite vocabulary.
-
-What additional choice turns the limiting rate into the exact symbol cost used below? Under homogeneous refinement, the ideal prefix-budget identification is
+The symbol theorem shows that even when we pay the in-register overhead of distinguishing distinctions, we can approach the same leading logarithmic cost as for the register. These overheads are already assumed to be part of the structural cost of the register however. Self-similarity has driven our argumentation to this point, so let us take it one final step. If the efficient register for the rank $r$ symbol already accounts for the overhead necessary to do so, we may directly identify the cost of the symbol with the efficient envelope of the register:
 
 $$
 K_{\mathcal R}(x)=K_{\mathrm{reg}}\bigl(r(x)\bigr). \tag{31}
 $$
 
-It assigns no selection overhead beyond the complete budget of the symbol’s typicality prefix. Combined with homogeneous refinement it gives
+Under the scale-covariant refinement cost of Eq. (24) we then have
 
 $$
-K_{\mathcal R}(x)=K_0+\kappa\log r(x). \tag{32}
+K_{\mathcal R}(x)=K_0+\kappa_\alpha
+ \frac{r(x)^\alpha-1}{\alpha},\qquad \alpha\ne0. \tag{32}
 $$
 
-Self-delimiting codes over a fixed alphabet require lower-order overhead, as the Kraft inequality and universal integer codes make explicit [33, 45]. Thus the exact law supplies an ideal model. Theorem 4 controls the achievable leading rate even when this equality cannot hold at every rank. For $\kappa>0$, absorbing the reference cost and unit into later multipliers gives the canonical model
+while under homogeneous refinement $\alpha =0$ and the logarithmic limit gives
 
 $$
-K(r)=\log r. \tag{33}
+K_{\mathcal R}(x)=K_0+\kappa\log r(x). \tag{33}
 $$
 
-The geometry of refinement
+Finally, for a given register size Eq. (28) guarantees a logarithmic form if we choose units that set the rate $\kappa$ to unity. If we also absorb the existence costs, we arrive at a canonical rank cost
 
-A supremely helpful perspective for understanding this result is the geometric one. First denote $B_{\mathcal H}(N)$ for the complete budget of the Hilbert construction detailed below. In this subsection set $K_0=B_{\mathcal H}(1)$ and we write $g(N)=B_{\mathcal H}(N)-K_0$ for its excess budget. In this subsection $\Delta$ and $\epsilon$ are computed from this prescribed budget by the same definitions used above. Their geometric values can then be compared with the efficient envelope $K_{\mathrm{reg}}$.
+$$
+K(r)=\log r. \tag{34}
+$$
 
-The construction we will employ is that of a Hilbert curve  [46]. We first divide a square into four quadrants and visit them in a fixed order, up the left-hand side, across the top and down the right-hand side. Divide each quadrant into four again and visit its sub-squares in the same pattern, rotated or reflected so that the last sub-square of one quadrant is adjacent to the first sub-square of the next. After $k$ such steps the path passes once through each of the $4^k$ cells of a $2^k\times2^k$ grid, moving only between neighbouring cells, as in Fig. 3(a). This path is the order-$k$ Hilbert curve, and as $k\to\infty$ it converges to a continuous curve through every point of the square. This is the standard example of a space-filling curve, with the useful propert that cells that are close along the path are close in space. This is one reason why such curves are used to order data in spatial databases and large matrix computations [47].
+The Geometry of Refinement
 
-Figure 3. The composition correction as geometry. (a) Successive depths $k$ of the Hilbert organisation of a square, supporting $N=4^k$ distinctions in registers of width $w=2^{-k}$. The blue path visits every cell once in rank order and is assembled from four rotated or reflected copies of the path one depth coarser. Orange lines mark the divisions made at the first two depths, the later one fainter, and grey lines those made at the third. The shading follows one register into its sub-registers. Each step to the next depth repeats one motif, a cross dividing a register into four, in every register at once. (b) Excess budget $g(N)=B_{\mathcal H}(N)-K_0$, normalised by the price $g(4)$ of the first division, when dividing a register of width $w$ costs in proportion to $w^{\gamma}$, Eq. (34). A price set by wall length ($\gamma=1$) doubles at each depth, a price set by area ($\gamma=2$) adds the same increment $g(4)$ at every depth, and a price falling faster than area ($\gamma=3$) halves. The correction $\epsilon(N,4)$ is the amount by which the step from $N$ to $4N$ exceeds the first step, so only the area-priced organisation has $\epsilon=0$ and $B_{\mathcal H}(N)=K_0+\kappa\log N$.
-[Image: cost/figure-3.webp · PDF p. 10]
+A supremely helpful perspective for understanding this result is the geometric one. To do so we will establish a correspondence to the Hilbert curve [42]. This curve is constructed by first dividing a square into four quadrants, and drawing a curve that visits each quadrant in a specified order. This division can be repeated, repeating the curve on each quadrant up to a rotation that joins each curve to its neighbours. After $k$ such divisions the curve passes through each of the $4^k$ cells of a $2^k\times2^k$ grid, as illustrated in Fig. 3(a).
 
-We may number the cells in the order the path visits them, and take this number as the rank of a symbol. The path finishes each quadrant before it enters the next, so the first $4^{k-1}$ ranks occupy the first quadrant, the next $4^{k-1}$ the second, and the same holds inside every quadrant at every depth. A rank therefore names a quadrant, then a quadrant within that quadrant, and so on down to a single cell. Every square in the construction is a register for the cells it contains, while being itself one of the four symbols of the register above it. This is the double role of a register made literal. The subdivision of Eq. (6) holds at every depth without reordering a single rank, which is why the sixteen symbols of Fig. 2 could be regrouped along one path. Refinement is just as uniform. Passing from $4^k$ to $4^{k+1}$ distinctions repeats one motif, a cross dividing a register into four, in each of the $4^k$ registers at depth $k$.
+This path is the order-$k$ Hilbert curve, and as $k\to\infty$ it converges to a continuous curve through every point of the square. This is the standard example of a space-filling curve, with the useful property that cells that are close along the path remain close in space. Such curves are often used to order data in spatial databases and large matrix computations [43] for precisely this reason.
 
-The path fixes how the distinctions nest. It leaves open the price of each repetition of the motif, but this is fixed by recursively by the fact that every repetition acts on a smaller square. At depth $i$ the registers have width $w_i=2^{-i}$ in units of the original square, and there are $w_i^{-2}=4^i$ of them. Suppose that the price of dividing a register into four depends only on its width, in proportion to $w^{\gamma}$. The exponent records the dimension of whatever the division consumes, with $\gamma=0$ for a fixed charge per division, $\gamma=1$ for walls drawn across the register and $\gamma=2$ for a resource spread through its area. Refining from $m=4^k$ to $mn$ distinctions, with $n=4^j$, passes through depths $k$ to $k+j-1$. Since $4^i w_i^{\gamma}=4^{i\alpha}$ with $\alpha=1-\gamma/2$,
+Figure 3. One rank order, different costs of refinement. (a) The Hilbert path visits the cells in rank order. The shaded quadrant contains rank 11 at depth two, and its cell becomes a register at the next division. Gold marks new cuts and grey marks earlier ones. (b) Complete symbol cost from Eq. (32) with $\alpha=1-\gamma/2$, in units of the first division price $C_0=\Delta_1(4)$ with singleton cost $K_0=C_0$. Colour runs in steps of $1/4$ from $\gamma=1$ (power-law growth) through $\gamma=2$ (the logarithm $K_0+C_0\log_4 r$, dashed) to $\gamma=3$ (bounded cost). Markers give the costs at complete Hilbert depths, $r=4^k$.
+[Image: cost/figure-3.webp · PDF p. 9]
+
+Already we see that the construction of the Hilbert curve echoes the self-similarity used to construct our representational cost functions. The curve passes through each cell of the square in order, and we may identify this with the rank. Each quadrant is filled in order, so the first $4^{k-1}$ ranks occupy the first quadrant, the next $4^{k-1}$ the second, and so forth. This holds inside every quadrant at every depth. A rank therefore names a quadrant, then a quadrant within that quadrant, and so on down to a single cell. Just as for registers and symbols, each square in the construction is a register for the cells it contains, while being itself one of the four symbols of the register above it. Returning to Eq. (6), we see that it holds at every depth without reordering a single rank, which is why the sixteen symbols of Fig. 2 could be regrouped along one path. Refinement is just as uniform. Passing from $4^k$ to $4^{k+1}$ distinctions repeats the motif in each of the $4^k$ registers at depth $k$.
+
+If we assign a price to each repetition of the motif, it must be recursively self-consistent by token of the fact that every repetition acts on a smaller square. Each square register/symbol is parametrised only by its width $w_i=2^{-i}$ in units of the original square, and there are $w_i^{-2}=4^i$ of them. Any cost we might set on iterating the curve must therefore be in proportion to $w^{\gamma}$. For example, with $\gamma=0$ the cost of division is constant, for $\gamma=1$ it scales with length and for a resource spread through its area $\gamma=2$. Iterating the curve from $m=4^k$ cells to $mn$ ($n=4^j$) then takes the curve from order $k$ to $k+j-1$. Since $4^i w_i^{\gamma}=4^{i\alpha}$ with $\alpha=1-\gamma/2$, we may express the differential cost of refinement of Eq. (13) as
 
 $$
 \Delta_m(n)
   =\Delta_1(4)\sum_{i=k}^{k+j-1}4^{i}w_i^{\gamma}
-  =m^{\alpha}\,\Delta_1(n), \tag{34}
+  =m^{\alpha}\,\Delta_1(n), \tag{35}
 $$
 
-and the composition correction of Eq. (13) follows at once,
+Defining $C_0=\Delta_1(4)$ for the price of the first division, after some tedious algebra we may establish contact with Eq. (15):
 
 $$
-\epsilon(m,n)=\bigl(m^{\alpha}-1\bigr)\,\Delta_1(n). \tag{35}
+\epsilon(m,n)=\bigl(m^\alpha-1\bigr)\Delta_1(n), \tag{36}
 $$
 
-Equation (35) is a statement about copies. Refining $m$ registers draws the motif $m$ times, and each copy is narrower by a factor $m^{-1/2}$ and so cheaper by $m^{-\gamma/2}$. The correction $\epsilon$ is what the multiplication of copies leaves over once their shrinking has been paid for. The two balance at $\gamma=2$, when dividing a register costs in proportion to its area. The registers at every depth tile the same square, so the total area being divided never changes, and neither does the price of dividing it. This is homogeneous refinement, with $\epsilon=0$. Walls are the natural case of a smaller exponent. A partition priced by the length of wall it draws has $\gamma=1$ and $\alpha=1/2$. Its excess budget is proportional to the total wall length, $2(\sqrt N-1)$ in units of the side, so each new depth costs twice as much as the last and $\epsilon>0$. A price falling faster than area gives $\alpha<0$ and $\epsilon<0$, and divisions become cheaper with depth until arbitrarily fine distinctions cost almost nothing. Figure 3(b) shows the three regimes on the same organisation.
-
-The square fixes the rate at which its registers narrow, and with it the balance point. Nothing in the construction requires the quadrants to fill the square, however, and relaxing this lets the dimension vary while the order stays fixed. Shrink each quadrant by a factor $1/s$ instead of $1/2$, keep it in its corner, and repeat. The result is a self-similar set of similarity dimension $d=\log4/\log s$, running from Hilbert’s square at $s=2$ to $d=1$ at $s=4$ (Fig. 4). The cells are visited in the same order, so every rank and every register is unchanged. For $d<2$ the set consists of disconnected pieces and no continuous curve can fill it. The path drawn in the figure only joins consecutive ranks, but the order is all the register hierarchy uses. Space-filling curves on connected self-similar sets have been constructed systematically [48]. Here the set is disconnected and only the order is carried over. At depth $i$ there are again $4^i$ registers, now of width $w_i=s^{-i}$, so that $4^i=w_i^{-d}$, and the sum in Eq. (34) gives the same result with
+where
 
 $$
-\alpha=1-\frac{\gamma}{d}. \tag{36}
+\Delta_1(n) =
+ \begin{cases}
+   C_0(n^\alpha-1)/(4^\alpha-1),
+      &\alpha\ne0,\\[1ex]
+   C_0\log n/\log4 &\alpha=0.
+ \end{cases} \tag{37}
 $$
 
-The correction $\epsilon$ therefore compares two dimensions, that of the set in which distinctions are drawn and that of whatever pays for drawing them, and it carries the sign of $d-\gamma$. Homogeneous refinement is $\gamma=d$, a price of division proportional to the share of the set’s natural measure that the register holds. With the price fixed, the dimension alone moves the cost law. A division priced by the length of the cut separating its four parts has $\gamma=1$, which gives $\alpha=1/2$ on the square and reaches homogeneous refinement as the set thins to $d=1$. For integer $d$, a $d$-dimensional cube divided into $2^d$ parts by walls has $\gamma=d-1$ and $\alpha=1/d$. On a line the walls are points, every division costs the same whatever its length, and the budget grows in proportion to $N$. This is a unary register, with one physical element per distinction.
+The complete cost function is then specified by Eqs. (32) and (33) with $\kappa_\alpha=\alpha C_0/(4^\alpha-1)$ for $\alpha \neq 0$ and $\kappa_0=C_0/\log4$.
 
-Figure 4. The Hilbert order at non-integer dimension. The order-four Hilbert sequence of $N=4^4$ ranks placed on the self-similar set generated by four corner maps of ratio $1/s$, with $s=4^{1/d}$. Orange outlines mark the registers at depths one to three, and shaded cells the individual symbols. Dashed lines are the cuts that divide the whole set, and each depth-one register, into four. Their lengths are proportional to the width of the register divided. The ranks and the nesting are the same in every panel, but the registers narrow faster as $d$ falls. With each division priced by the length of its cut, $\gamma=1$, the exponent $\alpha=1-1/d$ of Eq. (36) falls from $1/2$ on Hilbert’s square to zero, homogeneous refinement, at $d=1$. For $d<2$ the set is totally disconnected and the blue path is a guide joining consecutive ranks rather than part of the set. The enlarged inset follows one address through three levels: the selected child (red frame) becomes the register for the next four-way choice. This is the same recursion at every $d$, although its physical contraction factor $s^{-1}$ differs.
-[Image: cost/figure-4.webp · PDF p. 11]
+At this point a natural generalisation suggests itself. The Hilbert curve takes place in a dimension $d=2$ and each iteration multiplies distinctions by $b=4$, but we can imagine a more general geometry in which both the dimensionality and refinement can take a range of values. Let each iteration divide every cell into $b$ congruent copies of itself, just as the square divides into its quadrants. What a division shares among the copies is the volume of their parent, and it is volume that keeps count of the distinctions. At depth $i$ there are $b^i$ cells, each holding a fraction $b^{-i}$ of the register’s volume, so the distinctions resolved at that depth are counted by the inverse of a cell’s share. Width is then a derived quantity, $w_i=b^{-i/d}$, which returns $w_i=2^{-i}$ for the square. A resource of dimension $\gamma$ costs each cell in proportion to $w_i^\gamma$, and the divisions at depth $i$ together cost $C_i=C_0\,b^i w_i^{\gamma}=C_0\,b^{i\alpha}$, where
 
-The distinction between these geometric budgets and their efficient envelope is now useful. If a prescribed design has $B_{\mathcal H}(mn)>B_{\mathcal H}(m)+B_{\mathcal H}(n)$ and the positional alternative is available, splitting it reduces the budget. An architecture can therefore have a superlogarithmic raw cost while the efficient organisation assembled from its registers has a logarithmic asymptote. Within the scale-covariant family, an unbounded efficient budget can sustain only the logarithmic member. Appendix D derives that family and its composition correction. The erasure model in Appendix F gives its operational interpretation when the price per erased nat depends on refinement depth.
+$$
+\alpha=1-\frac{\gamma}{d}. \tag{38}
+$$
 
-At this stage, we have used principles of efficiency and recursive self-similarity to obtain the form of representational cost, and made contact with the geometry of space-filling curves. Let us now complete the link to thermodynamics, by specifying what arepresentation physically does.
+The refinement prices of Eqs. (35) and (36) carry over with $4$ replaced by $b$, so this exponent fixes the entire cost function. Note that $b$ has dropped out of it entirely. Whether the price of refinement grows, holds steady or dies away is decided by a single ratio, the dimension of the resource a division consumes against the dimension of the space it divides.
 
-IV. The Guessing Machine  (PDF pp. 10–13)
+Figure 4. One rank order, four physical partitions. (a–d) Finite approximants to the Hilbert, Gosper [44], terdragon [45] and Lévy [46] registers. Each divides into $b$ congruent children (gold perimeters) within its outline (dark orange), and the path visits them in rank order, shading from light at its start to dark at its end. $D_{\partial}$ is the limiting dimension of the outline. (e) Price $C_k$ of the $k$th level of refinement relative to the first, against the range $N=b^k$. Pricing perimeters gives $C_k/C_0=N^{\alpha}$ (solid), while pricing the volume divided gives $C_k/C_0=1$ for every tile (dashed). (f) The exponent $\alpha=1-D_{\partial}/2$ of Eq. (38) against the dimension of the perimeter. Only a perimeter that fills the plane reaches homogeneous refinement, $\alpha=0$ (filled circle).
+[Image: cost/figure-4.webp · PDF p. 10]
 
-The preceding section attacked the cost of a representation from its organisation. It compared register budgets, but what does a representation physically do with the distinctions it holds? We now approach the question from this other direction. Consider a machine that proposes an answer, checks it, and starts again when the answer is wrong. Its register must hold a candidate long enough to test it. To reuse that register, the machine must decide what to keep and what to discard. The abstract distinctions of the previous sections have become something the apparatus actually does.
+The logarithm of Theorem 2 now acquires a simple geometric meaning. Homogeneous refinement, $\alpha=0$, requires $\gamma=d$, so that a division is paid for in proportion to the volume it divides. Volume is exactly what subdivision conserves. However many cells a level contains, and whatever their shape, together they fill the same register, and dividing all of them costs what it cost to divide the whole once. This is the geometric content of distinctions that multiply while their costs add. A resource of lower dimension is instead shared among cells whose number grows faster than each one’s share shrinks, and the price of every new level rises with the range as $N^\alpha$. Nothing about the material has entered yet - only the dimension of the resource and that of the space.
 
-Why choose such an unassuming machine? It exposes the three jobs we want to separate: generating a candidate, verifying it, and clearing the space for another attempt. A deep result in mathematical logic lets us express a broad class of computations in this language. The erasure bound will then attach a physical price to the uncertainty discarded by the chosen protocol.
+Two of our earlier results now meet in the dimension of the resource. A resource contained within a $d$-dimensional cell cannot have dimension greater than $d$, so $\alpha\ge0$, and the negative exponents we have already excluded as unphysical are precisely those that would require it. In the other direction, Theorem 3 caps every efficient budget at $K_{\mathrm{reg}}(b)\lceil\log_b N\rceil$. A register refined at a power-law price can certainly be built, but as its range grows, independent registers composed positionally will eventually do the same job for less. Containment bounds $\gamma$ from above while efficiency bounds it from below, and the two meet only at $\gamma=d$. An efficient register pays for each division in proportion to the volume it divides.
+
+This is harder to satisfy than it sounds, because the natural way to keep one distinction apart from another is a wall. If each register needs its own perimeter, and that perimeter is smooth, then $\gamma=d-1$ and $\alpha=1/d$. For the square, every level then needs twice as much wall as the one before it. A wall can meet the demand only by ceasing to be smooth. Self-similar tiles of the plane are generically rough in exactly this sense, the square being the exception rather than the rule [47]. A perimeter of dimension $D_\partial$ between $d-1$ and $d$ gives $\alpha=1-D_\partial/d$, and approaches homogeneous refinement as it approaches filling the space it divides. Figure 4 compares four tiles of the plane, each dividing into $b$ congruent copies of itself and each ordered by a space-filling curve that generalises the Hilbert path. Priced by area they are indistinguishable, since every level divides the same area once. Priced by their perimeters they separate by the dimension of their boundaries alone [Fig. 4(e,f)]. The Lévy dragon, whose boundary very nearly fills the plane, is almost logarithmic, while the terdragon - which divides in three, as radix economy favours - owes its place to the roughness of its edges rather than to its radix. The comparison suggests a principle we might call fractal encoding: wherever distinctions must be held apart by walls, an efficient register should draw those walls as close to filling space as its material allows. Its boundaries then acquire the economy of a volume, and each further digit of an address costs nearly what the last one did.
+
+The perimeter also leaves a trace that can be read without weighing it. Perturb a point placed uniformly within a register by a short isotropic step, and read its address before and after. For short steps the chance of crossing a wall is proportional to its length, so the address at depth $k$ changes with a probability proportional to the total perimeter $C_k$ of the cells at that depth. Every wall at depth $k$ is also a wall at depth $k+1$, so a step that changes the coarser address changes the finer one too. Of the steps that change a point’s address at depth $k+1$, the fraction $P(k\,|\,k+1)$ that also change it at depth $k$ is therefore
+
+$$
+P(k\,|\,k+1)=\frac{C_k}{C_{k+1}}=b^{-\alpha}. \tag{39}
+$$
+
+How often a small perturbation changes the coarser address measures the exponent of the refinement law, without any material being counted. In the Gosper hierarchy three of the seven children of a parent have their neighbour in any given direction outside it, so $P(k\,|\,k+1)=3/7$ at every depth and $\alpha=1-\ln3/\ln7=1-D_\partial/2$. Figure 5 shows the readout on the hexagonal lattice that underlies the Gosper island, where Eq. (39) holds exactly. The identity itself needs no self-similarity, and Appendix E confirms it on irregular partitions as well. What self-similarity adds is that the readout returns the same exponent at every scale.
+
+Figure 5. Reading a perimeter from address changes. (a) A Gosper parent divided into seven children of seven hexagonal cells each, with its neighbouring parents in grey. Each segment is a short perturbation that changed the child address only (blue) or the parent address as well (vermilion). Perturbations that changed neither are not drawn, so the walls appear from the address changes alone. (b) The exponent $\alpha=-\log_7P(k\,|\,k+1)$ read from such perturbations at successive depths, against the number of hexagonal cells in each child (filled circles). Open squares and diamonds read $\alpha$ across two and three levels at once, from $P(k\,|\,k+j)=7^{-j\alpha}$, and are offset for clarity. The dashed line is $\alpha=1-\ln3/\ln7$, and error bars are one Monte Carlo standard error (Appendix E).
+[Image: cost/figure-5.webp · PDF p. 11]
+
+The demand of Eq. (3) carries no length scale - it is the same at every depth of the hierarchy. The matter that meets it does carry one. A rough wall is built from elements of finite size $a$, and it can only be rough between that scale and the size of the register it encloses, since tracing an outline of span $w$ requires of order $(w/a)^{D_\partial}$ elements only while $w\gg a$. Refinement in place therefore ends where the cells reach the size of the elements that bound them. At that scale a register can no longer be divided, only combined with others, and this is where the boundary of independence assumed in Eq. (26) is physically drawn. The self-similar account of a register’s interior terminates at its smallest unit, and beyond it further range is bought by positional composition at the logarithmic price of Theorem 3.
+
+The same contest between bulk and boundary runs well beyond registers. Entanglement in the ground state of a gapped local Hamiltonian grows with the boundary of a region, where that of a generic state grows with its volume [48]. At criticality the entropy of a block of $L$ sites grows as $(c/3)\ln L$, with $c$ the central charge [49], and entanglement renormalisation traces this logarithm to every scale contributing equally [50], just as every level of a homogeneous register adds the same cost. In Murray’s arterial tree every symmetric fork repeats the same radius ratio , and such networks fill the space they serve before terminating in units of fixed size, such as capillaries and leaves [52]. In each case a demand without a scale is met by matter with one, and the resource each division consumes decides the shape. What none of these examples fixes is the price $C_0$ of a single division, which depends on the operation performed. If that operation is the reversible isothermal reset of a uniformly occupied $b$-state memory, then $C_0=k_BT\log b$ [20], and the rate $\kappa_0=C_0/\log b$ is simply $k_BT$. A memory in use is rarely uniformly occupied, however. To find what its reset actually costs, we must follow a machine whose register is filled by its own guesses.
+
+IV. The Guessing Machine  (PDF pp. 11–14)
+
+The preceding section priced a representation by its organisation. But what does a representation physically do with the distinctions it holds? Sooner or later it must forget them, and Landauer showed that forgetting has a price: returning a memory to a standard state dissipates heat [18]. To see what that price is for a representation in use, consider a machine that proposes an answer, checks it, and starts again when the answer is wrong. Its register must hold a candidate long enough to test it, and to reuse the register the machine must decide what to keep and what to discard. The abstract distinctions of the previous sections have become something the apparatus actually does.
+
+Why choose such an unassuming machine? It exposes the three jobs we want to separate: generating a candidate, verifying it, and clearing the space for another attempt. A deep result in mathematical logic lets us express a broad class of computations in this language. The same result has already carried questions about physical systems into the theory of computation, showing that whether a quantum system can be steered to a chosen target is in general undecidable [53]. Here it lets one concrete machine stand for computation in general, and the erasure bound then attaches a physical price to the uncertainty its protocol discards.
 
 Computation as Diophantine search
 
-Call a set recursively enumerable if there exists a systematic procedure - an algorithm - that can confirm membership of any element in the set, though it may run indefinitely on non-members [49]. This includes every set for which a positive answer can be confirmed by a computation that terminates. The Davis–Putnam–Robinson–Matiyasevich (DPRM) theorem states that every such set $\mathcal S\subseteq\mathbb N^m$ can be characterised by integer solutions to a polynomial equation:
+Call a set recursively enumerable if there exists a systematic procedure - an algorithm - that can confirm membership of any element in the set, though it may run indefinitely on non-members [54]. This includes every set for which a positive answer can be confirmed by a computation that terminates. The Davis–Putnam–Robinson–Matiyasevich (DPRM) theorem states that every such set $\mathcal S\subseteq\mathbb N^m$ can be characterised by integer solutions to a Diophantine equation, a polynomial equation $D(u,x)$
 
 $$
 u\in\mathcal S
  \quad\Longleftrightarrow\quad
- \exists x\in\mathbb N^n:D(u,x)=0, \tag{37}
+ \exists x\in\mathbb N^n:D(u,x)=0, \tag{40}
 $$
 
-where $D$ has integer coefficients [50, 51]. Here $u$ is a tuple of parameters, the input to the computation, and $x$ is a tuple of witnesses. A witness is a candidate whose existence certifies a positive answer, much as an explicit counterexample certifies a conjecture false. Once a witness is supplied, verification reduces to evaluating $D(u,x)$ and testing whether it vanishes.
+with integer coefficients [55, 56]. Here $u$ is a tuple of parameters, the input to the computation, and $x$ is a tuple of witnesses. A witness is a candidate whose existence certifies a positive answer, much as an explicit counterexample certifies a conjecture false. Once a witness is supplied, verification reduces to evaluating $D(u,x)$ and testing whether it vanishes.
 
 The distinction between finding a witness and checking one is the familiar point. The theorem gives a finite verification procedure once the candidate is in hand, not a general bound on the resources required to find it. Its reach is nevertheless striking: every computably confirmable positive answer has such a polynomial witness relation. An integer polynomial can thus stand in for a computation without resembling the program that performs it.
 
-The polynomial encodes the logical relation, and while an implementation may be realised by logic gates, biochemical pathways or neural wiring, it is still described by the DPRM. It does not require the device to use random guesses, and the translation need not preserve its time, memory or heat costs. These are however are most useful properties for making physical bookkeeping explicit. We use them now to construct an example computational protocol.
+The polynomial encodes the logical relation, not its implementation: whether that is realised by logic gates, biochemical pathways or neural wiring, the relation is still described by Eq. (40). Nothing obliges the device to guess at random, and the translation need not preserve its time, memory or heat costs. Guessing and checking witnesses are nevertheless the most useful terms in which to make the physical bookkeeping explicit, and we now use them to construct an example protocol.
 
 Guess, test, erase
 
@@ -469,10 +473,10 @@ For fixed input $u$, let $p_u$ be a distribution over the candidate witnesses. T
 
 The machine is deliberately unimaginative. Its purpose is to make the physical jobs visible, not to recommend an efficient search algorithm. Independent guesses find a solution almost surely whenever the satisfying witnesses have positive total probability. Exhaustive enumeration is another possible strategy. Improving the guess distribution changes how often the machine succeeds, while changing what it retains changes the information eventually sent to reset.
 
-This also makes the connection to Section II concrete. The physical memory holding the candidate is a register, its logical readouts are the witness symbols $x$, and the test specifies which candidates answer the input $u$. A witness must be represented in matter before it can be checked. The figure separates that representation from the test and the subsequent reset. Appendix E gives the formal setup and discusses witness encodings.
+This also makes the connection to Section II concrete. The physical memory holding the candidate is a register $R$, its readouts are the witness symbols $x$, and the test specifies which candidates answer the input $u$. A witness must be represented in matter before it can be checked, and Fig. 6 separates that representation from the test and the reset that follows. Appendix F gives the formal setup and discusses witness encodings.
 
-Figure 5. The guessing machine. The polynomial tests the logical witness relation. Failed guesses enter the reset ensemble $p^E_u$, whose entropy determines the Landauer floor under the reset assumptions stated in the text. Probability rank gives the additional lower bound $H(p^E_u)\ge\ell(p^E_u)$.
-[Image: cost/figure-5.webp · PDF p. 12]
+Figure 6. The guessing machine. A candidate witness $x\sim p_u$ is written into the register $R$ and tested. A witness ($D=0$) halts the machine and is kept. A failure sends the register to reset, returning it to the reference state and discarding the distinction it held into a bath at temperature $T$, at a mean heat of at least $k_BTH(p^E_u)$ [Eq. (41) with $p=p^E_u$]. The bars show the ensemble $p^E_r$ that reaches the reset, in order of probability rank.
+[Image: cost/figure-6.webp · PDF p. 12]
 
 The cost of a reset
 
@@ -482,35 +486,35 @@ Let $p(x)$ be the ensemble of logical states entering a complete classical reset
 
 $$
 \langle Q_{\mathrm{erase}}\rangle\ge k_BT H(p),
- \qquad H(p)=-\sum_xp(x)\ln p(x). \tag{38}
+ \qquad H(p)=-\sum_xp(x)\ln p(x). \tag{41}
 $$
 
-This is the entropy-decrease form of the principle [18, 20]. The point of the reset is that many possible logical states are returned to one reference state. The discarded distinction is which of those states the register held, and its uncertainty is measured by $H(p)$, rather than by the size of the numeral written in memory.
+This is the entropy-decrease form of the principle [18, 20]. Picture the register as a particle that may sit in any of its cells. Resetting it means compressing the particle into the reference cell whichever cell it occupied, much as a piston compresses a one-molecule gas, and the work this compression requires leaves as heat. What is discarded is which cell the particle was in, and its uncertainty is measured by $H(p)$ rather than by the size of the numeral written in memory.
 
 A witness known to equal a large integer $M$ has zero logical entropy, however many digits are used to display it. Conversely, a register of capacity $N$ has entropy $\ln N$ only when its $N$ states are equally likely. This is why the occupied ensemble must be specified before a register budget is turned into an erasure cost - capacity tells us what the register can distinguish, while the distribution tells us which uncertainty this reset removes.
 
 The typicality ordering introduced in Section II now acquires a physical interpretation. We order the states by how likely they are to enter the reset. Relabelling a witness cannot change this order or the uncertainty removed, even though it can change the integer used to name it. Probability rank therefore supplies the invariant we need. List the positive probabilities in decreasing order, $p_1\ge p_2\ge\cdots$, breaking ties consistently, and define the mean log-rank
 
 $$
-\ell(p):=\sum_{r\ge1}p_r\ln r. \tag{39}
+\ell(p):=\sum_{r\ge1}p_r\ln r. \tag{42}
 $$
 
 We call this the rank surprisal. The first $r$ probabilities are each at least $p_r$, so
 
 $$
-rp_r\le\sum_{j=1}^r p_j\le1,\qquad -\ln p_r\ge\ln r. \tag{40}
+rp_r\le\sum_{j=1}^r p_j\le1,\qquad -\ln p_r\ge\ln r. \tag{43}
 $$
 
-Averaging and applying Eq. (38) gives
+Averaging and applying Eq. (41) gives
 
 $$
 \boxed{\langle Q_{\mathrm{erase}}\rangle
- \ge k_BT H(p)\ge k_BT\ell(p).} \tag{41}
+ \ge k_BT H(p)\ge k_BT\ell(p).} \tag{44}
 $$
 
-The physical content of the bound is now attached to rank itself. A state at probability rank $r$ cannot have probability greater than $1/r$, so its surprisal cannot be smaller than $\ln r$. Averaging converts this elementary ordering fact into a lower bound on the uncertainty erased and hence on the mean heat. We do not need the numerical size of a witness or a particular memory architecture to make that comparison. This extends the use of rank from pricing a vocabulary to pricing a specified operation on its occupied states. The distribution must be the one actually erased, under the reset assumptions above. With that ensemble fixed, changing the labels of its states cannot change the bound. For countable ensembles the entropy comparison holds as an inequality of non-negative extended sums. Finite entropy makes all the information quantities finite.
+The physical content of the bound is now attached to rank itself. A state at probability rank $r$ cannot have probability greater than $1/r$, so its surprisal cannot be smaller than $\ln r$. Averaging converts this elementary ordering fact into a lower bound on the uncertainty erased and hence on the mean heat. We need neither the numerical size of a witness nor a particular memory architecture to make that comparison, only the order of the bars in Fig. 6. This extends the use of rank from pricing a vocabulary to pricing a specified operation on its occupied states. The distribution must be the one actually erased, under the reset assumptions above. With that ensemble fixed, changing the labels of its states cannot change the bound. For countable ensembles the entropy comparison holds as an inequality of non-negative extended sums. Finite entropy makes all the information quantities finite.
 
-The rank of the known witness $M$ is one, as it should be. For a uniform ensemble, $\ell=\ln(N!)/N=\ln N-1+o(1)$, so rank surprisal follows the entropy to leading order. Uniformly refining each state into $n$ sub-states adds $\ln n$ nats independently of the original range. In the reversible isothermal limit its additional reset cost is $k_BT\ln n$. This provides a physical realisation of homogeneous refinement for a uniform-reset budget. The relevant order in Eq. (41) is always that of the ensemble actually erased. Appendix F develops the uniform-reset model when refinement prices vary with depth.
+The rank of the known witness $M$ is one, as it should be. For a uniform ensemble, $\ell=\ln(N!)/N=\ln N-1+o(1)$, so rank surprisal follows the entropy to leading order. Uniformly refining each state into $n$ sub-states adds $\ln n$ nats independently of the original range. In the reversible isothermal limit its additional reset cost is $k_BT\ln n$. This provides a physical realisation of homogeneous refinement for a uniform-reset budget. The relevant order in Eq. (44) is always that of the ensemble actually erased. Appendix G develops the uniform-reset model when refinement prices vary with depth.
 
 For the guessing cycle, the relevant ensemble is the one that reaches the reset after failure. Successful witnesses have left the cycle, so they must not be included as though they too were erased at that step.
 
@@ -519,81 +523,81 @@ Let $F$ denote failure and $\eta_u=\Pr(F\mid u)$. The ensemble entering reset is
 $$
 \langle Q_{\mathrm{witness}}\rangle_{\mathrm{attempt}}
  \ge\eta_u k_BT H(p^E_u)
- \ge\eta_u k_BT\ell(p^E_u). \tag{42}
+ \ge\eta_u k_BT\ell(p^E_u). \tag{45}
 $$
 
-Testing, control records and resetting a successful output contribute their own costs. If retained classical information $Z$ is used during reset, the corresponding bound uses $H(X\mid Z)$, and the rank comparison applies within each conditional ensemble. Reversible computation can postpone erasure by keeping this information [52, 20].
+Testing, control records and resetting a successful output contribute their own costs. If retained classical information $Z$ is used during reset, the corresponding bound uses $H(X\mid Z)$, and the rank comparison applies within each conditional ensemble. Reversible computation can postpone erasure by keeping this information [57, 20].
 
-A failed guess has not become physically free merely because it was wrong. The machine may keep a record of it - in which case that record occupies another register - or discard it and pay the reset cost of the uncertainty removed. Keeping the record can make future choices better informed, but whether that benefit repays its storage and access costs is a question about the organisation of the whole process. The problem recurs, it is self similar!
+A failed guess has not become physically free merely because it was wrong. The machine may keep a record of it - in which case that record occupies another register - or discard it and pay the reset cost of the uncertainty removed. Keeping the record can make future choices better informed, but whether that benefit repays its storage and access costs is a question about the organisation of the whole process. The problem recurs one level up - it is self-similar, just as the registers of Section III were.
 
 The same logical computation can consequently have different physical costs depending on what is retained and when it is reset. The guessing machine gives a concrete operation to which our rank description can be applied. For a fixed erased ensemble, probability rank survives an invertible relabelling of the witnesses, while the detailed apparatus fixes the additional costs. We can now turn the question around: if the mean logarithmic rank cost is specified but the occupation probabilities are not, what distribution should we infer?
 
-V. The Canonical Cost Curve  (PDF pp. 13–15)
+V. The Canonical Cost Curve  (PDF pp. 14–16)
 
 So far we have asked what it costs to support distinctions and what is paid when uncertainty over them is erased. A register’s use also has statistics: some symbols are encountered often, while others are rare. The cost law does not by itself specify those frequencies. We must distinguish the physical constraint from the inference we make when that constraint is all we know.
 
 We use the canonical symbol cost $K(r)=\log r$, selected by homogeneous refinement and the prefix-budget idealisation of Eq. (31). Physical use induces a distribution $p(r)$ over these states, with mean cost
 
 $$
-\ell=\sum_r p(r)\log r. \tag{43}
+\ell=\sum_r p(r)\log r. \tag{46}
 $$
 
 This is the rank surprisal, the expected logarithmic cost of the occupied symbol. Many distributions share the same mean. Choosing one of them therefore requires an inference rule. If the budget is all we know, how do we avoid supplying additional structure merely because we prefer it?
 
 The rank ensemble
 
-The answer is supplied by Jaynes’ principle of maximum entropy [53]. Among distributions consistent with the stated constraints, it chooses the one that makes the least additional commitment relative to the specified state space and reference measure. This is the sense in which maximum entropy is a requirement of honest inference. The consistency requirements studied by Shore and Johnson provide a related axiomatic basis [54].
+The answer is supplied by Jaynes’ principle of maximum entropy [58]. Among distributions consistent with the stated constraints, it chooses the one that makes the least additional commitment relative to the specified state space and reference measure. This is the sense in which maximum entropy is a requirement of honest inference. The consistency requirements studied by Shore and Johnson provide a related axiomatic basis [59].
 
 Here the reference is counting measure on the ranks: before conditioning on cost, each available rank receives the same weight. A different density of available states would instead enter as a prior weight. With this choice made, we maximise the Shannon entropy of a vocabulary of size $R$,
 
 $$
-S[p]=-\sum_{r=1}^R p(r)\log p(r) \tag{44}
+S[p]=-\sum_{r=1}^R p(r)\log p(r) \tag{47}
 $$
 
 under
 
 $$
 \sum_{r=1}^R p(r)=1,\qquad
- \sum_{r=1}^R p(r)\log r=\ell. \tag{45}
+ \sum_{r=1}^R p(r)\log r=\ell. \tag{48}
 $$
 
 The multiplier $\lambda$ conjugate to mean cost prices departures towards more expensive ranks. The maximum-entropy weight of a state is exponential in its cost. Since that cost is logarithmic, $e^{-\lambda\log r}=r^{-\lambda}$: the exponential in cost becomes a power law in rank. Normalisation gives
 
 $$
-p(r\mid\lambda)=\frac{r^{-\lambda}}{Z_R(\lambda)}, \tag{46}
+p(r\mid\lambda)=\frac{r^{-\lambda}}{Z_R(\lambda)}, \tag{49}
 $$
 
 where
 
 $$
-Z_R(\lambda)=\sum_{r=1}^R r^{-\lambda}. \tag{47}
+Z_R(\lambda)=\sum_{r=1}^R r^{-\lambda}. \tag{50}
 $$
 
 Theorem 5 (Zipf equilibrium).
 
 Let $R\ge2$ and $K(r)=\log r$ on $\{1,\dots,R\}$. For $0<\ell<\log R$, the maximum-entropy distribution at fixed mean cost $\ell$ is $p(r\mid\lambda)=r^{-\lambda}/Z_R(\lambda)$. The equation of state $\ell(\lambda)=-\partial_\lambda\log Z_R(\lambda)$ uniquely determines finite $\lambda$. The endpoint ensembles are obtained as $\lambda\to\pm\infty$.
 
-The theorem says that a power law need not be supplied as a further guess about the occupation statistics. It is the canonical maximum-entropy weight of a logarithmically priced rank. The calculation, together with its extension to scale-covariant costs, is given in Appendix G. For rank to agree with decreasing occupation probability we use $\lambda\ge0$, with $\lambda=0$ giving uniform occupation.
+The theorem says that a power law need not be supplied as a further guess about the occupation statistics. It is the canonical maximum-entropy weight of a logarithmically priced rank. The calculation, together with its extension to scale-covariant costs, is given in Appendix H. For rank to agree with decreasing occupation probability we use $\lambda\ge0$, with $\lambda=0$ giving uniform occupation.
 
-Mandelbrot obtained related power laws by assigning logarithmic word costs [42]. The preceding register and symbol theorems explain where the leading rate of that cost can come from once the organisation is itself included. The canonical model goes further by taking the logarithmic symbol law to be exact. Under that cost and the stated mean constraint, the occupation law is then fixed rather than fitted independently. This is the sequence of the argument: composition constrains the cost, and maximum entropy turns that cost into a distribution. Moreover, this rank law is not tied to a single mechanism. Power law distributions have been derived in a variety of previous contexts  [55, 56]. Our contribution is to establish the minimal systemic properties under which these Zipfian distributions obtain. The fact that these describe so many biological and societal phenomena is extremely suggestive. Consider for example that word frequencies in many languages exhibit a power law distribution with exponents close to $\lambda=1$. From this we may infer two facts. First, that natural language is close to an optimal representation under additive composition [Footnote 3. one could argue that language creation is a form of subadditive composition. No cap.] . Secondly, its exponent tells us that we humans and bots are prepared to pay an enormous cost for linguistic facility. Understanding why this last statement is true must be true is our next concern.
+Mandelbrot obtained related power laws by assigning logarithmic word costs [60]. The preceding register and symbol theorems explain where the leading rate of that cost can come from once the organisation is itself included. The canonical model goes further by taking the logarithmic symbol law to be exact. Under that cost and the stated mean constraint, the occupation law is then fixed rather than fitted independently. This is the sequence of the argument: composition constrains the cost, and maximum entropy turns that cost into a distribution. Moreover, this rank law is not tied to a single mechanism. Power law distributions have been derived in a variety of previous contexts [61, 62]. Our contribution is to establish the minimal systemic properties under which these Zipfian distributions obtain. The fact that these describe so many biological and societal phenomena is extremely suggestive. Consider for example that word frequencies in many languages exhibit a power law distribution with exponents close to $\lambda=1$. From this we may infer two facts. First, that natural language is close to an optimal representation under additive composition [Footnote 4. One could argue that language creation is a form of subadditive composition. No cap.] . Secondly, its exponent tells us that we humans and bots are prepared to pay an enormous cost for linguistic facility. Understanding why this last statement must be true is our next concern.
 
 The cost curve
 
 What does this distribution allow us to calculate? The partition sum is more than a normalising constant. Changing $\lambda$ shifts weight between cheap and expensive ranks, and derivatives of its logarithm tell us how the mean cost responds. Substituting the same probabilities into the entropy gives a second quantity along that curve:
 
 $$
-C(\lambda):=-\frac{d}{d\lambda}\log Z_R(\lambda)=\ell(\lambda), \tag{48}
+C(\lambda):=-\frac{d}{d\lambda}\log Z_R(\lambda)=\ell(\lambda), \tag{51}
 $$
 
 $$
-S(\lambda)=\lambda C(\lambda)+\log Z_R(\lambda). \tag{49}
+S(\lambda)=\lambda C(\lambda)+\log Z_R(\lambda). \tag{52}
 $$
 
 For $\lambda>0$, the corresponding free complexity is
 
 $$
 F(\lambda):=C(\lambda)-\lambda^{-1}S(\lambda)
-          =-\lambda^{-1}\log Z_R(\lambda). \tag{50}
+          =-\lambda^{-1}\log Z_R(\lambda). \tag{53}
 $$
 
 The multiplier acts as an inverse complexity temperature: large $\lambda$ concentrates occupation on cheap ranks, while smaller $\lambda$ spreads it across the vocabulary. Free complexity packages this competition between cost and the breadth of occupation in the familiar canonical form. The statistical mechanics is already recognisable, although a physical bath temperature enters only when we specify an operation such as the reset of Section IV.
@@ -602,7 +606,7 @@ How does this change when the vocabulary has no fixed upper limit? Taking $R\to\
 
 $$
 Z_\infty(\lambda)=\sum_{r=1}^{\infty}r^{-\lambda}
-                 =\zeta(\lambda),\qquad\lambda>1. \tag{51}
+                 =\zeta(\lambda),\qquad\lambda>1. \tag{54}
 $$
 
 The canonical cost curve therefore leads, in the infinite-vocabulary limit, to the Riemann zeta function. It arrives here as a sum over physically priced ranks. The boundary $\lambda=1$ marks the point at which suppression of expensive states no longer compensates for the unbounded range of states available. No normalised infinite ensemble exists there.
@@ -611,13 +615,13 @@ A finite register has no such difficulty. At finite $R$, $\lambda=1$ gives the h
 
 $$
 \chi(\lambda):=-\frac{dC}{d\lambda}
-              =\operatorname{Var}_{\lambda}(\log r). \tag{52}
+              =\operatorname{Var}_{\lambda}(\log r). \tag{55}
 $$
 
-Figure 6 shows the family and its response functions. The infinite-vocabulary zeta pole gives $C\sim(\lambda-1)^{-1}$ and $\chi\sim(\lambda-1)^{-2}$ as $\lambda\downarrow1$. Finite vocabularies instead have finite responses, with $C_R(1)\sim\frac12\ln R$ and $\chi_R(1)\sim\frac1{12}(\ln R)^2$. Appendix H gives these limits.
+Figure 7 shows the family and its response functions. The infinite-vocabulary zeta pole gives $C\sim(\lambda-1)^{-1}$ and $\chi\sim(\lambda-1)^{-2}$ as $\lambda\downarrow1$. Finite vocabularies instead have finite responses, with $C_R(1)\sim\frac12\ln R$ and $\chi_R(1)\sim\frac1{12}(\ln R)^2$. Appendix I gives these limits.
 
-Figure 6. Finite-cutoff Zipf family and critical structure. (a) Representative rank distributions $p(r\mid\lambda)$ on log–log axes for several values of the cost multiplier $\lambda$. The $\lambda=1$ curve (red) is standard Zipf’s law. (b) Response functions: mean cost $C(\lambda)$, entropy $S(\lambda)$, and free complexity $F(\lambda)$ (all in nats, $R=500$). (c) Finite-cutoff partition sums $Z_R(\lambda)$ for increasing vocabulary sizes $R$, approaching the infinite-cutoff limit $Z_\infty(\lambda)=\zeta(\lambda)$ for $\lambda>1$. (d) Finite-cutoff susceptibility $\chi(\lambda)=\mathrm{Var}_{\lambda}(\log r)$. The divergence occurs only in the infinite-vocabulary limit as $\lambda\downarrow1$.
-[Image: cost/figure-6.webp · PDF p. 14]
+Figure 7. Finite-cutoff Zipf family and critical structure. (a) Rank distributions $p(r\mid\lambda)$ for $R=500$ at several values of the cost multiplier $\lambda$. The $\lambda=1$ curve (vermilion) is Zipf’s law. (b) Mean cost $C(\lambda)$, entropy $S(\lambda)$ and free complexity $F(\lambda)$, all in nats, for $R=500$. (c) Partition sums $Z_R(\lambda)$ for increasing vocabulary sizes $R$, approaching $Z_\infty(\lambda)=\zeta(\lambda)$ (dashed), which diverges as $\lambda\downarrow1$. (d) Susceptibility $\chi(\lambda)=\mathrm{Var}_{\lambda}(\log r)$ for the same vocabularies. Its value at $\lambda=1$ grows as $\frac1{12}(\ln R)^2$ and diverges only in the infinite-vocabulary limit. Vertical lines mark $\lambda=1$.
+[Image: cost/figure-7.webp · PDF p. 15]
 
 When this is the ensemble undergoing the reset of Section IV, its mean heat obeys
 
@@ -626,12 +630,12 @@ $$
  \langle Q_{\mathrm{erase}}\rangle
  &\ge k_BT[\lambda C(\lambda)+\ln Z_R(\lambda)]\\
  &\ge k_BT C(\lambda).
- \end{aligned} \tag{53}
+ \end{aligned} \tag{56}
 $$
 
 The divergence near the infinite-vocabulary boundary therefore has an operational cost per complete reset. Spreading occupation across more scales leaves more uncertainty to be removed when the memory is cleared. This gives the singularity a physical meaning without demanding that any finite device realise an infinite vocabulary. A device’s power budget also depends on how frequently it performs the reset.
 
-The leading tail law extends beyond the exact logarithm. In units of $\kappa_\infty$, an organisation with $f(r)=c\ln r+o(\ln r)$ has normalisation threshold $\lambda_c=1/c$. Theorem 4 makes rates arbitrarily close to $c=1$ achievable. A fixed organisation has the canonical threshold precisely when its leading rate is one. Lower-order coding overhead then decides what happens on the boundary, as illustrated by Rissanen’s universal integer prior [45].
+The leading tail law extends beyond the exact logarithm. In units of $\kappa_\infty$, an organisation with $f(r)=c\ln r+o(\ln r)$ has normalisation threshold $\lambda_c=1/c$. Theorem 4 makes rates arbitrarily close to $c=1$ achievable. A fixed organisation has the canonical threshold precisely when its leading rate is one. Lower-order coding overhead then decides what happens on the boundary, as illustrated by Rissanen’s universal integer prior [63].
 
 A fixed weighting of the vocabulary can also change the tail. Write
 
@@ -639,93 +643,48 @@ $$
 \begin{aligned}
  p_w(r\mid\lambda)&=\frac{w(r)e^{-\lambda f(r)}}{Z_w(\lambda)},\\
  Z_w(\lambda)&=\sum_{r\ge1}w(r)e^{-\lambda f(r)}.
- \end{aligned} \tag{54}
+ \end{aligned} \tag{57}
 $$
 
 For $f(r)=\ln r+o(\ln r)$ and positive weights satisfying
 
 $$
-\ln w(r)=o(\ln r), \tag{55}
+\ln w(r)=o(\ln r), \tag{58}
 $$
 
-the threshold remains one. The weights are $r^{-\lambda+o(1)}$, so comparison with nearby powers establishes convergence for $\lambda>1$ and divergence for $\lambda<1$. At the boundary, $w(r)=[\ln(r+1)]^{-b}$ with exact logarithmic cost gives normalisation for $b>1$ and finite mean log-rank for $b>2$. A power weight $w(r)=r^{-a}$ instead shifts the threshold to $1-a$, while exponential suppression removes any finite normalisation boundary. Appendix I gives the comparison and the corresponding moment conditions.
+the threshold remains one. The weights are $r^{-\lambda+o(1)}$, so comparison with nearby powers establishes convergence for $\lambda>1$ and divergence for $\lambda<1$. At the boundary, $w(r)=[\ln(r+1)]^{-b}$ with exact logarithmic cost gives normalisation for $b>1$ and finite mean log-rank for $b>2$. A power weight $w(r)=r^{-a}$ instead shifts the threshold to $1-a$, while exponential suppression removes any finite normalisation boundary. Appendix J gives the comparison and the corresponding moment conditions.
 
-The precise invariant is therefore the leading logarithmic tail scale, while homogeneous refinement gives the exact zeta family. Asymptotic logarithmic costs and subpower weights retain its threshold away from the boundary, but need not retain its critical response. Equation (54) is a conditional model, not a general solution of an encoder optimisation with a mutual information constraint. That optimisation also changes which states represent the target, and is the next question.
+The precise invariant is therefore the leading logarithmic tail scale, while homogeneous refinement gives the exact zeta family. Asymptotic logarithmic costs and subpower weights retain its threshold away from the boundary, but need not retain its critical response. Throughout, we have priced a representation by its cost alone. What makes a representation useful rather than merely cheap is what it preserves about a target, the question posed by the information bottleneck [22] and, in a different guise, by the free-energy principle [64]. A static account of cost cannot settle it. Once the framework is extended to dynamics, however, whatever the evolution of a representation is steered towards must specify the target that the representation serves.
 
-Preserving a target. But what makes a representation useful rather than merely cheap? A register that always returns the same symbol is economical, but tells us nothing about a target that varies. Nor does a broad occupation distribution establish usefulness: the variation may be unrelated to what we want to predict. The missing question is what the symbols preserve about $Y$.
-
-To make that question explicit, let $W$ be a random source configuration taking values $\omega\in\Omega$, fix the joint law $p(\omega,y)$, and vary an encoder $q(x\mid\omega)$ over a specified admissible class. We also use $X$ and $Y$ for the resulting random variables. The encoder gives the Markov chain $X-W-Y$.
-
-We use $I_q(X;Y)$ as fidelity because it measures the reduction in target uncertainty supplied by the code [33]. Changing the names of the symbols does not change that information. Changing which source configurations they group together can. Thus learning a representation changes more than its occupation statistics: it changes which distinctions become accessible. Retaining the fixed rank cost of the chosen design, maximising occupation entropy at prescribed mean cost and relevance gives
-
-$$
-\begin{gathered}
- \max_q H_q(X),\\
- C[q]=\mathbb E_q[\ln r(X)]=\ell,\qquad I_q(X;Y)\ge I_0.
- \end{gathered} \tag{56}
-$$
-
-Its Lagrange functional for minimisation is
-
-$$
-\mathcal J[q]=\lambda C[q]-H_q(X)-\beta I_q(X;Y),
- \qquad\beta\ge0. \tag{57}
-$$
-
-Cost prices the occupied ranks, entropy rewards the breadth of occupation, and relevance rewards what those states reveal about the target. With a normalisable fixed reference law $\rho_\lambda(x)=e^{-\lambda K(x)}/Z(\lambda)$,
-
-$$
-\begin{aligned}
- \mathcal J[q]&=D(p_q(X)\Vert\rho_\lambda)-\ln Z(\lambda)\\
-             &\quad-\beta I_q(X;Y).
- \end{aligned} \tag{58}
-$$
-
-The representation can depart from the canonical occupation when the gain in target information justifies it. [Footnote 4. The free-energy principle uses variational free energy as an upper bound on sensory surprisal under a generative model [57]. Here the relative entropy compares occupation distributions at fixed rank cost. The algebra provides a connection, but the distributions being varied have different meanings.]
-
-The relation to information bottleneck depends on the cost calibration across encoders [22]. For a deterministic candidate class satisfying
-
-$$
-C[q]=aH_q(X)+b,\qquad a>0, \tag{59}
-$$
-
-with the same $a,b$ throughout, $H_q(X)=I_q(W;X)$. If $\lambda a>1$, a positive rescaling of $\mathcal J-\lambda b$ then gives
-
-$$
-\begin{aligned}
- \mathcal L_{\mathrm{IB}}
- &=I_q(W;X)-\beta_{\mathrm{IB}}I_q(X;Y),\\
- \beta_{\mathrm{IB}}&=\frac{\beta}{\lambda a-1}.
- \end{aligned} \tag{60}
-$$
-
-This is a sufficient condition for the deterministic bottleneck reduction. The sign is decisive: at $\lambda a=1$ the source penalty vanishes. In the general rank-cost model the three terms of $\mathcal J$ remain separate. Appendix J develops the stochastic case and explains why a cost bound alone does not establish equivalence of the optimisation problems.
-
-VI. Outlook  (PDF pp. 15–16)
+VI. Outlook  (PDF pp. 16–17)
 
 Every representation has to be built out of something, but this does not fix how its constituents must be organised. Representation can change without changing the target it represents. The sixteen symbols of Fig. 2 make this freedom explicit: a smaller choice within a register must be paid for by a larger choice of register. Once both are included, the problem repeats at the level of the apparatus itself. This is the central purpose of the recursive account developed here, to give the organisation of a representation a cost that can be compared with the cost of its contents.
 
-A useful way to view the logarithmic result is through the freedom to change coordinates. A monolithic register may be expensive to enlarge, yet its components can support the same distinctions more economically when used as digits. The asymptotic price is set by the infimum of the costs per nat available to that construction. The register theorem supplies both a ceiling from every available digit and a common limiting rate. The symbol theorem then shows that paying for selection and termination need not increase the infimum of leading rates. The generalisation is therefore not just a logarithm assigned to another kind of symbol. It is a comparison of physical organisations that prices the machinery needed to make those symbols accessible. The geometric examples show what changes before this optimisation: the number of subdivisions grows while the resource consumed by each subdivision shrinks. Their balance fixes the refinement law. The logarithm is the case in which every multiplicative increase of range has the same price. On this account, the logarithm is the cost of counting with physical registers.
+That account has produced three results. The first is the form of the cost itself, which efficiency and recursive self-consistency alone fix. A useful way to view the logarithmic result is through the freedom to change coordinates. A monolithic register may be expensive to enlarge, yet its components can support the same distinctions more economically when used as digits. The asymptotic price is set by the infimum of the costs per nat available to that construction. The register theorem supplies both a ceiling from every available digit and a common limiting rate. The symbol theorem then shows that paying for selection and termination need not increase the infimum of leading rates. The generalisation is therefore not just a logarithm assigned to another kind of symbol. It is a comparison of physical organisations that prices the machinery needed to make those symbols accessible.
 
-That logarithmic coordinate also gives the Zipf boundary a concrete meaning. In the finite harmonic distribution, each octave of rank carries approximately the same probability. The vocabulary uses many scales without selecting one of them as special. A direct physical example is the harmonic entanglement catalyst [58], whose ordered Schmidt probabilities are
+The second result is a correspondence with geometry. Before any digits are composed, a single register can only be refined, and the geometric examples show what that involves: the number of subdivisions grows while the resource consumed by each subdivision shrinks. Their balance fixes the refinement law. The logarithm is the case in which every multiplicative increase of range has the same price, reached when the resource consumed by each division fills the space it divides. Self-similar tiles ordered by space-filling curves realise a range of these laws, set by the dimension of their boundaries, and the exponent can be read from how often a small perturbation changes an address. On this account, the logarithm is the cost of counting with physical registers.
+
+The third result is a thermodynamic realisation. Through Diophantine search, the guessing machine of Section IV stands for computation in general, and the heat it dissipates in forgetting its guesses is bounded below by the mean logarithm of their probability rank. Together these results suggest why the same logarithm recurs across so many sciences. Information theory prices a message by the length of its code, thermodynamics prices a reset by the entropy it removes, and Zipf’s law finds the frequency of a word falling as a power of its rank. Each describes distinctions that must be held by something, and each inherits its logarithm from the efficient embodiment of those distinctions rather than from the particulars of its own substrate. The account developed here replaces none of these theories. It offers instead a foundation for a covering theory across them, in which the organisation of a representation is itself a physical object of optimisation.
+
+The logarithm of rank also gives the Zipf boundary a concrete meaning. In the finite harmonic distribution, each octave of rank carries approximately the same probability. The vocabulary uses many scales without selecting one of them as special. A direct physical example is the harmonic entanglement catalyst [65], whose ordered Schmidt probabilities are
 
 $$
-p_r=\frac{1}{rH_R},\qquad H_R=\sum_{j=1}^R\frac1j. \tag{61}
+p_r=\frac{1}{rH_R},\qquad H_R=\sum_{j=1}^R\frac1j. \tag{59}
 $$
 
 Its organisation across scales enables catalytic transformations. The finite cutoff is part of that construction, just as it is part of a physical register. In the classical reset model, enlarging this harmonic vocabulary raises the entropy removed per complete reset as $\frac12\ln R+\ln\ln R+O(1)$.
 
-The question of useful complexity is equally concrete in physical learning. Learning capacity has been repeatedly linked to dynamic phases [59, 60], while the response of an accessible subsystem is linked to spectral nonflatness and metrological sensitivity [61]. In these systems, generating more structure is useful only insofar as the available readout can use it. This gives the target-relative cost account a practical setting: compare the information preserved about the same task, the organisation needed to access it, and the resources consumed by preparing, reading and resetting that organisation. Furthermore, it emphasises the view of computation as a form of dynamics.
+The question of useful complexity is equally concrete in physical learning. Learning capacity has been repeatedly linked to dynamic phases [66, 67], while the response of an accessible subsystem is linked to spectral nonflatness and metrological sensitivity [68]. In these systems, generating more structure is useful only insofar as the available readout can use it. This gives the extension of the cost account to targets a practical setting: compare the information preserved about the same task, the organisation needed to access it, and the resources consumed by preparing, reading and resetting that organisation. Furthermore, it emphasises the view of computation as a form of dynamics.
 
-Where does this leave learning? Representation learning already makes such choices by finding variables in which useful structure becomes accessible [62]. Architecture search [63] and pruning [4, 5] extend the choice to the apparatus holding those variables. The present theory supplies a static comparison between the resulting organisations. A dynamical theory must then price the changes between them, including the information retained along the way. This is where the nearly decomposable hierarchy  [64] becomes a physical design question: when does the saving within a component repay the cost of selecting and coordinating it?
+Where does this leave learning? Representation learning already makes such choices by finding variables in which useful structure becomes accessible [69]. Architecture search [70] and pruning [4, 5] extend the choice to the apparatus holding those variables. The present theory supplies a static comparison between the resulting organisations. A dynamical theory must then price the changes between them, including the information retained along the way. This is where the nearly decomposable hierarchy [71] becomes a physical design question: when does the saving within a component repay the cost of selecting and coordinating it?
 
-Recursive self-improvement makes that question unavoidable. The procedure that proposes a change can itself be rewritten [6, 7, 8]. Its evaluator, archive and memory belong to the same physical account. Keeping unsuccessful candidates can make later searches more informative, but requires storage and access. Discarding them releases capacity while erasing uncertainty about the history. The trade-off concerns the entire process by which improvement is achieved. Connecting these static budgets to learning rates will require the duration and dissipation of the allowed operations [32, 23]. With those ingredients, whether such costs bound the rate of self-improvement becomes a well-posed physical question.
+The question is sharpest for a representation that is part of its own target. A learner that improves its own organisation must also represent that organisation, and part of what it must represent is how to represent itself more efficiently. Automated research and recursive self-improvement make this reflexive case a practical one. The procedure that proposes a change can itself be rewritten [6, 7, 8]. Its evaluator, archive and memory belong to the same physical account. Keeping unsuccessful candidates can make later searches more informative, but requires storage and access. Discarding them releases capacity while erasing uncertainty about the history, at the price the guessing machine makes explicit. The trade-off concerns the entire process by which improvement is achieved. Connecting these static budgets to learning rates will require the duration and dissipation of the allowed operations [32, 23]. With those ingredients, whether such costs bound the rate of self-improvement becomes a well-posed physical question. Answering it is the task of a thermodynamic theory of self-improvement, which we take up in a sequel.
 
 The cost of complexity is therefore also a question of where complexity is placed. The same distinctions can be prohibitively expensive in one organisation and accessible in another. Any universal theory of learning must account for that freedom, including when the learner turns it on itself. When it comes to accounting, the universe makes no special exceptions. Finally, more recursively minded readers may have noticed that this theory of representation applies even to itself, and to the best of our knowledge remains consistent with itself. Just imagine what it cost to organise.
 
-Acknowledgments  (PDF p. 16)
+Acknowledgments  (PDF p. 17)
 
-An immense debt of gratitude is owed to a number of friends and colleagues, without whose generosity of time this work would not have been possible. Particular thanks go to Denys Bondar for their formulation of the non-deterministic diophantine machine. Otherwise (in non-canonical order), the author is grateful for discussions with William Handley, Tapio Ala-Nissilä, Moein Ivaki, Matias Karjula, Roland Weiszmuller, Viktor Ivady, Juan Sebastian Totero Gongora, Sasha Balanov, Alex Zagoskin, Alicia Magann, Sarah Cavendish and - the best listener of all - Finlay McCaul.
+An immense debt of gratitude is owed to a number of friends and colleagues, without whose generosity of time this work would not have been possible. Particular thanks go to Denys Bondar for their formulation of the non-deterministic Diophantine machine. Otherwise (in non-canonical order), the author is grateful for discussions with William Handley, Tapio Ala-Nissilä, Moein Ivaki, Matias Karjula, Roland Weiszmuller, Viktor Ivady, Juan Sebastian Totero Gongora, Sasha Balanov, Alex Zagoskin, Alicia Magann, Sarah Cavendish and - the best listener of all - Finlay McCaul.
 
 Formal derivations, figures and manuscript drafting were assisted by EigenEngine, an integrated research environment and model harness, using ChatGPT and Claude. The author remains responsible for the ideas, interpretation and correctness of the results. More information is available at https://gmccaul.co.uk/eigenengine.
 
@@ -733,7 +692,7 @@ Appendix A — Homogeneous register cost  (PDF p. 17)
 
 The proof of Theorem 2 uses only monotonicity and multiplicative additivity.
 
-Proof. The function $g$ defined in Eq. (18) is nondecreasing, satisfies $g(1)=0$, and obeys Eq. (19). For any fixed $n\ge2$ and positive integer $k$, set
+Proof. The function $g$ defined in Eq. (20) is nondecreasing, satisfies $g(1)=0$, and obeys Eq. (21). For any fixed $n\ge2$ and positive integer $k$, set
 
 $$
 a_k
@@ -749,7 +708,7 @@ $$
 2^{a_k}\le n^k<2^{a_k+1}. \tag{A2}
 $$
 
-Monotonicity and repeated use of Eq. (19) give
+Monotonicity and repeated use of Eq. (21) give
 
 $$
 a_k g(2)
@@ -769,21 +728,21 @@ g(n)
   \kappa\log n. \tag{A4}
 $$
 
-The result also holds at $n=1$, and restoring $K_0$ proves Eq. (20).
+The result also holds at $n=1$, and restoring $K_0$ proves Eq. (22).
 
-Appendix B — Asymptotic price of a distinction  (PDF p. 17)
+Appendix B — Asymptotic price of a distinction  (PDF pp. 17–18)
 
 For Theorem 3, multiplicative subadditivity becomes ordinary subadditivity along the powers of any base.
 
-Proof. Fix $b\ge2$ and write $f_b(k)=K_{\mathrm{reg}}(b^k)$. Equation (22) gives $f_b(k+l)\le f_b(k)+f_b(l)$. For fixed $k$, write $l=qk+s$ with $0\le s<k$. Then $f_b(l)\le q\,f_b(k)+f_b(s)$, and dividing by $l$ and letting $l\to\infty$ gives $\limsup_l f_b(l)/l\le f_b(k)/k$ for every $k$. Hence $f_b(l)/l$ converges to $L_b:=\inf_k f_b(k)/k$, which is Fekete’s subadditive lemma [65]. For two bases $a$ and $b$, choose $j=\lfloor k\log b/\log a\rfloor$, so that $a^j\le b^k<a^{j+1}$. Monotonicity gives $f_a(j)\le f_b(k)\le f_a(j+1)$, and dividing by $k\log b$ shows that $L_a/\log a=L_b/\log b=:\kappa_\infty$. The same squeeze between consecutive powers of two extends the limit to all $N$. Taking $b=N$ and $k=1$ in $f_b(k)\ge kL_b$ gives the lower bound in Eq. (26) and identifies the limit with the infimum. The upper bound follows from monotonicity, $N\le b^{\lceil\log_b N\rceil}$, and repeated use of Eq. (22).
+Proof. Fix $b\ge2$ and write $f_b(k)=K_{\mathrm{reg}}(b^k)$. Equation (26) gives $f_b(k+l)\le f_b(k)+f_b(l)$. For fixed $k$, write $l=qk+s$ with $0\le s<k$. Then $f_b(l)\le q\,f_b(k)+f_b(s)$, and dividing by $l$ and letting $l\to\infty$ gives $\limsup_l f_b(l)/l\le f_b(k)/k$ for every $k$. Hence $f_b(l)/l$ converges to $L_b:=\inf_k f_b(k)/k$, which is Fekete’s subadditive lemma [72]. For two bases $a$ and $b$, choose $j=\lfloor k\log b/\log a\rfloor$, so that $a^j\le b^k<a^{j+1}$. Monotonicity gives $f_a(j)\le f_b(k)\le f_a(j+1)$, and dividing by $k\log b$ shows that $L_a/\log a=L_b/\log b=:\kappa_\infty$. The same squeeze between consecutive powers of two extends the limit to all $N$. Taking $b=N$ and $k=1$ in $f_b(k)\ge kL_b$ gives the lower bound in Eq. (28) and identifies the limit with the infimum. The upper bound follows from monotonicity, $N\le b^{\lceil\log_b N\rceil}$, and repeated use of Eq. (26).
 
-Appendix C — Cost of a symbol  (PDF p. 17)
+Appendix C — Cost of a symbol  (PDF p. 18)
 
-The proof of Theorem 4 compares a typicality prefix with a self-delimiting positional construction.
+Theorem 4 compares two ways of paying for a symbol. Its first part rests on the observation that the $r$ most typical symbols of any representation already form an organisation of $r$ distinctions, so no symbol can cost less than the efficient register for its own typicality prefix. The bound therefore includes the structural cost of reaching a symbol, not only the cost within its final register. The second part supplies a construction that approaches this bound. A variable-length description must record where each word ends, and a terminator makes that record explicit. The length can instead be marked recursively, by writing the number of digits before the digits themselves, which adds only $O(\log\log r)$ overhead and attains the same leading rate [73, 74]. The leading coefficient is fixed by the register comparison, while the lower-order overhead records how a particular code identifies its words and decides the behaviour at the boundary of an infinite vocabulary (Section V). Neither part suffices alone, since a lower bound leaves open whether any representation approaches it, while an explicit encoding cannot exclude a better one. Together they identify the same $\kappa_\infty$ for the efficient register budget and for the infimum of achievable symbol-cost rates.
 
-Proof. For (i), the $r$ most typical symbols are realised by $\mathcal R$ at a largest cost of $f_{\mathcal R}(r)$, since $f_{\mathcal R}$ is nondecreasing. As in the proof of Theorem 1, an efficient register for $r$ distinctions cannot need a larger budget than an available alternative, so $K_{\mathrm{reg}}(r)\le f_{\mathcal R}(r)$, and the lower bound of Eq. (26) completes the chain. For (ii), use an alphabet of $b$ letters together with one terminator, each held in a digit of range $b+1$. There are $b^l$ words of $l$ letters, so at least $b^L$ words have at most $L$ letters. Assign ranks in order of increasing length. The symbol at rank $r$ then has at most $\lceil\log_b r\rceil\le\log_b r+1$ letters and, with its terminator, occupies at most $\log_b r+2$ digits, each of budget $K_{\mathrm{reg}}(b+1)$. Its cost is nondecreasing in rank, which gives Eq. (30). The rate of this organisation is $K_{\mathrm{reg}}(b+1)/\log b$, which tends to $\kappa_\infty$ as $b\to\infty$ by Eq. (25), while by (i) no organisation has a rate below $\kappa_\infty$.
+Proof. For (i), the $r$ most typical symbols are realised by $\mathcal R$ at a largest cost of $f_{\mathcal R}(r)$, since $f_{\mathcal R}$ is nondecreasing. As in the proof of Theorem 1, an efficient register for $r$ distinctions cannot need a larger budget than an available alternative, so $K_{\mathrm{reg}}(r)\le f_{\mathcal R}(r)$, and the lower bound of Eq. (28) completes the chain. For (ii), use an alphabet of $b$ letters together with one terminator, each held in a digit of range $b+1$. There are $b^l$ words of $l$ letters, so at least $b^L$ words have at most $L$ letters. Assign ranks in order of increasing length. The symbol at rank $r$ then has at most $\lceil\log_b r\rceil\le\log_b r+1$ letters and, with its terminator, occupies at most $\log_b r+2$ digits, each of budget $K_{\mathrm{reg}}(b+1)$. Its cost is nondecreasing in rank, which gives Eq. (30). The rate of this organisation is $K_{\mathrm{reg}}(b+1)/\log b$, which tends to $\kappa_\infty$ as $b\to\infty$ by Eq. (27), while by (i) no organisation has a rate below $\kappa_\infty$.
 
-Appendix D — Scale-covariant register budgets  (PDF pp. 17–18)
+Appendix D — Scale-covariant register budgets  (PDF p. 18)
 
 For a prescribed architecture, let $B(n)$ be its budget, $K_0=B(1)$ and $g(n)=B(n)-K_0$. Assume a nonzero refinement price. Suppose its differential cost is scale covariant.
 
@@ -854,24 +813,35 @@ $$
   \frac{\alpha}{\kappa_\alpha}g(m)g(n). \tag{D8}
 $$
 
-Thus recursive consistency permits nonadditive excess costs as well as the logarithmic case. The geometric refinement of Eq. (34) realises this family on the ranges $N=4^k$, with $\alpha=1-\gamma/d$, and there Eq. (D8) reduces to Eq. (35). Positive $\alpha$ makes a fixed refinement more expensive on a larger register, and negative $\alpha$ makes it cheaper and gives a bounded limiting cost. Physically, unlimited distinctions ought to require an unlimited budget, which would exclude the negative-$\alpha$ members of this family. The ordinary logarithm is selected by the specific condition $\alpha=0$, for which the refinement price is independent of the existing register size.
+Thus recursive consistency permits nonadditive excess costs as well as the logarithmic case. The geometric refinement of Eq. (35) realises this family on the ranges $N=b^k$, with $\alpha=1-\gamma/d$ from Eq. (38), and there Eq. (D8) reduces to Eq. (36). Positive $\alpha$ makes a fixed refinement more expensive on a larger register, and negative $\alpha$ makes it cheaper and gives a bounded limiting cost. Physically, unlimited distinctions ought to require an unlimited budget, which would exclude the negative-$\alpha$ members of this family. The ordinary logarithm is selected by the specific condition $\alpha=0$, for which the refinement price is independent of the existing register size.
 
 The geometric picture produced this family from one assumption about how a price depends on size, but the power law in Eq. (D1) need not be tied to geometry, nor postulated. Suppose only that the positive prices of the same refinement at two initial ranges differ by a factor depending on the ratio of those ranges, $\Delta_{qm}(n)=h(q)\Delta_m(n)$, and that this factor varies monotonically with $q$. Applying the relation twice gives $h(qq')=h(q)h(q')$, and the argument of Theorem 2, applied to $\log h$, gives $h(q)=q^\alpha$. A refinement price with no preferred scale is therefore necessarily scale covariant, and homogeneous refinement is the case in which the price does not depend on scale at all.
 
-Appendix E — Diophantine search and witness encoding  (PDF p. 18)
+Appendix E — Monte Carlo test of the perimeter readout  (PDF pp. 18–19)
 
-A set is recursively enumerable when an algorithm can confirm membership of each element, although it may run indefinitely on non-members [49]. The DPRM theorem supplies the polynomial witness relation of Eq. (37) for every such set [50, 51]. The input $u$ fixes the parameters, and a witness tuple $x$ certifies membership when $D(u,x)=0$. Once supplied, a witness can be checked by finite polynomial evaluation.
+The readout of Eq. (39) follows from counting walls. A point placed uniformly in a region of area $A$ and moved a short distance $s$ in a uniformly random direction crosses a given straight wall element of length $\ell$ from a given side with probability $s\ell/(\pi A)$, to leading order in $s$. Summing over the walls at depth $k$, each crossable from both of the cells it separates, the probability that the address at depth $k$ changes is $sC_k/(\pi A)$, with $C_k$ the summed perimeters of the cells at that depth. Every wall at depth $k$ is also a wall at depth $k+1$, so the conditional probability is $C_k/C_{k+1}$ whatever the shapes of the cells. Within a single parent the same count applies, with its outline crossed from inside only and its internal walls from either side.
+
+On the hexagonal lattice the identity holds exactly rather than to leading order. Three cells meet at every vertex, so a step shorter than a cell side ends either in its own cell or in one of the six that share an edge with it, and by the symmetry of the lattice these six are equally likely. Every exposed cell edge then carries the same weight, and the probability that a step changes an address is proportional to the number of exposed edges separating different addresses. On the square lattice, where four cells meet at a vertex, a step can end in a cell that shares only a corner with its start, and this equality fails.
+
+We tested Eq. (39) on regions of hexagonal cells of unit pitch, with points placed uniformly in a parent and moved by isotropic steps of length log-uniform between $0.06$ and $0.28$ pitches, and with perimeters counted as exposed cell edges. The cases were the Gosper hierarchy with children of $7^m$ cells for $m=0,\dots,4$, the same hierarchy read across two and three levels at once, a Gosper parent of $343$ cells divided into $2$, $3$, $5$, $9$, $17$ and $33$ irregular children grown from random seeds, and a hexagonal parent of $217$ cells divided into $3$, $7$ and $19$ such children. Each case used between $1.0\times10^{6}$ and $1.5\times10^{7}$ steps, giving between $6.0\times10^{4}$ and $4.9\times10^{5}$ changes of the finer address. Figure 8 compares the measured conditional probability with the counted perimeter ratio. All sixteen cases agree within $1.9$ binomial standard errors, with $\chi^2=11.4$ for sixteen degrees of freedom. No physical material or heat is measured, so the test confirms only the counting that links address statistics to perimeter.
+
+Figure 8. The perimeter readout across all tested partitions. (a) Measured fraction $P(k\,|\,k+1)$ of changes of the finer address that also change the coarser one, against the counted perimeter ratio $C_k/C_{k+1}$, for single Gosper levels (filled circles), two and three Gosper levels at once (squares and diamonds), and irregular partitions of a Gosper parent (triangles) and of a hexagonal parent (hexagons). For the multilevel cases $k+1$ stands for the finer level read. The dashed line is Eq. (39), fixed before the simulation. (b) Deviation $z$ of each case in units of the binomial standard error, grouped as in (a), with $|z|\le2$ shaded.
+[Image: cost/figure-8.webp · PDF p. 19]
+
+Appendix F — Diophantine search and witness encoding  (PDF p. 19)
+
+A set is recursively enumerable when an algorithm can confirm membership of each element, although it may run indefinitely on non-members [54]. The DPRM theorem supplies the polynomial witness relation of Eq. (40) for every such set [55, 56]. The input $u$ fixes the parameters, and a witness tuple $x$ certifies membership when $D(u,x)=0$. Once supplied, a witness can be checked by finite polynomial evaluation.
 
 A Diophantine guessing machine consists of the parameter and witness spaces, the polynomial $D$, and a family of guess distributions $p_u$. Independent guesses find a solution almost surely whenever the satisfying witnesses have positive probability. Exhaustive enumeration is another possible search strategy. These choices implement the same logical relation through different processes.
 
-An invertible Gödelisation of witness tuples preserves the Shannon entropy of a fixed ensemble by relabelling its probabilities. Numerical log-magnitude need not be preserved: Cantor pairing can send $(x_1,x_2)$ with $x_1\gg x_2$ to a label of order $x_1^2$ [66]. The probability ranking used in Eq. (41) survives this relabelling. Any apparatus or ancillary memory needed to implement the conversion belongs to the physical account of the process.
+An invertible Gödelisation of witness tuples preserves the Shannon entropy of a fixed ensemble by relabelling its probabilities. Numerical log-magnitude need not be preserved: Cantor pairing can send $(x_1,x_2)$ with $x_1\gg x_2$ to a label of order $x_1^2$ [75]. The probability ranking used in Eq. (44) survives this relabelling. Any apparatus or ancillary memory needed to implement the conversion belongs to the physical account of the process.
 
-Appendix F — Scale-dependent erasure costs  (PDF pp. 18–19)
+Appendix G — Scale-dependent erasure costs  (PDF pp. 19–20)
 
 A separate physical identification is possible when an integer $v$ names a register uniformly occupied over $v$ distinguishable, equal-entropy states. Reset then removes $\ln v$ nats. For independent uniform component registers,
 
 $$
-H=\ln\!\left(\prod_{k=1}^n v_k\right)=\sum_{k=1}^n\ln v_k. \tag{F1}
+H=\ln\!\left(\prod_{k=1}^n v_k\right)=\sum_{k=1}^n\ln v_k. \tag{G1}
 $$
 
 Correlated components instead contribute their joint entropy. This model connects multiplicative refinement to additive reset cost through the occupied volume, rather than the arithmetic size of a witness.
@@ -881,31 +851,31 @@ Within the uniform-reset model, homogeneity is an assumption about the refinemen
 $$
 \Delta_m(n)
   =
-  k_BT\int_{\ln m}^{\ln mn}c(u)\,du. \tag{F2}
+  k_BT\int_{\ln m}^{\ln mn}c(u)\,du. \tag{G2}
 $$
 
-Any such price is path independent in the sense of Eq. (12), because integrals over adjacent intervals add. Homogeneous refinement is the case of constant $c$. Additional structure in the register appears as a dependence of $c$ on depth.
+Any such price is path independent in the sense of Eq. (14), because integrals over adjacent intervals add. Homogeneous refinement is the case of constant $c$. Additional structure in the register appears as a dependence of $c$ on depth.
 
 What additional constraint fixes $c$? Suppose the register has no preferred scale, in the sense that the ratio of the prices of the same relative refinement performed at two depths depends only on the separation of those depths,
 
 $$
 \frac{c(u+v)}{c(u)}=h(v)
-  \qquad\text{for all }u,v\ge0. \tag{F3}
+  \qquad\text{for all }u,v\ge0. \tag{G3}
 $$
 
-Setting $u=0$ gives $h(v)=c(v)/c(0)$, and hence $c(u+v)\,c(0)=c(u)\,c(v)$. This is Cauchy’s exponential equation for $c/c(0)$, whose only measurable solutions are exponentials, $c(u)=c(0)\,e^{\alpha u}$ for some real $\alpha$. Substitution in Eq. (F2) gives
+Setting $u=0$ gives $h(v)=c(v)/c(0)$, and hence $c(u+v)\,c(0)=c(u)\,c(v)$. This is Cauchy’s exponential equation for $c/c(0)$, whose only measurable solutions are exponentials, $c(u)=c(0)\,e^{\alpha u}$ for some real $\alpha$. Substitution in Eq. (G2) gives
 
 $$
 \Delta_m(n)
   =
-  k_BT\,c(0)\,m^{\alpha}\,\frac{n^{\alpha}-1}{\alpha}, \tag{F4}
+  k_BT\,c(0)\,m^{\alpha}\,\frac{n^{\alpha}-1}{\alpha}, \tag{G4}
 $$
 
 read as $k_BT\,c(0)\ln n$ at $\alpha=0$. This is the scale-covariant refinement of Eq. (D1), with $\kappa_\alpha=k_BT\,c(0)$ and the register budget of Eq. (D7). Appendix D derives the same power law from the corresponding requirement for finite refinements. Here it appears as a property of erasure, and its exponent $\alpha=d\ln c/d\ln m$ measures how the price of a nat changes with the size of the register being refined. Homogeneous refinement, $\alpha=0$, describes a register whose apparatus looks the same at every scale.
 
-Two consequences follow. First, the Landauer bound $c(u)\ge1$ at every depth excludes $\alpha<0$ for erasure into a single bath, since $c(0)e^{\alpha u}$ would eventually fall below one. This is the physical counterpart of the requirement in Section III that unlimited distinctions demand an unlimited budget. For budgets defined as the heat of these uniform resets, the same bound supplies $\kappa_\infty\ge k_BT$. This calibration is specific to the operation and ensemble. It does not assign an energy unit to an arbitrary structural budget in Theorem 3. Second, the scale-covariant family is already familiar. The function $(n^\alpha-1)/\alpha$ is the $q$-logarithm $\ln_q n=(n^{1-q}-1)/(1-q)$ with $q=1-\alpha$, and the composition correction of Eq. (D8) reproduces the pseudo-additivity $S_q(A+B)=S_q(A)+S_q(B)+(1-q)S_q(A)S_q(B)/k$ of the Tsallis entropy [67, 68], with $k=\kappa_\alpha$. The excess budget $g(n)$ is then the Tsallis entropy of $n$ equally weighted states, just as the homogeneous budget $\kappa\log n$ is their Boltzmann entropy, and $\alpha>0$ is the superadditive regime $q<1$. The homogeneous member recovers the uniform-reset logarithm used in Section IV.
+Two consequences follow. First, the Landauer bound $c(u)\ge1$ at every depth excludes $\alpha<0$ for erasure into a single bath, since $c(0)e^{\alpha u}$ would eventually fall below one. This is the physical counterpart of the requirement in Section III that unlimited distinctions demand an unlimited budget. For budgets defined as the heat of these uniform resets, the same bound supplies $\kappa_\infty\ge k_BT$. This calibration is specific to the operation and ensemble. It does not assign an energy unit to an arbitrary structural budget in Theorem 3. Second, the scale-covariant family is already familiar. The function $(n^\alpha-1)/\alpha$ is the $q$-logarithm $\ln_q n=(n^{1-q}-1)/(1-q)$ with $q=1-\alpha$, and the composition correction of Eq. (D8) reproduces the pseudo-additivity $S_q(A+B)=S_q(A)+S_q(B)+(1-q)S_q(A)S_q(B)/k$ of the Tsallis entropy [76, 41], with $k=\kappa_\alpha$. The excess budget $g(n)$ is then the Tsallis entropy of $n$ equally weighted states, just as the homogeneous budget $\kappa\log n$ is their Boltzmann entropy, and $\alpha>0$ is the superadditive regime $q<1$. The homogeneous member recovers the uniform-reset logarithm used in Section IV.
 
-Appendix G — Maximum-entropy rank ensembles  (PDF p. 19)
+Appendix H — Maximum-entropy rank ensembles  (PDF p. 20)
 
 With fixed rank labels, normalisation and a mean cost $\ell$, the entropy Lagrangian is
 
@@ -913,10 +883,10 @@ $$
 \frac{\partial}{\partial p(r)}\Bigl[
     S[p] - \alpha\bigl(\textstyle\sum p(r)-1\bigr)
          - \lambda\bigl(\textstyle\sum p(r)\log r - \ell\bigr)
-  \Bigr] = 0 \tag{G1}
+  \Bigr] = 0 \tag{H1}
 $$
 
-Its stationary condition is $-\ln p(r)-1-\alpha-\lambda\ln r=0$. Normalisation gives Eq. (46). Strict concavity of entropy gives the unique maximiser for an interior feasible mean. The derivative $dC/d\lambda=-\operatorname{Var}_{\lambda}(\ln r)<0$ for finite $R\ge2$ and finite $\lambda$ gives uniqueness of the multiplier. The endpoint ensembles follow as $\lambda\to\pm\infty$. If ranks must also follow decreasing occupation probability, $\lambda\ge0$ and the maximum mean is the uniform value $\ln(R!)/R$.
+Its stationary condition is $-\ln p(r)-1-\alpha-\lambda\ln r=0$. Normalisation gives Eq. (49). Strict concavity of entropy gives the unique maximiser for an interior feasible mean. The derivative $dC/d\lambda=-\operatorname{Var}_{\lambda}(\ln r)<0$ for finite $R\ge2$ and finite $\lambda$ gives uniqueness of the multiplier. The endpoint ensembles follow as $\lambda\to\pm\infty$. If ranks must also follow decreasing occupation probability, $\lambda\ge0$ and the maximum mean is the uniform value $\ln(R!)/R$.
 
 For the scale-covariant cost of Eq. (D5), the same calculation gives
 
@@ -924,25 +894,25 @@ $$
 p_\alpha(r\mid\lambda)
   =
   \frac{1}{Z_{R,\alpha}(\lambda)}
-  \exp\!\left[-\lambda\,\frac{r^{\alpha}-1}{\alpha}\right]. \tag{G2}
+  \exp\!\left[-\lambda\,\frac{r^{\alpha}-1}{\alpha}\right]. \tag{H2}
 $$
 
 with the logarithmic limit at $\alpha=0$. For $\alpha>0$ and $\lambda>0$ the large-rank weights decay as $\exp[-(\lambda/\alpha)r^\alpha]$, giving finite normalisation and mean cost. For $\alpha<0$ the cost tends to $1/|\alpha|$, so the weights tend to a positive constant for every finite $\lambda$ and the infinite sum diverges. Within this exact scale-covariant family, the logarithmic member has the finite positive normalisation boundary discussed in the main text.
 
-Appendix H — Critical response of the rank ensemble  (PDF p. 19)
+Appendix I — Critical response of the rank ensemble  (PDF pp. 20–21)
 
 For $\varepsilon=\lambda-1>0$, $\zeta(1+\varepsilon)=\varepsilon^{-1}+O(1)$, with its usual differentiable Laurent expansion. Consequently
 
 $$
 C(1+\varepsilon)=\varepsilon^{-1}+O(1),\qquad
- \chi(1+\varepsilon)=\varepsilon^{-2}+O(1). \tag{H1}
+ \chi(1+\varepsilon)=\varepsilon^{-2}+O(1). \tag{I1}
 $$
 
 These are infinite-vocabulary asymptotics. At finite cutoff and $\lambda=1$, integral comparison gives, for $j=0,1,2$,
 
 $$
 A_j(R):=\sum_{r=1}^R\frac{(\ln r)^j}{r}
-       =\frac{(\ln R)^{j+1}}{j+1}+O(1). \tag{H2}
+       =\frac{(\ln R)^{j+1}}{j+1}+O(1). \tag{I2}
 $$
 
 The errors are bounded because each summand is eventually decreasing and integrable on any fixed initial interval. With $L=\ln R$,
@@ -954,12 +924,12 @@ $$
               =\tfrac1{12}L^2+O(L),\\
  H(p_R)&=C_R(1)+\ln A_0
               =\tfrac12L+\ln L+O(1).
- \end{aligned} \tag{H3}
+ \end{aligned} \tag{I3}
 $$
 
-Finite devices can occupy this ensemble. Divergent heat per complete reset is a statement about the limit $R\to\infty$ under the reset assumptions of Eq. (38).
+Finite devices can occupy this ensemble. Divergent heat per complete reset is a statement about the limit $R\to\infty$ under the reset assumptions of Eq. (41).
 
-Appendix I — Stability of the convergence threshold  (PDF p. 19)
+Appendix J — Stability of the convergence threshold  (PDF p. 21)
 
 Write $f(r)=\ln r+h(r)$ with $h(r)=o(\ln r)$ and suppose $\ln w(r)=o(\ln r)$. For any fixed finite $\lambda$ and any $\delta>0$, there is a sufficiently large $r_0$ such that
 
@@ -967,50 +937,12 @@ $$
 r^{-\lambda-\delta}
  \le w(r)e^{-\lambda f(r)}
  \le r^{-\lambda+\delta},
- \qquad r\ge r_0. \tag{I1}
+ \qquad r\ge r_0. \tag{J1}
 $$
 
 For $\lambda>1$, choose $\delta<\lambda-1$ to obtain convergence. For $\lambda<1$, choose $\delta<1-\lambda$ to obtain divergence. The same upper comparison with an additional power of $\ln r$ gives finite log-rank moments of every fixed order for $\lambda>1$. At $\lambda=1$ neither comparison decides convergence. For $f(r)=\ln r$ and $w(r)=[\ln(r+1)]^{-b}$, the integral test applied to $r^{-1}(\ln r)^{j-b}$ gives a finite $j$th log-rank moment precisely when $b>j+1$. Normalisation is the case $j=0$.
 
-Appendix J — The cost–entropy–fidelity functional  (PDF pp. 19–20)
-
-With $W$ the source variable and fixed $p(\omega,y)$, each encoder $q(x\mid\omega)$ induces a different marginal $p_q(x)$ and target information. Dropping constraint constants from the negative of the maximum-entropy Lagrangian gives
-
-$$
-\mathcal J[q]=\lambda C[q]-H_q(X)-\beta I_q(X;Y). \tag{J1}
-$$
-
-This is the stated Lagrange functional. A nonconvex encoder class need not allow every constrained optimum to be recovered by a choice of multipliers. For a fixed $K(x)$ and finite $Z(\lambda)$, expansion of relative entropy gives
-
-$$
-D(p_q\Vert\rho_\lambda)
- =-H_q(X)+\lambda C[q]+\ln Z(\lambda), \tag{J2}
-$$
-
-which proves Eq. (58). This identity needs no assumption that $p_q$ is an equilibrium.
-
-For deterministic encoders and the additional calibration $C[q]=aH_q(X)+b$, one obtains
-
-$$
-\mathcal J[q]
- =(\lambda a-1)I_q(W;X)-\beta I_q(X;Y)+\lambda b. \tag{J3}
-$$
-
-A positive rescaling yields Eq. (60) if $\lambda a>1$. A lower bound on $C[q]$ in terms of entropy is insufficient to establish equality of the two optimisation problems. An asymptotic coding interpretation requires the calibration error to be controlled across the candidate class, as well as the blocklength limit.
-
-For stochastic encoders, $H_q(X)=I_q(W;X)+H_q(X\mid W)$. Retaining the entropy calibration therefore adds $(\lambda a-1)H_q(X\mid W)$ to the deterministic expression. Alternatively, calibrating cost to source information, $C[q]=aI_q(W;X)+b$, gives
-
-$$
-\begin{aligned}
- \mathcal J[q]={}&(\lambda a-1)I_q(W;X)
-       -H_q(X\mid W)\\
-       &-\beta I_q(X;Y)+\lambda b.
- \end{aligned} \tag{J4}
-$$
-
-In either case the conditional entropy must be fixed, vanish, or be explicitly offset by another cost term to recover the same standard bottleneck over stochastic encoders. Standard information bottleneck can instead be posed directly as minimising $I_q(W;X)$ at prescribed relevance [22]. That is a distinct modelling choice, not an algebraic consequence of rank-cost maximum entropy.
-
-References  (PDF pp. 20–21)
+References  (PDF pp. 21–22)
 
 [1] B. Neal, S. Mittal, A. Baratin, V. Tantia, M. Scicluna, S. Lacoste-Julien, and I. Mitliagkas, in ICML 2019 Workshop on Identifying and Understanding Deep Learning Phenomena (2019) arXiv:1810.08591.
 
@@ -1092,61 +1024,77 @@ References  (PDF pp. 20–21)
 
 [40] V. Garcia-Morales, Foundations of Physics 45, 295 (2015), arXiv:1401.0963.
 
-[41] D. Etiemble, Ternary circuits: why r=3 is not the optimal radix for computation (2019), arXiv:1908.06841.
+[41] C. Tsallis, Contemporary Physics 55, 179 (2014).
 
-[42] B. Mandelbrot, in Communication Theory, edited by W. Jackson (Academic Press, 1953) pp. 486–502.
+[42] D. Hilbert, Mathematische Annalen 38, 459 (1891).
 
-[43] P. Elias, IEEE Transactions on Information Theory 21, 194 (1975).
+[43] H. Haverkort, An inventory of three-dimensional hilbert space-filling curves (2011), arXiv:1109.2323.
 
-[44] L. Allison, A. S. Konagurthu, and D. F. Schmidt, in 2021 Data Compression Conference (DCC) (IEEE, 2021) pp. 313–322, arXiv:1906.05004.
+[44] J. Rus, in Proceedings of Bridges 2017: Mathematics, Art, Music, Architecture, Education, Culture (2017) p. 237–244.
 
-[45] J. Rissanen, The Annals of Statistics 11, 416 (1983).
+[45] L. Riddle, Terdragon.
 
-[46] D. Hilbert, Mathematische Annalen 38, 459 (1891).
+[46] P. Duvall and J. Keesling, The hausdorff dimension of the boundary of the lévy dragon (1999).
 
-[47] H. Haverkort, An inventory of three-dimensional hilbert space-filling curves (2011), arXiv:1109.2323.
+[47] A. Vince, Discrete &amp; Computational Geometry 21, 463 (1999).
 
-[48] H. Rao and S.-Q. Zhang, Nonlinearity 29, 2112 (2016).
+[48] J. Eisert, M. Cramer, and M. B. Plenio, Reviews of Modern Physics 82, 277 (2010).
 
-[49] M. Sipser, Introduction to the Theory of Computation, 3rd ed. (Cengage Learning, Boston, 2013).
+[49] P. Calabrese and J. Cardy, Journal of Statistical Mechanics: Theory and Experiment 2004, P06002 (2004).
 
-[50] Y. V. Matiyasevich, Hilbert’s Tenth Problem (MIT Press, Cambridge, MA, 1993).
+[50] B. Swingle, Physical Review D 86, 065007 (2012).
 
-[51] M. Davis, H. Putnam, and J. Robinson, Annals of Mathematics 74, 425 (1961).
+[51] C. D. Murray, Journal of General Physiology 9, 835 (1926).
 
-[52] C. H. Bennett, IBM Journal of Research and Development 17, 525 (1973).
+[52] G. B. West, J. H. Brown, and B. J. Enquist, Science 284, 1677 (1999).
 
-[53] E. T. Jaynes, Physical Review 106, 620 (1957).
+[53] D. I. Bondar and A. N. Pechen, Scientific Reports 10, 1195 (2020).
 
-[54] J. E. Shore and R. W. Johnson, IEEE Transactions on Information Theory 26, 26 (1980).
+[54] M. Sipser, Introduction to the Theory of Computation, 3rd ed. (Cengage Learning, Boston, 2013).
 
-[55] X. Gabaix, Quarterly Journal of Economics 114, 739 (1999).
+[55] Y. V. Matiyasevich, Hilbert’s Tenth Problem (MIT Press, Cambridge, MA, 1993).
 
-[56] T. Mora and W. Bialek, Journal of Statistical Physics 144, 268 (2011).
+[56] M. Davis, H. Putnam, and J. Robinson, Annals of Mathematics 74, 425 (1961).
 
-[57] C. L. Buckley, C. S. Kim, S. McGregor, and A. K. Seth, Journal of Mathematical Psychology 81, 55 (2017).
+[57] C. H. Bennett, IBM Journal of Research and Development 17, 525 (1973).
 
-[58] M. Karjula, T. Ojanen, K. Pöyhönen, T. Ala-Nissila, and M. N. Ivaki, Universal entanglement embezzlement and divergent nonlocal magic from generic local chaotic quantum evolution (2026), arXiv:2609.18691v1.
+[58] E. T. Jaynes, Physical Review 106, 620 (1957).
 
-[59] M. N. Ivaki, A. J. Szuminsky, A. Lazarides, A. Zagoskin, G. McCaul, and T. Ala-Nissila, Dynamical learning and quantum memory with non-hermitian many-body systems (2025), arXiv:2506.07676v1.
+[59] J. E. Shore and R. W. Johnson, IEEE Transactions on Information Theory 26, 26 (1980).
 
-[60] M. N. Ivaki, M. Karjula, and T. Ala-Nissila, Physical Review A 113, L060401 (2026).
+[60] B. Mandelbrot, in Communication Theory, edited by W. Jackson (Academic Press, 1953) pp. 486–502.
 
-[61] M. Karjula, T. Ojanen, T. Ala-Nissila, and M. N. Ivaki, The ebbs and flows of quantum learning and sensing (2026), arXiv:2608.20155v1.
+[61] X. Gabaix, Quarterly Journal of Economics 114, 739 (1999).
 
-[62] Y. Bengio, A. Courville, and P. Vincent, IEEE Transactions on Pattern Analysis and Machine Intelligence 35, 1798 (2013).
+[62] T. Mora and W. Bialek, Journal of Statistical Physics 144, 268 (2011).
 
-[63] B. Zoph and Q. V. Le, in 5th International Conference on Learning Representations (arXiv, 2017) arXiv:1611.01578.
+[63] J. Rissanen, The Annals of Statistics 11, 416 (1983).
 
-[64] H. A. Simon, Proceedings of the American Philosophical Society 106, 467 (1962).
+[64] C. L. Buckley, C. S. Kim, S. McGregor, and A. K. Seth, Journal of Mathematical Psychology 81, 55 (2017).
 
-[65] H. Boche, Y. Böck, and C. Deppe, in Information Theory and Related Fields, Lecture Notes in Computer Science, Vol. 14620, edited by C. Deppe, A. Winter, R. W. Yeung, H. Boche, I. Althöfer, J. Stoye, U. Tamm, and R. Ezzine (Springer Nature Switzerland, Cham, 2025) pp. 286–313, arXiv:2010.09896.
+[65] M. Karjula, T. Ojanen, K. Pöyhönen, T. Ala-Nissila, and M. N. Ivaki, Universal entanglement embezzlement and divergent nonlocal magic from generic local chaotic quantum evolution (2026), arXiv:2609.18691v1.
 
-[66] M. Li and P. Vitányi, An Introduction to Kolmogorov Complexity and Its Applications, 3rd ed., Texts in Computer Science (Springer, New York, 2008).
+[66] M. N. Ivaki, A. J. Szuminsky, A. Lazarides, A. Zagoskin, G. McCaul, and T. Ala-Nissila, Dynamical learning and quantum memory with non-hermitian many-body systems (2025), arXiv:2506.07676v1.
 
-[67] C. Tsallis, Journal of Statistical Physics 52, 479 (1988).
+[67] M. N. Ivaki, M. Karjula, and T. Ala-Nissila, Physical Review A 113, L060401 (2026).
 
-[68] C. Tsallis, Contemporary Physics 55, 179 (2014).
+[68] M. Karjula, T. Ojanen, T. Ala-Nissila, and M. N. Ivaki, The ebbs and flows of quantum learning and sensing (2026), arXiv:2608.20155v1.
+
+[69] Y. Bengio, A. Courville, and P. Vincent, IEEE Transactions on Pattern Analysis and Machine Intelligence 35, 1798 (2013).
+
+[70] B. Zoph and Q. V. Le, in 5th International Conference on Learning Representations (arXiv, 2017) arXiv:1611.01578.
+
+[71] H. A. Simon, Proceedings of the American Philosophical Society 106, 467 (1962).
+
+[72] H. Boche, Y. Böck, and C. Deppe, in Information Theory and Related Fields, Lecture Notes in Computer Science, Vol. 14620, edited by C. Deppe, A. Winter, R. W. Yeung, H. Boche, I. Althöfer, J. Stoye, U. Tamm, and R. Ezzine (Springer Nature Switzerland, Cham, 2025) pp. 286–313, arXiv:2010.09896.
+
+[73] P. Elias, IEEE Transactions on Information Theory 21, 194 (1975).
+
+[74] L. Allison, A. S. Konagurthu, and D. F. Schmidt, in 2021 Data Compression Conference (DCC) (IEEE, 2021) pp. 313–322, arXiv:1906.05004.
+
+[75] M. Li and P. Vitányi, An Introduction to Kolmogorov Complexity and Its Applications, 3rd ed., Texts in Computer Science (Springer, New York, 2008).
+
+[76] C. Tsallis, Journal of Statistical Physics 52, 479 (1988).
 
 Physical origins of the Kalmár constant
 Gerard McCaul · EigenEngine
